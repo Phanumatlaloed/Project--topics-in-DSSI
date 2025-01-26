@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ group.name }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles/group_detail.css' %}">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Sidebar -->
+        <aside class="sidebar bg-light vh-100 position-fixed">
+            <div class="logo text-center py-4">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
+                <h5 class="text-primary">My Community</h5>
+            </div>
+            <nav>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a href="{% url 'home' %}" class="nav-link py-2">🏠 Home</a></li>
+                    <li class="nav-item"><a href="{% url 'community_list' %}" class="nav-link py-2 active">👥 Community</a></li>
+                    <li class="nav-item"><a href="{% url 'savelist' %}" class="nav-link py-2">💾 Save</a></li>
+                    <li class="nav-item"><a href="{% url 'profile_management' %}" class="nav-link py-2">📄 Profile</a></li>
+                </ul>
+            </nav>
+            <div class="welcome-logout text-center mt-4">
+                <p>Welcome, <b>{{ request.user.username }}</b></p>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="content ms-270 px-4 py-4">
+            <!-- Group Header -->
+            <div class="group-header text-center py-4 bg-white shadow-sm rounded mb-4">
+                <img src="{{ group.image.url }}" alt="{{ group.name }}" class="group-image img-fluid rounded-circle mb-3">
+                <h1 class="mb-2">{{ group.name }}</h1>
+                <p class="text-muted">{{ group.description }}</p>
+                <div class="rules text-start mt-3">
+                    <p><strong>Rules:</strong> {{ group.rules }}</p>
+                </div>
+            </div>
+
+            <!-- Add Post Form -->
+            {% if request.user in group.members.all %}
+            <div class="post-form-container bg-white shadow-sm rounded p-4 mb-4">
+                <h3 class="mb-3">Create a Post</h3>
+                <form method="post" enctype="multipart/form-data" class="create-post">
+                    {% csrf_token %}
+                    <textarea name="content" class="form-control mb-3" rows="3" placeholder="What's on your mind?" required></textarea>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="file" name="video" class="form-control" accept="video/*">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Post</button>
+                </form>
+            </div>
+            {% endif %}
+
+            <!-- Posts Section -->
+            <div class="posts-section">
+                <h3 class="mb-4">Posts</h3>
+                {% for post in posts %}
+                <div class="post-card bg-white shadow-sm rounded p-4 mb-4">
+                    <div class="post-header d-flex justify-content-between align-items-center mb-2">
+                        <strong>{{ post.user.username }}</strong>
+                        <small class="text-muted">{{ post.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <p class="mb-3">{{ post.content }}</p>
+                    <div class="media-container">
+                        {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid rounded mb-3">
+                        {% endif %}
+                        {% if post.video %}
+                        <video controls class="w-100 rounded mb-3">
+                            <source src="{{ post.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        {% endif %}
+                    </div>
+                    <div class="post-actions mt-3 d-flex align-items-center">
+                        <form method="post" action="{% url 'toggle_group_post_like' post.id %}" class="like-form me-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm like-btn">
+                                {% if request.user in post.likes.all %}
+                                ❤️ Unlike
+                                {% else %}
+                                🤍 Like
+                                {% endif %}
+                            </button>
+                        </form>
+                        <span class="me-3 like-count">{{ post.likes.count }} Likes</span>
+                    </div>
+                    <div class="comments-section mt-3">
+                        <h6>Comments:</h6>
+                        {% for comment in post.comments.all %}
+                        <div class="comment">
+                            <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">No comments yet.</p>
+                        {% endfor %}
+                        <form method="post" action="{% url 'add_group_post_comment' post.id %}" class="comment-form">
+                            {% csrf_token %}
+                            <textarea name="content" class="form-control form-control-sm mb-2" rows="1" placeholder="Write a comment..." required></textarea>
+                            <button type="submit" class="btn btn-sm btn-primary">Comment</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/like.js' %}"></script>
+    <script src="{% static 'js/commentcommu.js' %}"></script>
+</body>
+</html>

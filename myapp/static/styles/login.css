@@ -1,0 +1,101 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #fdfbee; /* Background สีครีมอ่อน */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: #fff; /* สีขาวสำหรับกล่อง */
+    width: 420px; /* เพิ่มจาก 350px เป็น 420px */
+    padding: 2.4rem; /* เพิ่มจาก 2rem เป็น 2.4rem */
+    border-radius: 14px; /* เพิ่มขนาดมุมโค้ง */
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Logo */
+.logo-container img {
+    width: 72px; /* เพิ่มจาก 60px เป็น 72px */
+    height: 72px; /* เพิ่มจาก 60px เป็น 72px */
+    margin-bottom: 1.2rem; /* เพิ่มจาก 1rem เป็น 1.2rem */
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Title and Subtitle */
+h2 {
+    font-size: 1.8rem; /* เพิ่มจาก 1.5rem เป็น 1.8rem */
+    margin-bottom: 0.6rem; /* เพิ่มจาก 0.5rem เป็น 0.6rem */
+}
+
+p {
+    font-size: 1.08rem; /* เพิ่มจาก 0.9rem เป็น 1.08rem */
+    color: #555;
+    margin-bottom: 1.8rem; /* เพิ่มจาก 1.5rem เป็น 1.8rem */
+}
+
+/* Input Fields */
+input {
+    width: 100%;
+    padding: 12px; /* เพิ่มจาก 10px เป็น 12px */
+    margin: 0.6rem 0; /* เพิ่มจาก 0.5rem เป็น 0.6rem */
+    border: 1px solid #ddd;
+    border-radius: 6px; /* เพิ่มจาก 5px เป็น 6px */
+    font-size: 1.08rem; /* เพิ่มจาก 0.9rem เป็น 1.08rem */
+}
+
+input:focus {
+    border-color: #aaa;
+    outline: none;
+}
+
+/* Buttons */
+.btn-login {
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    padding: 12px; /* เพิ่มจาก 10px เป็น 12px */
+    font-size: 1.08rem; /* เพิ่มจาก 0.9rem เป็น 1.08rem */
+    border: none;
+    border-radius: 6px; /* เพิ่มจาก 5px เป็น 6px */
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-login:hover {
+    background-color: #333;
+}
+
+/* Links */
+.links {
+    display: flex;
+    justify-content: space-between;
+    margin: 1.2rem 0; /* เพิ่มจาก 1rem เป็น 1.2rem */
+}
+
+.links a {
+    color: #007bff;
+    font-size: 0.96rem; /* เพิ่มจาก 0.8rem เป็น 0.96rem */
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
+
+/* Admin Login */
+.admin-login {
+    font-size: 0.96rem; /* เพิ่มจาก 0.8rem เป็น 0.96rem */
+    color: #777;
+    margin-top: 1.2rem; /* เพิ่มจาก 1rem เป็น 1.2rem */
+}

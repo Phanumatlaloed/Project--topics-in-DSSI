@@ -1,0 +1,22 @@
+ECHO is on.
+# ข้ามโฟลเดอร์ __pycache__ และไฟล์ .pyc
+__pycache__/
+*.pyc
+
+# ข้ามไฟล์ฐานข้อมูล SQLite
+*.sqlite3
+
+# ข้ามไฟล์ Binary
+*.bin
+*.exe
+
+# ข้ามไฟล์ Media หรือไฟล์ใหญ่
+media/
+
+# ข้ามไฟล์จาก Virtual Environment
+venv/
+*.log
+
+# ข้ามไฟล์ IDE
+.vscode/
+.idea/

@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link rel="stylesheet" href="{% static 'styles/register.css' %}">
+</head>
+<body>
+    <div class="register-container">
+        <!-- โลโก้ -->
+        <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="logo">
+
+        <h1>สร้างบัญชีใหม่</h1>
+
+        <!-- แสดงข้อความแจ้งเตือน -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- ฟอร์มการสมัคร -->
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <input type="text" name="first_name" placeholder="ชื่อ" required>
+                <input type="text" name="last_name" placeholder="นามสกุล" required>
+            </div>
+
+            <label for="birthday">วันเกิด</label>
+            <div class="input-group">
+                <input type="date" name="date_of_birth" required>
+            </div>
+
+            <label>เพศ</label>
+            <div class="input-group gender">
+                <label><input type="radio" name="gender" value="male" required> ชาย</label>
+                <label><input type="radio" name="gender" value="female" required> หญิง</label>
+                <label><input type="radio" name="gender" value="other" required> อื่น ๆ</label>
+            </div>
+
+            <div class="input-group">
+                <input type="text" name="username" placeholder="ชื่อผู้ใช้" required>
+            </div>
+
+            <div class="input-group">
+                <input type="password" name="password" placeholder="รหัสผ่านใหม่" required>
+            </div>
+
+            <p class="info-text">
+                เมื่อคลิกสมัคร แสดงว่าคุณยินยอมตาม <a href="#">ข้อกำหนด</a>, <a href="#">นโยบายความเป็นส่วนตัว</a> และ <a href="#">นโยบายคุกกี้</a> ของเรา
+            </p>
+
+            <button type="submit" class="register-button">สมัคร</button>
+
+            <a href="{% url 'login' %}" class="existing-account">มีบัญชีแล้ว? ใช่ไหม</a>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessage = document.querySelector('.message.success');
+            if (successMessage) {
+                setTimeout(function () {
+                    window.location.href = "{% url 'login' %}";
+                }, 5000); // Redirect after 5 seconds
+            }
+        });
+    </script>
+</body>
+</html>

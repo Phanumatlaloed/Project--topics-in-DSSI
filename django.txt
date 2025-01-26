@@ -1,0 +1,7 @@
+django
+PyJWT
+requests
+mysqlclient
+django-allauth
+cryptography
+Pillow

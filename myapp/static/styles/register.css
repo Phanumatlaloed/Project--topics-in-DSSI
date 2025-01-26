@@ -1,0 +1,153 @@
+/* รีเซ็ต CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: linear-gradient(to bottom right, #fdfbee, #f8d7e4); /* พื้นหลังชมพูอ่อนผสมครีม */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    overflow: hidden; /* ป้องกันการเลื่อน */
+}
+
+/* คอนเทนเนอร์ฟอร์ม */
+.register-container {
+    background-color: #fff; /* สีขาวสำหรับฟอร์ม */
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* ลดความเข้มของเงา */
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+    overflow-y: auto; /* เพิ่ม scroll bar เมื่อเนื้อหายาวเกิน */
+    max-height: 95vh; /* จำกัดความสูงของฟอร์ม */
+}
+
+/* โลโก้ */
+.logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 3px solid #f8a1c1; /* สีชมพูอ่อน */
+}
+
+/* หัวข้อ */
+h1 {
+    font-size: 1.8rem;
+    color: #d35d90; /* สีชมพูเข้มสำหรับหัวข้อ */
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+p {
+    font-size: 0.95rem;
+    color: #555; /* สีเทาอ่อน */
+    margin-bottom: 20px;
+}
+
+/* กล่องป้อนข้อมูล */
+.input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: #f8a1c1; /* สีชมพูอ่อน */
+    box-shadow: 0 0 5px rgba(248, 161, 193, 0.5); /* เงาสีชมพู */
+    outline: none;
+}
+
+/* ปุ่ม */
+.register-button {
+    background-color: #f8a1c1; /* สีชมพู */
+    color: white;
+    font-size: 1.1rem;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.register-button:hover {
+    background-color: #f6c1d1; /* สีชมพูอ่อนเมื่อ Hover */
+    transform: scale(1.02);
+}
+
+/* ลิงก์ */
+.existing-account {
+    margin-top: 20px;
+    display: inline-block;
+    font-size: 0.95rem;
+    color: #d35d90; /* สีชมพูเข้ม */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.existing-account:hover {
+    text-decoration: underline;
+}
+
+/* ข้อความเพิ่มเติม */
+.info-text {
+    font-size: 0.85rem;
+    color: #777; /* สีเทาอ่อน */
+    margin: 15px 0;
+}
+
+/* แอนิเมชัน */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Media Queries สำหรับหน้าจอขนาดเล็ก */
+@media (max-height: 600px) {
+    .register-container {
+        max-height: 90vh;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    p, .info-text {
+        font-size: 0.85rem;
+    }
+
+    input, select {
+        padding: 10px;
+    }
+
+    .register-button {
+        font-size: 1rem;
+        padding: 10px;
+    }
+}

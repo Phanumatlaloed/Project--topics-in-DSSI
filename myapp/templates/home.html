@@ -1,0 +1,134 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'styles/home1.css' %}">
+    <script src="{% static 'js/like.js' %}" defer></script>
+    <script src="{% static 'js/comment.js' %}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo">
+            </div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="#">🏠 Home</a></li>
+                    <li><a href="{% url 'community_list' %}">👥 Community</a></li>
+                    <li><a href="{% url 'savelist' %}">💾 Save</a></li>
+                    <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                    <li><a href="#">💬 Messages</a></li>
+                    <li><a href="#">💬 Store</a></li>
+                </ul>
+            </nav>
+            <div class="welcome-logout">
+                <p>Welcome, <b>{{ request.user.username }}</b></p>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Create Post -->
+            <div class="create-post">
+                <form action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <textarea name="content" id="postContent" placeholder="What's on your mind?" required></textarea>
+                    <input type="file" name="image" id="postImage" accept="image/*">
+                    <input type="file" name="video" id="videoInput" accept="video/*">
+                    <button type="submit" class="submit-btn">Post</button>
+                </form>
+            </div>
+
+            <!-- Posts -->
+            <div class="posts">
+                {% for post in posts %}
+                <div class="post" id="post-{{ post.id }}">
+                    <div class="user">
+                        <div class="user-info">
+                            <span><strong>{{ post.user.user.username }}</strong></span>
+                        </div>
+                    </div>
+                    <p>{{ post.content }}</p>
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="Post Image" style="max-width: 100%;">
+                    {% elif post.video %}
+                        <video src="{{ post.video.url }}" controls style="max-width: 100%;"></video>
+                    {% endif %}
+                    <div class="actions">
+                        <!-- Like Button -->
+                        <form action="{% url 'toggle_like' post.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="like-btn">
+                                {% if request.user.profile in post.likes.all %}
+                                    👎 Unlike
+                                {% else %}
+                                    👍 Like
+                                {% endif %}
+                            </button>
+                        </form>
+                        <span class="like-count">{{ post.likes.count }} Likes</span>
+
+                        <!-- Save Button -->
+                        <form action="{% url 'save_post' post.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="save-btn">💾 Save</button>
+                        </form>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="comments">
+                        <h4>Comments:</h4>
+                        {% for comment in post.comments.all %}
+                        <div class="comment">
+                            <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                        </div>
+                        {% empty %}
+                        <p>No comments yet.</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Add Comment Form -->
+                    <form action="{% url 'add_comment' post.id %}" method="post" class="comment-form">
+                        {% csrf_token %}
+                        <textarea name="content" rows="2" placeholder="Write a comment..." required></textarea>
+                        <button type="submit">Comment</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div class="search">
+                <input type="text" placeholder="Search.....">
+            </div>
+            <div class="trending">
+                <h3>Trending</h3>
+                <ul>
+                    <li># Moisturizer</li>
+                    <li># Mask</li>
+                    <li># Lipstick</li>
+                    <li># Vitamin C</li>
+                    <li># Makeup</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">
+        <p>Notification</p>
+    </div>
+</body>
+</html>

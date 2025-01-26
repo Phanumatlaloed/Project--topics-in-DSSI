@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved List</title>
+    <link rel="stylesheet" href="{% static 'styles/savelist.css' %}">
+    <script src="{% static 'js/savelist.js' %}" defer></script>
+</head>
+<body>
+    <div class="savelist-container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Logo">
+                </a>
+            </div>
+            <h1>Saved Posts</h1>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" placeholder="Search.....">
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+
+        <!-- Saved Posts Grid -->
+        <div class="savelist-grid">
+            {% for saved_post in saved_posts %}
+            <div class="savelist-item" id="post-{{ saved_post.post.id }}">
+                {% if saved_post.post.image %}
+                    <img src="{{ saved_post.post.image.url }}" alt="Post Image">
+                {% elif saved_post.post.video %}
+                    <video src="{{ saved_post.post.video.url }}" controls></video>
+                {% endif %}
+                <p>{{ saved_post.post.content }}</p>
+                <form action="{% url 'remove_saved_post' saved_post.post.id %}" method="post" class="remove-post-form">
+                    {% csrf_token %}
+                    <button type="submit" class="remove-btn">Remove</button>
+                </form>
+            </div>
+            {% empty %}
+            <p>No saved posts yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

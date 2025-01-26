@@ -1,0 +1,62 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการโปรไฟล์</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>จัดการโปรไฟล์</h2>
+
+        <!-- ปุ่มกลับหน้า Home -->
+        <a href="{% url 'home' %}" class="btn btn-secondary mb-3">กลับไปยังหน้า Home</a>
+        
+        <!-- แสดงชื่อผู้ใช้ -->
+        <p><strong>ชื่อผู้ใช้:</strong> {{ user.username }}</p>
+
+        <div class="row">
+            <!-- ฟอร์มแก้ไขข้อมูลส่วนตัว -->
+            <div class="col-md-6">
+                <h3>ข้อมูลส่วนตัว</h3>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- แสดงรูปโปรไฟล์ -->
+                    <div class="mb-3">
+                        <label for="profile_picture" class="form-label">รูปโปรไฟล์</label>
+                        <div class="mb-3">
+                            {% if user.profile.profile_picture %}
+                                <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail" width="150">
+                            {% else %}
+                                <img src="{% static 'images/default-profile.png' %}" alt="Default Profile" class="img-thumbnail" width="150">
+                            {% endif %}
+                        </div>
+                        <input type="file" name="profile_picture" id="profile_picture" class="form-control">
+                    </div>
+
+                    <!-- ฟอร์มข้อมูลส่วนตัว -->
+                    {{ personal_info_form.as_p }}
+
+                    <button type="submit" name="update_personal_info" class="btn btn-primary">บันทึกข้อมูลส่วนตัว</button>
+                </form>
+            </div>
+
+            <!-- ฟอร์มเปลี่ยนรหัสผ่าน -->
+            <div class="col-md-6">
+                <h3>เปลี่ยนรหัสผ่าน</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ password_form.as_p }}
+                    <button type="submit" name="change_password" class="btn btn-warning">เปลี่ยนรหัสผ่าน</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Groups</title>
+    <link rel="stylesheet" href="{% static 'styles/community.css' %}">
+</head>
+<body>
+    <div class="community-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Community Groups</h1>
+            <a href="{% url 'create_group' %}" class="create-group-btn">+ Create New Group</a>
+        </div>
+
+        <!-- Group List -->
+        <div class="group-list">
+            {% for group in groups %}
+            <div class="group-card">
+                <img src="{{ group.image.url }}" alt="{{ group.name }}" class="group-image">
+                <div class="group-info">
+                    <h2>{{ group.name }}</h2>
+                    <p>{{ group.description|truncatewords:20 }}</p>
+                    <a href="{% url 'group_detail' group.id %}" class="view-group-btn">View Group</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

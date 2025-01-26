@@ -1,0 +1,275 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenniGuru - Community</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #fdfbf4;
+        }
+
+        .community-container {
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 20%;
+            background-color: #f8e9d8;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar .logo {
+            margin-bottom: 20px;
+        }
+
+        .sidebar .logo img {
+            width: 100px;
+            height: auto;
+            border-radius: 50%;
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .sidebar nav ul li {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar nav ul li a {
+            text-decoration: none;
+            font-size: 18px;
+            color: #333;
+            padding: 10px;
+            display: block;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar nav ul li a.active,
+        .sidebar nav ul li a:hover {
+            background-color: #e6d5c0;
+        }
+
+        .main-content {
+            width: 60%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .post-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .post-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 16px;
+        }
+
+        .add-post-button {
+            margin-left: 10px;
+            background-color: #f8a488;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .post {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post img {
+            max-width: 100%;
+            height: 200px; /* Adjusted to control image size */
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .post-tags {
+            margin-top: 10px;
+        }
+
+        .post-tags span {
+            display: inline-block;
+            margin-right: 5px;
+            background-color: #f8e9d8;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .post-actions {
+            margin-top: 10px;
+        }
+
+        .post-actions button {
+            margin-right: 10px;
+            background-color: #f8a488;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .right-sidebar {
+            width: 20%;
+            background-color: #f8e9d8;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+        }
+
+        .trending-section h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .trending-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .trending-section ul li {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .may-you-know {
+            margin-top: 20px;
+        }
+
+        .may-you-know h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .may-you-know ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .may-you-know ul li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .may-you-know ul li img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="community-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.jpg" alt="GenniGuru Logo">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}" >Home</a></li>
+                    <li><a href="{% url 'community' %}">Community</a></li>
+                    <li><a href="{% url 'savelist' %}">Save</a></li>
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                    <li><a href="#">Messages</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="post-input">
+                <input type="text" placeholder="What’s Do You Mind?">
+                <button class="add-post-button">+</button>
+            </div>
+
+            <div class="post">
+                <div class="post-header">
+                    <span>Someone</span>
+                    <span>Tag: #Lipstick</span>
+                </div>
+                <img src="Lipcom.jpg" alt="Post Image">
+                <p>This product makes my lips look so juicy...</p>
+                <div class="post-actions">
+                    <button>Comment</button>
+                    <button>Share</button>
+                </div>
+            </div>
+        </main>
+
+        <aside class="right-sidebar">
+            <div class="search-bar">
+                <input type="text" placeholder="Search.....">
+            </div>
+
+            <div class="trending-section">
+                <h3>Trending</h3>
+                <ul>
+                    <li>#Moisturizer</li>
+                    <li>#Mask</li>
+                    <li>#Lipstick</li>
+                    <li>#Vitamin C</li>
+                    <li>#Makeup</li>
+                    <li>#Aloe-vera</li>
+                </ul>
+            </div>
+
+            <div class="may-you-know">
+                <h3>May You Know</h3>
+                <ul>
+                    <li><img src="profile1.jpg" alt="Someone">Someone</li>
+                    <li><img src="profile2.jpg" alt="Someone">Someone</li>
+                    <li><img src="profile3.jpg" alt="Someone">Someone</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>

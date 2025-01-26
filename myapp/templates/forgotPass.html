@@ -1,0 +1,77 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <link rel="stylesheet" href="{% static 'styles/forgotPass.css' %}">
+</head>
+<body>
+    <div class="forgot-container">
+        <!-- โลโก้และปุ่มย้อนกลับในบรรทัดเดียวกัน -->
+        <div class="header">
+            <!--a href="login.html" class="back-arrow">← </!--a-->
+            <a href="{% url 'login' %}" class="back-arrow">←</a>
+            <div class="logo">
+                <img src="logo.jpg" alt="Logo">
+            </div>
+        </div>
+
+        <h1>Forgot Password</h1>
+
+        <form action="#" method="post" class="forgot-form" id="forgot-password-form">
+            <!-- Step 1: Enter Email -->
+            <div id="step-email">
+                <label for="email">Enter your email</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <button type="button" onclick="sendOTP()">Send OTP</button>
+            </div>
+
+            <!-- Step 2: Enter OTP -->
+            <div id="step-otp" style="display: none;">
+                <label for="otp">Enter OTP</label>
+                <input type="text" id="otp" placeholder="Enter OTP" required>
+                <button type="button" onclick="verifyOTP()">Verify OTP</button>
+            </div>
+
+            <!-- Step 3: Reset Password -->
+            <div id="step-reset" style="display: none;">
+                <label for="new-password">New Password</label>
+                <input type="password" id="new-password" placeholder="Enter new password" required>
+
+                <label for="confirm-password">Confirm New Password</label>
+                <input type="password" id="confirm-password" placeholder="Confirm new password" required>
+
+                <button type="submit" onclick="resetPassword()">Reset Password</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function sendOTP() {
+            document.getElementById('step-email').style.display = 'none';
+            document.getElementById('step-otp').style.display = 'block';
+            console.log("OTP sent to email");
+        }
+
+        function verifyOTP() {
+            document.getElementById('step-otp').style.display = 'none';
+            document.getElementById('step-reset').style.display = 'block';
+            console.log("OTP verified");
+        }
+
+        function resetPassword() {
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword === confirmPassword) {
+                console.log("Password reset successfully");
+            } else {
+                alert("Passwords do not match. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>
