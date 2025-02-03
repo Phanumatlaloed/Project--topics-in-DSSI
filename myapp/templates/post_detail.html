@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Detail</title>
+    <link rel="stylesheet" href="{% static 'styles/post_detail.css' %}">
+</head>
+<body>
+    <div class="post-detail-container">
+        <header class="header">
+            <a href="{% url 'savelist' %}" class="back-btn">⬅ Back to Saved List</a>
+            <h1>Post Detail</h1>
+        </header>
+
+        <div class="post-content">
+            <p>{{ post.content }}</p>
+
+            <!-- ✅ รองรับหลายรูปและวิดีโอ -->
+            <div class="post-media">
+                {% for media in post.media.all %}
+                    {% if media.media_type == "image" %}
+                        <img src="{{ media.file.url }}" alt="Post Image">
+                    {% elif media.media_type == "video" %}
+                        <video src="{{ media.file.url }}" controls></video>
+                    {% endif %}
+                {% empty %}
+                    <p class="text-muted">No media available</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

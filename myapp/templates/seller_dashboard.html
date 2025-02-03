@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles/seller_dashboard.css' %}">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-box">
+            <div class="store-header">
+                <h2>Welcome, {{ seller.store_name }}</h2>
+                {% if seller.store_image %}
+                    <img src="{{ seller.store_image.url }}" class="store-image" alt="Store Image">
+                {% else %}
+                    <p class="no-image">No store image uploaded</p>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-menu">
+                <a href="{% url 'add_product' %}" class="dashboard-btn">➕ Add Product</a>
+                <a href="{% url 'product_list' %}" class="dashboard-btn">📦 Product List</a>
+                <a href="{% url 'my_products' %}" class="dashboard-btn">🛍 My Products</a>
+                <a href="{% url 'edit_store' %}" class="edit-store-btn">⚙️ แก้ไขร้านค้า</a>
+                <a href="{% url 'seller_logout' %}" class="dashboard-btn logout-btn">🚪 Logout</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+/* ใช้โทนสีชมพูอ่อน (#ff6b81) และสีขาว */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #ffe6e9;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.dashboard-container {
+    width: 100%;
+    max-width: 600px;
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.store-header h2 {
+    color: #ff6b81;
+}
+
+.store-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.no-image {
+    color: #999;
+    font-size: 14px;
+}
+
+.dashboard-menu {
+    margin-top: 20px;
+}
+
+.dashboard-btn {
+    display: block;
+    width: 100%;
+    background-color: #ff6b81;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.dashboard-btn:hover {
+    background-color: #ff4d69;
+}
+
+.logout-btn {
+    background-color: #ff4d69;
+}
+
+.logout-btn:hover {
+    background-color: #e8435d;
+}

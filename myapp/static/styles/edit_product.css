@@ -1,0 +1,150 @@
+/* ใช้โทนสีชมพูอ่อน (#ff6b81) และสีขาว */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #ffe6e9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    width: 80px;
+    height: auto;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #ff6b81;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    background: #ff6b81;
+    color: white;
+}
+
+/* Edit Product Container */
+.edit-product-container {
+    width: 50%;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2 {
+    color: #ff6b81;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.form-group textarea {
+    height: 100px;
+}
+
+/* Product Image Preview */
+.preview-image {
+    width: 100px;
+    border-radius: 10px;
+    margin-top: 10px;
+    display: block;
+}
+
+/* Save Button */
+.save-btn {
+    display: inline-block;
+    background: #ff6b81;
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.save-btn:hover {
+    background: #e05570;
+}
+
+/* Cancel Button */
+.cancel-btn {
+    display: inline-block;
+    background: #ddd;
+    color: #333;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+    background: #bbb;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .edit-product-container {
+        width: 70%;
+    }
+}
+
+@media (max-width: 768px) {
+    .edit-product-container {
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .edit-product-container {
+        width: 100%;
+        padding: 20px;
+    }
+}

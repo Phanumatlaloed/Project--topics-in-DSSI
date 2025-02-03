@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',  # ใช้ allauth สำหรับการตรวจสอบผู้ใช้
     'django.contrib.auth.backends.ModelBackend',  # รวมการตรวจสอบผู้ใช้จาก Django
+    
 )
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -89,14 +90,17 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",  # ใช้ MySQL
-        "NAME": "mydatabase1",                 # ชื่อฐานข้อมูลที่คุณสร้างไว้
+        "NAME": "mydata2",                 # ชื่อฐานข้อมูลที่คุณสร้างไว้
         "USER": "root",                       # ชื่อผู้ใช้ MySQL
         "PASSWORD": "12345",                   # รหัสผ่าน MySQL
         "HOST": "localhost",                  # โฮสต์ MySQL
         "PORT": "3306",                       # พอร์ตของ MySQL (ปกติคือ 3306)
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "init_command": "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+        },
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -135,13 +139,11 @@ USE_TZ = True
 #STATIC_URL = 'static/'
 import os
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Static files
 STATIC_URL = '/static/'
-
-# กำหนดตำแหน่ง static files
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'myapp/static'),
-]
-
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'myapp/static')]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -168,3 +170,4 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
 
 
+AUTH_USER_MODEL = 'myapp.CustomUser'

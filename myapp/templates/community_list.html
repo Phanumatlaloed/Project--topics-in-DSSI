@@ -9,26 +9,53 @@
     <link rel="stylesheet" href="{% static 'styles/community.css' %}">
 </head>
 <body>
-    <div class="community-container">
-        <!-- Header -->
-        <div class="header">
-            <h1>Community Groups</h1>
-            <a href="{% url 'create_group' %}" class="create-group-btn">+ Create New Group</a>
-        </div>
-
-        <!-- Group List -->
-        <div class="group-list">
-            {% for group in groups %}
-            <div class="group-card">
-                <img src="{{ group.image.url }}" alt="{{ group.name }}" class="group-image">
-                <div class="group-info">
-                    <h2>{{ group.name }}</h2>
-                    <p>{{ group.description|truncatewords:20 }}</p>
-                    <a href="{% url 'group_detail' group.id %}" class="view-group-btn">View Group</a>
-                </div>
+    <div class="container-fluid">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo text-center">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
+                <h5>My Community</h5>
             </div>
-            {% endfor %}
-        </div>
+            <nav>
+                <ul class="nav">
+                    <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link active">👥 Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link">💾 Save</a></li>
+                    <li><a href="{% url 'profile' %}" class="nav-link">📄 Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
+                </ul>
+            </nav>
+            <div class="welcome-logout">
+                <p>Welcome, <b>{{ request.user.username }}</b></p>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="community-container">
+            <!-- Header -->
+            <div class="header">
+                <h1>Community Groups</h1>
+                <a href="{% url 'create_group' %}" class="create-group-btn">+ Create New Group</a>
+            </div>
+
+            <!-- Group List -->
+            <div class="group-list">
+                {% for group in groups %}
+                <div class="group-card">
+                    <img src="{{ group.image.url }}" alt="{{ group.name }}" class="group-image">
+                    <div class="group-info">
+                        <h2>{{ group.name }}</h2>
+                        <p>{{ group.description|truncatewords:20 }}</p>
+                        <a href="{% url 'group_detail' group.id %}" class="view-group-btn">View Group</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
     </div>
 </body>
 </html>

@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles/product_detail.css' %}">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Slick Slider (ใช้สำหรับรูปสินค้า) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
+                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
+                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Product Detail Section -->
+    <div class="product-container">
+        <div class="product-box">
+            <!-- Product Image Slider -->
+            <div class="product-slider">
+                {% if product.image %}
+                    <div><img src="{{ product.image.url }}" alt="{{ product.name }}"></div>
+                {% endif %}
+                {% for img in product.extra_images.all %}
+                    <div><img src="{{ img.image.url }}" alt="Extra Image"></div>
+                {% endfor %}
+            </div>
+
+            <!-- Product Details -->
+            <div class="product-info">
+                <h2>{{ product.name }}</h2>
+                <p class="price">💰 ราคา: {{ product.price }} บาท</p>
+                <p class="stock">📦 จำนวน: {{ product.quantity }}</p>
+                <p class="description">📜 รายละเอียด: {{ product.description }}</p>
+                <p class="seller">🏪 ร้านค้า: <strong>{{ product.seller.store_name }}</strong></p>
+
+                <!-- กลับไปหน้าสินค้า -->
+                <a href="{% url 'product_list' %}" class="back-btn">🔙 กลับไปที่สินค้าทั้งหมด</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS สำหรับ Slider -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.product-slider').slick({
+                dots: true,
+                infinite: true,
+                speed: 300,
+                slidesToShow: 1,
+                adaptiveHeight: true
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Store</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles/edit_store.css' %}">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
+                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
+                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+                <li><a href="{% url 'my_products' %}" class="active">📦 My Store</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Store Edit Form -->
+    <div class="store-edit-container">
+        <h2>🛠 แก้ไขข้อมูลร้านค้า</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="save-btn">💾 บันทึกการเปลี่ยนแปลง</button>
+        </form>
+        <a href="{% url 'seller_dashboard' %}" class="back-btn">⬅️ กลับไปที่แดชบอร์ด</a>
+    </div>
+</body>
+</html>

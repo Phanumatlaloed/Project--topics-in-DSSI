@@ -2,8 +2,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from . import views
-from .views import register, home, profile_edit
-from .views import logout_view, login_view
+from .views import logout_view, login_view, seller_login, seller_logout, register_seller, product_list, add_product, my_products, product_detail, delete_product
+from .views import delete_post, edit_post,edit_store
+from .views import (
+    edit_group_post, delete_group_post,
+   save_group_post, share_group_post
+)
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -33,4 +37,34 @@ urlpatterns = [
     path('profile/settings/', views.profile_management, name='profile_management'),  # เส้นทางตั้งค่าโปรไฟล์
     path('profile/', views.profile_view, name='profile'),  # เส้นทางแสดงโปรไฟล์
 
+    path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
+    path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),
+    path('post/<int:post_id>/', views.post_detail, name='post_detail'),  # ✅ แก้ปัญหา NoReverseMatch
+    path('delete_media/<int:media_id>/', views.delete_media, name='delete_media'),
+
+
+    path('post/<int:post_id>/share/', views.share_post, name='share_post'),
+    path('community/<int:group_id>/edit/', views.edit_group, name='edit_group'),
+    path('community/<int:group_id>/delete/', views.delete_group, name='delete_group'),
+
+
+    path('group_post/<int:post_id>/edit/', edit_group_post, name='edit_group_post'),
+    path('group/post/<int:post_id>/delete/', delete_group_post, name='delete_group_post'),
+    path('group/post/<int:post_id>/save/', save_group_post, name='save_group_post'),
+    path('group/post/<int:post_id>/share/', share_group_post, name='share_group_post'),
+
+
+    path("seller/login/", seller_login, name="seller_login"),
+    path("seller/logout/", seller_logout, name="seller_logout"),
+    path("seller/register/", register_seller, name="register_seller"),
+    path("dashboard/", views.seller_dashboard, name="seller_dashboard"),
+    path("product/add/", views.add_product, name="add_product"),
+    path("product/<int:product_id>/edit/", views.edit_product, name="edit_product"),
+    path("product/<int:product_id>/delete/", views.delete_product, name="delete_product"),
+
+    path("products/", product_list, name="product_list"),
+    path("products/my/", my_products, name="my_products"),
+    path("products/add/", add_product, name="add_product"),
+    path("products/<int:product_id>/", product_detail, name="product_detail"),
+    path('seller/edit/', edit_store, name='edit_store'),
 ]

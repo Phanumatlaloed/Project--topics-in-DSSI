@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Products</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles/product_list.css' %}">
+
+    <!-- Slick Slider -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css"/>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
+                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
+                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>🛍 All Products</h2>
+
+        <!-- Product Slider -->
+        <div class="product-slider">
+            {% for product in products %}
+                <div class="product-card">
+                    <a href="{% url 'product_detail' product.id %}">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="{% static 'images/default_product.png' %}" alt="No Image">
+                        {% endif %}
+                    </a>
+                    <h3>{{ product.name }}</h3>
+                    <p>💰 ราคา: <strong>{{ product.price }} บาท</strong></p>
+                    <p>📦 จำนวน: <strong>{{ product.stock }}</strong></p>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- jQuery & Slick Slider -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('.product-slider').slick({
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                arrows: true,
+                dots: true,
+                responsive: [
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+</body>
+</html>

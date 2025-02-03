@@ -1,0 +1,86 @@
+/* 🌸 Pink-White Elegant Theme */
+body {
+    background: linear-gradient(to bottom right, #fce4ec, #f8bbd0);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ✅ กล่องฟอร์มสมัคร */
+.register-card {
+    background: white;
+    width: 400px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    margin-top: 5%;
+    text-align: center;
+}
+
+/* ✅ โลโก้ */
+.logo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ หัวข้อ */
+h2 {
+    font-size: 24px;
+    color: #e91e63;
+    font-weight: bold;
+}
+
+/* ✅ ป้ายกำกับฟอร์ม */
+.form-label {
+    font-weight: 600;
+    color: #e91e63;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ✅ ช่องป้อนข้อมูล */
+.form-control {
+    border: 2px solid #f8bbd0;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+/* ✅ เมื่อคลิกที่ช่องป้อนข้อมูล */
+.form-control:focus {
+    border-color: #e91e63;
+    box-shadow: 0px 0px 5px #e91e63;
+    outline: none;
+}
+
+/* ✅ ปุ่มสมัคร */
+.btn-register {
+    background: #e91e63;
+    color: white;
+    padding: 12px;
+    border: none;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+/* ✅ เมื่อวางเมาส์บนปุ่ม */
+.btn-register:hover {
+    background: #d81b60;
+}
+
+/* ✅ ลิงก์ไปหน้าเข้าสู่ระบบ */
+.text-link {
+    color: #e91e63;
+    font-weight: bold;
+}
+
+/* ✅ เมื่อวางเมาส์บนลิงก์ */
+.text-link:hover {
+    text-decoration: underline;
+}

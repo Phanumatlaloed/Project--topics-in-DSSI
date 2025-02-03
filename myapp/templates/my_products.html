@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Products</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles/my_products.css' %}">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
+                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
+                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+                <li><a href="{% url 'my_products' %}" class="active">📦 My Store</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Store Information -->
+    <div class="store-container">
+        <h2>My Store: {{ seller.store_name }}</h2>
+
+        <!-- ปุ่มเพิ่มสินค้าใหม่ -->
+        <a href="{% url 'add_product' %}" class="add-product-btn">+ เพิ่มสินค้าใหม่</a>
+
+        <!-- แสดงสินค้า -->
+        <div class="product-grid">
+            {% for product in products %}
+                <div class="product-card">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% endif %}
+                    <h3><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h3>
+                    <p class="price">💰 {{ product.price }} บาท</p>
+                    <p class="stock">📦 คงเหลือ: {{ product.stock }}</p>
+
+                    <!-- ปุ่มแก้ไข & ลบสินค้า -->
+                    <div class="action-buttons">
+                        <a href="{% url 'edit_product' product.id %}" class="edit-btn">✏️ แก้ไข</a>
+                        <a href="{% url 'delete_product' product.id %}" class="delete-btn" onclick="return confirm('Are you sure?')">
+                            🗑 ลบ
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'seller_dashboard' %}" class="back-btn">⬅️ Back to Dashboard</a>
+    </div>
+</body>
+</html>
+

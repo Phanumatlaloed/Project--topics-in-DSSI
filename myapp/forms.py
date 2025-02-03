@@ -1,7 +1,11 @@
 from django import forms
 from .models import Member, CommunityGroup, GroupPost, UserProfile
-from .models import Post
+from .models import Post, Seller, Product, CustomUser, Post, PostMedia
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # ✅ ใช้ CustomUser
 
 class MemberForm(forms.ModelForm):
     class Meta:
@@ -81,3 +85,71 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['profile_picture'] #เพิ่มใหม่ไว้ล่างสุด
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'price', 'stock', 'image']
+
+from django import forms
+from .models import Seller, CustomUser
+class SellerForm(forms.ModelForm):
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
+        error_messages={'required': 'กรุณากรอกอีเมล'}
+    )
+
+    class Meta:
+        model = Seller
+        fields = ['store_name', 'email', 'store_image', 'contact_info']
+        widgets = {
+            'store_name': forms.TextInput(attrs={"class": "form-control"}),
+            'contact_info': forms.Textarea(attrs={"class": "form-control"}),
+        }
+
+
+
+
+class CustomUserForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={"class": "form-control"}),
+            'password1': forms.PasswordInput(attrs={"class": "form-control"}),
+            'password2': forms.PasswordInput(attrs={"class": "form-control"}),
+        }
+
+
+class SellerUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Seller
+        fields = ['store_name', 'store_image', 'contact_info']
+class CustomUserForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'password1', 'password2']  # ใช้แค่ username และ email
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser  # ✅ ใช้ CustomUser แทน User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
+        error_messages={'required': 'กรุณากรอกอีเมล'}
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'password1', 'password2']
+
+

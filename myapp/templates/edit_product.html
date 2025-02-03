@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles/edit_product.css' %}">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
+                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
+                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+                <li><a href="{% url 'my_products' %}">📦 My Store</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Edit Product Container -->
+    <div class="edit-product-container">
+        <h2>✏️ Edit Product</h2>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+            </div>
+
+            <div class="form-group">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+            </div>
+
+            <div class="form-group">
+                {{ form.price.label_tag }}
+                {{ form.price }}
+            </div>
+
+            <div class="form-group">
+                {{ form.stock.label_tag }}
+                {{ form.stock }}
+            </div>
+
+            <div class="form-group">
+                {{ form.image.label_tag }}
+                {{ form.image }}
+                {% if form.instance.image %}
+                    <img src="{{ form.instance.image.url }}" class="preview-image" alt="Current Product Image">
+                {% endif %}
+            </div>
+
+            <button type="submit" class="save-btn">💾 Save Changes</button>
+        </form>
+
+        <a href="{% url 'my_products' %}" class="cancel-btn">🔙 Cancel</a>
+    </div>
+</body>
+</html>

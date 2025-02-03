@@ -1,0 +1,46 @@
+body {
+    background-color: #ffe4e1;
+    font-family: 'Arial', sans-serif;
+}
+
+.edit-group-card {
+    max-width: 600px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid #ffb6c1;
+    margin: auto;
+    padding: 30px;
+}
+
+.edit-group-card h2 {
+    color: #ff6f91;
+    font-weight: bold;
+}
+
+.form-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.btn-primary {
+    background-color: #ff6f91;
+    border-color: #ff6f91;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #e63946;
+    border-color: #e63946;
+}
+
+.btn-secondary {
+    font-weight: bold;
+    background-color: #888;
+    border-color: #888;
+}
+
+.btn-secondary:hover {
+    background-color: #666;
+    border-color: #666;
+}

@@ -1,26 +1,35 @@
+/* 🌸 General Styles */
 body {
     margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #ffe4e1;
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f7;
+    color: #333;
 }
 
+/* 🌸 Sidebar */
 .sidebar {
-    width: 250px;
+    width: 260px;
     height: 100vh;
     position: fixed;
-    background-color: #f7c6c7;
+    background-color: #ffebef;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    border-right: 2px solid #ffb6c1;
+    border-right: 3px solid #ff9aa2;
 }
 
 .sidebar .logo img {
-    width: 80%;
-    height: auto;
-    margin: 0 auto 20px;
+    width: 90px;
+    height: 90px;
     display: block;
+    margin: 0 auto 15px;
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h5 {
+    text-align: center;
+    color: #ff6b81;
+    font-weight: bold;
 }
 
 .sidebar nav ul {
@@ -29,7 +38,7 @@ body {
 }
 
 .sidebar nav ul li {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .sidebar nav ul li a {
@@ -37,37 +46,37 @@ body {
     font-size: 16px;
     color: #333;
     display: block;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 12px;
+    border-radius: 10px;
     text-align: center;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .sidebar nav ul li a:hover,
 .sidebar nav ul li.active a {
-    background-color: #ff6f91;
+    background-color: #ff6b81;
     color: #fff;
     font-weight: bold;
 }
 
+/* 🌸 Logout Button */
 .welcome-logout {
     margin-top: 20px;
     text-align: center;
-    font-size: 0.9rem;
-    background-color: #fdf1f1;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    background-color: #ffecec;
+    padding: 12px;
+    border-radius: 10px;
 }
 
 .logout-btn {
     margin-top: 10px;
     display: inline-block;
-    padding: 8px 12px;
-    background-color: #f87171;
+    padding: 10px 14px;
+    background-color: #ff4f5a;
     color: #fff;
     border: none;
-    border-radius: 20px;
+    border-radius: 25px;
     text-decoration: none;
     font-weight: bold;
     transition: all 0.3s ease;
@@ -79,66 +88,120 @@ body {
     transform: scale(1.05);
 }
 
+/* 🌸 Content */
 .content {
-    margin-left: 270px;
-    padding: 20px;
+    margin-left: 280px;
+    padding: 30px;
 }
 
+/* 🌸 Group Header */
 .group-header {
     text-align: center;
     background-color: #fff;
-    padding: 30px;
+    padding: 40px;
     margin-bottom: 20px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid #ffb6c1;
+    border: 3px solid #ff9aa2;
 }
 
 .group-image {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 3px solid #f7c6c7;
+    border: 4px solid #ff6b81;
 }
 
+/* 🌸 ปุ่มแก้ไขและลบกลุ่ม */
+.group-header .btn {
+    font-size: 14px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.group-header .btn-warning {
+    background-color: #ffcc00;
+    color: #fff;
+}
+
+.group-header .btn-warning:hover {
+    background-color: #ffb300;
+    transform: scale(1.05);
+}
+
+.group-header .btn-danger {
+    background-color: #ff4f5a;
+    color: #fff;
+}
+
+.group-header .btn-danger:hover {
+    background-color: #e63946;
+    transform: scale(1.05);
+}
+
+/* 🌸 Post Form */
 .post-form-container {
     background-color: #fff;
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid #ffb6c1;
+    border: 3px solid #ff9aa2;
     margin-bottom: 30px;
 }
 
+.post-form-container h3 {
+    color: #ff6b81;
+    font-weight: bold;
+}
+
+/* 🌸 Post Card */
 .post-card {
     background-color: #fff;
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid #ffb6c1;
+    border: 3px solid #ff9aa2;
     margin-bottom: 30px;
-}
-
-.post-card .media-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 15px;
 }
 
 .post-card .media-container img,
 .post-card .media-container video {
-    width: 48%;
+    width: 100%;
     height: auto;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* 🌸 Like & Comment Buttons */
+.post-actions .btn {
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.post-actions .btn-outline-primary {
+    border: 2px solid #ff6b81;
+    color: #ff6b81;
+}
+
+.post-actions .btn-outline-primary:hover {
+    background: #ff6b81;
+    color: white;
+}
+
+.post-actions .like-count {
+    font-weight: bold;
+    color: #ff6b81;
+}
+
+/* 🌸 Comments */
 .comments-section {
     margin-top: 20px;
     padding: 15px;
@@ -149,16 +212,56 @@ body {
     margin-bottom: 10px;
     font-size: 14px;
     color: #555;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #fdf1f1;
+    padding: 12px;
+    border-radius: 10px;
+    background-color: #fff0f3;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .comment strong {
-    color: #ff6f91;
+    color: #ff6b81;
     display: block;
     margin-bottom: 5px;
     font-size: 15px;
 }
 
+/* 🌸 Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .post-card {
+        padding: 15px;
+    }
+
+    .post-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+/* ✅ ปรับขนาดรูปโปรไฟล์ให้น่ารัก */
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid #ff6f91;
+}
+
+
+
+/* ✅ เมื่อโฮเวอร์ที่รูป จะขยายใหญ่ขึ้น */
+.profile-pic:hover {
+    transform: scale(1.1); /* ✅ ขยายขึ้น 10% */
+    transition: 0.3s ease-in-out;
+}

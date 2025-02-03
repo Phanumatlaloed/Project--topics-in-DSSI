@@ -1,134 +1,115 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+
+    <!-- ✅ Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'styles/home1.css' %}">
+
+    <!-- ✅ JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="{% static 'js/post.js' %}" defer></script>
     <script src="{% static 'js/like.js' %}" defer></script>
-    <script src="{% static 'js/comment.js' %}" defer></script>
+    <script src="{% static 'js/share.js' %}" defer></script>
 </head>
 <body>
-    <div class="container">
+    <div class="container-fluid d-flex">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                <img src="{% static 'media/logo.jpg' %}" alt="Logo">
+        <aside class="sidebar p-3">
+            <div class="text-center">
+                <img src="{% static 'media/logo.jpg' %}" class="rounded-circle mb-3" alt="Logo" width="100">
+                <p><b>Welcome, {{ request.user.username }}</b></p>
             </div>
-            <nav>
-                <ul>
-                    <li class="active"><a href="#">🏠 Home</a></li>
-                    <li><a href="{% url 'community_list' %}">👥 Community</a></li>
-                    <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                    <li><a href="{% url 'profile' %}">📄 Profile</a></li>
-                    <li><a href="#">💬 Messages</a></li>
-                    <li><a href="#">💬 Store</a></li>
-                </ul>
-            </nav>
-            <div class="welcome-logout">
-                <p>Welcome, <b>{{ request.user.username }}</b></p>
+            <nav class="nav flex-column">
+                <a href="#" class="nav-link active">🏠 Home</a>
+                <a href="{% url 'community_list' %}" class="nav-link">👥 Community</a>
+                <a href="{% url 'savelist' %}" class="nav-link">💾 Save</a>
+                <a href="{% url 'profile' %}" class="nav-link">📄 Profile</a>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="logout-btn">Logout</button>
+                    <button type="submit" class="btn btn-danger w-100 mt-3">Logout</button>
                 </form>
-            </div>
+            </nav>
         </aside>
 
         <!-- Main Content -->
-        <main class="content">
-            <!-- Create Post -->
-            <div class="create-post">
-                <form action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
+        <main class="content flex-grow-1 p-4">
+            <!-- ✅ Create Post Form -->
+            <div class="create-post card p-3">
+                <form id="postForm" action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <textarea name="content" id="postContent" placeholder="What's on your mind?" required></textarea>
-                    <input type="file" name="image" id="postImage" accept="image/*">
-                    <input type="file" name="video" id="videoInput" accept="video/*">
-                    <button type="submit" class="submit-btn">Post</button>
+                
+                    <!-- ปุ่มอัปโหลดรูปภาพ -->
+                    <label for="postImages" class="upload-btn">🖼️ เพิ่มรูปภาพ</label>
+                    <input type="file" name="images" id="postImages" accept="image/*" multiple hidden>
+                
+                    <!-- ปุ่มอัปโหลดวิดีโอ -->
+                    <label for="postVideos" class="upload-btn">🎥 เพิ่มวิดีโอ</label>
+                    <input type="file" name="videos" id="postVideos" accept="video/*" multiple hidden>
+                
+                    <button type="submit" id="postButton" class="submit-btn">Post</button>
                 </form>
             </div>
 
-            <!-- Posts -->
-            <div class="posts">
+            <!-- ✅ Posts Section -->
+            <div class="posts mt-4">
                 {% for post in posts %}
-                <div class="post" id="post-{{ post.id }}">
-                    <div class="user">
-                        <div class="user-info">
-                            <span><strong>{{ post.user.user.username }}</strong></span>
-                        </div>
+                <div class="post card p-3 mb-3">
+                    <!-- User Info -->
+                    <div class="user-info d-flex align-items-center">
+                        <img src="{{ post.user.profile_picture.url|default:'/static/images/default-profile.png' }}" class="profile-img me-2">
+                        <b>{{ post.user.username }}</b>
                     </div>
-                    <p>{{ post.content }}</p>
-                    {% if post.image %}
-                        <img src="{{ post.image.url }}" alt="Post Image" style="max-width: 100%;">
-                    {% elif post.video %}
-                        <video src="{{ post.video.url }}" controls style="max-width: 100%;"></video>
-                    {% endif %}
-                    <div class="actions">
-                        <!-- Like Button -->
-                        <form action="{% url 'toggle_like' post.id %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="like-btn">
-                                {% if request.user.profile in post.likes.all %}
-                                    👎 Unlike
-                                {% else %}
-                                    👍 Like
+
+                    <!-- Post Content -->
+                    <p class="mt-2">{{ post.content }}</p>
+
+                    <!-- Post Media -->
+                    {% if post.media.all %}
+                    <div id="carouselPost{{ post.id }}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for media in post.media.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                {% if media.media_type == "image" %}
+                                    <img src="{{ media.file.url }}" class="d-block w-100 rounded">
+                                {% elif media.media_type == "video" %}
+                                    <video src="{{ media.file.url }}" controls class="d-block w-100 rounded"></video>
                                 {% endif %}
-                            </button>
-                        </form>
-                        <span class="like-count">{{ post.likes.count }} Likes</span>
-
-                        <!-- Save Button -->
-                        <form action="{% url 'save_post' post.id %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="save-btn">💾 Save</button>
-                        </form>
-                    </div>
-
-                    <!-- Comments Section -->
-                    <div class="comments">
-                        <h4>Comments:</h4>
-                        {% for comment in post.comments.all %}
-                        <div class="comment">
-                            <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% empty %}
-                        <p>No comments yet.</p>
-                        {% endfor %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPost{{ post.id }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselPost{{ post.id }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
                     </div>
+                    {% endif %}
 
-                    <!-- Add Comment Form -->
-                    <form action="{% url 'add_comment' post.id %}" method="post" class="comment-form">
-                        {% csrf_token %}
-                        <textarea name="content" rows="2" placeholder="Write a comment..." required></textarea>
-                        <button type="submit">Comment</button>
-                    </form>
+                    <!-- Actions -->
+                    <div class="actions mt-2 d-flex gap-2">
+                        <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">👍 Like</button>
+                        <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
+                        <button class="btn btn-light share-btn" data-post-id="{{ post.id }}">🔗 Share</button>
+
+                        {% if request.user == post.user %}
+                            <a href="{% url 'edit_post' post.id %}" class="btn btn-light">✏️ Edit</a>
+                            <form action="{% url 'delete_post' post.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">🗑️ Delete</button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
         </main>
-
-        <!-- Right Sidebar -->
-        <aside class="right-sidebar">
-            <div class="search">
-                <input type="text" placeholder="Search.....">
-            </div>
-            <div class="trending">
-                <h3>Trending</h3>
-                <ul>
-                    <li># Moisturizer</li>
-                    <li># Mask</li>
-                    <li># Lipstick</li>
-                    <li># Vitamin C</li>
-                    <li># Makeup</li>
-                </ul>
-            </div>
-        </aside>
-    </div>
-
-    <!-- Notification Toast -->
-    <div id="toast" class="toast hidden">
-        <p>Notification</p>
     </div>
 </body>
 </html>

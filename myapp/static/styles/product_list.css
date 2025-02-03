@@ -1,0 +1,165 @@
+/* ใช้โทนสีชมพูอ่อน (#ff6b81) และสีขาว */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #ffe6e9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    width: 80px;
+    height: auto;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #ff6b81;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    background: #ff6b81;
+    color: white;
+}
+
+/* Header */
+h2 {
+    text-align: center;
+    color: #ff6b81;
+    margin-top: 30px;
+}
+
+/* Product Slider */
+.product-slider {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* ปรับขนาดสินค้าให้ดูสมดุล */
+.product-card {
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    width: 300px;  /* ปรับขนาดให้เหมาะสม */
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px;  /* ให้รูปเต็มขนาดที่เหมาะสม */
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.product-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ff6b81;
+    margin-bottom: 5px;
+}
+
+.product-card p {
+    font-size: 16px;
+    color: #666;
+    margin: 3px 0;
+}
+
+/* เพิ่มเอฟเฟกต์ให้สวยงาม */
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive ปรับขนาดสินค้าให้เหมาะกับหน้าจอ */
+@media (max-width: 1024px) {
+    .product-slider {
+        justify-content: center;
+    }
+
+    .product-card {
+        width: 260px;
+    }
+
+    .product-card img {
+        height: 220px;
+    }
+
+    .product-card h3 {
+        font-size: 18px;
+    }
+
+    .product-card p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-slider {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-card {
+        width: 90%;
+    }
+
+    .product-card img {
+        height: 200px;
+    }
+
+    .product-card h3 {
+        font-size: 18px;
+    }
+
+    .product-card p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-card {
+        width: 100%;
+    }
+
+    .product-card img {
+        height: 180px;
+    }
+
+    .product-card h3 {
+        font-size: 16px;
+    }
+
+    .product-card p {
+        font-size: 13px;
+    }
+}

@@ -1,350 +1,168 @@
-/* รีเซ็ต CSS พื้นฐาน */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
+/* ✅ ตกแต่งหน้าเว็บในตรีมชมพู-ขาว */
 body {
-    background-color: #f4f5f7;
-    color: #333;
+    background-color: #fff5f7;
+    font-family: 'Arial', sans-serif;
 }
 
-.container {
-    display: grid;
-    grid-template-columns: 250px 1fr 300px;
+/* ✅ Container หลัก */
+.container-fluid {
+    display: flex;
     height: 100vh;
 }
 
-/* Sidebar */
+/* ✅ Sidebar */
 .sidebar {
-    background-color: #fff;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
+    width: 250px;
+    background: #ffccd5;
+    color: #5a5a5a;
+    padding: 20px;
+    border-radius: 10px;
 }
 
-.logo img {
-    width: 80px;
-    height: 80px;
-    display: block;
-    margin: 0 auto;
+.sidebar .logo img {
+    width: 100px;
     border-radius: 50%;
 }
 
-.sidebar nav ul {
-    list-style: none;
-    margin-top: 2rem;
-}
-
-.sidebar nav ul li {
-    margin: 1.5rem 0;
-}
-
-.sidebar nav ul li a {
-    text-decoration: none;
-    color: #555;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1rem;
-}
-
-.sidebar nav ul li.active a {
-    color: #007bff;
-}
-
-.welcome-logout {
-    text-align: center;
-    font-size: 0.9rem;
-}
-
-.logout-btn {
-    margin-top: 0.5rem;
-    display: inline-block;
-    padding: 8px 12px;
-    background-color: #f87171;
-    color: #fff;
-    border-radius: 20px;
-    text-decoration: none;
+.sidebar .nav-link {
+    padding: 10px;
+    border-radius: 8px;
+    color: #6d6d6d;
     font-weight: bold;
-    transition: all 0.3s ease;
 }
 
-.logout-btn:hover {
-    background-color: #dc2626;
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+    background: #ff8fab;
+    color: white;
 }
 
-/* Main Content */
+.sidebar .btn-danger {
+    background: #ff5c8a;
+    border: none;
+}
+
+/* ✅ Content */
 .content {
-    background-color: #f9fafb;
-    padding: 1.5rem;
-    overflow-y: auto;
+    flex-grow: 1;
+    padding: 20px;
 }
 
-.input-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fff;
-    padding: 1rem;
-    border-radius: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+/* ✅ Create Post */
+.create-post {
+    background: #ffebf0;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.input-box input {
-    border: none;
-    outline: none;
-    font-size: 1rem;
+.create-post textarea {
     width: 100%;
-    background: transparent;
+    height: 80px;
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #ff99ac;
+    resize: none;
 }
 
-.input-box .add-btn {
-    background-color: #f87171;
-    color: #fff;
-    border: none;
-    font-size: 1.5rem;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+.create-post .upload-btn {
+    display: inline-block;
+    background: #ff99ac;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.input-box .add-btn:hover {
-    background-color: #ef4444;
+.create-post .upload-btn:hover {
+    background: #ff5c8a;
 }
 
-/* Post Section */
+.create-post .btn-pink {
+    background: #ff5c8a;
+    color: white;
+    border: none;
+    width: 100%;
+}
+
+.create-post .btn-pink:hover {
+    background: #ff3d6f;
+}
+
+/* ✅ Post */
 .post {
-    background: #fff;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-    border-radius: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
 }
 
-.user {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-}
-
+/* ✅ User Info */
 .user-info {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-weight: bold;
 }
 
-.tags span {
-    background-color: #e5e7eb;
-    padding: 4px 8px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    margin-right: 5px;
+.user-info .profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
 
-.actions {
-    margin-top: 1rem;
-    color: #888;
-    display: flex;
-    justify-content: space-between;
-}
-
-/* Right Sidebar */
-.right-sidebar {
-    background-color: #fff;
-    padding: 1.5rem;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.search input {
+/* ✅ Post Media */
+.post-media img,
+.post-media video {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    outline: none;
-}
-
-.trending {
-    margin-top: 2rem;
-}
-
-.trending h3 {
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    color: #333;
-}
-
-.trending ul {
-    list-style: none;
-}
-
-.trending ul li {
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: #555;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        grid-template-columns: 1fr;
-    }
-
-    .sidebar,
-    .right-sidebar {
-        display: none;
-    }
-
-    .content {
-        padding: 1rem;
-    }
-}
-
-
-.welcome-logout {
-    text-align: center;
-    font-size: 0.9rem;
-}
-
-.logout-btn {
-    display: inline-block;
-   
-}
-
-/* สร้างโมเดล */
-.modal {
-    display: none; /* ซ่อน Modal โดยค่าเริ่มต้น */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 50%;
     border-radius: 10px;
 }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+/* ✅ Carousel */
+.carousel-control-prev,
+.carousel-control-next {
+    filter: invert(100%);
 }
 
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
+/* ✅ Actions */
+.actions {
+    display: flex;
+    gap: 10px;
 }
 
-textarea {
-    width: 100%;
-    height: 100px;
-    margin: 10px 0;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-/* like */
-.like-btn {
-    background-color: #f4f4f4;
+.actions .btn {
+    background: #ffe3e6;
     border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-}
-
-.like-btn:hover {
-    background-color: #e0e0e0;
-}
-
-.liked {
-    color: #007bff;
-    font-weight: bold;
-}
-/* Toast Notification */
-.toast {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #4caf50;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 1rem;
-    opacity: 0;
-    transform: translateY(100px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 1000;
-}
-
-.toast.hidden {
-    display: none;
-}
-
-.toast.show {
-    opacity: 1;
-    transform: translateY(0);
-    display: block;
-}
-.comments {
-    margin-top: 20px;
-    padding: 10px;
-    border-top: 1px solid #ddd;
-}
-
-.comment {
-    margin-bottom: 10px;
-    padding: 5px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-}
-
-.comment strong {
-    color: #333;
-}
-
-.comment-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.comment-form button {
-    background-color: #007bff;
-    color: white;
     padding: 8px 12px;
-    border: none;
+    font-size: 14px;
     border-radius: 5px;
-    cursor: pointer;
 }
 
-.comment-form button:hover {
-    background-color: #0056b3;
+.actions .btn:hover {
+    background: #ffccd5;
+}
+
+.actions .btn-danger {
+    background: #ff5c8a;
+    color: white;
+}
+
+.actions .btn-danger:hover {
+    background: #ff3d6f;
+}
+
+/* ✅ Responsive */
+@media (max-width: 768px) {
+    .container-fluid {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        text-align: center;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
 }

@@ -23,7 +23,7 @@
 
         <!-- Search Bar -->
         <div class="search-bar">
-            <input type="text" placeholder="Search.....">
+            <input type="text" id="searchInput" placeholder="Search posts..." onkeyup="searchPosts()">
         </div>
 
         <!-- Toast Notification -->
@@ -33,12 +33,28 @@
         <div class="savelist-grid">
             {% for saved_post in saved_posts %}
             <div class="savelist-item" id="post-{{ saved_post.post.id }}">
-                {% if saved_post.post.image %}
-                    <img src="{{ saved_post.post.image.url }}" alt="Post Image">
-                {% elif saved_post.post.video %}
-                    <video src="{{ saved_post.post.video.url }}" controls></video>
-                {% endif %}
-                <p>{{ saved_post.post.content }}</p>
+                <!-- ✅ คลิกที่โพสต์เพื่อไปยังโพสต์นั้น -->
+                 
+                <a href="{% url 'post_detail' saved_post.post.id %}" class="post-link">
+                    <div class="post-content">
+                        <p>{{ saved_post.post.content }}</p>
+
+                        <!-- ✅ รองรับหลายรูปและวิดีโอ -->
+                        <div class="post-media">
+                            {% for media in saved_post.post.media.all %}
+                                {% if media.media_type == "image" %}
+                                    <img src="{{ media.file.url }}" alt="Post Image">
+                                {% elif media.media_type == "video" %}
+                                    <video src="{{ media.file.url }}" controls></video>
+                                {% endif %}
+                            {% empty %}
+                                <p class="text-muted">No media available</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Remove Button -->
                 <form action="{% url 'remove_saved_post' saved_post.post.id %}" method="post" class="remove-post-form">
                     {% csrf_token %}
                     <button type="submit" class="remove-btn">Remove</button>
@@ -49,5 +65,21 @@
             {% endfor %}
         </div>
     </div>
+
+    <script>
+        function searchPosts() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let items = document.querySelectorAll(".savelist-item");
+
+            items.forEach(item => {
+                let text = item.textContent.toLowerCase();
+                if (text.includes(input)) {
+                    item.style.display = "block";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        }
+    </script>
 </body>
 </html>

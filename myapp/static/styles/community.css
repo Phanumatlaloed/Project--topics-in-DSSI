@@ -1,16 +1,92 @@
 /* General Body Styling */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
+    background-color: #f9f9fc;
     margin: 0;
     padding: 0;
 }
 
+/* Sidebar */
+.sidebar {
+    width: 270px; /* ขนาดที่สอดคล้อง */
+    height: 100vh;
+    position: fixed;
+    background-color: #fde5e5; /* สีชมพูอ่อน */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-right: 3px solid #f7c2c2; /* เพิ่มความชัดเจนของขอบ */
+}
+
+.sidebar .logo img {
+    width: 80%;
+    height: auto;
+    margin: 0 auto 15px;
+    display: block;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h5 {
+    color: #333333; /* สีดำชัดเจน */
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.5rem; /* ขยายตัวอักษร */
+    margin-bottom: 20px;
+}
+
+.nav {
+    list-style: none;
+    padding: 0;
+}
+
+.nav-link {
+    text-decoration: none;
+    padding: 12px 15px;
+    display: block;
+    color: #666; /* สีข้อความ */
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background-color: #ff9aa2; /* สีเน้น */
+    color: white;
+    font-weight: bold;
+}
+
+.welcome-logout {
+    margin-top: 30px;
+    text-align: center;
+    background-color: #ffe9e9;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logout-btn {
+    margin-top: 10px;
+    background-color: #f58b8b;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #e46868;
+    transform: scale(1.05);
+}
+
 /* Community Container */
 .community-container {
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 20px;
+    margin-left: 280px; /* เพิ่มระยะเพื่อเน้นการแยก */
+    padding: 40px;
+    max-width: calc(100% - 280px);
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -25,8 +101,9 @@ body {
 }
 
 .header h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: #333;
+    font-weight: bold;
 }
 
 .create-group-btn {
@@ -72,7 +149,6 @@ body {
     width: 100%;
     height: 180px;
     object-fit: cover;
-    border-bottom: 2px solid #f4f4f9;
 }
 
 /* Group Info */
@@ -85,7 +161,7 @@ body {
     font-size: 1.5rem;
     color: #333;
     margin-bottom: 10px;
-    word-break: break-word; /* รองรับข้อความยาว */
+    font-weight: bold;
 }
 
 .group-info p {
@@ -111,20 +187,4 @@ body {
 .view-group-btn:hover {
     background-color: #218838;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .group-info h2 {
-        font-size: 1.2rem;
-    }
-
-    .group-info p {
-        font-size: 0.8rem;
-    }
-
-    .create-group-btn {
-        padding: 8px 15px;
-        font-size: 0.9rem;
-    }
 }
