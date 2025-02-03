@@ -1,0 +1,101 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำสั่งซื้อของฉัน</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles/my_orders.css' %}">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2>คำสั่งซื้อ</h2>
+            <ul>
+                <li class="active">📦 คำสั่งซื้อของฉัน</li>
+                <li>📌 จัดส่งแบบชุด</li>
+                <li>🚚 พัสดุเตรียมส่งมอบ</li>
+                <li>↩️ ขอคืนสินค้า</li>
+                <li>⚙️ ตั้งค่าการจัดส่ง</li>
+            </ul>
+
+            <h2>สินค้า</h2>
+            <ul>
+                <li>📋 สินค้าของฉัน</li>
+                <li>➕ เพิ่มสินค้าใหม่</li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <header class="content-header">
+                <h1>คำสั่งซื้อของฉัน</h1>
+                <button class="btn-download">⬇️ ดาวน์โหลด</button>
+                <button class="btn-history">📜 ประวัติการดาวน์โหลด</button>
+            </header>
+
+            <!-- Tab Menu -->
+            <nav class="tab-menu">
+                <button class="active">ทั้งหมด</button>
+                <button>ยังไม่ชำระ</button>
+                <button>ที่ต้องจัดส่ง</button>
+                <button>กำลังจัดส่ง</button>
+                <button>สำเร็จ</button>
+                <button>ขอยกเลิก/คืนเงิน</button>
+            </nav>
+
+            <!-- Filters -->
+            <div class="filters">
+                <label>สถานะคำสั่งซื้อ:</label>
+                <button class="active">ทั้งหมด</button>
+                <button>ยังไม่ดำเนินการ</button>
+                <button>ดำเนินการแล้ว</button>
+
+                <label>ความเร่งด่วน:</label>
+                <button>ทั้งหมด</button>
+                <button>จัดส่งล่าช้า (0)</button>
+                <button>ส่งภายในวันนี้ (0)</button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" placeholder="ระบุรหัสคำสั่งซื้อ">
+                <select>
+                    <option>ช่องทางการจัดส่ง</option>
+                    <option>All Channels</option>
+                </select>
+                <button class="btn-filter">📌 ตกลง</button>
+                <button class="btn-reset">🔄 รีเซ็ต</button>
+            </div>
+
+            <!-- Table -->
+            <div class="order-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>สินค้า</th>
+                            <th>ราคาสุทธิ</th>
+                            <th>สถานะ</th>
+                            <th>นับถอยหลัง</th>
+                            <th>ช่องทางการจัดส่ง</th>
+                            <th>ดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6" class="no-orders">ไม่พบคำสั่งซื้อ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

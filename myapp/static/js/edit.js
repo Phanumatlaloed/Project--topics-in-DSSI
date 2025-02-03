@@ -1,29 +1,39 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // ✅ ฟังก์ชันลบไฟล์ที่อัปโหลดไว้แล้ว
-    document.querySelectorAll(".remove-existing-file").forEach(button => {
+    const fileInput = document.getElementById("editPostImages");
+    const fileVideoInput = document.getElementById("editPostVideos");
+    const selectedFilesContainer = document.getElementById("selectedEditFiles");
+
+    fileInput.addEventListener("change", function () {
+        selectedFilesContainer.innerHTML = ""; // ล้างรายการไฟล์ที่เลือก
+
+        for (let i = 0; i < fileInput.files.length; i++) {
+            let file = fileInput.files[i];
+            let fileName = document.createElement("p");
+            fileName.textContent = file.name;
+            selectedFilesContainer.appendChild(fileName);
+        }
+    });
+
+    fileVideoInput.addEventListener("change", function () {
+        for (let i = 0; i < fileVideoInput.files.length; i++) {
+            let file = fileVideoInput.files[i];
+            let fileName = document.createElement("p");
+            fileName.textContent = file.name;
+            selectedFilesContainer.appendChild(fileName);
+        }
+    });
+
+    // ✅ ลบไฟล์ที่อัปโหลดแล้ว
+    document.querySelectorAll(".remove-existing-file").forEach((button) => {
         button.addEventListener("click", function () {
-            const mediaId = this.dataset.fileId;
-
-            if (!mediaId || mediaId === "undefined") {
-                console.error("❌ Error: mediaId is undefined!");
-                return;
-            }
-
-            fetch(`/delete_media/${mediaId}/`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    this.closest(".file-item").remove(); // ✅ ลบไฟล์จาก UI
-                } else {
-                    console.error("ลบไม่สำเร็จ:", data.message);
-                }
-            })
-            .catch(error => console.error("เกิดข้อผิดพลาด:", error));
+            const mediaId = this.getAttribute("data-file-id");
+            fetch(`/delete_media/${mediaId}/`, { method: "DELETE" })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        this.parentElement.remove();
+                    }
+                });
         });
     });
 });

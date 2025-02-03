@@ -153,3 +153,12 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ['username', 'email', 'password1', 'password2']
 
 
+from django import forms
+from .models import Post, PostMedia
+
+class EditPostForm(forms.ModelForm):
+    """ ฟอร์มแก้ไขโพสต์ (เฉพาะข้อความ) """
+    class Meta:
+        model = Post
+        fields = ['content']
+

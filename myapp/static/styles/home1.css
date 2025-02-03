@@ -1,168 +1,41 @@
-/* ✅ ตกแต่งหน้าเว็บในตรีมชมพู-ขาว */
+/* 🎨 Background */
 body {
-    background-color: #fff5f7;
-    font-family: 'Arial', sans-serif;
+    background-color: #fff5f7; /* สีชมพูอ่อน */
 }
 
-/* ✅ Container หลัก */
-.container-fluid {
-    display: flex;
-    height: 100vh;
+/* 🎨 Sidebar */
+.bg-pink {
+    background-color: #ffe3e6 !important;
 }
 
-/* ✅ Sidebar */
-.sidebar {
-    width: 250px;
-    background: #ffccd5;
-    color: #5a5a5a;
-    padding: 20px;
+/* 🎨 ปรับขนาดโพสต์ */
+.create-post, .post {
+    background: #ffffff;
     border-radius: 10px;
 }
 
-.sidebar .logo img {
-    width: 100px;
-    border-radius: 50%;
+/* 📸 ปรับรูปภาพให้ขนาดเหมาะสม */
+.post-media {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 
-.sidebar .nav-link {
-    padding: 10px;
+.media-item img, .media-item video {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
     border-radius: 8px;
-    color: #6d6d6d;
-    font-weight: bold;
 }
 
-.sidebar .nav-link.active,
-.sidebar .nav-link:hover {
-    background: #ff8fab;
-    color: white;
-}
-
-.sidebar .btn-danger {
-    background: #ff5c8a;
-    border: none;
-}
-
-/* ✅ Content */
-.content {
-    flex-grow: 1;
-    padding: 20px;
-}
-
-/* ✅ Create Post */
-.create-post {
-    background: #ffebf0;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.create-post textarea {
-    width: 100%;
-    height: 80px;
-    border-radius: 5px;
-    padding: 10px;
-    border: 1px solid #ff99ac;
-    resize: none;
-}
-
-.create-post .upload-btn {
-    display: inline-block;
-    background: #ff99ac;
-    color: white;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.create-post .upload-btn:hover {
-    background: #ff5c8a;
-}
-
-.create-post .btn-pink {
-    background: #ff5c8a;
-    color: white;
-    border: none;
-    width: 100%;
-}
-
-.create-post .btn-pink:hover {
-    background: #ff3d6f;
-}
-
-/* ✅ Post */
-.post {
-    background: white;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-}
-
-/* ✅ User Info */
-.user-info {
+/* 🖼️ ถ้ามีเกิน 4 รูป ให้แสดง +จำนวนที่เหลือ */
+.extra-images {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-}
-
-.user-info .profile-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
-
-/* ✅ Post Media */
-.post-media img,
-.post-media video {
-    width: 100%;
-    border-radius: 10px;
-}
-
-/* ✅ Carousel */
-.carousel-control-prev,
-.carousel-control-next {
-    filter: invert(100%);
-}
-
-/* ✅ Actions */
-.actions {
-    display: flex;
-    gap: 10px;
-}
-
-.actions .btn {
-    background: #ffe3e6;
-    border: none;
-    padding: 8px 12px;
-    font-size: 14px;
-    border-radius: 5px;
-}
-
-.actions .btn:hover {
-    background: #ffccd5;
-}
-
-.actions .btn-danger {
-    background: #ff5c8a;
+    background: rgba(0, 0, 0, 0.5);
     color: white;
-}
-
-.actions .btn-danger:hover {
-    background: #ff3d6f;
-}
-
-/* ✅ Responsive */
-@media (max-width: 768px) {
-    .container-fluid {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        text-align: center;
-    }
-
-    .actions {
-        flex-direction: column;
-    }
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px;
 }

@@ -92,7 +92,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",  # ใช้ MySQL
         "NAME": "mydata2",                 # ชื่อฐานข้อมูลที่คุณสร้างไว้
         "USER": "root",                       # ชื่อผู้ใช้ MySQL
-        "PASSWORD": "12345",                   # รหัสผ่าน MySQL
+        "PASSWORD": "1234",                   # รหัสผ่าน MySQL
         "HOST": "localhost",                  # โฮสต์ MySQL
         "PORT": "3306",                       # พอร์ตของ MySQL (ปกติคือ 3306)
         "OPTIONS": {

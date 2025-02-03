@@ -19,9 +19,9 @@
             <h2 class="text-center">📝 แก้ไขโพสต์</h2>
 
             <!-- ฟอร์มแก้ไขโพสต์ -->
-            <form id="editPostForm" method="post" enctype="multipart/form-data" action="{% url 'edit_post' post.id %}">
+            <form id="editPostForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <textarea name="content" id="editPostContent" class="form-control" required>{{ post.content }}</textarea>
+                {{ form.as_p }}
 
                 <!-- ✅ แสดงไฟล์ที่อัปโหลดไว้ก่อนหน้า -->
                 <div class="existing-files mt-3">
@@ -30,11 +30,11 @@
                         {% for media in post.media.all %}
                             <div class="file-item d-flex align-items-center" data-file-id="{{ media.id }}">
                                 {% if media.media_type == "image" %}
-                                    <img src="{{ media.file.url }}" class="file-preview">
+                                    <img src="{{ media.file.url }}" class="file-preview me-2">
                                 {% else %}
-                                    <video src="{{ media.file.url }}" class="file-preview" controls></video>
+                                    <video src="{{ media.file.url }}" class="file-preview me-2" controls></video>
                                 {% endif %}
-                                <button type="button" class="btn btn-sm btn-danger remove-existing-file ms-2" data-file-id="{{ media.id }}">✖</button>
+                                <button type="button" class="btn btn-sm btn-danger remove-existing-file" data-file-id="{{ media.id }}">✖</button>
                             </div>
                         {% endfor %}
                     </div>
@@ -56,9 +56,11 @@
                 <div id="selectedEditFiles" class="selected-files mt-3"></div>
 
                 <button type="submit" id="savePostButton" class="btn btn-pink w-100 mt-3">💾 Save</button>
+                  <!-- ปุ่มยกเลิก -->
+                <a href="{% url 'home' %}" class="btn btn-danger w-100 mt-2">❌ ยกเลิก</a>
+
             </form>
         </div>
     </div>
 </body>
 </html>
-

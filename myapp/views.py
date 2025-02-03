@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt  # ✅ เพิ่มการ import
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -7,7 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 import os
 from .models import Member, Post, Comment, CommunityGroup,PostMedia, GroupPost, Seller, Product, SavedPost, SavedGroupPost, GroupComment
-from .forms import CustomUserCreationForm, SellerForm, AccountEditForm, UserEditForm, CustomUserForm, PasswordChangeForm, CommunityGroupForm, GroupPostForm, ProductForm, SellerForm, SellerUpdateForm, UserCreationForm
+from .forms import CustomUserCreationForm,EditPostForm, SellerForm, AccountEditForm, UserEditForm, CustomUserForm, PasswordChangeForm, CommunityGroupForm, GroupPostForm, ProductForm, SellerForm, SellerUpdateForm, UserCreationForm
 
 User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
 
@@ -206,7 +207,6 @@ def delete_post(request, post_id):
 
     return JsonResponse({"success": True, "message": "โพสต์ถูกลบเรียบร้อยแล้ว!"}, status=200)
 
-
 @login_required
 def edit_post(request, post_id):
     """ ฟังก์ชันแก้ไขโพสต์ """
@@ -217,28 +217,28 @@ def edit_post(request, post_id):
         return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์แก้ไขโพสต์นี้"}, status=403)
 
     if request.method == "POST":
-        content = request.POST.get("content", "").strip()
-        images = request.FILES.getlist("images")
-        videos = request.FILES.getlist("videos")
+        form = EditPostForm(request.POST, instance=post)
 
-        if not content and not images and not videos and not post.media.exists():
-            return JsonResponse({"success": False, "message": "โพสต์ต้องมีข้อความ หรือไฟล์สื่อ"}, status=400)
+        if form.is_valid():
+            form.save()
 
-        # ✅ อัปเดตเนื้อหาโพสต์
-        post.content = content
-        post.save()
+            # ✅ ดึงไฟล์รูปภาพและวิดีโอที่อัปโหลดใหม่
+            images = request.FILES.getlist("images")
+            videos = request.FILES.getlist("videos")
 
-        # ✅ เพิ่มไฟล์ใหม่
-        for img in images:
-            PostMedia.objects.create(post=post, file=img, media_type='image')
+            for file in images:
+                PostMedia.objects.create(post=post, file=file, media_type='image')
 
-        for vid in videos:
-            PostMedia.objects.create(post=post, file=vid, media_type='video')
+            for file in videos:
+                PostMedia.objects.create(post=post, file=file, media_type='video')
 
-        return JsonResponse({"success": True, "message": "โพสต์อัปเดตเรียบร้อยแล้ว!", "post_id": post.id})
+            # ✅ กลับไปหน้าหลักทันทีหลังจากบันทึก
+            return redirect('home')
 
-    return render(request, "edit_post.html", {"post": post})
+    else:
+        form = EditPostForm(instance=post)
 
+    return render(request, "edit_post.html", {"post": post, "form": form})
 
 @login_required
 def delete_post(request, post_id):
@@ -249,16 +249,17 @@ def delete_post(request, post_id):
         return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบโพสต์นี้"}, status=403)
 
     post.delete()
-    return JsonResponse({"success": True, "message": "โพสต์ถูกลบเรียบร้อยแล้ว!"})
+    return JsonResponse({"success": True, "message": "โพสต์ถูกลบเรียบร้อยแล้ว!", "redirect_url": "/"})  # ✅ กลับหน้าหลัก
 
 
+
+@csrf_exempt  # ❌ ปิด CSRF สำหรับฟังก์ชันนี้
 @login_required
 def delete_media(request, media_id):
     """ ฟังก์ชันลบไฟล์สื่อออกจากโพสต์ """
     if request.method == "DELETE":
         media = get_object_or_404(PostMedia, id=media_id)
 
-        # ✅ ตรวจสอบว่าเป็นเจ้าของโพสต์หรือไม่
         if media.post.user != request.user:
             return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบไฟล์นี้"}, status=403)
 
@@ -266,6 +267,7 @@ def delete_media(request, media_id):
         return JsonResponse({"success": True, "message": "ไฟล์ถูกลบเรียบร้อยแล้ว!"})
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
 
 @login_required
 def toggle_like(request, post_id):

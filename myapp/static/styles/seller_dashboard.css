@@ -1,66 +1,125 @@
-/* ใช้โทนสีชมพูอ่อน (#ff6b81) และสีขาว */
+/* General Styles */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #ffe6e9;
+    background-color: #f8f9fa;
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    padding: 0;
 }
 
+/* Dashboard Container */
 .dashboard-container {
-    width: 100%;
-    max-width: 600px;
-    background-color: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    display: flex;
+    min-height: 100vh;
 }
 
-.store-header h2 {
-    color: #ff6b81;
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    height: 100%;
 }
 
-.store-image {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 10px;
-    margin-top: 10px;
+.sidebar h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
 }
 
-.no-image {
-    color: #999;
-    font-size: 14px;
+.menu {
+    list-style-type: none;
+    padding: 0;
 }
 
-.dashboard-menu {
+.menu-header {
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.menu-item {
+    padding: 10px;
+}
+
+.menu-item a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.menu-item a:hover {
+    background-color: #34495e;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+
+/* Content */
+.content {
+    margin-left: 270px;
+    padding: 20px;
+    width: calc(100% - 270px);
+}
+
+/* Content Header */
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.btn-add-product {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-add-product:hover {
+    background-color: #2980b9;
+}
+
+/* Tab Menu */
+.tab-menu {
+    display: flex;
+    gap: 10px;
     margin-top: 20px;
 }
 
-.dashboard-btn {
-    display: block;
-    width: 100%;
-    background-color: #ff6b81;
+.tab-menu button {
+    background-color: #ecf0f1;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.tab-menu button.active {
+    background-color: #3498db;
     color: white;
-    text-decoration: none;
+}
+
+/* Table */
+.product-table {
+    margin-top: 20px;
+}
+
+.product-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.product-table th, .product-table td {
+    border: 1px solid #ddd;
     padding: 10px;
-    margin: 10px 0;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background 0.3s;
+    text-align: left;
 }
 
-.dashboard-btn:hover {
-    background-color: #ff4d69;
-}
-
-.logout-btn {
-    background-color: #ff4d69;
-}
-
-.logout-btn:hover {
-    background-color: #e8435d;
+.no-product {
+    text-align: center;
+    color: #888;
 }

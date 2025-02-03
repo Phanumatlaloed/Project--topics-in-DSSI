@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,24 +15,61 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <div class="dashboard-box">
-            <div class="store-header">
-                <h2>Welcome, {{ seller.store_name }}</h2>
-                {% if seller.store_image %}
-                    <img src="{{ seller.store_image.url }}" class="store-image" alt="Store Image">
-                {% else %}
-                    <p class="no-image">No store image uploaded</p>
-                {% endif %}
-            </div>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2>แดชบอร์ดร้านค้า</h2>
+            <ul class="menu">
+                <li class="menu-header">คำสั่งซื้อ</li>
+                <li class="menu-item"><a href="#">📦 คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="#">📌 จัดส่งแบบชุด</a></li>
+                <li class="menu-item"><a href="#">🚚 พัสดุเตรียมส่งมอบ</a></li>
+                <li class="menu-item"><a href="#">↩️ ขอคืนสินค้า</a></li>
+                <li class="menu-item"><a href="#">⚙️ ตั้งค่าการจัดส่ง</a></li>
+                
+                <li class="menu-header">สินค้า</li>
+                <li class="menu-item active"><a href="{% url 'my_products' %}">📋 สินค้าของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'add_product' %}">➕ เพิ่มสินค้าใหม่</a></li>
+            </ul>
+        </aside>
 
-            <div class="dashboard-menu">
-                <a href="{% url 'add_product' %}" class="dashboard-btn">➕ Add Product</a>
-                <a href="{% url 'product_list' %}" class="dashboard-btn">📦 Product List</a>
-                <a href="{% url 'my_products' %}" class="dashboard-btn">🛍 My Products</a>
-                <a href="{% url 'edit_store' %}" class="edit-store-btn">⚙️ แก้ไขร้านค้า</a>
-                <a href="{% url 'seller_logout' %}" class="dashboard-btn logout-btn">🚪 Logout</a>
+        <!-- Main Content -->
+        <main class="content">
+            <header class="content-header">
+                <h1>สินค้าของฉัน</h1>
+                <button class="btn-add-product" onclick="window.location.href='{% url 'add_product' %}';">
+                    ➕ เพิ่มสินค้าใหม่
+                </button>                
+            </header>
+
+            <!-- Tab Menu -->
+            <nav class="tab-menu">
+                <button class="active">ขายอยู่ (0)</button>
+                <button>การละเมิด (0)</button>
+                <button>อยู่ระหว่างตรวจสอบ (0)</button>
+                <button>ยังไม่ลงขาย (3)</button>
+            </nav>
+
+            <!-- Table -->
+            <div class="product-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>สินค้า</th>
+                            <th>ยอดขาย</th>
+                            <th>ราคา</th>
+                            <th>คลัง</th>
+                            <th>คุณภาพรายการสินค้า</th>
+                            <th>การดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6" class="no-product">ไม่มีสินค้า</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </main>
     </div>
 </body>
 </html>
