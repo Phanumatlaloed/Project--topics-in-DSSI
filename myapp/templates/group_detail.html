@@ -12,33 +12,33 @@
     <link rel="stylesheet" href="{% static 'styles/group_detail.css' %}">
     
     <!-- Scripts -->
-    <script src="{% static 'js/group_like.js' %}"></script>
+    <script src="{% static 'js/post.js' %}" defer></script>
+    <script src="{% static 'js/like.js' %}" defer></script>
+    <script src="{% static 'js/share.js' %}" defer></script>
+    <script src="{% static 'js/delete.js' %}" defer></script>
+    <script src="{% static 'js/comment.js' %}" defer></script>
+    <script src="{% static 'js/savelist.js' %}" defer></script>
+    <script src="{% static 'js/follow.js' %}" defer></script>
 </head>
 <body>
     <div class="container-fluid">
-        <!-- Sidebar -->
-        <aside class="sidebar bg-light vh-100 position-fixed">
-            <div class="logo text-center py-4">
-                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
-                <h5 class="text-primary">My Community</h5>
+        <!-- Sidebar โครงสร้างเดิม -->
+        <aside class="sidebar p-3 bg-light">
+            <div class="text-center">
+                <img src="{% static 'media/logo.jpg' %}" class="rounded-circle mb-3" alt="Logo" width="80">
+                <p><b>Welcome, {{ request.user.username }}</b></p>
             </div>
-            
-            <nav>
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a href="{% url 'home' %}" class="nav-link py-2">🏠 Home</a></li>
-                    <li class="nav-item"><a href="{% url 'community_list' %}" class="nav-link py-2 active">👥 Community</a></li>
-                    <li class="nav-item"><a href="{% url 'savelist' %}" class="nav-link py-2">💾 Save</a></li>
-                    <li class="nav-item"><a href="{% url 'profile' %}" class="nav-link py-2">📄 Profile</a></li>
-                </ul>
-            </nav>
-            
-            <div class="welcome-logout text-center mt-4">
-                <p>Welcome, <b>{{ request.user.username }}</b></p>
+            <nav class="nav flex-column">
+                <a href="{% url 'home' %}" class="nav-link">🏠 Home</a>
+                <a href="{% url 'community_list' %}" class="nav-link active">👥 Community</a>
+                <a href="{% url 'savelist' %}" class="nav-link">💾 Save</a>
+                <a href="{% url 'profile' %}" class="nav-link">📄 Profile</a>
+                <a href="{% url 'product_list' %}" class="nav-link">🛒 Product List</a>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="logout-btn">Logout</button>
+                    <button type="submit" class="btn btn-danger w-100 mt-3">Logout</button>
                 </form>
-            </div>
+            </nav>
         </aside>
 
         <!-- Main Content -->
@@ -70,77 +70,115 @@
             {% if is_member %}
             <!-- Post Form -->
             <div class="post-form-container bg-white shadow-sm rounded p-4 mb-4">
-                <h3 class="mb-3">Create a Post</h3>
-                <form method="post" enctype="multipart/form-data">
+                <h3 class="mb-3">สร้างโพสต์</h3>
+                <form id="postForm" action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <textarea name="content" class="form-control mb-3" rows="3" placeholder="What's on your mind?" required></textarea>
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <input type="file" name="image" class="form-control" accept="image/*">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="file" name="video" class="form-control" accept="video/*">
-                        </div>
+                    <textarea name="content" class="form-control mb-3" rows="3" placeholder="คุณกำลังคิดอะไร?" required></textarea>
+                    <div class="d-flex gap-2">
+                        <label for="postImages" class="btn btn-light">🖼️ เพิ่มรูปภาพ</label>
+                        <input type="file" name="images" id="postImages" accept="image/*" multiple hidden>
+                    
+                        <label for="postVideos" class="btn btn-light">🎥 เพิ่มวิดีโอ</label>
+                        <input type="file" name="videos" id="postVideos" accept="video/*" multiple hidden>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 mt-3">Post</button>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">โพสต์</button>
                 </form>
             </div>
             {% endif %}
             
             <!-- Posts Section -->
             <div class="posts-section">
-                <h3 class="mb-4">Posts</h3>
+                <h3 class="mb-4">โพสต์</h3>
                 {% for post in posts %}
-                <div class="post-card bg-white shadow-sm rounded p-4 mb-4">
+                <div class="post card p-3 mb-3 shadow-sm" id="post-{{ post.id }}">
                     <div class="post-header d-flex align-items-center">
                         {% if post.user.member_profile.profile_picture %}
                         <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img me-2 rounded-circle" width="40" height="40">
                         {% else %}
                             <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
                         {% endif %}                   
-                        <strong class="ms-2">{{ post.user.get_full_name|default:post.user.username }}</strong>                        
-                        <small class="text-muted ms-auto">{{ post.created_at|date:"M d, Y H:i" }}</small>
-                    </div>
-                    <p class="mb-3">{{ post.content }}</p>
-                    
-                    <div class="media-container">
-                        {% if post.image %}
-                        <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid rounded mb-3">
-                        {% endif %}
-                        {% if post.video %}
-                        <video controls class="w-100 rounded mb-3">
-                            <source src="{{ post.video.url }}" type="video/mp4">
-                        </video>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="post-actions mt-3 d-flex align-items-center">
-                        <button class="btn btn-outline-primary btn-sm like-btn me-3" data-post-id="{{ post.id }}">
-                            {% if request.user in post.likes.all %} ❤️ Unlike {% else %} 🤍 Like {% endif %}
-                        </button>
-                        <span id="like-count-{{ post.id }}" class="me-3 like-count">{{ post.likes.count }} Likes</span>
-                        <button class="btn btn-sm btn-outline-info me-3 save-group-btn" data-post-id="{{ post.id }}">
-                            {% if request.user in post.saves.all %} ✅ Saved {% else %} 🔖 Save {% endif %}
-                        </button>                        
-                        <button class="btn btn-sm btn-outline-success share-group-btn" data-post-id="{{ post.id }}">
-                            🔄 Share
-                        </button>                        
-                        <div class="mt-2">
-                            <a href="{% url 'edit_post' post.id %}" class="btn btn-sm btn-warning">✏️ Edit</a>
-                            <a href="{% url 'delete_post' post.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">🗑 Delete</a>
+                        <div class="d-flex flex-column">
+                            <b>{{ post.user.get_full_name|default:post.user.username }}</b>
+                            <small class="text-muted">{{ post.created_at|date:"M d, Y H:i" }}</small>
                         </div>
-
+                    </div>
+                    <p class="mt-2">{{ post.content }}</p>
                     
-                    {% if request.user.profile == post.user %}
-                    <div class="mt-2">
-                        <a href="{% url 'edit_post' post.id %}" class="btn btn-sm btn-warning">✏️ Edit</a>
-                        <a href="{% url 'delete_post' post.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">🗑 Delete</a>
+                    <!-- Post Media -->
+                    {% if post.media.all %}
+                    <div class="post-media d-grid">
+                        {% for media in post.media.all|slice:":4" %}
+                            <div class="media-item">
+                                {% if media.media_type == "image" %}
+                                    <img src="{{ media.file.url }}" class="rounded img-fluid">
+                                {% elif media.media_type == "video" %}
+                                    <video src="{{ media.file.url }}" controls class="rounded img-fluid"></video>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
                     </div>
                     {% endif %}
+
+                    <!-- Actions -->
+                    <div class="actions mt-2 d-flex gap-2">
+                        <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">👍 Like</button>
+                        <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
+                        <button class="btn btn-light share-btn" data-post-id="{{ post.id }}">🔗 Share</button>
+                        <button class="btn btn-light save-btn" data-post-id="{{ post.id }}">
+                            💾 {% if post in request.user.saved_posts.all %}Unsave{% else %}Save{% endif %}
+                        </button>  
+
+                        {% if request.user == post.user %}
+                            <a href="{% url 'edit_post' post.id %}" class="btn btn-light">✏️ Edit</a>                          
+                            <button class="btn btn-danger delete-btn" data-post-id="{{ post.id }}">🗑 Delete</button>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="comments mt-2">
+                        <h6>💬 Comments</h6>
+                        <div id="comments-{{ post.id }}">
+                            {% for comment in post.comments.all %}
+                                <div class="comment border p-2 mb-1 rounded bg-white">
+                                    <b>{{ comment.user.username }}</b>: {{ comment.content }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    
+                        <!-- Add Comment Form -->
+                        <form class="add-comment-form mt-2" data-post-id="{{ post.id }}">
+                            {% csrf_token %}
+                            <input type="text" name="content" placeholder="เขียนความคิดเห็น..." class="form-control mb-1">
+                            <button type="submit" class="btn btn-primary btn-sm">Comment</button>
+                        </form>
+                    </div>
                 </div>
+                {% empty %}
+                <p class="text-muted text-center">ยังไม่มีโพสต์</p>
                 {% endfor %}
             </div>
         </main>
     </div>
+
+    <script>
+        // JavaScript สำหรับการอัปโหลดรูปภาพและวิดีโอ
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageInput = document.getElementById('postImages');
+            const videoInput = document.getElementById('postVideos');
+            const imageLabel = document.querySelector('label[for="postImages"]');
+            const videoLabel = document.querySelector('label[for="postVideos"]');
+
+            imageInput.addEventListener('change', function() {
+                imageLabel.textContent = this.files.length > 0 
+                    ? `🖼️ เลือก ${this.files.length} รูป` 
+                    : '🖼️ เพิ่มรูปภาพ';
+            });
+
+            videoInput.addEventListener('change', function() {
+                videoLabel.textContent = this.files.length > 0 
+                    ? `🎥 เลือก ${this.files.length} วิดีโอ` 
+                    : '🎥 เพิ่มวิดีโอ';
+            });
+        });
+    </script>
 </body>
 </html>
