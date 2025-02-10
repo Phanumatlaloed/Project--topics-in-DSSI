@@ -7,6 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📜 ประวัติการสั่งซื้อ</title>
     <link rel="stylesheet" href="{% static 'styles/order_history.css' %}">
+    <style>
+        .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+        }
+        .status.pending { background-color: orange; }
+        .status.processing { background-color: blue; } /* ✅ แสดงสถานะ "เตรียมจัดส่ง" */
+        .status.shipped { background-color: green; }
+        .status.delivered { background-color: purple; }
+    </style>
 </head>
 <body>
 
@@ -18,13 +30,12 @@
             </a>
         </div>
         <ul class="nav-links">
-            <ul class="nav-links">
-                <li><a href="{% url 'home' %}">🏠 Home</a></li>
-                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
-                <li><a href="{% url 'cart' %}" class="active">🛒 Cart</a></li>
-                <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
-            </ul>
-        </header>
+            <li><a href="{% url 'home' %}">🏠 Home</a></li>
+            <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+            <li><a href="{% url 'cart' %}">🛒 Cart</a></li>
+            <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
+        </ul>
+    </header>
 
     <div class="container">
         <h1 class="title">📜 ประวัติการสั่งซื้อ</h1>
@@ -61,7 +72,19 @@
                     <td class="{% if order.payment_status == 'paid' %}paid{% else %}pending{% endif %}">
                         {{ order.get_payment_status_display }}
                     </td>
-                    <td class="status">{{ order.get_status_display }}</td>
+                    <td class="status">
+                        {% if order.status == "pending" %}
+                            <span class="pending">รอดำเนินการ</span>
+                        {% elif order.status == "processing" %}
+                            <span class="processing">เตรียมจัดส่ง</span>  <!-- ✅ แสดงสถานะ "เตรียมจัดส่ง" -->
+                        {% elif order.status == "shipped" %}
+                            <span class="shipped">จัดส่งแล้ว</span>
+                        {% elif order.status == "delivered" %}
+                            <span class="delivered">จัดส่งสำเร็จ</span>
+                        {% else %}
+                            <span class="unknown">ไม่ทราบสถานะ</span>
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{% url 'edit_shipping_address' order.id %}" class="edit-button">📝 แก้ไข</a>
                     </td>

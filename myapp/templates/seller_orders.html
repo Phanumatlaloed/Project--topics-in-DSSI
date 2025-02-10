@@ -53,6 +53,9 @@
                         📞 {{ order.phone_number }}
                     </td>
                     <td>
+                        {% if order.status == "processing" %}
+                            <button class="ship-order" data-order-id="{{ order.id }}">📦 เตรียมจัดส่ง</button>
+                        {% endif %}
                         {% if order.status == "pending" %}
                             <a href="{% url 'update_order_status' order.id 'shipped' %}" class="btn shipped">🚚 จัดส่งแล้ว</a>
                         {% elif order.status == "shipped" %}
@@ -74,3 +77,30 @@
     </main>
 </div>
 
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelectorAll(".ship-order").forEach(button => {
+                    button.addEventListener("click", function () {
+                        let orderId = this.getAttribute("data-order-id");
+                        let url = `/seller/orders/${orderId}/ship/`;
+
+                        if (confirm("คุณแน่ใจหรือไม่ว่าต้องการอัปเดตสถานะเป็น 'จัดส่งแล้ว'?")) {
+                            fetch(url, {
+                                method: "GET",
+                                headers: { "X-Requested-With": "XMLHttpRequest" }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert(`✅ ${data.message}`);
+                                    location.reload();  // ✅ รีโหลดหน้าเพื่ออัปเดตข้อมูล
+                                } else {
+                                    alert(`❌ ${data.message}`);
+                                }
+                            })
+                            .catch(error => console.error("Error:", error));
+                        }
+                    });
+                });
+            });
+        </script>

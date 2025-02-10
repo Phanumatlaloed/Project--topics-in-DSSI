@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ตรวจสอบการชำระเงิน | MyShop</title>
     <link rel="stylesheet" href="{% static 'styles/seller_payment.css' %}">
+
+    
+    <script src="{% static 'js/follow.js' %}" defer></script>
 </head>
 <body>
 
@@ -51,8 +54,8 @@
                         {% endwith %}
                     </td>
                     <td>
-                        <a href="{% url 'approve_seller_payment' order.id %}" class="approve">✅ อนุมัติ</a>
-                        <a href="{% url 'reject_seller_payment' order.id %}" class="reject">❌ ปฏิเสธ</a>
+                        <button class="approve" data-order-id="{{ order.id }}">✅ อนุมัติ</button>
+                        <button class="reject" data-order-id="{{ order.id }}">❌ ปฏิเสธ</button>
                     </td>
                 </tr>
                 {% endfor %}
