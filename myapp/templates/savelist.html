@@ -1,83 +1,120 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saved List</title>
+    <title>Saved Posts</title>
+
+    <!-- ✅ Bootstrap & Custom CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'styles/savelist.css' %}">
-    <script src="{% static 'js/savelist.js' %}" defer></script>
+
+    <!-- ✅ JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="{% static 'js/savelistre.js' %}" defer></script>
 </head>
 <body>
-    <div class="savelist-container">
-        <!-- Header Section -->
-        <header class="header">
-            <div class="logo">
-                <a href="{% url 'home' %}">
-                    <img src="{% static 'media/logo.jpg' %}" alt="Logo">
-                </a>
+    <div class="wrapper d-flex">
+         <!-- Sidebar -->
+         <aside class="sidebar">
+            <div class="logo text-center">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
+                <h5>Save Post</h5>
             </div>
-            <h1>Saved Posts</h1>
-        </header>
-
-        <!-- Search Bar -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search posts..." onkeyup="searchPosts()">
-        </div>
-
-        <!-- Toast Notification -->
-        <div id="toast" class="toast"></div>
-
-        <!-- Saved Posts Grid -->
-        <div class="savelist-grid">
-            {% for saved_post in saved_posts %}
-            <div class="savelist-item" id="post-{{ saved_post.post.id }}">
-                <!-- ✅ คลิกที่โพสต์เพื่อไปยังโพสต์นั้น -->
-                 
-                <a href="{% url 'post_detail' saved_post.post.id %}" class="post-link">
-                    <div class="post-content">
-                        <p>{{ saved_post.post.content }}</p>
-
-                        <!-- ✅ รองรับหลายรูปและวิดีโอ -->
-                        <div class="post-media">
-                            {% for media in saved_post.post.media.all %}
-                                {% if media.media_type == "image" %}
-                                    <img src="{{ media.file.url }}" alt="Post Image">
-                                {% elif media.media_type == "video" %}
-                                    <video src="{{ media.file.url }}" controls></video>
-                                {% endif %}
-                            {% empty %}
-                                <p class="text-muted">No media available</p>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Remove Button -->
-                <form action="{% url 'remove_saved_post' saved_post.post.id %}" method="post" class="remove-post-form">
+            <nav>
+                <ul class="nav">
+                    <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link">👥 Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link active">💾 Save </a></li>
+                    <li><a href="{% url 'profile' %}" class="nav-link">📄 Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
+                </ul>
+            </nav>
+            <div class="welcome-logout">
+                <p>Welcome, <b>{{ request.user.username }}</b></p>
+                <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="remove-btn">Remove</button>
+                    <button type="submit" class="logout-btn">Logout</button>
                 </form>
             </div>
-            {% empty %}
-            <p>No saved posts yet.</p>
-            {% endfor %}
-        </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content p-4">
+            <header class="text-center mb-4">
+                <h2 class="text-primary">📌 Saved Posts</h2>
+            </header>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search saved posts..." onkeyup="searchPosts()">
+            </div>
+
+            <!-- Saved Posts -->
+            <div class="row">
+                {% for saved_post in saved_posts %}
+                <div class="col-md-6 col-lg-4 post-item">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <!-- User Info -->
+                            <div class="d-flex align-items-center mb-2">
+                                <img src="{{ saved_post.post.user.profile_picture }}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                                <div>
+                                    <h6 class="mb-0">{{ saved_post.post.user.username }}</h6>
+                                    <small class="text-muted">{{ saved_post.post.created_at|date:"M d, Y H:i" }}</small>
+                                </div>
+                            </div>
+
+                            <!-- Post Type -->
+                            <span class="badge bg-info text-white">
+                                {% if saved_post.post_type == 'group' %}
+                                    Group Post 🏛
+                                {% else %}
+                                    Home Post 🏠
+                                {% endif %}
+                            </span>
+
+                            <!-- Post Content -->
+                            <a href="{% url 'post_detail' saved_post.post.id %}" class="text-decoration-none text-dark">
+                                <p class="card-text mt-2">{{ saved_post.post.content }}</p>
+                            </a>
+
+                            <!-- Post Media -->
+                            {% if saved_post.post.media.all %}
+                            <div class="post-media d-flex flex-wrap">
+                                {% for media in saved_post.post.media.all|slice:":3" %}
+                                    {% if media.media_type == "image" %}
+                                        <img src="{{ media.file.url }}" class="img-fluid rounded me-1 mb-1">
+                                    {% elif media.media_type == "video" %}
+                                        <video src="{{ media.file.url }}" controls class="img-fluid rounded me-1 mb-1"></video>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <!-- Remove Button -->
+                            <button class="btn btn-outline-danger btn-sm w-100 mt-2 remove-btn" data-post-id="{{ saved_post.post.id }}">
+                                🗑 Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-muted">😢 No saved posts yet.</p>
+                {% endfor %}
+            </div>
+        </main>
     </div>
 
     <script>
         function searchPosts() {
             let input = document.getElementById("searchInput").value.toLowerCase();
-            let items = document.querySelectorAll(".savelist-item");
+            let items = document.querySelectorAll(".post-item");
 
             items.forEach(item => {
                 let text = item.textContent.toLowerCase();
-                if (text.includes(input)) {
-                    item.style.display = "block";
-                } else {
-                    item.style.display = "none";
-                }
+                item.style.display = text.includes(input) ? "block" : "none";
             });
         }
     </script>

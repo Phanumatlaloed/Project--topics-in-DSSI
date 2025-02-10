@@ -1,0 +1,154 @@
+/* 🌸 ตั้งค่าทั่วไป */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fff0f5;  /* ✅ ปรับพื้นหลังให้เป็นสีชมพูอ่อน */
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🌸 Navbar */
+.navbar {
+    background-color: #ff8fab;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    background-color: #ff8fab; /* ✅ กำหนดพื้นหลังให้ตรงกับ Navbar */
+    padding: 5px; /* ✅ เพิ่มขอบรอบโลโก้ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* ✅ ทำให้ขอบมน */
+}
+
+.logo img {
+    width: 60px; /* ✅ ปรับขนาดโลโก้ */
+    height: auto;
+    display: block;
+    background: transparent; /* ✅ ทำให้พื้นหลังภาพโลโก้โปร่งใส */
+    border-radius: 50%; /* ✅ ทำให้ขอบมนเข้ากับพื้นหลัง */
+}
+
+/* เมนู Navbar */
+.navbar .nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar .nav-links li {
+    display: inline;
+}
+
+.navbar .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.navbar .nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.navbar .nav-links a.active {
+    text-decoration: underline;
+}
+
+/* 🌸 Container */
+.order-history-container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 40px auto;
+    background-color: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ✅ เพิ่มเงาให้ดูหรูขึ้น */
+    text-align: center;
+}
+
+/* 🌸 Title */
+h1 {
+    font-size: 28px;
+    color: #ff5c8a;
+    margin-bottom: 20px;
+}
+
+/* 🌸 Table */
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.order-table th, .order-table td {
+    padding: 15px;
+    border: 1px solid #ffbdd4;
+}
+
+.order-table th {
+    background-color: #ffccd5;
+    color: #d6336c;
+    font-weight: bold;
+}
+
+.order-table tbody tr:nth-child(even) {
+    background-color: #fff0f3;
+}
+
+.order-table tbody tr:hover {
+    background-color: #ffe5ec;
+}
+
+/* 🌸 ปุ่มแก้ไข */
+.edit-button {
+    display: inline-block;
+    background-color: #ff5c8a;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.edit-button:hover {
+    background-color: #d6336c;
+    transform: scale(1.05);
+}
+
+/* 🌸 Payment Status */
+.paid {
+    color: green;
+    font-weight: bold;
+}
+
+.pending {
+    color: red;
+    font-weight: bold;
+}
+
+/* 🌸 Footer */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ff8fab;
+    text-align: center;
+    padding: 15px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}

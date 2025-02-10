@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 แก้ไขคำสั่งซื้อ</title>
+    <link rel="stylesheet" href="{% static 'styles/order_edit.css' %}">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'cart' %}">🛒 Cart</a></li>
+                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="order-edit-container">
+        <h1>📝 แก้ไขคำสั่งซื้อ</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="address">📍 ที่อยู่จัดส่ง:</label>
+                <input type="text" name="address" id="address" value="{{ order.shipping_address }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone_number">📞 หมายเลขโทรศัพท์:</label>
+                <input type="text" name="phone_number" id="phone_number" value="{{ order.phone_number }}" required>
+            </div>
+
+            <button type="submit" class="save-button">💾 บันทึกการเปลี่ยนแปลง</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Your Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

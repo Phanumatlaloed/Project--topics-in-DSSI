@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -19,8 +18,12 @@
         <aside class="sidebar">
             <h2>แดชบอร์ดร้านค้า</h2>
             <ul class="menu">
+                <li class="menu-header">สินค้า</li>
+                <li class="menu-item active"><a href="{% url 'seller_dashboard' %}">📋 จัดการร้านค้า</a></li>
+
                 <li class="menu-header">คำสั่งซื้อ</li>
-                <li class="menu-item"><a href="#">📦 คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_orders' %}">📦 คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
                 <li class="menu-item"><a href="#">📌 จัดส่งแบบชุด</a></li>
                 <li class="menu-item"><a href="#">🚚 พัสดุเตรียมส่งมอบ</a></li>
                 <li class="menu-item"><a href="#">↩️ ขอคืนสินค้า</a></li>
@@ -29,6 +32,10 @@
                 <li class="menu-header">สินค้า</li>
                 <li class="menu-item active"><a href="{% url 'my_products' %}">📋 สินค้าของฉัน</a></li>
                 <li class="menu-item"><a href="{% url 'add_product' %}">➕ เพิ่มสินค้าใหม่</a></li>
+                <li class="menu-item"><a href="{% url 'edit_store' %}">⚙️ แก้ไขร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">⚙️ แก้ไขโปรไฟล์ผู้ขาย</a></li>
+                <li class="menu-item"><a href="{% url 'seller_orders' %}">📦 คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_logout' %}">Logout</a></li>
             </ul>
         </aside>
 
@@ -40,10 +47,11 @@
                     ➕ เพิ่มสินค้าใหม่
                 </button>                
             </header>
+            
 
             <!-- Tab Menu -->
             <nav class="tab-menu">
-                <button class="active">ขายอยู่ (0)</button>
+                <button class="active">ขายอยู่ ({{ products|length }})</button>
                 <button>การละเมิด (0)</button>
                 <button>อยู่ระหว่างตรวจสอบ (0)</button>
                 <button>ยังไม่ลงขาย (3)</button>
@@ -55,6 +63,7 @@
                     <thead>
                         <tr>
                             <th>สินค้า</th>
+                            <th>หมวดหมู่</th>  <!-- ✅ เพิ่มคอลัมน์แสดงหมวดหมู่สินค้า -->
                             <th>ยอดขาย</th>
                             <th>ราคา</th>
                             <th>คลัง</th>
@@ -63,10 +72,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="6" class="no-product">ไม่มีสินค้า</td>
-                        </tr>
-                    </tbody>
+                        {% if products %}
+                            {% for product in products %}
+                            <tr>
+                                <td class="product-info">
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                                    <span>{{ product.name }}</span>
+                                </td>
+                                <td>{{ product.get_category_display }}</td>  <!-- ✅ ใช้ get_category_display() เพื่อดึงค่าที่แสดง -->
+                                <td>{{ product.sales_count }} รายการ</td>
+                                <td>฿{{ product.price }}</td>
+                                <td>{{ product.stock }} ชิ้น</td>
+                                <td>{{ product.quality_score }}%</td>
+                                <td>
+                                    <a href="{% url 'edit_product' product.id %}" class="edit-btn">✏️ แก้ไข</a>
+                                    <a href="{% url 'delete_product' product.id %}" class="delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">🗑 ลบ</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="no-product">ไม่มีสินค้า</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>                    
                 </table>
             </div>
         </main>

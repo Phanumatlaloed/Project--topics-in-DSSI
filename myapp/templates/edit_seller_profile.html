@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แก้ไขโปรไฟล์ผู้ขาย</title>
+    <link rel="stylesheet" href="{% static 'styles/edit_profile.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>🔧 แก้ไขโปรไฟล์ผู้ขาย</h2>
+
+        <!-- ฟอร์มแก้ไขข้อมูลผู้ใช้ -->
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="update_profile" value="1">
+            <fieldset>
+                <legend>👤 ข้อมูลผู้ใช้</legend>
+                {{ user_form.as_p }}
+            </fieldset>
+
+            <fieldset>
+                <legend>🏪 ข้อมูลร้านค้า</legend>
+                {{ seller_form.as_p }}
+            </fieldset>
+
+            <button type="submit" class="btn btn-primary">💾 บันทึก</button>
+        </form>
+
+        <hr>
+
+        <!-- ฟอร์มเปลี่ยนรหัสผ่าน -->
+        <h3>🔑 เปลี่ยนรหัสผ่าน</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="change_password" value="1">
+            {{ password_form.as_p }}
+            <button type="submit" class="btn btn-warning">🔄 อัปเดตรหัสผ่าน</button>
+            <a href="{% url 'seller_dashboard' %}" class="btn-cancel">⬅️ ยกเลิก</a>
+        </form>
+    </div>
+</body>
+</html>

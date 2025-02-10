@@ -1,0 +1,79 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 ประวัติการสั่งซื้อ</title>
+    <link rel="stylesheet" href="{% static 'styles/order_history.css' %}">
+</head>
+<body>
+
+    <!-- 🌸 Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+            </a>
+        </div>
+        <ul class="nav-links">
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+                <li><a href="{% url 'cart' %}" class="active">🛒 Cart</a></li>
+                <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
+            </ul>
+        </header>
+
+    <div class="container">
+        <h1 class="title">📜 ประวัติการสั่งซื้อ</h1>
+
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>📌 Order ID</th>
+                    <th>🏪 ร้านค้า</th>
+                    <th>📦 รายการสินค้า</th>
+                    <th>📍 ที่อยู่จัดส่ง</th>
+                    <th>📞 เบอร์โทรศัพท์</th>
+                    <th>💰 ราคา</th>
+                    <th>💳 สถานะชำระเงิน</th>
+                    <th>🚚 สถานะคำสั่งซื้อ</th>
+                    <th>✏️ แก้ไข</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.seller.store_name }}</td>
+                    <td>
+                        <ul>
+                            {% for item in order.order_items.all %}
+                                <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.product.price }})</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>{{ order.shipping_address }}</td>
+                    <td>{{ order.phone_number }}</td>
+                    <td>฿{{ order.total_price }}</td>
+                    <td class="{% if order.payment_status == 'paid' %}paid{% else %}pending{% endif %}">
+                        {{ order.get_payment_status_display }}
+                    </td>
+                    <td class="status">{{ order.get_status_display }}</td>
+                    <td>
+                        <a href="{% url 'edit_shipping_address' order.id %}" class="edit-button">📝 แก้ไข</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Your Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

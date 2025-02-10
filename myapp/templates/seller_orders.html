@@ -1,0 +1,76 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'styles/seller_orders.css' %}">
+<div class="seller-dashboard">
+    <!-- 🌸 Sidebar Menu -->
+    <aside class="sidebar">
+        <ul class="menu">
+            <li class="menu-header">สินค้า</li>
+            <li class="menu-item"><a href="{% url 'seller_dashboard' %}">📋 จัดการร้านค้า</a></li>
+            <li class="menu-item"><a href="{% url 'my_products' %}">📋 สินค้าของฉัน</a></li>
+            <li class="menu-item"><a href="{% url 'add_product' %}">➕ เพิ่มสินค้าใหม่</a></li>
+            <li class="menu-item"><a href="{% url 'edit_store' %}">⚙️ แก้ไขร้านค้า</a></li>
+            <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">⚙️ แก้ไขโปรไฟล์ผู้ขาย</a></li>
+            <li class="menu-item active"><a href="{% url 'seller_orders' %}">📦 คำสั่งซื้อของฉัน</a></li>
+            <li class="menu-item logout"><a href="{% url 'seller_logout' %}">🚪 Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- 🌸 Main Content -->
+    <main class="order-management-container">
+        <h1>📦 คำสั่งซื้อของฉัน</h1>
+
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>📌 Order ID</th>
+                    <th>📦 รายการสินค้า</th>
+                    <th>💳 สถานะชำระเงิน</th>
+                    <th>🚚 สถานะการจัดส่ง</th>
+                    <th>📍 ที่อยู่จัดส่ง</th>
+                    <th>⚙️ จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>
+                        <ul>
+                            {% for item in order.order_items.all %}
+                                <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.price_per_item }})</li>
+                            {% empty %}
+                                <li>❌ ไม่มีสินค้าในคำสั่งซื้อ</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td class="{% if order.payment_status == 'paid' %}paid{% else %}pending{% endif %}">
+                        {{ order.get_payment_status_display }}
+                    </td>
+                    <td class="status">{{ order.get_status_display }}</td>
+                    <td>
+                        {{ order.shipping_address }}<br>
+                        📞 {{ order.phone_number }}
+                    </td>
+                    <td>
+                        {% if order.status == "pending" %}
+                            <a href="{% url 'update_order_status' order.id 'shipped' %}" class="btn shipped">🚚 จัดส่งแล้ว</a>
+                        {% elif order.status == "shipped" %}
+                            <a href="{% url 'update_order_status' order.id 'delivered' %}" class="btn delivered">✅ ส่งสำเร็จ</a>
+                        {% endif %}
+
+                        {% if order.status == "pending" %}
+                            <a href="{% url 'cancel_order' order.id %}" class="btn cancel">❌ ยกเลิก</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">❌ ไม่มีคำสั่งซื้อเข้ามา</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</div>
+

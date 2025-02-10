@@ -1,0 +1,68 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📌 โพสต์ทั้งหมด</title>
+    <link rel="stylesheet" href="{% static 'styles/search_content.css' %}">
+</head>
+<body>
+
+    <!-- 🌸 Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Logo">
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}" class="active">🏠 หน้าแรก</a></li>
+                <li><a href="{% url 'register' %}">📝 สมัครสมาชิก</a></li>
+                <li><a href="{% url 'login' %}">🔑 เข้าสู่ระบบ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- 🌸 Sidebar -->
+        <aside class="sidebar">
+            <ul class="menu">
+                <li class="menu-item"><a href="{% url 'home' %}">🏠 หน้าแรก</a></li>
+                <li class="menu-item"><a href="{% url 'search' %}">🔍 ค้นหาเนื้อหา</a></li>
+                <li class="menu-item"><a href="{% url 'all_posts' %}">📝 โพสต์ทั้งหมด</a></li>
+            </ul>
+        </aside>
+
+        <!-- 🌸 เนื้อหาหลัก -->
+        <main class="content-container">
+            <h1>📝 โพสต์ทั้งหมด</h1>
+
+            {% if posts %}
+                <ul class="post-list">
+                    {% for post in posts %}
+                        <li class="post-item">
+                            <a href="{% url 'post_detail' post.id %}">
+                                <h2>{{ post.title }}</h2>
+                            </a>
+                            <p>{{ post.content|truncatewords:30 }}</p>
+                            <span>📅 {{ post.created_at|date:"d M Y" }}</span> | 
+                            <span>✍️ {{ post.author.username }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-results">❌ ไม่พบโพสต์</p>
+            {% endif %}
+        </main>
+    </div>
+
+    <!-- 🌸 Footer -->
+    <footer>
+        <p>&copy; 2025 Your Site. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

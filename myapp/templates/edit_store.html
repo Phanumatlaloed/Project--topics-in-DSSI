@@ -1,44 +1,89 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Store</title>
+    <title>แก้ไขร้านค้า | Seller Dashboard</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'styles/edit_store.css' %}">
+    <!-- ✅ Bootstrap & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- ✅ Custom CSS -->
+    <link rel="stylesheet" href="{% static 'styles/edit_store.css' %}">
 </head>
 <body>
-    <!-- Navbar -->
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="{% url 'home' %}">🏠 Home</a></li>
-                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
-                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
-                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
-                <li><a href="{% url 'my_products' %}" class="active">📦 My Store</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <!-- Store Edit Form -->
-    <div class="store-edit-container">
-        <h2>🛠 แก้ไขข้อมูลร้านค้า</h2>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="save-btn">💾 บันทึกการเปลี่ยนแปลง</button>
-        </form>
-        <a href="{% url 'seller_dashboard' %}" class="back-btn">⬅️ กลับไปที่แดชบอร์ด</a>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">💖 แดชบอร์ดร้านค้า</div>
+            <ul class="menu">
+                <li class="menu-header">สินค้า</li>
+                <li class="menu-item"><a href="{% url 'seller_dashboard' %}">📋 จัดการร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'my_products' %}">📦 สินค้าของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'add_product' %}">➕ เพิ่มสินค้าใหม่</a></li>
+                <li class="menu-item active"><a href="{% url 'edit_store' %}">⚙️ แก้ไขร้านค้า</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <div class="card shadow-lg p-4">
+                <!-- Header -->
+                <div class="text-center">
+                    <h2 class="text-pink">🛠 แก้ไขข้อมูลร้านค้า</h2>
+                    <p class="text-muted">กรุณากรอกข้อมูลให้ครบทุกช่องเพื่ออัปเดตร้านค้าของคุณ</p>
+                </div>
+
+                <!-- ✅ แสดงข้อความแจ้งเตือน -->
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                                <i class="fa {% if message.tags == 'error' %}fa-times-circle{% else %}fa-check-circle{% endif %}"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Store Edit Form -->
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">📌 ชื่อร้านค้า</label>
+                        {{ form.store_name }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">📞 ข้อมูลติดต่อ</label>
+                        {{ form.contact_info }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">🖼 รูปภาพร้านค้า</label>
+                        {{ form.store_image }}
+                        {% if seller.store_image %}
+                            <div class="preview-container">
+                                <img src="{{ seller.store_image.url }}" class="img-preview" alt="Store Image">
+                            </div>
+                        {% endif %}
+                        <small class="text-muted">⚠️ กรุณาอัปโหลดรูปภาพให้ครบ</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-pink w-100 mt-3">💾 บันทึกการเปลี่ยนแปลง</button>
+                </form>
+
+                <a href="{% url 'seller_dashboard' %}" class="btn btn-secondary w-100 mt-2">⬅️ กลับไปที่แดชบอร์ด</a>
+            </div>
+        </main>
     </div>
+
+    <!-- ✅ Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

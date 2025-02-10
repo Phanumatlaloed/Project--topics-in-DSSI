@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Website{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+    <!-- ✅ Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/">MyShop</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">🏠 หน้าแรก</a></li>
+            <li><a href="/products/">🛒 สินค้า</a></li>
+            <li><a href="/cart/">🛍 ตะกร้า</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="/profile/">👤 โปรไฟล์</a></li>
+                <li><a href="/logout/">🚪 ออกจากระบบ</a></li>
+            {% else %}
+                <li><a href="/login/">🔑 เข้าสู่ระบบ</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- ✅ Container สำหรับแสดงเนื้อหา -->
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- ✅ Footer -->
+    <footer>
+        <p>© 2025 MyShop | ออกแบบโดย Developer</p>
+    </footer>
+
+</body>
+</html>

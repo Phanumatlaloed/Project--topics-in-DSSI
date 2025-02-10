@@ -6,81 +6,6 @@ body {
     padding: 0;
 }
 
-/* Sidebar */
-.sidebar {
-    width: 270px; /* ขนาดที่สอดคล้อง */
-    height: 100vh;
-    position: fixed;
-    background-color: #fde5e5; /* สีชมพูอ่อน */
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    border-right: 3px solid #f7c2c2; /* เพิ่มความชัดเจนของขอบ */
-}
-
-.sidebar .logo img {
-    width: 80%;
-    height: auto;
-    margin: 0 auto 15px;
-    display: block;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar h5 {
-    color: #333333; /* สีดำชัดเจน */
-    font-weight: bold;
-    text-align: center;
-    font-size: 1.5rem; /* ขยายตัวอักษร */
-    margin-bottom: 20px;
-}
-
-.nav {
-    list-style: none;
-    padding: 0;
-}
-
-.nav-link {
-    text-decoration: none;
-    padding: 12px 15px;
-    display: block;
-    color: #666; /* สีข้อความ */
-    font-size: 1rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    text-align: center;
-}
-
-.nav-link:hover,
-.nav-link.active {
-    background-color: #ff9aa2; /* สีเน้น */
-    color: white;
-    font-weight: bold;
-}
-
-.welcome-logout {
-    margin-top: 30px;
-    text-align: center;
-    background-color: #ffe9e9;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.logout-btn {
-    margin-top: 10px;
-    background-color: #f58b8b;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.logout-btn:hover {
-    background-color: #e46868;
-    transform: scale(1.05);
-}
 
 /* Community Container */
 .community-container {
@@ -137,6 +62,7 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 25px;
 }
 
 .group-card:hover {
@@ -187,4 +113,120 @@ body {
 .view-group-btn:hover {
     background-color: #218838;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* 📌 Sidebar */
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    background-color: #fde5e5;
+    padding: 12px 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-right: 3px solid #f7c2c2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* ทำให้ตัวอักษรชิดซ้าย */
+}
+
+/* 🖼 ปรับขนาดและการจัดวางโลโก้ */
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.sidebar .logo img {
+    width: 90px;
+    height: 90px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    /*padding-left: 20px; */
+}
+
+.sidebar .logo img:hover {
+    transform: scale(1.05);
+    padding-left: 20;
+}
+
+/* 👤 Welcome Message */
+/* จัดให้อักษรอยู่ตรงกลาง */
+.sidebar h5 {
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.4rem; /* ขยายขนาดให้เด่นขึ้น */
+    margin-top: 10px;
+}
+
+/* 📌 เมนูใน Sidebar */
+.nav {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.nav-link {
+    text-decoration: none;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* ชิดซ้าย */
+    text-align: left;
+    padding-left: 25px; /* เพิ่มระยะชิดซ้าย */
+    color: #666;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    margin-bottom: 10px;
+    width: 100%; /* ทำให้กว้างเต็ม sidebar */
+}
+
+/* ปรับให้ icon กับ text ห่างกันเล็กน้อย */
+.nav-link i {
+    margin-right: 8px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background-color: #ff9aa2;
+    color: white;
+    font-weight: bold;
+}
+
+/* 🎀 Welcome Section */
+.welcome-logout {
+    text-align: center;
+    padding: 40px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px; /* เพิ่มระยะห่างก่อนปุ่ม Logout */
+}
+
+/* 🔴 ปุ่ม Logout */
+.logout-btn {
+    width: 100%;
+    background-color: #dc3545;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: auto; /* ดันปุ่มลงไปด้านล่างสุด */
+}
+
+/* ทำให้ Sidebar เป็น Flexbox เพื่อให้จัดตำแหน่งปุ่ม Logout ได้ */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* ดันปุ่ม Logout ไปอยู่ด้านล่าง */
+    height: 100vh;
 }

@@ -1,28 +1,35 @@
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".delete-form").forEach(form => {
-        form.addEventListener("submit", function (event) {
-            event.preventDefault();
-            const postId = this.getAttribute("data-post-id");
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            let postId = this.dataset.postId;
+            let postElement = document.getElementById(`post-${postId}`);
 
-            if (confirm("คุณต้องการลบโพสต์นี้ใช่หรือไม่?")) {
-                fetch(`/post/${postId}/delete/`, {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("✅ โพสต์ถูกลบแล้ว!");
-                        document.getElementById(`post-${postId}`).remove();
-                    } else {
-                        alert("❌ ลบโพสต์ไม่สำเร็จ: " + data.message);
-                    }
-                })
-                .catch(error => console.error("Error:", error));
-            }
+            if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบโพสต์นี้?")) return;
+
+            // ✅ ปิดการใช้งานปุ่มลบหลังจากคลิก
+            this.disabled = true;
+
+            fetch(`/post/${postId}/delete/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    postElement.remove();  // ✅ ลบโพสต์ออกจาก DOM
+                    alert("✅ โพสต์ถูกลบเรียบร้อยแล้ว!");
+                } else {
+                    alert(`❌ เกิดข้อผิดพลาด: ${data.message}`);
+                    this.disabled = false;  // ✅ เปิดใช้งานปุ่มอีกครั้งหากลบไม่สำเร็จ
+                }
+            })
+            .catch(error => {
+                console.error("❌ Error:", error);
+                this.disabled = false;
+            });
         });
     });
 });

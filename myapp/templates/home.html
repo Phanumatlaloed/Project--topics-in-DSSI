@@ -15,20 +15,26 @@
     <script src="{% static 'js/post.js' %}" defer></script>
     <script src="{% static 'js/like.js' %}" defer></script>
     <script src="{% static 'js/share.js' %}" defer></script>
+    <script src="{% static 'js/delete.js' %}" defer></script>
+    <script src="{% static 'js/comment.js' %}" defer></script>
+    <script src="{% static 'js/savelist.js' %}" defer></script>
+    <script src="{% static 'js/follow.js' %}" defer></script>
+
 </head>
 <body class="bg-light">
     <div class="container-fluid d-flex">
         <!-- Sidebar -->
-        <aside class="sidebar p-3 bg-pink">
+        <aside class="sidebar p-3 bg-light">
             <div class="text-center">
                 <img src="{% static 'media/logo.jpg' %}" class="rounded-circle mb-3" alt="Logo" width="80">
                 <p><b>Welcome, {{ request.user.username }}</b></p>
             </div>
             <nav class="nav flex-column">
-                <a href="#" class="nav-link active">🏠 Home</a>
+                <a href="{% url 'home' %}" class="nav-link active">🏠 Home</a>
                 <a href="{% url 'community_list' %}" class="nav-link">👥 Community</a>
                 <a href="{% url 'savelist' %}" class="nav-link">💾 Save</a>
                 <a href="{% url 'profile' %}" class="nav-link">📄 Profile</a>
+                <a href="{% url 'product_list' %}" class="nav-link">🛒 Product List</a>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger w-100 mt-3">Logout</button>
@@ -59,11 +65,26 @@
             <!-- ✅ Posts Section -->
             <div class="posts mt-4">
                 {% for post in posts %}
-                <div class="post card p-3 mb-3 shadow-sm">
+                <div class="post card p-3 mb-3 shadow-sm" id="post-{{ post.id }}">
                     <!-- User Info -->
                     <div class="user-info d-flex align-items-center">
-                        <img src="{{ post.user.profile_picture.url|default:'/static/images/default-profile.png' }}" class="profile-img me-2">
+                        {% if post.user.member_profile.profile_picture %}
+                            <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img me-2 rounded-circle" width="40" height="40">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
+                        {% endif %}
                         <b>{{ post.user.username }}</b>
+
+                        <!-- ปุ่มติดตาม -->
+                        {% if post.user != request.user %}
+                            <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn"
+                                    data-user-id="{{ post.user.id }}">
+                                    {% if post.user.id in following_users %}Unfollow{% else %}Follow{% endif %}
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
 
                     <!-- Post Content -->
@@ -75,16 +96,12 @@
                         {% for media in post.media.all|slice:":4" %}
                             <div class="media-item">
                                 {% if media.media_type == "image" %}
-                                    <img src="{{ media.file.url }}" class="rounded">
+                                    <img src="{{ media.file.url }}" class="rounded img-fluid">
                                 {% elif media.media_type == "video" %}
-                                    <video src="{{ media.file.url }}" controls class="rounded"></video>
+                                    <video src="{{ media.file.url }}" controls class="rounded img-fluid"></video>
                                 {% endif %}
                             </div>
                         {% endfor %}
-
-                        {% if post.media.count > 4 %}
-                            <div class="extra-images">+{{ post.media.count|add:"-4" }}</div>
-                        {% endif %}
                     </div>
                     {% endif %}
 
@@ -93,14 +110,32 @@
                         <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">👍 Like</button>
                         <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
                         <button class="btn btn-light share-btn" data-post-id="{{ post.id }}">🔗 Share</button>
+                        <button class="btn btn-light save-btn" data-post-id="{{ post.id }}">
+                            💾 {% if post in request.user.saved_posts.all %}Unsave{% else %}Save{% endif %}
+                        </button>  
 
                         {% if request.user == post.user %}
-                            <a href="{% url 'edit_post' post.id %}" class="btn btn-light">✏️ Edit</a>
-                            <form action="{% url 'delete_post' post.id %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">🗑️ Delete</button>
-                            </form>
+                            <a href="{% url 'edit_post' post.id %}" class="btn btn-light">✏️ Edit</a>                          
+                            <button class="btn btn-danger delete-btn" data-post-id="{{ post.id }}">🗑 Delete</button>
                         {% endif %}
+                    </div>
+                    
+                    <div class="comments mt-2">
+                        <h6>💬 Comments</h6>
+                        <div id="comments-{{ post.id }}">
+                            {% for comment in post.comments.all %}
+                                <div class="comment border p-2 mb-1 rounded bg-white">
+                                    <b>{{ comment.user.username }}</b>: {{ comment.content }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    
+                        <!-- ✅ Add Comment Form -->
+                        <form class="add-comment-form mt-2" data-post-id="{{ post.id }}">
+                            {% csrf_token %}
+                            <input type="text" name="content" placeholder="Write a comment..." class="form-control mb-1">
+                            <button type="submit" class="btn btn-primary btn-sm">Comment</button>
+                        </form>
                     </div>
                 </div>
                 {% endfor %}

@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 โพสต์ทั้งหมด</title>
+    <link rel="stylesheet" href="{% static 'styles/all_posts.css' %}">
+</head>
+<body>
+
+    <!-- 🌸 Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'all_posts' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Logo">
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'all_posts' %}" class="active">🏠 หน้าแรก</a></li>
+                <li><a href="{% url 'register' %}">📝 สมัครสมาชิก</a></li>
+                <li><a href="{% url 'login' %}">🔑 เข้าสู่ระบบ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 🌸 ช่องค้นหา -->
+    <div class="search-container">
+        <form method="GET" action="{% url 'all_posts' %}">
+            <input type="text" name="query" placeholder="🔍 ค้นหาโพสต์..." value="{{ request.GET.query }}">
+            <button type="submit">ค้นหา</button>
+        </form>
+    </div>
+
+    <!-- 🌸 เนื้อหาหลัก -->
+    <main class="content-container">
+        <h1>📝 โพสต์ทั้งหมด</h1>
+
+        <div class="posts">
+            {% for post in posts %}
+            <div class="post card">
+                <div class="user-info">
+                    {% if post.user.member_profile.profile_picture %}
+                        <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img">
+                    {% else %}
+                        <img src="{% static 'images/default-profile.png' %}" class="profile-img">
+                    {% endif %}
+                    <b>{{ post.user.username }}</b>
+                </div>
+
+                <p>{{ post.content }}</p>
+
+                {% if post.media.all %}
+                <div class="post-media">
+                    {% for media in post.media.all|slice:":4" %}
+                        <div class="media-item">
+                            {% if media.media_type == "image" %}
+                                <img src="{{ media.file.url }}" class="img-fluid">
+                            {% elif media.media_type == "video" %}
+                                <video src="{{ media.file.url }}" controls class="img-fluid"></video>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+                <p class="no-results">❌ ไม่พบโพสต์</p>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Your Site. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

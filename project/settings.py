@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+
 ]
 # settings.py
 
@@ -90,7 +91,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",  # ใช้ MySQL
-        "NAME": "mydata2",                 # ชื่อฐานข้อมูลที่คุณสร้างไว้
+        "NAME": "mydata3",                 # ชื่อฐานข้อมูลที่คุณสร้างไว้
         "USER": "root",                       # ชื่อผู้ใช้ MySQL
         "PASSWORD": "1234",                   # รหัสผ่าน MySQL
         "HOST": "localhost",                  # โฮสต์ MySQL
@@ -171,3 +172,14 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
 
 
 AUTH_USER_MODEL = 'myapp.CustomUser'
+
+
+# ตั้งค่า Email Backend (ใช้ SMTP ของ Gmail)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # ✅ ใช้ Gmail SMTP
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ahhajahjajj@gmail.com'  # ✅ ใส่อีเมลของคุณ
+EMAIL_HOST_PASSWORD = 'nlom qvlq fswi ftjb'  # ✅ ใช้ App Password ของ Gmail (ไม่ใช่รหัสผ่านจริง)
+
+

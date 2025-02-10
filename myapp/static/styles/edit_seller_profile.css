@@ -1,0 +1,124 @@
+/* ✅ ตั้งค่า Theme */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fef3f7; /* สีชมพูอ่อน */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* ✅ กล่องฟอร์ม */
+.edit-profile-container {
+    width: 45%;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ หัวข้อ */
+h2 {
+    text-align: center;
+    color: #ff6384;
+    font-weight: bold;
+}
+
+/* ✅ คำอธิบาย */
+.subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* ✅ กลุ่มฟอร์ม */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    color: #ff6384;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* ✅ ปรับสไตล์ช่องกรอกข้อมูล */
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ffb6c1;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+input:focus, textarea:focus {
+    border-color: #ff85a2;
+    outline: none;
+    box-shadow: 0 0 5px #ff85a2;
+}
+
+/* ✅ ปรับแต่งรูปภาพที่อัปโหลด */
+.preview-img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 2px solid #ff85a2;
+}
+
+/* ✅ ส่วนเปลี่ยนรหัสผ่าน */
+.password-section {
+    background: #fff0f3;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.password-section h3 {
+    color: #ff6384;
+    text-align: center;
+}
+
+/* ✅ ปรับแต่งปุ่ม */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-save, .btn-cancel {
+    width: 48%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+/* ✅ ปุ่มบันทึก */
+.btn-save {
+    background-color: #ff85a2;
+    color: white;
+}
+
+.btn-save:hover {
+    background-color: #ff6384;
+}
+
+/* ✅ ปุ่มยกเลิก */
+.btn-cancel {
+    background-color: #b0b0b0;
+    color: white;
+    text-align: center;
+}
+
+.btn-cancel:hover {
+    background-color: #888888;
+}

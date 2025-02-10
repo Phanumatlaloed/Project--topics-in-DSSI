@@ -1,0 +1,63 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 สรุปรายการสินค้าที่ต้องชำระ</title>
+    <link rel="stylesheet" href="{% static 'styles/checkout.css' %}">
+</head>
+<body>
+
+    <!-- 🌸 Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">🏠 Home</a></li>
+            <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+            <li><a href="{% url 'cart' %}">🛒 Cart</a></li>
+            <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
+        </ul>
+    </header>
+
+    <!-- 🌸 Checkout Summary -->
+    <div class="checkout-container">
+        <h2>🛒 สรุปรายการสินค้าที่ต้องชำระ</h2>
+
+        <form method="POST" action="{% url 'confirm_order' %}">
+            {% csrf_token %}
+
+            <h3>📍 ข้อมูลที่อยู่จัดส่ง</h3>
+            <label>ที่อยู่จัดส่ง:</label>
+            <textarea name="shipping_address" required>{{ user_shipping_info.address }}</textarea>
+
+            <label>เบอร์โทรศัพท์:</label>
+            <input type="text" name="phone_number" value="{{ user_shipping_info.phone_number }}" required>
+
+            <h3>🛍 รายการสินค้าทั้งหมด</h3>
+            {% for seller, items in orders_by_seller.items %}
+                <h4>🏪 ร้านค้า: {{ seller.store_name }}</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item.product.name }} - {{ item.quantity }} ชิ้น (฿{{ item.product.price }})</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+
+            <h3>💰 ยอดรวมทั้งหมด: ฿{{ total_checkout_price }}</h3>
+
+            <button type="submit" class="btn btn-success">✅ ยืนยันคำสั่งซื้อ</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Your Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

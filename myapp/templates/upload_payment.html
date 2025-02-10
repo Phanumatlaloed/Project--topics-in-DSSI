@@ -1,0 +1,56 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 สรุปรายการสินค้าที่ต้องชำระ</title>
+    <link rel="stylesheet" href="{% static 'styles/payment_upload.css' %}">
+</head>
+<body>
+
+    <!-- 🌸 Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">🏠 Home</a></li>
+            <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+            <li><a href="{% url 'cart' %}">🛒 Cart</a></li>
+            <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
+        </ul>
+    </header> 
+
+    <div class="payment-container">
+        <h2>💳 อัปโหลดหลักฐานการชำระเงิน</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <h3>📌 หมายเลขออเดอร์:</h3>
+            <ul>
+                {% for order in orders %}
+                    <li>#{{ order.id }} (฿{{ order.total_price }}) - {{ order.seller.store_name }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>💰 ยอดรวมที่ต้องชำระ: ฿{{ total_payment }}</h3>
+
+            <label>📷 อัปโหลดสลิปการชำระเงิน:</label>
+            <input type="file" name="slip" required>
+
+            <button type="submit" class="btn btn-success">📤 ส่งหลักฐานการชำระเงิน</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Your Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
+

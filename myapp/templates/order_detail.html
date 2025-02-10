@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 รายละเอียดคำสั่งซื้อ</title>
+    <link rel="stylesheet" href="{% static 'styles/order_detail.css' %}">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'cart' %}">🛒 Cart</a></li>
+                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>📦 รายละเอียดคำสั่งซื้อ #{{ order.id }}</h2>
+            
+            <div class="order-details">
+                <p><strong>📅 วันที่สั่งซื้อ:</strong> {{ order.created_at|date:"d M Y" }}</p>
+                <p><strong>💰 ราคารวม:</strong> ฿{{ order.total_price }}</p>
+                <p><strong>🚚 สถานะ:</strong> {{ order.get_status_display }}</p>
+            </div>
+
+            <h3>📦 รายการสินค้า</h3>
+            <ul>
+                {% for item in order.order_items.all %}
+                <li>{{ item.product.name }} x {{ item.quantity }}</li>
+                {% endfor %}
+            </ul>
+
+            <a href="{% url 'order_history' %}" class="btn btn-back">⬅ กลับไปยังประวัติการสั่งซื้อ</a>
+        </div>
+    </main>
+</body>
+</html>

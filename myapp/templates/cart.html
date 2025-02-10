@@ -1,0 +1,122 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 ตะกร้าสินค้า</title>
+    <link rel="stylesheet" href="{% static 'styles/cart.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- 🌸 Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+                <li><a href="{% url 'cart' %}" class="active">🛒 Cart</a></li>
+                <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 🌸 Content -->
+    <main>
+        <div class="container">
+            <h2>🛒 ตะกร้าสินค้าของคุณ</h2>
+
+            {% if cart_items %}
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>สินค้า</th>
+                            <th>ราคา</th>
+                            <th>จำนวน</th>
+                            <th>รวม</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr id="cart-item-{{ item.id }}">
+                            <td class="product-info">
+                                <img src="{{ item.product.image.url }}" class="product-image">
+                                <span>{{ item.product.name }}</span>
+                            </td>
+                            <td>฿{{ item.product.price }}</td>
+                            <td class="quantity-controls">
+                                <button class="update-cart decrease" data-id="{{ item.id }}" data-action="decrease">➖</button>
+                                <span class="quantity">{{ item.quantity }}</span>
+                                <button class="update-cart increase" data-id="{{ item.id }}" data-action="increase">➕</button>
+                            </td>
+                            <td class="total-price">฿{{ item.total_price }}</td>
+                            <td>
+                                <button class="btn-remove" data-id="{{ item.id }}">🗑️</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="cart-summary">
+                    <h3>💰 รวมทั้งหมด: ฿<span id="cart-total">{{ total_price }}</span></h3>
+                    <a href="{% url 'checkout' %}" class="btn-checkout">✅ ไปที่ชำระเงิน</a>
+                </div>
+            {% else %}
+                <p class="empty-cart">⚠️ ตะกร้าของคุณว่างเปล่า</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- 🌸 JavaScript (AJAX สำหรับอัปเดตตะกร้า) -->
+    <script>
+        $(document).ready(function () {
+            $(".update-cart").click(function(e) {
+                e.preventDefault();
+                let item_id = $(this).data("id");
+                let action = $(this).data("action");
+
+                $.ajax({
+                    url: `/cart/update/${item_id}/${action}/`,
+                    method: "POST",
+                    data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
+                    success: function(response) {
+                        if (response.success) {
+                            $("#cart-item-" + item_id + " .quantity").text(response.new_quantity);
+                            $("#cart-item-" + item_id + " .total-price").text("฿" + response.new_total);
+                            $("#cart-total").text(response.cart_total);
+
+                            // ลบสินค้าออกจาก DOM ถ้าจำนวนเป็น 0
+                            if (response.new_quantity === 0) {
+                                $("#cart-item-" + item_id).remove();
+                            }
+                        }
+                    }
+                });
+            });
+
+            $(".btn-remove").click(function(e) {
+                e.preventDefault();
+                let item_id = $(this).data("id");
+
+                $.ajax({
+                    url: `/cart/remove/${item_id}/`,
+                    method: "POST",
+                    data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
+                    success: function(response) {
+                        if (response.success) {
+                            $("#cart-item-" + item_id).remove();
+                            $("#cart-total").text(response.cart_total);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

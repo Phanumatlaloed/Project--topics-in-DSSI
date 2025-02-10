@@ -1,9 +1,10 @@
 from django import forms
 from .models import Member, CommunityGroup, GroupPost, UserProfile
-from .models import Post, Seller, Product, CustomUser, Post, PostMedia
+from .models import Post, Seller, Product, CustomUser, Post, PostMedia, ShippingAddress
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 
 User = get_user_model()  # ✅ ใช้ CustomUser
 
@@ -89,7 +90,15 @@ class UserProfileForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'stock', 'image']
+        fields = ['name', 'description', 'price', 'stock', 'image', 'category']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'image': forms.FileInput(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),  # ✅ Dropdown เลือกหมวดหมู่
+        }
 
 from django import forms
 from .models import Seller, CustomUser
@@ -120,12 +129,40 @@ class CustomUserForm(UserCreationForm):
             'password1': forms.PasswordInput(attrs={"class": "form-control"}),
             'password2': forms.PasswordInput(attrs={"class": "form-control"}),
         }
+CustomUser = get_user_model()
 
+class SelleruserUpdateForm(UserChangeForm):
+    """ ฟอร์มแก้ไขข้อมูลผู้ใช้ (User) """
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+class SelleruserPasswordUpdateForm(PasswordChangeForm):
+    """ ฟอร์มเปลี่ยนรหัสผ่าน (User) """
+    old_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'รหัสผ่านเดิม'})
+    )
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'รหัสผ่านใหม่'})
+    )
+    new_password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'ยืนยันรหัสผ่านใหม่'})
+    )
 
 class SellerUpdateForm(forms.ModelForm):
+    """ ฟอร์มแก้ไขข้อมูลร้านค้า """
     class Meta:
         model = Seller
-        fields = ['store_name', 'store_image', 'contact_info']
+        fields = ['store_name', 'contact_info', 'store_image']
+        widgets = {
+            'store_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_info': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'store_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
 class CustomUserForm(UserCreationForm):
     class Meta:
         model = CustomUser
@@ -162,3 +199,11 @@ class EditPostForm(forms.ModelForm):
         model = Post
         fields = ['content']
 
+class ShippingAddressForm(forms.ModelForm):
+    class Meta:
+        model = ShippingAddress
+        fields = ['address', 'phone_number']
+        labels = {
+            'address': '📍 ที่อยู่จัดส่ง',
+            'phone_number': '📞 เบอร์โทรศัพท์',
+        }

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Products</title>
+    <title>🛍 สินค้าทั้งหมด</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'styles/product_list.css' %}">
@@ -29,59 +29,91 @@
                 <li><a href="{% url 'savelist' %}">💾 Save</a></li>
                 <li><a href="{% url 'profile' %}">📄 Profile</a></li>
                 <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
+                <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
+                <li><a href="{% url 'cart' %}">🛒 Cart (<span id="cart-count">{{ cart_count }}</span>)</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <h2>🛍 All Products</h2>
+        <h2>🛍 สินค้าทั้งหมด</h2>
 
-        <!-- Product Slider -->
-        <div class="product-slider">
+        <!-- 🔍 ค้นหาสินค้า -->
+        <input type="text" id="searchBox" placeholder="🔍 ค้นหาสินค้า..." onkeyup="filterProducts()">
+
+        <!-- 📌 เลือกหมวดหมู่ -->
+        <div class="filter-section">
+            <label for="categoryFilter">📌 เลือกหมวดหมู่:</label>
+            <select id="categoryFilter" class="form-select">
+                <option value="">ทั้งหมด</option>
+                <option value="makeup">Makeup</option>
+                <option value="skincare">Skincare</option>
+                <option value="haircare">Hair Care</option>
+                <option value="bodycare">Body Care</option>
+                <option value="nailcare">Nail Care</option>
+                <option value="wellness">Wellness</option>
+                <option value="beautytools">Beauty Tools</option>
+            </select>
+        </div>
+
+        <div class="row">
             {% for product in products %}
-                <div class="product-card">
-                    <a href="{% url 'product_detail' product.id %}">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        {% else %}
-                            <img src="{% static 'images/default_product.png' %}" alt="No Image">
-                        {% endif %}
-                    </a>
-                    <h3>{{ product.name }}</h3>
-                    <p>💰 ราคา: <strong>{{ product.price }} บาท</strong></p>
-                    <p>📦 จำนวน: <strong>{{ product.stock }}</strong></p>
+            <div class="col-md-4 product-item" data-category="{{ product.category }}" data-name="{{ product.name }}">
+                <div class="card">
+                    <img src="{{ product.image.url }}" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">🛍 ร้านค้า: {{ product.seller.store_name }}</p>
+                        <p class="card-text">📌 หมวดหมู่: {{ product.get_category_display }}</p>
+                        <p class="card-text">📦 คงเหลือ: {{ product.stock }}</p>
+                        <p class="text-primary">💰 ราคา: ฿{{ product.price }}</p>
+
+                        <!-- 🛒 ปุ่มเพิ่มในตะกร้า -->
+                        <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">➕ เพิ่มในตะกร้า</button>
+                        </form>
+
+                        <!-- 🔍 ดูรายละเอียดสินค้า -->
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-info">📄 รายละเอียด</a>
+                    </div>
                 </div>
+            </div>
+            {% empty %}
+            <p>⚠️ ไม่มีสินค้าที่ตรงกับการค้นหา</p>
             {% endfor %}
         </div>
     </main>
 
-    <!-- jQuery & Slick Slider -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
-
     <script>
-        $(document).ready(function(){
-            $('.product-slider').slick({
-                slidesToShow: 3,
-                slidesToScroll: 1,
-                autoplay: true,
-                autoplaySpeed: 3000,
-                arrows: true,
-                dots: true,
-                responsive: [
-                    {
-                        breakpoint: 768,
-                        settings: {
-                            slidesToShow: 2
-                        }
-                    },
-                    {
-                        breakpoint: 480,
-                        settings: {
-                            slidesToShow: 1
-                        }
-                    }
-                ]
+        // 🔍 ฟังก์ชันค้นหาสินค้า
+        function filterProducts() {
+            let searchQuery = document.getElementById("searchBox").value.toLowerCase();
+            let products = document.querySelectorAll(".product-item");
+
+            products.forEach(product => {
+                let productName = product.getAttribute("data-name").toLowerCase();
+                let productCategory = product.getAttribute("data-category").toLowerCase();
+                
+                if (productName.includes(searchQuery) || productCategory.includes(searchQuery)) {
+                    product.style.display = "block";
+                } else {
+                    product.style.display = "none";
+                }
+            });
+        }
+
+        // 📌 ฟังก์ชันกรองหมวดหมู่สินค้า
+        document.getElementById("categoryFilter").addEventListener("change", function () {
+            let selectedCategory = this.value;
+            let products = document.querySelectorAll(".product-item");
+
+            products.forEach(product => {
+                if (selectedCategory === "" || product.getAttribute("data-category") === selectedCategory) {
+                    product.style.display = "block";
+                } else {
+                    product.style.display = "none";
+                }
             });
         });
     </script>

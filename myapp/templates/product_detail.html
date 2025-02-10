@@ -52,6 +52,7 @@
                 <p class="price">💰 ราคา: {{ product.price }} บาท</p>
                 <p class="stock">📦 จำนวน: {{ product.quantity }}</p>
                 <p class="description">📜 รายละเอียด: {{ product.description }}</p>
+                <p class="description">หมวดหมู่: {{ product.get_category_display }}</p>
                 <p class="seller">🏪 ร้านค้า: <strong>{{ product.seller.store_name }}</strong></p>
 
                 <!-- กลับไปหน้าสินค้า -->

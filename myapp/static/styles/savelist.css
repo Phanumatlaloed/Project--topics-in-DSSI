@@ -1,145 +1,160 @@
-/* Header Section */
-.header {
+/* 🌸 General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fff5f7; /* สีชมพูอ่อน */
+}
+
+.wrapper {
+    display: flex;
+}
+
+/* 📌 Sidebar */
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    background-color: #fde5e5;
+    padding: 12px 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-right: 3px solid #f7c2c2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* ทำให้ตัวอักษรชิดซ้าย */
+}
+
+/* 🖼 ปรับขนาดและการจัดวางโลโก้ */
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.sidebar .logo img {
+    width: 90px;
+    height: 90px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    padding-left: 20;
+}
+
+.sidebar .logo img:hover {
+    transform: scale(1.05);
+    padding-left: 20;
+}
+
+/* 👤 Welcome Message */
+.sidebar h5 {
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    border: 20px;
+}
+
+/* 📌 เมนูใน Sidebar */
+/* 📌 เมนูใน Sidebar */
+.nav {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.nav-link {
+    text-decoration: none;
+    padding: 12px 15px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start; /* ชิดซ้าย */
+    text-align: left;
+    padding-left: 25px; /* เพิ่มระยะชิดซ้าย */
+    color: #666;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    margin-bottom: 10px;
+    width: 100%; /* ทำให้กว้างเต็ม sidebar */
+}
+
+/* ปรับให้ icon กับ text ห่างกันเล็กน้อย */
+.nav-link i {
+    margin-right: 8px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background-color: #ff9aa2;
+    color: white;
+    font-weight: bold;
+}
+
+/* 🎀 Welcome Section */
+.welcome-logout {
+    text-align: center;
+    padding: 40px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px; /* เพิ่มระยะห่างก่อนปุ่ม Logout */
+}
+
+/* 🔴 ปุ่ม Logout */
+.logout-btn {
+    width: 100%;
+    background-color: #dc3545;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: auto; /* ดันปุ่มลงไปด้านล่างสุด */
+}
+
+/* ทำให้ Sidebar เป็น Flexbox เพื่อให้จัดตำแหน่งปุ่ม Logout ได้ */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* ดันปุ่ม Logout ไปอยู่ด้านล่าง */
+    height: 100vh;
+}
+
+/* 🌸 Main Content */
+.content {
+    margin-left: 270px;
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.search-bar {
     margin-bottom: 20px;
 }
 
-.header .logo img {
-    width: 70px;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
+/* 🌸 Card Styling */
+.card {
+    border-radius: 15px;
+    transition: transform 0.2s;
+    background: white;
 }
 
-.header .logo img:hover {
-    transform: scale(1.1); /* เพิ่มเอฟเฟกต์เมื่อวางเมาส์บนโลโก้ */
-}
-
-h1 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-left: 20px;
-    text-align: center;
-    flex: 1; /* จัดหัวข้อให้อยู่ตรงกลาง */
-}
-
-/* Search Bar */
-.search-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.search-bar input {
-    width: 80%;
-    max-width: 600px;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 25px;
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.search-bar input:focus {
-    border-color: #ff6f61;
-    box-shadow: 0 0 5px rgba(255, 111, 97, 0.5);
-}
-
-/* Saved List Items */
-.savelist-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-}
-
-.savelist-item {
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    text-align: center;
-    position: relative;
-    padding: 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.savelist-item:hover {
+.card:hover {
     transform: scale(1.03);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
-.savelist-item img,
-.savelist-item video {
-    width: 100%;
-    height: 200px;
+.post-media img,
+.post-media video {
+    max-height: 120px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
-.savelist-item p {
-    margin-top: 15px;
-    font-size: 1rem;
-    color: #333;
-    text-align: left;
-}
-
-/* Remove Button */
 .remove-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 8px 20px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.remove-btn:hover {
-    background-color: #ff1a1a;
-}
-
-/* Toast Notification */
-.toast {
-    visibility: hidden;
-    max-width: 350px;
-    min-width: 250px;
-    margin: 0 auto;
-    background-color: rgba(0, 0, 0, 0.85);
-    color: #fff;
-    text-align: center;
-    border-radius: 12px;
-    padding: 15px 20px;
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    font-size: 1rem;
-    font-weight: 500;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    transition: opacity 0.4s ease, top 0.4s ease;
-}
-
-.toast.show {
-    visibility: visible;
-    opacity: 1;
-    top: 30px;
-}
-
-.toast.success {
-    background-color: #28a745;
-    border-left: 6px solid #218838;
-}
-
-.toast.error {
-    background-color: #dc3545;
-    border-left: 6px solid #c82333;
+    font-size: 14px;
+    font-weight: bo
 }

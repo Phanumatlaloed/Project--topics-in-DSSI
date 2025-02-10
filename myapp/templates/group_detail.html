@@ -93,7 +93,11 @@
                 {% for post in posts %}
                 <div class="post-card bg-white shadow-sm rounded p-4 mb-4">
                     <div class="post-header d-flex align-items-center">
-                        <img src="{% if post.user.profile.profile_picture %}{{ post.user.profile.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" alt="Profile" class="profile-pic">                    
+                        {% if post.user.member_profile.profile_picture %}
+                        <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img me-2 rounded-circle" width="40" height="40">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
+                        {% endif %}                   
                         <strong class="ms-2">{{ post.user.get_full_name|default:post.user.username }}</strong>                        
                         <small class="text-muted ms-auto">{{ post.created_at|date:"M d, Y H:i" }}</small>
                     </div>

@@ -1,42 +1,125 @@
+/* ✅ ตั้งค่า Theme */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #ffe6e9;
-    margin: 0;
+    background-color: #fef3f7; /* สีชมพูอ่อน */
+}
+
+.dashboard-container {
+    display: flex;
+}
+
+/* ✅ Sidebar */
+.sidebar {
+    width: 250px;
+    background: #ff85a2;
+    color: white;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.sidebar h2 {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu {
+    list-style: none;
     padding: 0;
 }
 
-/* Container */
-.store-edit-container {
-    max-width: 600px;
-    background: white;
-    margin: 50px auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+.menu-header {
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 5px 10px;
+    background: #f76a88;
+    border-radius: 5px;
 }
 
-/* ปุ่มบันทึก */
-.save-btn {
-    display: inline-block;
-    background: #ff6b81;
+.menu-item {
+    margin-top: 10px;
+}
+
+.menu-item a {
     color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
     text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s;
+    display: block;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.menu-item a:hover, .menu-item.active a {
+    background: white;
+    color: #ff85a2;
+}
+
+/* ✅ Main Content */
+.content {
+    flex-grow: 1;
+    padding: 30px;
+}
+
+.card {
+    border-radius: 15px;
+    background: #ffffff;
     border: none;
 }
 
-.save-btn:hover {
-    background: #ff4757;
+/* ✅ สีชมพูของปุ่ม */
+.btn-pink {
+    background-color: #ff85a2;
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
 }
 
-/* ปุ่มย้อนกลับ */
-.back-btn {
-    display: block;
+.btn-pink:hover {
+    background-color: #ff6384;
+}
+
+/* ✅ ตั้งค่าฟอร์มให้ดูดีขึ้น */
+.form-label {
+    font-weight: 600;
+    color: #ff6384;
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 2px solid #ffb6c1;
+    padding: 10px;
+}
+
+.form-control:focus {
+    border-color: #ff85a2;
+    box-shadow: 0 0 5px #ff85a2;
+}
+
+/* ✅ ปรับแต่งรูปภาพที่อัปโหลด */
+.preview-container {
+    text-align: center;
     margin-top: 10px;
-    color: #ff6b81;
+}
+
+.img-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #ff85a2;
+}
+
+/* ✅ ปรับแต่ง Alert */
+.alert {
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 10px;
+    text-align: center;
+}
+
+/* ✅ ปรับแต่งปุ่มกลับ */
+.btn-secondary {
+    border-radius: 10px;
     font-weight: bold;
 }
