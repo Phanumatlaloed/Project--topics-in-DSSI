@@ -207,3 +207,27 @@ class ShippingAddressForm(forms.ModelForm):
             'address': '📍 ที่อยู่จัดส่ง',
             'phone_number': '📞 เบอร์โทรศัพท์',
         }
+
+
+
+from .models import Report
+
+class ReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ['reason', 'description']
+
+
+class AdminRegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'password1', 'password2']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_staff = True  # ✅ ให้แอดมินเป็น staff อัตโนมัติ
+        if commit:
+            user.save()
+        return user
