@@ -45,8 +45,8 @@
     <!-- Header -->
     <header class="profile-header text-center mb-4">
         <div class="profile-picture mb-3">
-            {% if member and member.profile_picture %}
-                <img src="{{ member.profile_picture.url }}" alt="Profile Picture" class="rounded-circle img-fluid" width="150" height="150">
+            {% if user.profile.profile_picture %}
+                <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle img-fluid" width="150" height="150">
             {% else %}
                 <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="rounded-circle img-fluid" width="150" height="150">
             {% endif %}

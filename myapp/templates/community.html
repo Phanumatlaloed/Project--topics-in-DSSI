@@ -208,6 +208,100 @@
     </style>
 </head>
 <body>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // ✅ ฟังก์ชันกด Like
+            document.querySelectorAll(".like-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    let postId = this.dataset.postId;
+                    fetch(`/like/${postId}/`, {
+                        method: "POST",
+                        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.nextElementSibling.innerText = `${data.like_count} Likes`;
+                            this.classList.toggle("liked", data.liked);
+                        }
+                    });
+                });
+            });
+        
+            // ✅ ฟังก์ชันบันทึกโพสต์
+            document.querySelectorAll(".save-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    let postId = this.dataset.postId;
+                    fetch(`/save/${postId}/`, {
+                        method: "POST",
+                        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.innerText = data.saved ? "Saved" : "Save";
+                        }
+                    });
+                });
+            });
+        
+            // ✅ ฟังก์ชันแชร์โพสต์
+            document.querySelectorAll(".share-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    let postId = this.dataset.postId;
+                    fetch(`/post/${postId}/share/`, {
+                        method: "POST",
+                        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("โพสต์ถูกแชร์แล้ว!");
+                        }
+                    });
+                });
+            });
+        
+            // ✅ ฟังก์ชันลบโพสต์
+            document.querySelectorAll(".delete-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    if (!confirm("ต้องการลบโพสต์นี้จริงหรือไม่?")) return;
+        
+                    let postId = this.dataset.postId;
+                    fetch(`/post/${postId}/delete/`, {
+                        method: "POST",
+                        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.closest(".post").remove();
+                        }
+                    });
+                });
+            });
+        
+            // ✅ ฟังก์ชันเพิ่มคอมเมนต์
+            document.querySelectorAll(".comment-form").forEach(form => {
+                form.addEventListener("submit", function(event) {
+                    event.preventDefault();
+                    let postId = this.dataset.postId;
+                    let content = this.querySelector("textarea").value;
+        
+                    fetch(`/add_comment/${postId}/`, {
+                        method: "POST",
+                        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                        body: new URLSearchParams({ content: content })
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            let commentSection = this.closest(".post").querySelector(".comments");
+                            commentSection.innerHTML += `<p><b>${data.username}:</b> ${data.content}</p>`;
+                            this.querySelector("textarea").value = "";
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+        
     <div class="community-container">
         <aside class="sidebar">
             <div class="logo">

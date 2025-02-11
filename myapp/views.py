@@ -171,6 +171,7 @@ def reset_password(request):
 
     return render(request, "reset_password.html")
 
+
 @login_required
 def home(request):
     """ 
@@ -213,9 +214,16 @@ def community(request):
 def savelist(request):
     return render(request, 'savelist.html')
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Post, PostMedia
+
 def profile(request):
+    user = request.user  # ดึงข้อมูลของผู้ใช้ที่ล็อกอินอยู่
+    profile = get_object_or_404(Member, user=user)  # ดึงโปรไฟล์ของผู้ใช้
+    posts = Post.objects.filter(user=user, is_reported=False).order_by('-created_at')  # กรองโพสต์ที่ไม่ถูกรีพอร์ต
+
     if request.method == 'POST':
-        user = request.user
         profile = user.profile
 
         # Update user information
@@ -234,7 +242,8 @@ def profile(request):
         messages.success(request, 'Profile updated successfully!')
         return redirect('profile')
 
-    return render(request, 'profile.html', {'user': request.user})
+    return render(request, 'profile.html', {'user': user, 'posts': posts})
+
 
 
 def profile_edit(request):
@@ -261,33 +270,25 @@ def profile_edit(request):
         'member_form': member_form,
     })
 
-'''@csrf_exempt
-def create_post(request):
-    if request.method == 'POST':
-        print("Request body:", request.body)
-        print("Authenticated user:", request.user.is_authenticated)
-    # โค้ดส่วนที่เหลือ'''
-    
-
-
-
 
 def logout_view(request):
     logout(request)
     messages.success(request, "คุณได้ออกจากระบบเรียบร้อยแล้ว")
     return redirect('login')
 
+
 @login_required
 def create_post(request):
     if request.method == "POST":
         content = request.POST.get('content', '').strip()
+        is_community = request.POST.get('is_community', 'false') == 'true'
         image_files = request.FILES.getlist('images')
         video_files = request.FILES.getlist('videos')
 
         if not content and not image_files and not video_files:
             return JsonResponse({'success': False, 'message': 'โพสต์ต้องมีข้อความ หรือไฟล์สื่อ'}, status=400)
 
-        post = Post.objects.create(user=request.user, content=content)
+        post = Post.objects.create(user=request.user, content=content, is_community_post=is_community)
 
         for img in image_files:
             PostMedia.objects.create(post=post, file=img, media_type='image')
@@ -295,7 +296,12 @@ def create_post(request):
         for vid in video_files:
             PostMedia.objects.create(post=post, file=vid, media_type='video')
 
-        return JsonResponse({'success': True, 'post_id': post.id}, status=201)
+        return JsonResponse({
+            'success': True, 
+            'post_id': post.id, 
+            'username': request.user.username,
+            'content': content
+        }, status=201)
 
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
@@ -552,6 +558,8 @@ def delete_group(request, group_id):
     messages.success(request, "กลุ่มถูกลบเรียบร้อยแล้ว!")
     return redirect('community_list')
 
+from django.http import JsonResponse
+
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(CommunityGroup, id=group_id)
@@ -559,18 +567,30 @@ def group_detail(request, group_id):
     is_member = request.user in group.members.all()
 
     if request.method == "POST":
-        content = request.POST.get('content', '')
+        content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
         video = request.FILES.get('video')
 
         if content or image or video:
-            GroupPost.objects.create(
+            post = GroupPost.objects.create(
                 group=group,
-                user=request.user,  # ✅ ใช้ request.user (User instance)
+                user=request.user,  
                 content=content,
                 image=image,
                 video=video
             )
+
+            # ✅ ถ้า request เป็น AJAX ให้ส่ง JSON Response กลับไป
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': True,
+                    'post_id': post.id,
+                    'username': request.user.username,
+                    'content': post.content,
+                    'image_url': post.image.url if post.image else None,
+                    'video_url': post.video.url if post.video else None
+                })
+
             return redirect('group_detail', group_id=group.id)
 
     return render(request, 'group_detail.html', {
@@ -1696,3 +1716,12 @@ def delete_reported_post(request, post_id):
         post.delete()
         messages.success(request, "Post has been deleted.")
     return redirect("admin_dashboard")
+
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'password_reset.html'  # ฟอร์มขอรหัสผ่านใหม่
+    email_template_name = 'password_reset_email.html'  # เทมเพลตรูปแบบอีเมล
+    subject_template_name = 'password_reset_subject.txt'  # หัวข้ออีเมล
+    success_url = reverse_lazy('password_reset_done')  # หลังส่งอีเมลเสร็จให้ไปหน้านี้

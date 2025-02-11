@@ -174,12 +174,22 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
 AUTH_USER_MODEL = 'myapp.CustomUser'
 
 
-# ตั้งค่า Email Backend (ใช้ SMTP ของ Gmail)
+
+import ssl
+import smtplib
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # ✅ ใช้ Gmail SMTP
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ahhajahjajj@gmail.com'  # ✅ ใส่อีเมลของคุณ
-EMAIL_HOST_PASSWORD = 'nlom qvlq fswi ftjb'  # ✅ ใช้ App Password ของ Gmail (ไม่ใช่รหัสผ่านจริง)
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'ahhajahjajj@gmail.com'
+EMAIL_HOST_PASSWORD = 'nlomqvlqfswiftjb'  # ต้องเป็น App Password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
 
+# ปิดการตรวจสอบ SSL ชั่วคราว
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
+# กำหนด SSL Context (เฉพาะสำหรับการพัฒนา)
+EMAIL_SSL_CONTEXT = ssl._create_unverified_context()

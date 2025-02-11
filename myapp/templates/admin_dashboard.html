@@ -41,8 +41,15 @@
                             <td>{{ report.reported_by.username }}</td>
                             <td>{{ report.get_reason_display }}</td>
                             <td>
-                                <a href="{% url 'delete_reported_post' report.post.id %}" class="btn btn-danger btn-sm">Delete Post</a>
+                                <form method="post" action="{% url 'delete_reported_post' report.post.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">ลบโพสต์</button>
+                                </form>
                             </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No reported posts found.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

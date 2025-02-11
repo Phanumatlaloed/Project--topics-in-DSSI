@@ -6,14 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
 
-    <!-- CSS Dependencies -->
+    <!-- ✅ Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'styles/home.css' %}">
 
-    <!-- JavaScript Dependencies -->
+    <!-- ✅ JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
-    
-    <!-- Custom JavaScript Files -->
     <script src="{% static 'js/post.js' %}" defer></script>
     <script src="{% static 'js/like.js' %}" defer></script>
     <script src="{% static 'js/share.js' %}" defer></script>
@@ -22,26 +20,20 @@
     <script src="{% static 'js/savelist.js' %}" defer></script>
     <script src="{% static 'js/follow.js' %}" defer></script>
 </head>
-
 <body class="bg-light">
     <div class="container-fluid d-flex">
-        <!-- Sidebar Section -->
+        <!-- Sidebar -->
         <aside class="sidebar p-3 bg-light">
-            <!-- User Profile -->
             <div class="text-center">
                 <img src="{% static 'media/logo.jpg' %}" class="rounded-circle mb-3" alt="Logo" width="80">
                 <p><b>Welcome, {{ request.user.username }}</b></p>
             </div>
-
-            <!-- Navigation Menu -->
             <nav class="nav flex-column">
                 <a href="{% url 'home' %}" class="nav-link active">🏠 Home</a>
                 <a href="{% url 'community_list' %}" class="nav-link">👥 Community</a>
                 <a href="{% url 'savelist' %}" class="nav-link">💾 Save</a>
                 <a href="{% url 'profile' %}" class="nav-link">📄 Profile</a>
                 <a href="{% url 'product_list' %}" class="nav-link">🛒 Product List</a>
-                
-                <!-- Logout Button -->
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger w-100 mt-3">Logout</button>
@@ -49,16 +41,14 @@
             </nav>
         </aside>
 
-        <!-- Main Content Section -->
+        <!-- Main Content -->
         <main class="content flex-grow-1 p-4">
-            <!-- Create Post Section -->
-            <section class="create-post card p-3 shadow-sm">
+            <!-- ✅ Create Post Form -->
+            <div class="create-post card p-3 shadow-sm">
                 <form id="postForm" action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <!-- Post Content Textarea -->
                     <textarea name="content" id="postContent" class="form-control mb-2" placeholder="What's on your mind?" required></textarea>
                 
-                    <!-- Media Upload Buttons -->
                     <div class="d-flex gap-2">
                         <label for="postImages" class="btn btn-light">🖼️ เพิ่มรูปภาพ</label>
                         <input type="file" name="images" id="postImages" accept="image/*" multiple hidden>
@@ -67,100 +57,101 @@
                         <input type="file" name="videos" id="postVideos" accept="video/*" multiple hidden>
                     </div>
 
-                    <!-- Post Submit Button -->
                     <button type="submit" id="postButton" class="btn btn-primary w-100 mt-3">Post</button>
                 </form>
-            </section>
+            </div>
 
-            <!-- Posts Section -->
-            <section class="posts mt-4">
+            <!-- ✅ Posts Section -->
+            <div class="posts mt-4">
                 {% for post in posts %}
-                <article class="post card p-3 mb-3 shadow-sm" id="post-{{ post.id }}">
-                    <!-- User Info & Follow Button -->
-                    <div class="user-info d-flex align-items-center">
-                        <!-- Profile Picture -->
-                        {% if post.user.member_profile.profile_picture %}
-                            <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img me-2 rounded-circle" width="40" height="40">
-                        {% else %}
-                            <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
-                        {% endif %}
-                        
-                        <b>{{ post.user.username }}</b>
+                    {% if post.is_reported == False %}
+                        <div class="post card p-3 mb-3 shadow-sm" id="post-{{ post.id }}">
+                            <!-- User Info -->
+                            <div class="user-info d-flex align-items-center">
+                                {% if post.user.member_profile.profile_picture %}
+                                    <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img me-2 rounded-circle" width="40" height="40">
+                                {% else %}
+                                    <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
+                                {% endif %}
+                                <b>{{ post.user.username }}</b>
 
-                        <!-- Follow/Unfollow Button -->
-                        {% if post.user != request.user %}
-                            <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn"
-                                    data-user-id="{{ post.user.id }}">
-                                    {% if post.user.id in following_users %}Unfollow{% else %}Follow{% endif %}
-                                </button>
-                            </form>
-                        {% endif %}
-                    </div>
+                                <!-- Community Label -->
+                                {% if post.is_community_post %}
+                                    <div class="badge bg-primary text-white ms-2">🌍 Community Post</div>
+                                {% endif %}
 
-                    <!-- Post Content -->
-                    <p class="mt-2">{{ post.content }}</p>
-
-                    <!-- Post Media (Images & Videos) -->
-                    {% if post.media.all %}
-                    <div class="post-media d-grid">
-                        {% for media in post.media.all|slice:":4" %}
-                            <div class="media-item">
-                                {% if media.media_type == "image" %}
-                                    <img src="{{ media.file.url }}" class="rounded img-fluid">
-                                {% elif media.media_type == "video" %}
-                                    <video src="{{ media.file.url }}" controls class="rounded img-fluid"></video>
+                                <!-- Follow Button -->
+                                {% if post.user != request.user %}
+                                    <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn"
+                                            data-user-id="{{ post.user.id }}">
+                                            {% if post.user.id in following_users %}Unfollow{% else %}Follow{% endif %}
+                                        </button>
+                                    </form>
                                 {% endif %}
                             </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
 
-                    <!-- Post Actions -->
-                    <div class="actions mt-2 d-flex gap-2">
-                        <!-- Like Button -->
-                        <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">👍 Like</button>
-                        <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
-                        
-                        <!-- Share Button -->
-                        <button class="btn btn-light share-btn" data-post-id="{{ post.id }}">🔗 Share</button>
-                        
-                        <!-- Save Button -->
-                        <button class="btn btn-light save-btn" data-post-id="{{ post.id }}">
-                            💾 {% if post in request.user.saved_posts.all %}Unsave{% else %}Save{% endif %}
-                        </button>  
+                            <!-- Post Content -->
+                            <p class="mt-2">{{ post.content }}</p>
 
-                        <!-- Edit & Delete Buttons (for post owner) -->
-                        {% if request.user == post.user %}
-                            <a href="{% url 'edit_post' post.id %}" class="btn btn-light">✏️ Edit</a>                          
-                            <button class="btn btn-danger delete-btn" data-post-id="{{ post.id }}">🗑 Delete</button>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Comments Section -->
-                    <div class="comments mt-2">
-                        <h6>💬 Comments</h6>
-                        
-                        <!-- Existing Comments -->
-                        <div id="comments-{{ post.id }}">
-                            {% for comment in post.comments.all %}
-                                <div class="comment border p-2 mb-1 rounded bg-white">
-                                    <b>{{ comment.user.username }}</b>: {{ comment.content }}
+                            <!-- Post Media (รูป & วิดีโอ) -->
+                            {% if post.media.all %}
+                                <div class="post-media d-grid">
+                                    {% for media in post.media.all|slice:":4" %}
+                                        <div class="media-item">
+                                            {% if media.media_type == "image" %}
+                                                <img src="{{ media.file.url }}" class="rounded img-fluid">
+                                            {% elif media.media_type == "video" %}
+                                                <video src="{{ media.file.url }}" controls class="rounded img-fluid"></video>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                            {% endfor %}
+                            {% endif %}
+
+                            <!-- Actions -->
+                            <div class="actions mt-2 d-flex gap-2">
+                                <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">👍 Like</button>
+                                <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
+                                <button class="btn btn-light share-btn" data-post-id="{{ post.id }}">🔗 Share</button>
+                                <button class="btn btn-light save-btn" data-post-id="{{ post.id }}">
+                                    💾 {% if post in request.user.saved_posts.all %}Unsave{% else %}Save{% endif %}
+                                </button>  
+
+                                {% if request.user == post.user %}
+                                    <a href="{% url 'edit_post' post.id %}" class="btn btn-light">✏️ Edit</a>                          
+                                    <button class="btn btn-danger delete-btn" data-post-id="{{ post.id }}">🗑 Delete</button>
+                                {% endif %}
+
+                                <!-- ✅ ปุ่ม Report -->
+                                {% if request.user != post.user %}
+                                    <a href="{% url 'report_post' post.id %}" class="btn btn-warning">🚩 Report</a>
+                                {% endif %}
+                            </div>
+
+                            <!-- Comments Section -->
+                            <div class="comments mt-2">
+                                <h6>💬 Comments</h6>
+                                <div id="comments-{{ post.id }}">
+                                    {% for comment in post.comments.all %}
+                                        <div class="comment border p-2 mb-1 rounded bg-white">
+                                            <b>{{ comment.user.username }}</b>: {{ comment.content }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Add Comment Form -->
+                                <form class="add-comment-form mt-2" data-post-id="{{ post.id }}">
+                                    {% csrf_token %}
+                                    <input type="text" name="content" placeholder="Write a comment..." class="form-control mb-1">
+                                    <button type="submit" class="btn btn-primary btn-sm">Comment</button>
+                                </form>
+                            </div>
                         </div>
-                    
-                        <!-- Add Comment Form -->
-                        <form class="add-comment-form mt-2" data-post-id="{{ post.id }}">
-                            {% csrf_token %}
-                            <input type="text" name="content" placeholder="Write a comment..." class="form-control mb-1">
-                            <button type="submit" class="btn btn-primary btn-sm">Comment</button>
-                        </form>
-                    </div>
-                </article>
+                    {% endif %}
                 {% endfor %}
-            </section>
+            </div>
         </main>
     </div>
 </body>

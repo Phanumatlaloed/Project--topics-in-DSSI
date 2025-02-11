@@ -32,7 +32,7 @@ urlpatterns = [
     path('community/<int:group_id>/', views.group_detail, name='group_detail'),
     path('community/<int:group_id>/join/', views.join_group, name='join_group'),
     #like
-    path('create/', views.create_post, name='create_post'),
+    path('create_post/', views.create_post, name='create_post'),
     path('like/<int:post_id>/', views.toggle_like, name='toggle_like'),
     path('save/<int:post_id>/', views.save_post, name='save_post'),
     path('remove_saved_post/<int:post_id>/', views.remove_saved_post, name='remove_saved_post'),
