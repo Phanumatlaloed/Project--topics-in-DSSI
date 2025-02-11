@@ -9,7 +9,8 @@ from .views import (
     add_product, my_products, product_detail, delete_product, delete_post, edit_post, 
     edit_store, edit_group_post, delete_group_post, save_group_post, share_group_post,
     add_to_cart, view_cart, update_cart, remove_from_cart, checkout, update_shipping,
-    add_review, order_tracking, return_order, cancel_order
+    add_review, order_tracking, return_order, cancel_order, report_post, block_user,
+    admin_login, admin_dashboard, delete_reported_post, admin_register,
 )
 
 
@@ -23,6 +24,7 @@ urlpatterns = [
     path('savelist/', views.savelist, name='savelist'),
     path('profile_management/', views.profile_management, name='profile_management'),
     path('follow/<int:user_id>/', views.follow_user, name='follow_user'),
+    path('report/<int:post_id>/', report_post, name='report_post'),  # ✅ เพิ่ม URL pattern สำหรับการรายงานโพสต์
 
     
     path('community/', views.community_list, name='community_list'),
@@ -126,7 +128,14 @@ urlpatterns = [
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),
+    
+    path('block_user/<int:user_id>/', block_user, name='block_user'),  # ✅ เพิ่ม URL pattern สำหรับการบล็อกผู้ใช้
+
+    # ✅ เส้นทางสำหรับการลงชื่อเข้าใช้ของผู้ดูแลระบบ
+    path('admin_register/', admin_register, name='admin_register'),  # ✅ เส้นทางสมัครแอดมิน
+    path('admin_login/', admin_login, name='admin_login'),
+    path('admin_dashboard/', admin_dashboard, name='admin_dashboard'),
+    path('delete_post/<int:post_id>/', delete_reported_post, name='delete_reported_post'),
+    path('admin_logout/', logout_view, name='admin_logout'),  # ✅ เพิ่มเส้นทางออกจากระบบของแอดมิน
+
 ]
-
-
-

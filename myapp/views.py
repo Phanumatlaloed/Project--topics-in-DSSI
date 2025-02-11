@@ -13,7 +13,7 @@ from .models import Cart, CartItem  # ✅ Import Cart และ CartItem
 from .models import Order, OrderItem  # ✅ เพิ่ม OrderItem เข้าไปด้วย
 
 from .models import Member,CustomUser, Post, Comment, CommunityGroup,PostMedia, GroupPost, Seller, Product, SavedPost, SavedGroupPost, GroupComment, Cart, ShippingAddress, Payment, Order, Review,RefundRequest 
-from .forms import CustomUserCreationForm,ShippingAddressForm,SelleruserUpdateForm, SellerUpdateForm, SelleruserPasswordUpdateForm,UserChangeForm, PasswordChangeForm,EditPostForm, SellerForm, AccountEditForm, UserEditForm, PasswordChangeForm, CommunityGroupForm, ProductForm, SellerForm, SellerUpdateForm, UserCreationForm
+from .forms import CustomUserCreationForm, ShippingAddressForm, SelleruserUpdateForm, SellerUpdateForm, SelleruserPasswordUpdateForm,UserChangeForm, PasswordChangeForm,EditPostForm, SellerForm, AccountEditForm, UserEditForm, PasswordChangeForm, CommunityGroupForm, ProductForm, SellerForm, SellerUpdateForm, UserCreationForm
 
 User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
 
@@ -173,15 +173,26 @@ def reset_password(request):
 
 @login_required
 def home(request):
-    """ แสดงหน้า Home สำหรับเฉพาะผู้ใช้ที่เป็น Member """
+    """ 
+    แสดงหน้า Home โดยกรองโพสต์ของผู้ใช้ที่ถูกบล็อกออก 
+    และไม่แสดงโพสต์ที่ถูกรีพอร์ต
+    """
     if request.user.role != 'member':
         messages.error(request, "❌ เฉพาะสมาชิก (Member) เท่านั้นที่สามารถเข้าถึงหน้านี้!")
         return redirect('login')  # ✅ รีไดเรกต์ไปที่หน้า login ถ้าไม่ใช่ member
 
+    # ✅ ดึงรายการผู้ใช้ที่ถูกบล็อก
+    blocked_users = BlockedUser.objects.filter(blocked_by=request.user).values_list('blocked_user', flat=True)
+
+    # ✅ ดึงโพสต์ที่ไม่ถูกรีพอร์ต และไม่ใช่ของผู้ใช้ที่ถูกบล็อก
+    posts = Post.objects.filter(is_reported=False).exclude(user__id__in=blocked_users).order_by('-created_at')
+
     return render(request, 'home.html', {
-        'username': request.user.username,  
-        'posts': Post.objects.all().order_by('-created_at')  # ✅ ส่งโพสต์ไปแสดงในหน้า home
+        'username': request.user.username,
+        'posts': posts  # ✅ ส่งโพสต์ที่ผ่านการกรองไปแสดงในหน้า home
     })
+
+
 #logout
 # ✅ ฟังก์ชันล็อกเอาต์
 def logout_view(request):
@@ -291,26 +302,28 @@ def create_post(request):
 @login_required
 def delete_post(request, post_id):
     """ ฟังก์ชันลบโพสต์และไฟล์แนบที่เกี่ยวข้อง """
-    post = Post.objects.filter(id=post_id).first()  # ✅ ใช้ `.filter().first()` เพื่อลด error
+    if request.method == "POST":
+        post = Post.objects.filter(id=post_id).first()  # ✅ ใช้ `.filter().first()` เพื่อลด error
 
-    if not post:
-        return JsonResponse({"success": False, "message": "โพสต์นี้ถูกลบไปแล้วหรือไม่มีอยู่จริง"}, status=404)
+        if not post:
+            return JsonResponse({"success": False, "message": "โพสต์นี้ถูกลบไปแล้วหรือไม่มีอยู่จริง"}, status=404)
 
-    # ✅ ตรวจสอบว่าเป็นเจ้าของโพสต์
-    if post.user != request.user:
-        return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบโพสต์นี้"}, status=403)
+        # ✅ ตรวจสอบว่าเป็นเจ้าของโพสต์
+        if post.user != request.user:
+            return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบโพสต์นี้"}, status=403)
 
-    # ✅ ลบไฟล์แนบ
-    for media in post.media.all():
-        if media.file:
-            file_path = os.path.join(settings.MEDIA_ROOT, str(media.file))
-            if os.path.exists(file_path):
-                os.remove(file_path)
-        media.delete()
+        # ✅ ลบไฟล์แนบ
+        for media in post.media.all():
+            if media.file:
+                file_path = os.path.join(settings.MEDIA_ROOT, str(media.file))
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            media.delete()
 
-    post.delete()  # ✅ ลบโพสต์
-    return JsonResponse({"success": True, "message": "โพสต์ถูกลบเรียบร้อยแล้ว!"}, status=200)
-
+        post.delete()  # ✅ ลบโพสต์
+        return JsonResponse({"success": True, "message": "โพสต์ถูกลบเรียบร้อยแล้ว!"}, status=200)
+    
+    return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
 
 @login_required
 def edit_post(request, post_id):
@@ -680,13 +693,16 @@ def profile_view(request):
         member = None  # ✅ ป้องกันกรณีไม่มีโปรไฟล์
     
     posts = Post.objects.filter(user=user).order_by('-created_at')  
+    
+    # คำนวณจำนวน following
+    following_users = [follow.following.id for follow in request.user.following.all()]
 
     return render(request, 'profile.html', {
         'posts': posts,
         'member': member,
         'user': user,
+        'following_users': following_users
     })
-
 
 @login_required
 def share_post(request, post_id):
@@ -1364,7 +1380,6 @@ def get_shipping_address(user):
         return None
 
 
-
 @login_required
 def confirm_order(request):
     """ ยืนยันคำสั่งซื้อ และบันทึกลงฐานข้อมูล """
@@ -1383,7 +1398,7 @@ def confirm_order(request):
         return redirect('checkout')
 
     orders_by_seller = {}
-    order_ids = []  # ✅ เก็บหมายเลขออเดอร์
+    order_ids = []
 
     for item in cart_items:
         seller = item.product.seller
@@ -1402,9 +1417,17 @@ def confirm_order(request):
             total_price=total_price,
             status="pending",
         )
-        order_ids.append(str(order.id))  # ✅ ต้องแปลงเป็น `str()`
+        order_ids.append(str(order.id))
 
         for item in items:
+            # ✅ ลดจำนวนสินค้าคงเหลือ
+            if item.product.stock >= item.quantity:
+                item.product.stock -= item.quantity
+                item.product.save()  # ✅ อัปเดตค่าคงเหลือในฐานข้อมูล
+            else:
+                messages.error(request, f"❌ สินค้า {item.product.name} คงเหลือไม่เพียงพอ")
+                return redirect('cart')
+
             OrderItem.objects.create(
                 order=order,
                 product=item.product,
@@ -1414,9 +1437,8 @@ def confirm_order(request):
             )
 
     cart_items.delete()  # ✅ ล้างตะกร้าหลังจากสร้างคำสั่งซื้อ
-
-    # ✅ ใช้ `redirect()` ให้ถูกต้อง
     return redirect(f"/payment/upload/{','.join(order_ids)}/")
+
 
 @login_required
 def edit_order(request, order_id):
@@ -1574,3 +1596,103 @@ def profile_view(request):
         'following_count': following_count,
         'is_following': is_following
     })
+
+
+@login_required
+def approve_seller_payment(request, order_id):
+    """อนุมัติการชำระเงินของออเดอร์ และอัปเดตสถานะเป็น 'เตรียมจัดส่ง'"""
+    order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
+
+    if not hasattr(order, 'payment'):
+        return JsonResponse({"success": False, "message": f"❌ ไม่พบข้อมูลการชำระเงินของออเดอร์ #{order.id}"}, status=400)
+
+    # ✅ เปลี่ยนสถานะเป็น "เตรียมจัดส่ง"
+    order.payment_status = "paid"
+    order.status = "processing"  # เปลี่ยนจาก 'pending' เป็น 'processing' (เตรียมจัดส่ง)
+    order.save()
+
+    return JsonResponse({"success": True, "message": f"✅ ออเดอร์ #{order.id} ได้รับการอนุมัติและเตรียมจัดส่งแล้ว"})
+
+
+from .models import Report
+from .forms import ReportForm
+@login_required
+def report_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == 'POST':
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            Report.objects.create(
+                post=post,
+                reported_by=request.user,
+                reason=form.cleaned_data['reason'],
+                description=form.cleaned_data['description']
+            )
+            post.is_reported = True  # ✅ ซ่อนโพสต์ที่ถูกรายงาน
+            post.save()
+            messages.success(request, "Post reported successfully.")
+            return redirect('block_user', post.user.id)  # ✅ นำไปสู่หน้าบล็อคผู้ใช้
+    else:
+        form = ReportForm()
+    return render(request, 'report_post.html', {'form': form, 'post': post})
+
+from.models import BlockedUser
+@login_required
+def block_user(request, user_id):
+    blocked_user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        BlockedUser.objects.create(blocked_by=request.user, blocked_user=blocked_user)
+        messages.success(request, f"You have blocked {blocked_user.username}.")
+        return redirect('home')
+    return render(request, 'block_user.html', {'blocked_user': blocked_user})
+
+
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from.forms import AdminRegisterForm
+# ตรวจสอบว่าเป็นแอดมินหรือไม่
+def is_admin(user):
+    return user.is_authenticated and user.is_staff
+
+# แอดมินล็อกอิน
+def admin_login(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None and user.is_staff:  # ✅ ต้องเป็นแอดมินเท่านั้น
+            login(request, user)
+            return redirect("admin_dashboard")
+        else:
+            messages.error(request, "Invalid credentials or not an admin.")
+    
+    return render(request, "admin_login.html")
+
+
+def admin_register(request):
+    if request.method == 'POST':
+        form = AdminRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Admin account created successfully. You can now log in.")
+            return redirect('admin_login')  # ✅ หลังสมัครเสร็จให้ไปหน้า login
+    else:
+        form = AdminRegisterForm()
+
+    return render(request, 'admin_register.html', {'form': form})
+
+# แสดงแดชบอร์ดแอดมิน
+@user_passes_test(is_admin)
+def admin_dashboard(request):
+    reported_posts = Report.objects.select_related('post', 'reported_by').order_by('-created_at')
+    return render(request, "admin_dashboard.html", {"reported_posts": reported_posts})
+
+# ลบโพสต์ที่ถูกรีพอร์ต
+@user_passes_test(is_admin)
+def delete_reported_post(request, post_id):
+    post = Post.objects.filter(id=post_id).first()
+    if post:
+        post.delete()
+        messages.success(request, "Post has been deleted.")
+    return redirect("admin_dashboard")
