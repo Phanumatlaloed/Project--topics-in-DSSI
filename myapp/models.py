@@ -92,9 +92,12 @@ class Post(models.Model):
     content = models.TextField(blank=True, null=True, default="")
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_posts', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_community_post = models.BooleanField(default=False)  # ✅ เพิ่มฟิลด์ระบุว่าเป็นโพสต์จาก Community หรือไม่
     shared_from = models.ForeignKey(
         'self', on_delete=models.SET_NULL, null=True, blank=True, related_name='shared_by'
     )
+    is_reported = models.BooleanField(default=False)  # ✅ เพิ่มฟิลด์เพื่อซ่อนโพสต์ที่ถูกรายงาน
+
 
     class Meta:
         ordering = ['-created_at']
@@ -351,3 +354,29 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"{self.follower.username} follows {self.following.username}"
+    
+
+class Report(models.Model):
+    REASON_CHOICES = [
+        ('spam', 'Spam'),
+        ('violence', 'Violence or Harmful Content'),
+        ('harassment', 'Harassment or Bullying'),
+        ('other', 'Other'),
+    ]
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='reports')
+    reported_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)  # ✅ ใช้ CustomUser
+    reason = models.CharField(max_length=20, choices=REASON_CHOICES)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Report by {self.reported_by.username} on Post {self.post.id}"
+
+# Model สำหรับบล็อคผู้ใช้
+class BlockedUser(models.Model):
+    blocked_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='blocked_users')
+    blocked_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='blocked_by_users')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.blocked_by.username} blocked {self.blocked_user.username}"
