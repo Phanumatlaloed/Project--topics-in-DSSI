@@ -59,7 +59,11 @@
                         <div class="card-body">
                             <!-- User Info -->
                             <div class="d-flex align-items-center mb-2">
-                                <img src="{{ saved_post.post.user.profile_picture }}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                            {% if saved_post.post.user.member_profile and saved_post.post.user.member_profile.profile_picture %}
+                                <img src="{{ saved_post.post.user.member_profile.profile_picture.url }}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                            {% else %}
+                                <img src="{% static 'media/default_profile.png' %}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                            {% endif %}                            
                                 <div>
                                     <h6 class="mb-0">{{ saved_post.post.user.username }}</h6>
                                     <small class="text-muted">{{ saved_post.post.created_at|date:"M d, Y H:i" }}</small>

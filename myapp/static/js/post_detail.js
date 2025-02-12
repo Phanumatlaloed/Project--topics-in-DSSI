@@ -67,3 +67,4 @@ document.addEventListener("DOMContentLoaded", function () {
         return document.querySelector("[name=csrfmiddlewaretoken]").value;
     }
 });
+

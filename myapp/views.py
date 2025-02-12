@@ -210,10 +210,6 @@ def forgotPass(request):
 def community(request):
     return render(request, 'community.html')
 
-#savelist
-def savelist(request):
-    return render(request, 'savelist.html')
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Post, PostMedia
@@ -222,6 +218,7 @@ def profile(request):
     user = request.user  # ดึงข้อมูลของผู้ใช้ที่ล็อกอินอยู่
     profile = get_object_or_404(Member, user=user)  # ดึงโปรไฟล์ของผู้ใช้
     posts = Post.objects.filter(user=user, is_reported=False).order_by('-created_at')  # กรองโพสต์ที่ไม่ถูกรีพอร์ต
+
 
     if request.method == 'POST':
         profile = user.profile
@@ -270,13 +267,6 @@ def profile_edit(request):
         'member_form': member_form,
     })
 
-
-def logout_view(request):
-    logout(request)
-    messages.success(request, "คุณได้ออกจากระบบเรียบร้อยแล้ว")
-    return redirect('login')
-
-
 @login_required
 def create_post(request):
     if request.method == "POST":
@@ -284,6 +274,7 @@ def create_post(request):
         is_community = request.POST.get('is_community', 'false') == 'true'
         image_files = request.FILES.getlist('images')
         video_files = request.FILES.getlist('videos')
+        #group_id = request.POST.get('group_id')  # ✅ ดึงค่า group_id
 
         if not content and not image_files and not video_files:
             return JsonResponse({'success': False, 'message': 'โพสต์ต้องมีข้อความ หรือไฟล์สื่อ'}, status=400)
@@ -481,26 +472,6 @@ def add_comment(request, post_id):
     return JsonResponse({'success': False, 'message': 'Invalid request!'}, status=400)
 
 
-def profile_management(request):
-    profile = request.user.profile
-    if request.method == 'POST':
-        user_form = UserEditForm(request.POST, instance=request.user)
-        profile_form = AccountEditForm(request.POST, request.FILES, instance=profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, "ข้อมูลโปรไฟล์ของคุณถูกแก้ไขเรียบร้อยแล้ว")
-            return redirect('profile_management')
-    else:
-        user_form = UserEditForm(instance=request.user)
-        profile_form = AccountEditForm(instance=profile)
-
-    return render(request, 'profile_management.html', {
-        'user_form': user_form,
-        'profile_form': profile_form,
-    })
-
-
 @login_required
 def community_list(request):
     """ แสดงรายการกลุ่ม Community สำหรับเฉพาะผู้ใช้ที่เป็น Member """
@@ -598,6 +569,28 @@ def group_detail(request, group_id):
         'posts': posts,
         'is_member': is_member
     })
+
+#โพสต์ในกลุ่ม
+@login_required
+def create_group_post(request, group_id):
+    """ ฟังก์ชันสำหรับสร้างโพสต์ใหม่ในกลุ่ม """
+    group = get_object_or_404(Group, id=group_id)
+
+    if request.method == "POST":
+        content = request.POST.get("content", "").strip()
+        if content:
+            post = GroupPost.objects.create(
+                group=group,
+                user=request.user,
+                content=content
+            )
+            return JsonResponse({
+                "success": True,
+                "message": "โพสต์สำเร็จ!",
+                "post_id": post.id
+            })
+
+    return JsonResponse({"success": False, "message": "กรุณากรอกเนื้อหาโพสต์"}, status=400)
 
 
 @login_required
@@ -706,24 +699,41 @@ def profile_view(request):
         messages.error(request, "❌ เฉพาะสมาชิก (Member) เท่านั้นที่สามารถเข้าถึงหน้านี้!")
         return redirect('login')
 
-    user = request.user  
+    user = request.user
+    
     try:
-        member = Member.objects.get(user=user)  # ✅ ดึง Member Profile
+        member = Member.objects.get(user=user)
     except Member.DoesNotExist:
-        member = None  # ✅ ป้องกันกรณีไม่มีโปรไฟล์
-    
-    posts = Post.objects.filter(user=user).order_by('-created_at')  
-    
-    # คำนวณจำนวน following
+        member = None
+
+    # ดึงเฉพาะโพสต์ของผู้ใช้งานเท่านั้น
+    posts = Post.objects.filter(
+        user=user,
+        is_reported=False
+    ).prefetch_related(
+        'media',
+        'comments',
+        'likes'
+    ).order_by('-created_at')
+
+    # Debug information
+    print(f"Debug - User ID: {user.id}")
+    print(f"Debug - Total posts found: {posts.count()}")
+    for post in posts:
+        print(f"Debug - Post ID: {post.id}, Content: {post.content[:50]}...")
+
+    # คำนวณ following users
     following_users = [follow.following.id for follow in request.user.following.all()]
 
     return render(request, 'profile.html', {
         'posts': posts,
         'member': member,
         'user': user,
-        'following_users': following_users
+        'following_users': following_users,
+        'request_user': request.user  # เพิ่ม request_user เพื่อใช้ในการเช็คปุ่ม follow
     })
 
+# แชร์โพสต์หน้าหลัก
 @login_required
 def share_post(request, post_id):
     """ ฟังก์ชันแชร์โพสต์ """
@@ -758,14 +768,21 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import GroupPost, SavedGroupPost, Member
 
+# บันทึกโพสต์ในกลุ่ม
 @login_required
 def save_group_post(request, post_id):
     """
     ฟังก์ชันสำหรับ Save / Unsave Group Post
     """
     post = get_object_or_404(GroupPost, id=post_id)
-    user_profile = get_object_or_404(Member, user=request.user)  # ตรวจสอบโปรไฟล์
+    
+    # ตรวจสอบโปรไฟล์ของผู้ใช้
+    try:
+        user_profile = Member.objects.get(user=request.user)
+    except Member.DoesNotExist:
+        return JsonResponse({"success": False, "message": "ไม่พบข้อมูลโปรไฟล์ของผู้ใช้"}, status=400)
 
+    # ตรวจสอบว่าผู้ใช้บันทึกโพสต์ไปแล้วหรือไม่
     saved_post, created = SavedGroupPost.objects.get_or_create(user=user_profile, post=post)
 
     if not created:
@@ -777,12 +794,11 @@ def save_group_post(request, post_id):
     return JsonResponse({
         'success': True,
         'saved': saved,
-        'save_count': post.saves.count(),
+        'save_count': post.saves.count(),  # ส่งจำนวนครั้งที่ถูกบันทึก
     })
 
 
-
-
+# แชร์โพสต์ในกลุ่ม
 @login_required
 def share_group_post(request, post_id):
     """
@@ -810,22 +826,25 @@ def share_group_post(request, post_id):
         'message': f"Post shared to {group.name}!",
     })
 
-
-login_required
+# แก้ไขโพสต์ในกลุ่ม
+@login_required
 def edit_group_post(request, post_id):
-    """ แก้ไขโพสต์เฉพาะเจ้าของโพสต์ """
-    post = get_object_or_404(GroupPost, id=post_id, user=request.user)
+    post = get_object_or_404(GroupPost, id=post_id)
 
-    if request.method == 'POST':
-        post.content = request.POST.get('content', post.content)
-        post.image = request.FILES.get('image', post.image)
-        post.video = request.FILES.get('video', post.video)
-        post.save()
-        return redirect('group_detail', group_id=post.group.id)
+    if post.user != request.user:
+        return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์แก้ไขโพสต์นี้"}, status=403)
 
-    return render(request, 'edit_post.html', {'post': post})
+    if request.method == "POST":
+        content = request.POST.get("content", "").strip()
+        if content:
+            post.content = content
+            post.save()
+            return JsonResponse({"success": True, "message": "โพสต์ถูกแก้ไขเรียบร้อยแล้ว!"})
+
+    return JsonResponse({"success": False, "message": "กรุณากรอกเนื้อหาที่ต้องการแก้ไข"}, status=400)
 
 
+# ลบโพสต์ในกลุ่ม
 @login_required
 def delete_group_post(request, post_id):
     """ ลบโพสต์เฉพาะเจ้าของโพสต์ """
@@ -834,28 +853,6 @@ def delete_group_post(request, post_id):
         post.delete()
         return JsonResponse({"success": True, "message": "Post deleted successfully!"})
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
-
-
-@login_required
-def save_group_post(request, post_id):
-    """ บันทึกโพสต์จากกลุ่ม """
-    post = get_object_or_404(GroupPost, id=post_id)
-
-    # ตรวจสอบว่ามีการบันทึกโพสต์ไปแล้วหรือไม่
-    saved_post, created = SavedPost.objects.get_or_create(
-        user=request.user,
-        post=post,
-        post_type="group"
-    )
-
-    if not created:
-        saved_post.delete()  # กดยกเลิกการบันทึก
-        return JsonResponse({"success": True, "message": "Post removed from saved list!"})
-
-    return JsonResponse({"success": True, "message": "Post saved successfully!"})
-
-
-
 
 # ✅ ฟังก์ชันแดชบอร์ดผู้ขาย
 @login_required
@@ -895,13 +892,14 @@ def edit_product(request, product_id):
         form = ProductForm(instance=product)
     return render(request, "edit_product.html", {"form": form})
 
-@login_required
+# ✅ ฟังก์ชันลบสินค้า
+'''@login_required
 def delete_product(request, product_id):
     """ ลบสินค้า """
     product = get_object_or_404(Product, id=product_id, seller=request.user.seller_profile)
     product.delete()
     messages.success(request, "Product deleted successfully!")
-    return redirect("seller_dashboard")
+    return redirect("seller_dashboard") '''
 
 
 # ✅ ฟังก์ชันสำหรับ Seller Login
@@ -1553,7 +1551,7 @@ def seller_payment_verification(request):
         "payments": payments  # ✅ ส่ง payments dictionary ไปให้ template
     })
 
-
+# ✅ สร้างฟังก์ชันสำหรับการอนุมัติหรือปฏิเสธการชำระเงิน
 @login_required
 def approve_seller_payment(request, order_id):
     """ผู้ขายอนุมัติการชำระเงิน"""
@@ -1603,7 +1601,7 @@ def follow_user(request, user_id):
     return JsonResponse({"success": True, "message": "Followed successfully."})
 
 
-@login_required
+'''@login_required
 def profile_view(request):
     user = request.user
     followers_count = user.followers.count()
@@ -1615,7 +1613,7 @@ def profile_view(request):
         'followers_count': followers_count,
         'following_count': following_count,
         'is_following': is_following
-    })
+    }) '''
 
 
 @login_required
@@ -1725,3 +1723,23 @@ class CustomPasswordResetView(PasswordResetView):
     email_template_name = 'password_reset_email.html'  # เทมเพลตรูปแบบอีเมล
     subject_template_name = 'password_reset_subject.txt'  # หัวข้ออีเมล
     success_url = reverse_lazy('password_reset_done')  # หลังส่งอีเมลเสร็จให้ไปหน้านี้
+
+@login_required
+def get_group_posts(request, group_id):
+    group = get_object_or_404(CommunityGroup, id=group_id)
+    posts = GroupPost.objects.filter(group=group).order_by('-created_at')
+
+    post_list = []
+    for post in posts:
+        post_list.append({
+            'id': post.id,
+            'username': post.user.username,
+            'profile_picture': post.user.member_profile.profile_picture.url if post.user.member_profile.profile_picture else None,
+            'content': post.content,
+            'created_at': post.created_at.strftime('%b %d, %Y %H:%M'),
+            'image_url': post.image.url if post.image else None,
+            'video_url': post.video.url if post.video else None,
+            'is_owner': request.user == post.user  # ✅ ตรวจสอบว่าผู้ใช้เป็นเจ้าของโพสต์หรือไม่
+        })
+
+    return JsonResponse({'posts': post_list}, status=200)
