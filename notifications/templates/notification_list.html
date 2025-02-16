@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การแจ้งเตือน</title>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: #f5f5f5;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .back-link:hover {
+            background: #2980b9;
+        }
+
+        .notification-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.2s;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .notification-icon {
+            font-size: 28px;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-message {
+            color: #34495e;
+            margin: 5px 0;
+        }
+
+        .notification-time {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 การแจ้งเตือน</h1>
+        <a href="{% url 'home' %}" class="back-link">← กลับไปหน้าโพสต์</a>
+        
+        {% if notifications %}
+            <div class="notifications-list">
+                {% for notification in notifications %}
+                    <div class="notification-card">
+                        <div class="notification-icon">
+                            {% if notification.notification_type == "like_post" %}
+                                ❤️
+                            {% elif notification.notification_type == "new_comment" %}
+                                💬
+                            {% elif notification.notification_type == "new_follower" %}
+                                👤
+                            {% elif notification.notification_type == "share_post" %}
+                                🔄
+                            {% elif notification.notification_type == "new_order" %}
+                                🛒
+                            {% elif notification.notification_type == "new_review" %}
+                                ⭐
+                            {% else %}
+                                🔔
+                            {% endif %}
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-message">
+                                {% if notification.notification_type == "like_post" %}
+                                    <strong>{{ notification.sender.username }}</strong> กดไลค์โพสต์ของคุณ!
+                                {% elif notification.notification_type == "new_comment" %}
+                                    <strong>{{ notification.sender.username }}</strong> แสดงความคิดเห็นในโพสต์ของคุณ!
+                                {% elif notification.notification_type == "new_follower" %}
+                                    <strong>{{ notification.sender.username }}</strong> กำลังติดตามคุณ!
+                                {% elif notification.notification_type == "share_post" %}
+                                    <strong>{{ notification.sender.username }}</strong> แชร์โพสต์ของคุณ!
+                                {% elif notification.notification_type == "new_order" %}
+                                    📦 คำสั่งซื้อใหม่จาก <strong>{{ notification.sender.username }}</strong>!
+                                {% elif notification.notification_type == "new_review" %}
+                                    ⭐ <strong>{{ notification.sender.username }}</strong> รีวิวสินค้าของคุณ!
+                                {% else %}
+                                    มีการแจ้งเตือนใหม่!
+                                {% endif %}
+                            </div>
+                            <div class="notification-time">
+                                {{ notification.created_at|timesince }} ที่ผ่านมา
+                            </div>
+                            {% if notification.post %}
+                                <a href="{% url 'post_detail' notification.post.id %}" style="color: #3498db; text-decoration: none; margin-top: 8px;">
+                                    ดูโพสต์ →
+                                </a>
+                            {% elif notification.order %}
+                                <a href="/orders/{{ notification.order.id }}" style="color: #e67e22; text-decoration: none; margin-top: 8px;">
+                                    ดูคำสั่งซื้อ →
+                                </a>
+                            {% elif notification.sender %}
+                                <a href="{% url 'profile' notification.sender.id %}" style="color: #2ecc71; text-decoration: none; margin-top: 8px;">
+                                    ดูโปรไฟล์ →
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-notifications">
+                📭 ยังไม่มีการแจ้งเตือนใหม่
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

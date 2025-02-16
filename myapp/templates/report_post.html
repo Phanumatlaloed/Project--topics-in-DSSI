@@ -22,7 +22,7 @@
                     <li class="nav-item"><a href="{% url 'home' %}" class="nav-link">🏠 หน้าหลัก</a></li>
                     <li class="nav-item"><a href="{% url 'product_list' %}" class="nav-link">🛍️ สินค้า</a></li>
                     <li class="nav-item"><a href="{% url 'cart' %}" class="nav-link">🛒 ตะกร้า</a></li>
-                    <li class="nav-item"><a href="{% url 'profile' %}" class="nav-link">👤 โปรไฟล์</a></li>
+                    <li class="nav-item"><a href="{% url 'profile' request.user.id %}" class="nav-link">👤 โปรไฟล์</a></li>
                     <li class="nav-item">
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}

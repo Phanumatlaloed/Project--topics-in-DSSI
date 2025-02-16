@@ -1,38 +1,43 @@
 document.addEventListener("DOMContentLoaded", function () {
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith(name + "=")) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    document.querySelectorAll(".save-group-btn").forEach(button => {
+    // ✅ ปุ่ม Save / Unsave
+    document.querySelectorAll(".save-btn").forEach(button => {
         button.addEventListener("click", function () {
-            const postId = this.getAttribute("data-post-id");
-            const csrfToken = getCookie("csrftoken");
+            let postId = this.dataset.postId;
+            let groupId = this.dataset.groupId;  // รับค่า group_id จากปุ่มหรือ HTML element
+            let btn = this;
 
-            fetch(`/group_post/save/${postId}/`, {
+            fetch(`/community/${groupId}/group/post/${postId}/save/`, { 
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": csrfToken,
+                    "X-CSRFToken": getCSRFToken(),
+                    "X-Requested-With": "XMLHttpRequest",
                     "Content-Type": "application/json"
-                }
+                },
+                body: JSON.stringify({})
             })
+            
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    this.innerHTML = data.saved ? "✅ Saved" : "🔖 Save";
+                    if (data.saved) {
+                        btn.innerHTML = "💾 Unsave";
+                        btn.classList.add("btn-success");
+                        btn.classList.remove("btn-light");
+                    } else {
+                        btn.innerHTML = "💾 Save";
+                        btn.classList.add("btn-light");
+                        btn.classList.remove("btn-success");
+                    }
+                } else {
+                    alert("❌ ไม่สามารถบันทึกโพสต์ได้");
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => console.error("❌ Error:", error));
         });
     });
+
+    function getCSRFToken() {
+        let csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']");
+        return csrfToken ? csrfToken.value : "";
+    }
 });

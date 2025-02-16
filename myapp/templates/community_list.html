@@ -21,7 +21,7 @@
                     <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
                     <li><a href="{% url 'community_list' %}" class="nav-link active">👥 Community</a></li>
                     <li><a href="{% url 'savelist' %}" class="nav-link">💾 Save</a></li>
-                    <li><a href="{% url 'profile' %}" class="nav-link">📄 Profile</a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
                     <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
                 </ul>
             </nav>

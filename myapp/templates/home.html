@@ -23,7 +23,6 @@
 <body class="bg-light">
     <div class="container-fluid d-flex">
         <!-- Sidebar -->
-        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo text-center">
                 <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
@@ -34,8 +33,9 @@
                     <li><a href="{% url 'home' %}" class="nav-link active">🏠 Home</a></li>
                     <li><a href="{% url 'community_list' %}" class="nav-link">👥 Community</a></li>
                     <li><a href="{% url 'savelist' %}" class="nav-link ">💾 Save </a></li>
-                    <li><a href="{% url 'profile' %}" class="nav-link">📄 Profile</a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
                     <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
+                    <li><a href="{% url 'notification_list' %}" class="nav-link">notification</a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">
@@ -80,14 +80,15 @@
                                     <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
                                 {% endif %}
                                 <b>{{ post.user.username }}</b>
+                                <small class="text-muted">{{ post.created_at|date:"F j, Y, g:i a" }}</small>
 
                                 <!-- Community Label -->
                                 {% if post.is_community_post %}
                                     <div class="badge bg-primary text-white ms-2">🌍 Community Post</div>
                                 {% endif %}
 
-                                <!-- Follow Button -->
-                                {% if post_user != request.user %}
+                                {# ✅ แสดงปุ่ม Follow แค่ครั้งเดียวต่อผู้ใช้แต่ละคน #}
+                                {% if post.user.id not in followed_users and post.user != request.user %}
                                     <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn"
@@ -95,6 +96,18 @@
                                             {% if post.user.id in following_users %}Unfollow{% else %}Follow{% endif %}
                                         </button>
                                     </form>
+                                    {% with followed_users|add:post.user.id as followed_users %} {% endwith %}
+                                {% endif %}
+
+                                <!-- Follow Button >
+                                {% if post_user != request.user %}
+                                    <form-- method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn"
+                                            data-user-id="{{ post.user.id }}">
+                                            {% if post.user.id in following_users %}Unfollow{% else %}Follow{% endif %}
+                                        </button>
+                                    </form-->
                                 {% endif %}
                             </div>
 
@@ -131,7 +144,7 @@
                                 {% endif %}
 
                                 <!-- ✅ ปุ่ม Report -->
-                                {% if request_user != post.user %}
+                                {% if request.user != post.user %}
                                     <a href="{% url 'report_post' post.id %}" class="btn btn-warning">🚩 Report</a>
                                 {% endif %}
                             </div>

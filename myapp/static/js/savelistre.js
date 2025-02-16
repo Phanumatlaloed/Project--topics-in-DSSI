@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".remove-btn").forEach(button => {
         button.addEventListener("click", function () {
             let postId = this.dataset.postId;
+            let groupId = this.dataset.groupId;  // groupId สำหรับโพสต์ในกลุ่ม
             let card = this.closest(".post-item");
 
             // ✅ ดึง CSRF Token จาก Cookie
@@ -20,7 +21,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 return cookieValue;
             }
 
-            fetch(`/remove_saved_post/${postId}/`, {
+            // ตรวจสอบว่าโพสต์เป็นของกลุ่มหรือไม่
+            let url = groupId ? 
+                      `/community/${groupId}/group/post/${postId}/delete/` :  // ถ้าเป็นโพสต์ในกลุ่ม
+                      `/remove_saved_post/${postId}/`;  // ถ้าเป็นโพสต์ในหน้า Home
+
+            fetch(url, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCSRFToken(),

@@ -20,7 +20,7 @@
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">🏠 Home</a></li>
                 <li><a href="{% url 'cart' %}">🛒 Cart</a></li>
-                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'profile' request.user.id %}">📄 Profile</a></li>
                 <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
             </ul>
         </nav>

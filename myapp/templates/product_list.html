@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +26,7 @@
                 <li><a href="{% url 'home' %}">🏠 Home</a></li>
                 <li><a href="{% url 'community_list' %}">👥 Community</a></li>
                 <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'profile' request.user.id  %}">📄 Profile</a></li>
                 <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
                 <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
                 <li><a href="{% url 'cart' %}">🛒 Cart (<span id="cart-count">{{ cart_count }}</span>)</a></li>
@@ -63,16 +62,15 @@
                     <img src="{{ product.image.url }}" class="card-img-top">
                     <div class="card-body">
                         <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text">🛍 ร้านค้า: {{ product.seller.store_name }}</p>
+                        <p class="card-text">🛍 ร้านค้า: <a href="{% url 'store_detail' product.seller.id %}">{{ product.seller.store_name }}</a></p>
                         <p class="card-text">📌 หมวดหมู่: {{ product.get_category_display }}</p>
                         <p class="card-text">📦 คงเหลือ: {{ product.stock }}</p>
                         <p class="text-primary">💰 ราคา: ฿{{ product.price }}</p>
 
                         <!-- 🛒 ปุ่มเพิ่มในตะกร้า -->
-                        <form method="POST" action="{% url 'add_to_cart' product.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success">➕ เพิ่มในตะกร้า</button>
-                        </form>
+                        <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
+                            ➕ เพิ่มในตะกร้า
+                        </button>
 
                         <!-- 🔍 ดูรายละเอียดสินค้า -->
                         <a href="{% url 'product_detail' product.id %}" class="btn btn-info">📄 รายละเอียด</a>
@@ -85,37 +83,7 @@
         </div>
     </main>
 
-    <script>
-        // 🔍 ฟังก์ชันค้นหาสินค้า
-        function filterProducts() {
-            let searchQuery = document.getElementById("searchBox").value.toLowerCase();
-            let products = document.querySelectorAll(".product-item");
-
-            products.forEach(product => {
-                let productName = product.getAttribute("data-name").toLowerCase();
-                let productCategory = product.getAttribute("data-category").toLowerCase();
-                
-                if (productName.includes(searchQuery) || productCategory.includes(searchQuery)) {
-                    product.style.display = "block";
-                } else {
-                    product.style.display = "none";
-                }
-            });
-        }
-
-        // 📌 ฟังก์ชันกรองหมวดหมู่สินค้า
-        document.getElementById("categoryFilter").addEventListener("change", function () {
-            let selectedCategory = this.value;
-            let products = document.querySelectorAll(".product-item");
-
-            products.forEach(product => {
-                if (selectedCategory === "" || product.getAttribute("data-category") === selectedCategory) {
-                    product.style.display = "block";
-                } else {
-                    product.style.display = "none";
-                }
-            });
-        });
-    </script>
+    <!-- JavaScript -->
+    <script src="{% static 'js/product_list.js' %}"></script>
 </body>
 </html>

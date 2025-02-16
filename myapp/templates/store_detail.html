@@ -1,0 +1,69 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏪 ร้านค้า: {{ store.store_name }}</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles/store_detail.css' %}">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
+                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
+                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
+                <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
+                <li><a href="{% url 'cart' %}">🛒 Cart (<span id="cart-count">{{ cart_count }}</span>)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="store-header">
+            <h2>🏪 ร้านค้า: {{ store.store_name }}</h2>
+            <img src="{{ store.store_image.url }}" alt="ร้านค้า" class="store-image">
+            <p>📧 อีเมลร้านค้า: {{ store.email }}</p>
+            <p>📞 ติดต่อ: {{ store.contact_info }}</p>
+        </div>
+
+        <h3>🛍 สินค้าทั้งหมดของร้าน</h3>
+        <div class="product-grid">
+            {% for product in store.products.all %}
+            <div class="product-item">
+                <div class="card">
+                    <img src="{{ product.image.url }}" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="text-primary">💰 ราคา: ฿{{ product.price }}</p>
+                        
+                        <!-- ปุ่มเพิ่มในตะกร้า -->
+                        <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">➕ เพิ่มในตะกร้า</button>
+                        </form>
+
+                        <!-- ดูรายละเอียดสินค้า -->
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-info">📄 รายละเอียด</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>⚠️ ร้านค้านี้ยังไม่มีสินค้า</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

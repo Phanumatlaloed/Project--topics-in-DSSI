@@ -23,7 +23,7 @@
                 <li><a href="{% url 'home' %}">🏠 Home</a></li>
                 <li><a href="{% url 'community_list' %}">👥 Community</a></li>
                 <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'profile' request.user.id %}">📄 Profile</a></li>
                 <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
                 <li><a href="{% url 'my_products' %}">📦 My Store</a></li>
             </ul>

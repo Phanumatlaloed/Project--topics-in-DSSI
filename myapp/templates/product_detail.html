@@ -1,22 +1,24 @@
 {% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ product.name }}</title>
-    
+
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'styles/product_detail.css' %}">
-    
+
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <!-- Slick Slider (ใช้สำหรับรูปสินค้า) -->
+    <!-- Slick Slider (ใช้สำหรับแสดงรูปสินค้า) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 </head>
 <body>
+
     <!-- Navbar -->
     <header>
         <nav class="navbar">
@@ -27,7 +29,7 @@
                 <li><a href="{% url 'home' %}">🏠 Home</a></li>
                 <li><a href="{% url 'community_list' %}">👥 Community</a></li>
                 <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
+                <li><a href="{% url 'profile' request.user.id  %}">📄 Profile</a></li>
                 <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
             </ul>
         </nav>
@@ -49,17 +51,79 @@
             <!-- Product Details -->
             <div class="product-info">
                 <h2>{{ product.name }}</h2>
-                <p class="price">💰 ราคา: {{ product.price }} บาท</p>
-                <p class="stock">📦 จำนวน: {{ product.quantity }}</p>
-                <p class="description">📜 รายละเอียด: {{ product.description }}</p>
-                <p class="description">หมวดหมู่: {{ product.get_category_display }}</p>
-                <p class="seller">🏪 ร้านค้า: <strong>{{ product.seller.store_name }}</strong></p>
+                <p class="price">💰 ราคา: ฿{{ product.price }}</p>
+                <p class="stock">📦 จำนวนคงเหลือ: {{ product.stock }}</p>
+                <p class="description">📜 รายละเอียดสินค้า: {{ product.description }}</p>
+                <p class="category">📌 หมวดหมู่: {{ product.get_category_display }}</p>
+                <p class="seller">🏪 ร้านค้า: <a href="{% url 'store_detail' product.seller.id %}"><strong>{{ product.seller.store_name }}</strong></a></p>
 
-                <!-- กลับไปหน้าสินค้า -->
-                <a href="{% url 'product_list' %}" class="back-btn">🔙 กลับไปที่สินค้าทั้งหมด</a>
+                <!-- 🛒 ปุ่มเพิ่มลงในตะกร้า -->
+                <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">➕ เพิ่มในตะกร้า</button>
+                </form>
+
+                <!-- 🔙 กลับไปหน้าสินค้า -->
+                <a href="{% url 'product_list' %}" class="btn btn-secondary">🔙 กลับไปที่สินค้าทั้งหมด</a>
             </div>
         </div>
     </div>
+
+    <!-- 🌟 ส่วนแสดงรีวิว -->
+    <div class="reviews-section">
+        <h3>🌟 รีวิวสินค้า</h3>
+
+        {% for review in product.reviews.all %}
+            <div class="review-box">
+                <p><strong>{{ review.user.username }}</strong>: ⭐ {{ review.rating }}/5</p>
+                <p>{{ review.comment }}</p>
+
+                <!-- แสดงรูปภาพ & วิดีโอ -->
+                <div class="review-media">
+                    {% for media in review.media.all %}
+                        {% if media.media_type == "image" %}
+                            <img src="{{ media.file.url }}" alt="Review Image" class="review-image">
+                        {% elif media.media_type == "video" %}
+                            <video controls class="review-video">
+                                <source src="{{ media.file.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% empty %}
+            <p>⚠️ ยังไม่มีรีวิว</p>
+        {% endfor %}
+    </div>
+
+    <!-- 🌟 ฟอร์มเพิ่มรีวิว -->
+    {% if user.is_authenticated %}
+        <div class="review-form">
+            <h3>📝 รีวิวสินค้า</h3>
+            <form method="POST" action="{% url 'add_review' product.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label>ให้คะแนนสินค้า:</label>
+                <select name="rating">
+                    <option value="5">⭐ 5</option>
+                    <option value="4">⭐ 4</option>
+                    <option value="3">⭐ 3</option>
+                    <option value="2">⭐ 2</option>
+                    <option value="1">⭐ 1</option>
+                </select>
+
+                <label>แสดงความคิดเห็น:</label>
+                <textarea name="comment" required></textarea>
+
+                <label>อัปโหลดรูปภาพ/วิดีโอ:</label>
+                <input type="file" name="media" accept="image/*,video/*" multiple>
+
+                <button type="submit" class="btn btn-primary">✅ ส่งรีวิว</button>
+            </form>
+        </div>
+    {% else %}
+        <p>🔒 กรุณา <a href="{% url 'login' %}">เข้าสู่ระบบ</a> เพื่อรีวิวสินค้า</p>
+    {% endif %}
 
     <!-- JS สำหรับ Slider -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -75,5 +139,6 @@
             });
         });
     </script>
-</body>
+
+</body>  
 </html>

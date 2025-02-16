@@ -380,3 +380,41 @@ class BlockedUser(models.Model):
 
     def __str__(self):
         return f"{self.blocked_by.username} blocked {self.blocked_user.username}"
+
+# 🌟 รีวิวสินค้า (Review)
+def review_media_upload_path(instance, filename):
+    """ กำหนด path การอัปโหลดไฟล์ รีวิวแยกประเภท (รูป & วิดีโอ) และเปลี่ยนชื่อไฟล์ให้ไม่ซ้ำ """
+    folder = "images" if instance.media_type == "image" else "videos"
+    ext = filename.split('.')[-1]  
+    unique_filename = f"{uuid.uuid4()}.{ext}"
+    return os.path.join(f"reviews/{folder}/", unique_filename)
+
+
+class Review(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews")
+    rating = models.IntegerField(choices=[(i, f"⭐ {i}") for i in range(1, 6)])  # คะแนน 1-5
+    comment = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)  # ✅ ใช้ timezone.now แทน auto_now_add
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name} ({self.rating} ⭐)"
+
+
+class ReviewMedia(models.Model):
+    """ โมเดลสำหรับเก็บไฟล์รีวิว (รูป & วิดีโอ) """
+    MEDIA_TYPE_CHOICES = (
+        ('image', 'Image'),
+        ('video', 'Video'),
+    )
+    
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="media")
+    file = models.FileField(upload_to=review_media_upload_path)  
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"({self.media_type.upper()}) {os.path.basename(self.file.name)}"

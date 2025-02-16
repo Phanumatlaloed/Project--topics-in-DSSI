@@ -1,0 +1,70 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✍️ รีวิวสินค้า - {{ product.name }}</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles/add_review.css' %}">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">🏠 Home</a></li>
+                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+                <li><a href="{% url 'cart' %}">🛒 Cart</a></li>
+                <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>✍️ รีวิวสินค้า</h1>
+
+        <div class="product-info">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            <h2>{{ product.name }}</h2>
+            <p>💰 ราคา: ฿{{ product.price }}</p>
+            <p>📦 จำนวน: {{ product.stock }}</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" 
+      action="{% url 'add_review' order_id=order.id product_id=product.id %}">
+
+            {% csrf_token %}
+
+            <!-- เลือกคะแนน -->
+            <label>🌟 ให้คะแนน:</label>
+            <select name="rating">
+                <option value="1">⭐ 1</option>
+                <option value="2">⭐ 2</option>
+                <option value="3">⭐ 3</option>
+                <option value="4">⭐ 4</option>
+                <option value="5">⭐ 5</option>
+            </select>
+
+            <!-- รีวิวข้อความ -->
+            <label>📝 เขียนรีวิว:</label>
+            <textarea name="comment" placeholder="พิมพ์รีวิวของคุณที่นี่..."></textarea>
+
+            <!-- อัปโหลดไฟล์ -->
+            <label>📷 อัปโหลดรูป/วิดีโอ (ไม่บังคับ):</label>
+            <input type="file" name="media" multiple>
+
+            <!-- ปุ่มส่ง -->
+            <button type="submit" class="btn-submit">📩 ส่งรีวิว</button>
+        </form>
+    </div>
+</body>
+</html>

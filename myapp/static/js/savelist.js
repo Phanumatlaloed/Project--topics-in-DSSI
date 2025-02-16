@@ -1,16 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // ✅ เพิ่ม event listener ให้ปุ่ม Save ทุกปุ่ม
+    // ✅ ปุ่ม Save / Unsave
     document.querySelectorAll(".save-btn").forEach(button => {
         button.addEventListener("click", function () {
-            let postId = this.dataset.postId;  // ดึง ID ของโพสต์
+            let postId = this.dataset.postId;
             let btn = this;
 
-            fetch(`/save/${postId}/`, {  // ✅ URL ต้องตรงกับ `urls.py`
+            fetch(`/save/${postId}/`, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCSRFToken(),
-                    "X-Requested-With": "XMLHttpRequest"
-                }
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
             })
             .then(response => response.json())
             .then(data => {
@@ -32,18 +34,20 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // ✅ เพิ่ม event listener ให้ปุ่ม Remove บนหน้า Saved List
+    // ✅ ปุ่ม Remove บน Saved List
     document.querySelectorAll(".remove-btn").forEach(button => {
         button.addEventListener("click", function () {
             let postId = this.dataset.postId;
             let card = this.closest(".col-md-6, .col-lg-4");
 
-            fetch(`/save/${postId}/`, {  // ✅ URL ต้องตรงกับ `urls.py`
+            fetch(`/remove_saved_post/${postId}/`, {  // ✅ ใช้ URL ที่ถูกต้อง
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCSRFToken(),
-                    "X-Requested-With": "XMLHttpRequest"
-                }
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
             })
             .then(response => response.json())
             .then(data => {
@@ -60,6 +64,19 @@ document.addEventListener("DOMContentLoaded", function () {
     // ✅ ฟังก์ชันดึง CSRF Token
     function getCSRFToken() {
         let csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']");
-        return csrfToken ? csrfToken.value : "";
+        if (csrfToken) return csrfToken.value;
+
+        let cookieValue = null;
+        if (document.cookie) {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.startsWith("csrftoken=")) {
+                    cookieValue = cookie.substring("csrftoken=".length, cookie.length);
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 });

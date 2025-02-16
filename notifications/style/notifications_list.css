@@ -1,0 +1,43 @@
+.notification-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 10px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.notification-card:hover {
+    transform: translateY(-2px);
+}
+.notification-icon {
+    font-size: 24px;
+    color: #4CAF50; /* สีเขียวสำหรับไอคอน */
+}
+.notification-content {
+    flex-grow: 1;
+}
+.notification-sender {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+.notification-message {
+    color: #666;
+    font-size: 14px;
+}
+.notification-time {
+    color: #999;
+    font-size: 12px;
+    margin-top: 4px;
+}
+.view-post-link {
+    color: #2196F3; /* สีน้ำเงินสำหรับลิงก์ */
+    text-decoration: none;
+    font-size: 14px;
+}
+.view-post-link:hover {
+    text-decoration: underline;
+}

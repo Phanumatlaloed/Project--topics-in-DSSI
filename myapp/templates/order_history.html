@@ -6,11 +6,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📜 ประวัติการสั่งซื้อ</title>
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'styles/order_history.css' %}">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- 🌸 Navbar -->
+    <!-- Navbar -->
     <header class="navbar">
         <div class="logo">
             <a href="{% url 'home' %}">
@@ -18,16 +23,16 @@
             </a>
         </div>
         <ul class="nav-links">
-            <ul class="nav-links">
-                <li><a href="{% url 'home' %}">🏠 Home</a></li>
-                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
-                <li><a href="{% url 'cart' %}" class="active">🛒 Cart</a></li>
-                <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
-            </ul>
-        </header>
+            <li><a href="{% url 'home' %}">🏠 Home</a></li>
+            <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
+            <li><a href="{% url 'cart' %}">🛒 Cart</a></li>
+            <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
+        </ul>
+    </header>
 
+    <!-- Main Content -->
     <div class="container">
-        <h1 class="title">📜 ประวัติการสั่งซื้อ</h1>
+        <h1>📜 ประวัติการสั่งซื้อ</h1>
 
         <table class="order-table">
             <thead>
@@ -40,7 +45,7 @@
                     <th>💰 ราคา</th>
                     <th>💳 สถานะชำระเงิน</th>
                     <th>🚚 สถานะคำสั่งซื้อ</th>
-                    <th>✏️ แก้ไข</th>
+                    <th>⭐ รีวิว</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,29 +56,65 @@
                     <td>
                         <ul>
                             {% for item in order.order_items.all %}
-                                <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.product.price }})</li>
+                                <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.price_per_item }})</li>
                             {% endfor %}
                         </ul>
                     </td>
                     <td>{{ order.shipping_address }}</td>
                     <td>{{ order.phone_number }}</td>
                     <td>฿{{ order.total_price }}</td>
-                    <td class="{% if order.payment_status == 'paid' %}paid{% else %}pending{% endif %}">
-                        {{ order.get_payment_status_display }}
-                    </td>
-                    <td class="status">{{ order.get_status_display }}</td>
                     <td>
-                        <a href="{% url 'edit_shipping_address' order.id %}" class="edit-button">📝 แก้ไข</a>
+                        {% if order.payment_status == "paid" %}
+                            <span class="paid">✅ ชำระเงินแล้ว</span>
+                        {% elif order.payment_status == "pending" %}
+                            <span class="pending-payment">⏳ รอการชำระเงิน</span>
+                        {% elif order.payment_status == "rejected" %}
+                            <span class="rejected">❌ การชำระเงินถูกปฏิเสธ</span>
+                        {% endif %}
                     </td>
+                    <td class="status">
+                        {% if order.status == "pending" %}
+                            <span class="pending">🟠 รอดำเนินการ</span>
+                        {% elif order.status == "processing" %}
+                            <span class="processing">🔄 เตรียมจัดส่ง</span>
+                        {% elif order.status == "shipped" %}
+                            <span class="shipped">🚚 จัดส่งแล้ว</span>
+                        {% elif order.status == "delivered" %}
+                            <span class="delivered">✅ ส่งสำเร็จ</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.status == "delivered" %}
+                            {% for item in order.order_items.all %}
+                                {% with already_reviewed=False %}
+                                    {% for review in item.product.reviews.all %}
+                                        {% if review.user == request.user and review.order.id == order.id %}
+                                            {% with already_reviewed=True %}
+                                                <span class="reviewed">✅ รีวิวแล้ว</span><br>
+                                            {% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if not already_reviewed %}
+                                        <a href="{% url 'add_review' order.id item.product.id %}" class="btn-review">
+                                            📝 รีวิว {{ item.product.name }}
+                                        </a><br>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endfor %}
+                        {% else %}
+                            <span class="no-review">❌ ยังไม่สามารถรีวิวได้</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9">❌ ไม่มีคำสั่งซื้อ</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-
-    <footer>
-        <p>&copy; 2025 Your Shop. All rights reserved.</p>
-    </footer>
 
 </body>
 </html>

@@ -16,7 +16,7 @@
         
         <!-- Back Button -->
         <div class="text-end">
-            <a href="{% url 'profile' %}" class="btn btn-secondary mb-3">⬅ กลับไปยังหน้า Profile</a>
+            <a href="{% url 'profile' request.user.id %}" class="btn btn-secondary mb-3">⬅ กลับไปยังหน้า Profile</a>
         </div>
 
         <!-- Welcome Section -->

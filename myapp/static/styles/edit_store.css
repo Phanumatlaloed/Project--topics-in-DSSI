@@ -2,124 +2,123 @@
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #fef3f7; /* สีชมพูอ่อน */
-}
-
-.dashboard-container {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-/* ✅ Sidebar */
-.sidebar {
-    width: 250px;
-    background: #ff85a2;
-    color: white;
-    padding: 20px;
-    min-height: 100vh;
+/* ✅ กล่องฟอร์ม */
+.edit-profile-container {
+    width: 45%;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar h2 {
-    font-size: 20px;
-    font-weight: bold;
+/* ✅ หัวข้อ */
+h2 {
     text-align: center;
+    color: #ff6384;
+    font-weight: bold;
+}
+
+/* ✅ คำอธิบาย */
+.subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
     margin-bottom: 20px;
 }
 
-.menu {
-    list-style: none;
-    padding: 0;
+/* ✅ กลุ่มฟอร์ม */
+.form-group {
+    margin-bottom: 15px;
 }
 
-.menu-header {
+label {
     font-weight: bold;
-    margin-top: 15px;
-    padding: 5px 10px;
-    background: #f76a88;
-    border-radius: 5px;
-}
-
-.menu-item {
-    margin-top: 10px;
-}
-
-.menu-item a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    padding: 10px;
-    border-radius: 8px;
-    transition: all 0.3s ease-in-out;
-}
-
-.menu-item a:hover, .menu-item.active a {
-    background: white;
-    color: #ff85a2;
-}
-
-/* ✅ Main Content */
-.content {
-    flex-grow: 1;
-    padding: 30px;
-}
-
-.card {
-    border-radius: 15px;
-    background: #ffffff;
-    border: none;
-}
-
-/* ✅ สีชมพูของปุ่ม */
-.btn-pink {
-    background-color: #ff85a2;
-    color: white;
-    border-radius: 10px;
-    font-weight: bold;
-}
-
-.btn-pink:hover {
-    background-color: #ff6384;
-}
-
-/* ✅ ตั้งค่าฟอร์มให้ดูดีขึ้น */
-.form-label {
-    font-weight: 600;
     color: #ff6384;
+    display: block;
+    margin-bottom: 5px;
 }
 
-.form-control {
-    border-radius: 10px;
+/* ✅ ปรับสไตล์ช่องกรอกข้อมูล */
+input, textarea {
+    width: 100%;
+    padding: 12px;
     border: 2px solid #ffb6c1;
-    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
 }
 
-.form-control:focus {
+input:focus, textarea:focus {
     border-color: #ff85a2;
+    outline: none;
     box-shadow: 0 0 5px #ff85a2;
 }
 
 /* ✅ ปรับแต่งรูปภาพที่อัปโหลด */
-.preview-container {
-    text-align: center;
-    margin-top: 10px;
-}
-
-.img-preview {
-    width: 100px;
-    height: 100px;
+.preview-img {
+    display: block;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
+    margin-top: 10px;
     border-radius: 10px;
     border: 2px solid #ff85a2;
 }
 
-/* ✅ ปรับแต่ง Alert */
-.alert {
+/* ✅ ส่วนเปลี่ยนรหัสผ่าน */
+.password-section {
+    background: #fff0f3;
+    padding: 15px;
     border-radius: 10px;
-    font-size: 14px;
-    padding: 10px;
+    margin-top: 20px;
+}
+
+.password-section h3 {
+    color: #ff6384;
     text-align: center;
 }
 
-/* ✅ ปรับแต่งปุ่มกลับ */
-.btn-secondary {
-    border-radius: 10px;
+/* ✅ ปรับแต่งปุ่ม */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-save, .btn-cancel {
+    width: 48%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
     font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+/* ✅ ปุ่มบันทึก */
+.btn-save {
+    background-color: #ff85a2;
+    color: white;
+}
+
+.btn-save:hover {
+    background-color: #ff6384;
+}
+
+/* ✅ ปุ่มยกเลิก */
+.btn-cancel {
+    background-color: #b0b0b0;
+    color: white;
+    text-align: center;
+}
+
+.btn-cancel:hover {
+    background-color: #888888;
 }

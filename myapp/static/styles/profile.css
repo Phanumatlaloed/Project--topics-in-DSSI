@@ -14,104 +14,136 @@ body {
     min-height: 100vh;
 }
 
-/* 🌸 Sidebar */
+/* 📌 Sidebar */
 .sidebar {
     width: 220px;
     height: 100vh;
     position: fixed;
-    background-color: #ffebef;
-    padding: 20px;
+    background-color: #fde5e5;
+    padding: 12px 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    border-right: 3px solid #ff9aa2;
-    color: #333;
+    border-right: 3px solid #f7c2c2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* ทำให้ตัวอักษรชิดซ้าย */
 }
 
-.sidebar-header {
+/* 🖼 ปรับขนาดและการจัดวางโลโก้ */
+.sidebar .logo {
     text-align: center;
-    padding: 20px 0;
+    margin-bottom: 10px;
 }
 
-.sidebar-header img {
+.sidebar .logo img {
     width: 90px;
     height: 90px;
-    border: 4px solid white;
+    display: block;
+    margin: 0 auto;
     border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-bottom: 15px;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+
 }
 
-.menu ul {
+.sidebar .logo img:hover {
+    transform: scale(1.05);
+    padding-left: 20;
+}
+
+/* 👤 Welcome Message */
+/* จัดให้อักษรอยู่ตรงกลาง */
+.sidebar h5 {
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.4rem; /* ขยายขนาดให้เด่นขึ้น */
+    margin-top: 10px;
+
+}
+
+/* 📌 เมนูใน Sidebar */
+.nav {
     list-style: none;
     padding: 0;
-    margin: 0;
+    width: 100%;
 }
 
-.menu li {
-    margin-bottom: 12px;
-}
-
-.menu a {
+.nav-link {
     text-decoration: none;
-    font-size: 16px;
-    color: #333;
-    display: block;
-    padding: 12px;
-    border-radius: 10px;
-    text-align: center;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* ชิดซ้าย */
+    text-align: left;
+    padding-left: 25px; /* เพิ่มระยะชิดซ้าย */
+    color: #666;
+    font-size: 1rem;
+    border-radius: 8px;
     transition: all 0.3s ease;
+    font-weight: 500;
+    margin-bottom: 10px;
+    width: 100%; /* ทำให้กว้างเต็ม sidebar */
 }
 
-.menu a:hover,
-.menu a.active {
-    background-color: #ff6b81;
-    color: #fff;
+/* ปรับให้ icon กับ text ห่างกันเล็กน้อย */
+.nav-link i {
+    margin-right: 8px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background-color: #ff9aa2;
+    color: white;
     font-weight: bold;
 }
 
-.menu a i {
-    margin-right: 10px;
-}
-
-/* 🌸 Sidebar Footer */
-.sidebar-footer {
-    margin-top: auto;
+/* 🎀 Welcome Section */
+.welcome-logout {
     text-align: center;
-    font-size: 14px;
-    background-color: #ffecec;
-    padding: 12px;
-    border-radius: 10px;
+    padding: 40px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px; /* เพิ่มระยะห่างก่อนปุ่ม Logout */
 }
 
-.sidebar-footer p {
-    margin-bottom: 10px;
-    font-size: 14px;
-}
-
-.sidebar-footer .btn {
-    background-color: #ff4f5a;
-    color: white;
+/* 🔴 ปุ่ม Logout */
+.logout-btn {
+    width: 100%;
+    background-color: #dc3545;
     border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
+    padding: 12px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
     transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: auto; /* ดันปุ่มลงไปด้านล่างสุด */
 }
 
-.sidebar-footer .btn:hover {
-    background-color: #e63946;
-    transform: scale(1.05);
+/* ทำให้ Sidebar เป็น Flexbox เพื่อให้จัดตำแหน่งปุ่ม Logout ได้ */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* ดันปุ่ม Logout ไปอยู่ด้านล่าง */
+    height: 100vh;
 }
+
 
 /* 🌸 Main Content */
 .content {
-    margin-left: 280px;
+    margin-left: 270px;  /* Give enough space for sidebar */
     padding: 30px;
     flex-grow: 1;
+    overflow: hidden;  /* Prevent overflow of content */
 }
 
 /* 🌸 Profile Header */
 .profile-header {
     background: linear-gradient(135deg, #ff9aa2, #ff6b81);
-    padding: 40px;
+    padding: 20px 50px;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -130,12 +162,12 @@ body {
 
 /* 🌸 Create Post */
 .create-post {
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
     padding: 25px;
-    margin-bottom: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border: 3px solid #ff9aa2;
+    margin-bottom: 30px;
 }
 
 .create-post textarea {
@@ -157,6 +189,47 @@ body {
     margin-bottom: 30px;
     transition: transform 0.3s;
 }
+
+ 🌸 ปรับขนาดรูปภาพในโพสต์ให้เล็กลง */
+.post-media .media-item img {
+    max-width: 400px; /* กำหนดความกว้างสูงสุด */
+    width: 100%; /* ปรับขนาดให้เหมาะสมกับหน้าจอ */
+    /*height: auto; /* คงอัตราส่วนของรูปภาพ */
+    display: block;
+    margin: 0 auto; /* จัดให้อยู่ตรงกลาง */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 🌸 ถ้ามีหลายรูป จัดเรียงให้ดูสวย */
+.post-media.d-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.post-media {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* จัดให้อยู่กึ่งกลาง */
+    gap: 10px; /* ระยะห่างระหว่างรูป */
+}
+
+.post-media .media-item {
+    flex: 1 1 45%; /* ปรับขนาดให้แต่ละรูปใช้ 45% ของพื้นที่ */
+    max-width: 45%;
+}
+
+.post-media img,
+.post-media video {
+    width: 100%;
+    height: 300px; /* ปรับความสูงให้เท่ากัน */
+    object-fit: cover; /* ป้องกันรูปบิดเบี้ยว */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 
 .post:hover {
     transform: translateY(-5px);

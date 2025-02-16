@@ -1,0 +1,132 @@
+/* 🌸 ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🌸 Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    width: 80px;
+    height: auto;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #ff6b81;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    background: #ff6b81;
+    color: white;
+}
+
+/* 🌸 ส่วนของร้านค้า */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.store-header {
+    padding-bottom: 20px;
+    border-bottom: 2px solid #ff6b81;
+}
+
+h2 {
+    color: #ff6b81;
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+.store-image {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 10px 0;
+    border: 4px solid #ff6b81;
+}
+
+p {
+    font-size: 16px;
+    color: #555;
+}
+
+/* 🌸 โครงสร้างสินค้า */
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px auto;
+    max-width: 1200px;
+}
+
+/* 🌸 การ์ดสินค้า */
+.product-item {
+    width: 260px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+
+.product-item:hover {
+    transform: translateY(-5px);
+}
+
+.card {
+    text-align: center;
+    padding: 15px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff6b81;
+    margin-top: 10px;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+}

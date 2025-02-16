@@ -16,29 +16,36 @@
     <script src="{% static 'js/group_like.js' %}" defer></script>
     <script src="{% static 'js/group_share.js' %}" defer></script>
     <script src="{% static 'js/group_delete.js' %}" defer></script>
+    <script src="{% static 'js/group_edit.js' %}" defer></script>
     <script src="{% static 'js/comment.js' %}" defer></script>
-    <script src="{% static 'js/savelist.js' %}" defer></script>
+    <script src="{% static 'js/group_save.js' %}" defer></script>
     <script src="{% static 'js/follow.js' %}" defer></script>
 </head>
 <body>
     <div class="container-fluid">
-        <!-- Sidebar โครงสร้างเดิม -->
-        <aside class="sidebar p-3 bg-light">
-            <div class="text-center">
-                <img src="{% static 'media/logo.jpg' %}" class="rounded-circle mb-3" alt="Logo" width="80">
-                <p><b>Welcome, {{ request.user.username }}</b></p>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo text-center">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
+                <h5>My Community</h5>
             </div>
-            <nav class="nav flex-column">
-                <a href="{% url 'home' %}" class="nav-link">🏠 Home</a>
-                <a href="{% url 'community_list' %}" class="nav-link active">👥 Community</a>
-                <a href="{% url 'savelist' %}" class="nav-link">💾 Save</a>
-                <a href="{% url 'profile' %}" class="nav-link">📄 Profile</a>
-                <a href="{% url 'product_list' %}" class="nav-link">🛒 Product List</a>
+            <nav>
+                <ul class="nav">
+                    <li><a href="{% url 'home' %}" class="nav-link ">🏠 Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link active">👥 Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link ">💾 Save </a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
+                    <li><a href="{% url 'notification_list' %}" class="nav-link">notification</a></li>
+                </ul>
+            </nav>
+            <div class="welcome-logout">
+                <p>Welcome, <b>{{ request.user.username }}</b></p>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger w-100 mt-3">Logout</button>
+                    <button type="submit" class="logout-btn">Logout</button>
                 </form>
-            </nav>
+            </div>
         </aside>
 
         <!-- Main Content -->
@@ -54,7 +61,7 @@
                 </div>
                 
                 {% if request.user == post.user %}
-                    <a href="{% url 'edit_post' post.id %}" class="btn btn-light">✏️ Edit</a>                          
+                <a href="{% url 'edit_group_post' post.id %}" class="btn btn-light">✏️ Edit</a>                          
                     <button class="btn btn-danger delete-btn" data-post-id="{{ post.id }}">🗑 Delete</button>
                 {% endif %}
             
@@ -70,19 +77,23 @@
             <!-- Post Form -->
             <div class="post-form-container bg-white shadow-sm rounded p-4 mb-4">
                 <h3 class="mb-3">สร้างโพสต์</h3>
-                <form id="postForm" action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
+                <form id="postForm" action="{% url 'create_group_post' group.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <textarea name="content" class="form-control mb-3" rows="3" placeholder="คุณกำลังคิดอะไร?" required></textarea>
+                    
+                    <input type="hidden" name="group_id" value="{{ group.id }}">
+                
                     <div class="d-flex gap-2">
                         <label for="postImages" class="btn btn-light">🖼️ เพิ่มรูปภาพ</label>
-                        <input type="file" name="images" id="postImages" accept="image/*" multiple hidden>
-                    
+                        <input type="file" name="image" id="postImages" accept="image/*" hidden>
+                
                         <label for="postVideos" class="btn btn-light">🎥 เพิ่มวิดีโอ</label>
-                        <input type="file" name="videos" id="postVideos" accept="video/*" multiple hidden>
+                        <input type="file" name="video" id="postVideos" accept="video/*" hidden>
                     </div>
+                    
                     <button type="submit" class="btn btn-primary w-100 mt-3">โพสต์</button>
                 </form>
-            </div>
+            </div>    
             {% endif %}
             
             <!-- Posts Section -->
@@ -123,12 +134,12 @@
                         <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">👍 Like</button>
                         <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
                         <button class="btn btn-light share-btn" data-post-id="{{ post.id }}">🔗 Share</button>
-                        <button class="btn btn-light save-btn" data-post-id="{{ post.id }}">
+                        <button class="btn btn-light save-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
                             💾 {% if post in request.user.saved_posts.all %}Unsave{% else %}Save{% endif %}
-                        </button>  
+                        </button>                        
 
                         {% if request.user == post.user %}
-                            <a href="{% url 'edit_post' post.id %}" class="btn btn-light">✏️ Edit</a>                          
+                            <a href="{% url 'edit_group_post' post.id %}" class="btn btn-light">✏️ Edit</a>                          
                             <button class="btn btn-danger delete-btn" data-post-id="{{ post.id }}">🗑 Delete</button>
                         {% endif %}
                     </div>

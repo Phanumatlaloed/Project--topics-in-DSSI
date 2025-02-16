@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{% static 'styles/profile.css' %}">
     <script src="{% static 'js/profile.js' %}" defer></script>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+
     <script src="{% static 'js/post.js' %}" defer></script>
     <script src="{% static 'js/like.js' %}" defer></script>
     <script src="{% static 'js/share.js' %}" defer></script>
@@ -18,24 +20,27 @@
 </head>
 <body>
     <div class="wrapper d-flex">
-        <!-- Sidebar -->
-        <aside class="sidebar bg-light">
-            <div class="sidebar-header text-center py-4">
-                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="sidebar-logo img-fluid rounded-circle" width="100">
+          <!-- Sidebar -->
+          <aside class="sidebar">
+            <div class="logo text-center">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
+                <h5>Profile</h5>
             </div>
-            <nav class="menu">
-                <ul class="list-unstyled">
-                    <li><a href="{% url 'home' %}" class="d-block py-2 px-3"><i class="fas fa-home me-2"></i>Home</a></li>
-                    <li><a href="{% url 'community_list' %}" class="d-block py-2 px-3"><i class="fas fa-users me-2"></i>Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="d-block py-2 px-3"><i class="fas fa-bookmark me-2"></i>Saved</a></li>
-                    <li><a href="{% url 'profile' %}" class="d-block py-2 px-3 active"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
+            <nav>
+                <ul class="nav">
+                    <li><a href="{% url 'home' %}" class="nav-link ">🏠 Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link">👥 Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link ">💾 Save </a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link active">📄 Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
+                    <li><a href="{% url 'notification_list' %}" class="nav-link">notification</a></li>
                 </ul>
             </nav>
-            <div class="sidebar-footer text-center mt-auto py-3">
-                <p>Welcome, <strong>{{ user.username }}</strong></p>
+            <div class="welcome-logout">
+                <p>Welcome, <b>{{ request.user.username }}</b></p>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
-                    <button class="btn btn-danger btn-sm">Logout</button>
+                    <button type="submit" class="logout-btn">Logout</button>
                 </form>
             </div>
         </aside>
@@ -91,14 +96,8 @@
             <!-- User's Posts -->
             <div class="user-posts">
                 <div class="user-posts">
-                    <h3>Debug Posts:</h3>
-                    <ul>
-                        {% for post in posts %}
-                            <li>{{ post.content }} ({{ post.created_at }})</li>
-                        {% empty %}
-                            <li>No posts found.</li>
-                        {% endfor %}
-                    </ul>
+                    <h3>โพสต์ของฉัน</h3>
+
                 </div>
 
                 {% for post in posts %}

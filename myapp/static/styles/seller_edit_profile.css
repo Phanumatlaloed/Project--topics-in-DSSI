@@ -1,0 +1,174 @@
+/* ✅ ตั้งค่าธีม */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ffdde1, #f9a8b4); /* พื้นหลังไล่สีชมพูอ่อน */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* ✅ กล่องฟอร์ม */
+.edit-profile-container {
+    max-width: 600px;  /* ✅ ปรับให้กว้างขึ้น */
+    width: 100%;
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);  /* ✅ เงาแบบ Soft */
+    transition: 0.3s;
+}
+
+/* ✅ หัวข้อ */
+h2 {
+    text-align: center;
+    color: #ff4d6d; /* สีชมพูสด */
+    font-weight: bold;
+    font-size: 22px;
+}
+
+/* ✅ คำอธิบาย */
+.subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* ✅ กลุ่มฟอร์ม */
+.form-group {
+    margin-bottom: 18px;
+}
+
+label {
+    font-weight: 600;
+    color: #ff6384;
+    display: block;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+/* ✅ ปรับสไตล์ช่องกรอกข้อมูล */
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ffb6c1;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: 0.3s;
+    background-color: #fffafc;
+}
+
+/* ✅ เอฟเฟกต์ตอนโฟกัส */
+input:focus, textarea:focus {
+    border-color: #ff85a2;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 133, 162, 0.4);
+}
+
+/* ✅ ปรับแต่งรูปภาพที่อัปโหลด */
+.preview-img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    margin: 15px auto;
+    border-radius: 50%;
+    border: 3px solid #ff85a2;
+    transition: 0.3s;
+}
+
+.preview-img:hover {
+    transform: scale(1.05);
+    border-color: #ff4d6d;
+}
+
+/* ✅ ส่วนเปลี่ยนรหัสผ่าน */
+.password-section {
+    background: #fff0f3;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 25px;
+    border: 1px solid #ffb6c1;
+}
+
+.password-section h3 {
+    color: #ff4d6d;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* ✅ ปรับแต่งปุ่ม */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.btn-save, .btn-cancel {
+    width: 48%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+/* ✅ ปุ่มบันทึก */
+.btn-save {
+    background: linear-gradient(135deg, #ff85a2, #ff6384);
+    color: white;
+    box-shadow: 0 4px 10px rgba(255, 99, 132, 0.3);
+}
+
+.btn-save:hover {
+    background: linear-gradient(135deg, #ff6384, #ff4d6d);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255, 99, 132, 0.5);
+}
+
+/* ✅ ปุ่มยกเลิก */
+.btn-cancel {
+    background-color: #b0b0b0;
+    color: white;
+    box-shadow: 0 4px 8px rgba(176, 176, 176, 0.3);
+}
+
+.btn-cancel:hover {
+    background-color: #888888;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(136, 136, 136, 0.4);
+}
+
+/* ✅ เอฟเฟกต์แจ้งเตือน */
+.alert {
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    animation: fadeOut 3s ease-in-out;
+}
+
+.alert-success {
+    background: #dff0d8;
+    color: #3c763d;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* ✅ เอฟเฟกต์แจ้งเตือนค่อยๆ หายไป */
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}

@@ -14,28 +14,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         return cookieValue;
     }
-
-    // ✅ Save Post
-    document.querySelectorAll(".save-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            let postId = this.getAttribute("data-post-id");
-            fetch(`/group_post/save/${postId}/`, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCSRFToken(),
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => response.json())
-            .then(data => alert(data.message));
-        });
-    });
-
+    
     // ✅ Share Post
     document.querySelectorAll(".share-btn").forEach(button => {
         button.addEventListener("click", function () {
             let postId = this.getAttribute("data-post-id");
-            fetch(`/group_post/share/${postId}/`, {
+            fetch(`/group/post/${postId}/share/`, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCSRFToken(),
@@ -52,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener("click", function () {
             let postId = this.getAttribute("data-post-id");
             if (confirm("Are you sure?")) {
-                fetch(`/group_post/delete/${postId}/`, {
+                fetch(`/group/post/delete/${postId}/`, {
                     method: "POST",
                     headers: {
                         "X-CSRFToken": getCSRFToken(),

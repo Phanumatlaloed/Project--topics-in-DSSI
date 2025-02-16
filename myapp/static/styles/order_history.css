@@ -1,154 +1,229 @@
-/* 🌸 ตั้งค่าทั่วไป */
+/* 🌸 ตั้งค่าฟอนต์และพื้นฐาน */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #fff0f5;  /* ✅ ปรับพื้นหลังให้เป็นสีชมพูอ่อน */
-    color: #333;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f9f9f9;
 }
 
 /* 🌸 Navbar */
 .navbar {
-    background-color: #ff8fab;
-    padding: 12px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: #ff85a2;
+    padding: 15px;
 }
 
-.logo {
-    background-color: #ff8fab; /* ✅ กำหนดพื้นหลังให้ตรงกับ Navbar */
-    padding: 5px; /* ✅ เพิ่มขอบรอบโลโก้ */
+.navbar .logo img {
+    height: 50px;
+}
+
+.nav-links {
+    list-style: none;
     display: flex;
+    gap: 20px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links .active {
+    background-color: white;
+    color: #ff85a2;
+}
+
+/* 🌸 Container */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    text-align: center;
+    color: #ff4081;
+    font-size: 28px;
+}
+
+/* 🌸 ตารางคำสั่งซื้อ */
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.order-table thead {
+    background-color: #ff85a2;
+    color: white;
+}
+
+.order-table th, 
+.order-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-table th {
+    font-weight: bold;
+}
+
+.order-table tbody tr:hover {
+    background-color: #ffe4e9;
+}
+
+/* 🌸 สถานะคำสั่งซื้อ */
+.status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: rgb(16, 15, 15);
+    display: inline-block;
+}
+
+.status.pending { background-color: orange; }
+.status.processing { background-color: blue; }
+.status.shipped { background-color: green; }
+.status.delivered { background-color: purple; }
+.status.rejected { background-color: red; }
+
+/* 🌸 สถานะการชำระเงิน */
+.payment-status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+    display: inline-block;
+}
+
+.payment-status.pending { background-color: gray; }
+.payment-status.paid { background-color: green; }
+.payment-status.rejected { background-color: red; }
+
+/* 🌸 ปุ่มยกเลิกคำสั่งซื้อ */
+.btn-cancel {
+    background-color: red;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.btn-cancel:hover {
+    background-color: darkred;
+}
+
+/* 🌸 Footer */
+footer {
+    text-align: center;
+    padding: 15px;
+    margin-top: 30px;
+    background-color: #ff85a2;
+    color: white;
+}
+/* 🌟 ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🌟 Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    border-radius: 50%; /* ✅ ทำให้ขอบมน */
+    background-color: white;
+    padding: 15px 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.logo img {
-    width: 60px; /* ✅ ปรับขนาดโลโก้ */
-    height: auto;
-    display: block;
-    background: transparent; /* ✅ ทำให้พื้นหลังภาพโลโก้โปร่งใส */
-    border-radius: 50%; /* ✅ ทำให้ขอบมนเข้ากับพื้นหลัง */
-}
-
-/* เมนู Navbar */
-.navbar .nav-links {
+.nav-links {
     list-style: none;
     padding: 0;
     display: flex;
     gap: 20px;
 }
 
-.navbar .nav-links li {
-    display: inline;
-}
-
-.navbar .nav-links a {
-    color: white;
+.nav-links a {
     text-decoration: none;
     font-weight: bold;
-    font-size: 16px;
-    padding: 8px 15px;
-    border-radius: 5px;
+    color: #ff6b81;
+    padding: 10px 15px;
 }
 
-.navbar .nav-links a:hover {
-    background-color: rgba(255, 255, 255, 0.3);
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.navbar .nav-links a.active {
-    text-decoration: underline;
-}
-
-/* 🌸 Container */
-.order-history-container {
-    width: 90%;
-    max-width: 1100px;
-    margin: 40px auto;
-    background-color: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ✅ เพิ่มเงาให้ดูหรูขึ้น */
-    text-align: center;
-}
-
-/* 🌸 Title */
-h1 {
-    font-size: 28px;
-    color: #ff5c8a;
-    margin-bottom: 20px;
-}
-
-/* 🌸 Table */
+/* 🌟 ตารางแสดงคำสั่งซื้อ */
 .order-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    text-align: center;
-    border-radius: 10px;
-    overflow: hidden;
 }
 
 .order-table th, .order-table td {
-    padding: 15px;
-    border: 1px solid #ffbdd4;
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
 }
 
 .order-table th {
-    background-color: #ffccd5;
-    color: #d6336c;
-    font-weight: bold;
-}
-
-.order-table tbody tr:nth-child(even) {
-    background-color: #fff0f3;
-}
-
-.order-table tbody tr:hover {
-    background-color: #ffe5ec;
-}
-
-/* 🌸 ปุ่มแก้ไข */
-.edit-button {
-    display: inline-block;
-    background-color: #ff5c8a;
+    background: #ff6b81;
     color: white;
-    padding: 8px 15px;
-    border-radius: 7px;
+}
+
+.paid { color: green; }
+.pending-payment { color: orange; }
+.rejected { color: red; }
+.pending { color: orange; }
+.processing { color: blue; }
+.shipped { color: #ffb347; }
+.delivered { color: green; }
+
+/* 🌟 ปุ่มรีวิว */
+.btn-review {
+    background: #ff6b81;
+    color: white;
+    padding: 8px 12px;
     text-decoration: none;
-    font-size: 14px;
+    border-radius: 8px;
+    display: inline-block;
     font-weight: bold;
-    transition: all 0.3s ease-in-out;
+    transition: 0.3s;
 }
 
-.edit-button:hover {
-    background-color: #d6336c;
-    transform: scale(1.05);
+.btn-review:hover {
+    background: #e05570;
 }
 
-/* 🌸 Payment Status */
-.paid {
-    color: green;
-    font-weight: bold;
-}
-
-.pending {
-    color: red;
-    font-weight: bold;
-}
-
-/* 🌸 Footer */
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #ff8fab;
-    text-align: center;
-    padding: 15px;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
+/* 🌟 กรณียังไม่สามารถรีวิวได้ */
+.no-review {
+    color: #aaa;
+    font-style: italic;
 }

@@ -22,6 +22,8 @@ from django.conf.urls.static import static  # นำเข้า static สำ�
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("myapp.urls")),  # Add this line
+    #path('myapp/', include('myapp.urls')),  # เชื่อมโยง URL ของแอป posts
+    path('notifications/', include('notifications.urls')),  # เชื่อมโยง URL ของแอป notifications
 ] 
 
 

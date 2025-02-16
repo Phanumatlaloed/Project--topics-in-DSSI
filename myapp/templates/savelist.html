@@ -13,6 +13,8 @@
     <!-- ✅ JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="{% static 'js/savelistre.js' %}" defer></script>
+    <script src="{% static 'js/group_savelistre.js' %}" defer></script>
+
 </head>
 <body>
     <div class="wrapper d-flex">
@@ -20,15 +22,15 @@
          <aside class="sidebar">
             <div class="logo text-center">
                 <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
-                <h5>Save Post</h5>
+                <h5>Saved Posts</h5>
             </div>
             <nav>
                 <ul class="nav">
                     <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
                     <li><a href="{% url 'community_list' %}" class="nav-link">👥 Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="nav-link active">💾 Save </a></li>
-                    <li><a href="{% url 'profile' %}" class="nav-link">📄 Profile</a></li>
-                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link active">💾 Saved </a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link">🛍 Products</a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">
@@ -46,67 +48,97 @@
                 <h2 class="text-primary">📌 Saved Posts</h2>
             </header>
 
-            <!-- Search Bar -->
+            <!-- 🔹 Tab Navigation -->
+            <ul class="nav nav-tabs mb-3" id="savedPostTabs">
+                <li class="nav-item">
+                    <button class="nav-link active" id="home-posts-tab" data-bs-toggle="tab" data-bs-target="#homePosts">🏠 Home Posts</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="group-posts-tab" data-bs-toggle="tab" data-bs-target="#groupPosts">🏛 Group Posts</button>
+                </li>
+            </ul>
+
+            <!-- 🔹 Search Bar -->
             <div class="search-bar">
                 <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search saved posts..." onkeyup="searchPosts()">
             </div>
 
-            <!-- Saved Posts -->
-            <div class="row">
-                {% for saved_post in saved_posts %}
-                <div class="col-md-6 col-lg-4 post-item">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <!-- User Info -->
-                            <div class="d-flex align-items-center mb-2">
-                            {% if saved_post.post.user.member_profile and saved_post.post.user.member_profile.profile_picture %}
-                                <img src="{{ saved_post.post.user.member_profile.profile_picture.url }}" class="rounded-circle me-2" width="40" height="40" alt="User">
-                            {% else %}
-                                <img src="{% static 'media/default_profile.png' %}" class="rounded-circle me-2" width="40" height="40" alt="User">
-                            {% endif %}                            
-                                <div>
-                                    <h6 class="mb-0">{{ saved_post.post.user.username }}</h6>
-                                    <small class="text-muted">{{ saved_post.post.created_at|date:"M d, Y H:i" }}</small>
+            <!-- 🔹 Tab Content -->
+            <div class="tab-content">
+                <!-- ✅ Home Posts -->
+                <div class="tab-pane fade show active" id="homePosts">
+                    <div class="row">
+                        {% for saved_post in saved_posts %}
+                        <div class="col-md-6 col-lg-4 post-item">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <!-- User Info -->
+                                    <div class="d-flex align-items-center mb-2">
+                                    {% if saved_post.post.user.member_profile and saved_post.post.user.member_profile.profile_picture %}
+                                        <img src="{{ saved_post.post.user.member_profile.profile_picture.url }}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                                    {% else %}
+                                        <img src="{% static 'media/default_profile.png' %}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                                    {% endif %}                            
+                                        <div>
+                                            <h6 class="mb-0">{{ saved_post.post.user.username }}</h6>
+                                            <small class="text-muted">{{ saved_post.post.created_at|date:"M d, Y H:i" }}</small>
+                                        </div>
+                                    </div>
+
+                                    <!-- Post Type -->
+                                    <span class="badge bg-info text-white">Home Post 🏠</span>
+
+                                    <!-- Post Content -->
+                                    <a href="{% url 'post_detail' saved_post.post.id %}" class="text-decoration-none text-dark">
+                                        <p class="card-text mt-2">{{ saved_post.post.content }}</p>
+                                    </a>
+
+                                    <!-- Remove Button -->
+                                    <button class="btn btn-outline-danger btn-sm w-100 mt-2 remove-btn" 
+                                        data-post-id="{{ saved_post.post.id }}" >
+                                        🗑 Remove
+                                    </button>                                
+                                    
                                 </div>
                             </div>
-
-                            <!-- Post Type -->
-                            <span class="badge bg-info text-white">
-                                {% if saved_post.post_type == 'group' %}
-                                    Group Post 🏛
-                                {% else %}
-                                    Home Post 🏠
-                                {% endif %}
-                            </span>
-
-                            <!-- Post Content -->
-                            <a href="{% url 'post_detail' saved_post.post.id %}" class="text-decoration-none text-dark">
-                                <p class="card-text mt-2">{{ saved_post.post.content }}</p>
-                            </a>
-
-                            <!-- Post Media -->
-                            {% if saved_post.post.media.all %}
-                            <div class="post-media d-flex flex-wrap">
-                                {% for media in saved_post.post.media.all|slice:":3" %}
-                                    {% if media.media_type == "image" %}
-                                        <img src="{{ media.file.url }}" class="img-fluid rounded me-1 mb-1">
-                                    {% elif media.media_type == "video" %}
-                                        <video src="{{ media.file.url }}" controls class="img-fluid rounded me-1 mb-1"></video>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-
-                            <!-- Remove Button -->
-                            <button class="btn btn-outline-danger btn-sm w-100 mt-2 remove-btn" data-post-id="{{ saved_post.post.id }}">
-                                🗑 Remove
-                            </button>
                         </div>
+                        {% empty %}
+                        <p class="text-center text-muted">😢 No saved home posts yet.</p>
+                        {% endfor %}
                     </div>
                 </div>
-                {% empty %}
-                <p class="text-center text-muted">😢 No saved posts yet.</p>
-                {% endfor %}
+
+                <!-- ✅ Group Posts -->
+                <!-- Group Posts -->
+                <div class="tab-pane fade" id="groupPosts">
+                    <div class="row">
+                        {% for saved_post in saved_group_posts %}
+                        <div class="col-md-6 col-lg-4 post-item">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <!-- Group Info -->
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h6 class="mb-0">{{ saved_post.post.group.name }}</h6>
+                                        <small class="text-muted ms-2">🏛 Group</small>
+                                    </div>
+                                    <!-- Post Content -->
+                                    <a href="{% url 'group_detail' saved_post.post.id %}" class="text-decoration-none text-dark">
+                                        <p class="card-text mt-2">{{ saved_post.post.content }}</p>
+                                    </a>
+                                    <!-- Remove Button -->
+                                    <button class="btn btn-outline-danger btn-sm w-100 mt-2 remove-btn" 
+                                        data-post-id="{{ saved_post.post.id }}" 
+                                        data-group-id="{{ saved_post.post.group.id|default:'' }}">
+                                        🗑 Remove
+                                    </button> 
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center text-muted">😢 No saved group posts yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </main>
     </div>

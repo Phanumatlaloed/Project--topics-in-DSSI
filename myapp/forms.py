@@ -231,3 +231,111 @@ class AdminRegisterForm(UserCreationForm):
         if commit:
             user.save()
         return user
+    
+#class ShippingAddressForm(forms.ModelForm):
+   # class Meta:
+      #  model = ShippingAddress
+      #  fields = ['address', 'phone_number']
+      #  labels = {
+       #     'address': '📍 ที่อยู่จัดส่ง',
+       #     'phone_number': '📞 เบอร์โทรศัพท์',
+      #  }
+
+from .models import Report
+
+class ReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ['reason', 'description']
+
+
+class AdminRegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'password1', 'password2']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_staff = True  # ✅ ให้แอดมินเป็น staff อัตโนมัติ
+        if commit:
+            user.save()
+        return user
+
+class ShippingAddressForm(forms.ModelForm):
+    """ ฟอร์มสำหรับเพิ่ม / แก้ไขที่อยู่จัดส่ง """
+    class Meta:
+        model = ShippingAddress
+        fields = ['address', 'phone_number', 'city', 'postal_code']
+        labels = {
+            'address': '📍 ที่อยู่',
+            'phone_number': '📞 เบอร์โทรศัพท์',
+            'city': '🏙 เมือง',
+            'postal_code': '📮 รหัสไปรษณีย์',
+        }
+        widgets = {
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'กรอกที่อยู่ของคุณ...'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เบอร์โทรศัพท์'}),
+            'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ชื่อเมือง'}),
+            'postal_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'รหัสไปรษณีย์'}),
+        }
+    
+    def clean_phone_number(self):
+        """ ตรวจสอบหมายเลขโทรศัพท์ให้ถูกต้อง """
+        phone_number = self.cleaned_data.get('phone_number')
+        if not phone_number.isdigit():
+            raise forms.ValidationError("⚠️ เบอร์โทรศัพท์ต้องเป็นตัวเลขเท่านั้น")
+        if len(phone_number) < 9 or len(phone_number) > 15:
+            raise forms.ValidationError("⚠️ เบอร์โทรศัพท์ต้องมีความยาวระหว่าง 9-15 ตัว")
+        return phone_number
+
+    def clean_postal_code(self):
+        """ ตรวจสอบรหัสไปรษณีย์ """
+        postal_code = self.cleaned_data.get('postal_code')
+        if not postal_code.isdigit():
+            raise forms.ValidationError("⚠️ รหัสไปรษณีย์ต้องเป็นตัวเลขเท่านั้น")
+        if len(postal_code) not in [5, 6]:
+            raise forms.ValidationError("⚠️ รหัสไปรษณีย์ต้องมีความยาว 5 หรือ 6 ตัวอักษร")
+        return postal_code
+    
+# ✅ ฟอร์มแก้ไขโปรไฟล์ผู้ใช้ทั่วไป
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser  # ✅ ใช้ CustomUser
+        fields = ['first_name', 'last_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ชื่อ'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'นามสกุล'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'อีเมล'}),
+        }
+
+# ✅ ฟอร์มแก้ไขข้อมูลร้านค้า (สำหรับ Seller)
+class SellerProfileForm(forms.ModelForm):
+    class Meta:
+        model = Seller  # ✅ ใช้ Seller แทน SellerProfile
+        fields = ['store_name', 'email', 'store_image', 'contact_info']
+        widgets = {
+            'store_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ชื่อร้านค้า'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'อีเมลของร้านค้า'}),
+            'store_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'contact_info': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'ข้อมูลติดต่อ'}),
+        }
+
+from django import forms
+from django.contrib.auth.forms import UserChangeForm
+from .models import CustomUser, Seller
+
+class CustomUserUpdateForm(UserChangeForm):
+    """ ฟอร์มอัปเดตข้อมูลผู้ใช้ (อีเมล, ชื่อ, username) """
+    password = None  # ✅ ซ่อนฟิลด์รหัสผ่าน
+
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email", "first_name", "last_name")
+
+class SellerProfileUpdateForm(forms.ModelForm):
+    """ ฟอร์มอัปเดตข้อมูลร้านค้า """
+    class Meta:
+        model = Seller
+        fields = ("store_name", "store_image", "contact_info")

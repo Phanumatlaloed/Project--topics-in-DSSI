@@ -13,61 +13,53 @@ body {
     min-height: 100vh;
 }
 
-/* Sidebar */
+/* ปรับ Sidebar */
 .sidebar {
     width: 250px;
     background-color: #ff85a2;
     color: white;
     padding: 10px;
-    position: fixed;
-    height: 100%;
+    position: fixed;  /* ✅ ทำให้ Sidebar อยู่กับที่ */
+    left: 0;
+    top: 0;
+    height: 100vh;  /* ✅ ใช้ความสูงเต็มหน้าจอ */
+    overflow-y: auto; /* ✅ ถ้ารายการเยอะ สามารถเลื่อนได้ */
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
 }
 
-.sidebar h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.menu {
-    list-style-type: none;
-    padding: 0;
-}
-
-.menu-header {
-    font-weight: 600;
-    margin-top: 15px;
-}
-
+/* ปรับขนาดและระยะห่างของเมนู */
 .menu-item {
-    padding: 10px;
+    padding: 8px; /* ลด Padding เพื่อให้ปุ่มเล็กลง */
     text-align: center;
+    font-size: 14px; /* ลดขนาดตัวอักษร */
 }
 
 .menu-item a {
-    color: white;
-    text-decoration: none;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 10px;
-    border-radius: 10px;
+    justify-content: start;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    transition: background-color 0.3s;
 }
 
 .menu-item a:hover {
     background-color: #ff6b9d;
 }
 
-/* Content */
+/* ปรับ Layout ของเนื้อหา */
 .content {
-    margin-left: 270px;
+    margin-left: 270px; /* ✅ ขยับเนื้อหาให้ห่างจาก Sidebar */
     padding: 20px;
     width: calc(100% - 270px);
-    background-color: #fff5f7;
+    background-color: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* Content Header */
@@ -76,7 +68,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 10px;
-    border-bottom: 2px solid #ffbad4;
+    /*border-bottom: 2px solid #ffbad4; */
 }
 
 .btn-add-product {
