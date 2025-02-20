@@ -1,24 +1,24 @@
-/* 🌸 ตั้งค่าพื้นฐาน */
+/* 🌸 พื้นหลังและฟอนต์ */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #fff5f8;
     margin: 0;
     padding: 0;
+    text-align: center;
 }
 
 /* 🌸 Navbar */
 .navbar {
+    background-color: #ffebf0;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: white;
-    padding: 15px 30px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .logo img {
-    width: 80px;
-    height: auto;
+    height: 45px; /* ปรับขนาดโลโก้ให้พอดี */
 }
 
 .nav-links {
@@ -28,135 +28,102 @@ body {
     gap: 20px;
 }
 
-.nav-links li {
-    display: inline;
-}
-
 .nav-links a {
     text-decoration: none;
+    color: #ff5a8a;
     font-weight: bold;
-    color: #ff6b81;
-    padding: 10px 15px;
-    border-radius: 8px;
-    transition: background 0.3s;
+    transition: 0.3s;
 }
 
-.nav-links a:hover, .nav-links a.active {
-    background: #ff6b81;
+.nav-links a:hover {
+    color: #d14770;
+}
+
+/* 🌸 กล่อง Checkout */
+.checkout-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+/* 🌸 Section เลือกที่อยู่ */
+.address-selection {
+    background-color: #fff0f4;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 2px solid #ff5a8a;
+}
+
+legend {
+    font-weight: bold;
+    color: #ff5a8a;
+    font-size: 18px;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+/* 🌸 ปุ่มจัดการที่อยู่ */
+.address-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #ff5a8a;
     color: white;
 }
 
-/* 🌸 Checkout Container */
-.checkout-container {
-    width: 80%;
-    margin: 40px auto;
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.btn-secondary {
+    background-color: #f4c2c2;
+    color: #333;
 }
 
-h2 {
-    text-align: center;
-    color: #ff6b81;
-    font-size: 26px;
+.btn-primary:hover, .btn-secondary:hover {
+    opacity: 0.8;
 }
 
-h3 {
-    color: #ff6b81;
-    font-size: 22px;
+/* 🌸 ปุ่มยืนยัน */
+.btn-success {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
     margin-top: 20px;
 }
 
-/* 🌸 รายการสินค้า */
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-ul li {
-    margin: 10px 0;
-    font-size: 16px;
-}
-
-/* 🌸 ฟอร์มที่อยู่จัดส่ง */
-label {
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 5px;
-    display: block;
-}
-
-input, textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 2px solid #ff6b81;
-    border-radius: 8px;
-    font-size: 16px;
-}
-
-textarea {
-    height: 100px;
-    resize: none;
-}
-
-button {
-    padding: 12px 20px;
-    background-color: #ff6b81;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #e05570;
-}
-
-/* 🌸 ปุ่มยืนยันการสั่งซื้อ */
-.btn {
-    display: inline-block;
-    padding: 10px 15px;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background 0.3s;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.btn-success {
-    background: #ff6b81;
-    color: white;
-}
-
 .btn-success:hover {
-    background: #e05570;
+    background-color: #218838;
 }
 
-/* 🌸 Responsive (มือถือ & แท็บเล็ต) */
-@media (max-width: 768px) {
-    .checkout-container {
-        width: 90%;
-        padding: 20px;
-    }
-
-    h2 {
-        font-size: 24px;
-    }
-
-    h3 {
-        font-size: 20px;
-    }
-
-    input, textarea {
-        font-size: 14px;
-    }
-
-    button {
-        font-size: 14px;
-    }
+/* 🌸 Footer */
+footer {
+    margin-top: 30px;
+    font-size: 14px;
+    color: #666;
 }

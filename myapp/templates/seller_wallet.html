@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 กระเป๋าเงินของฉัน</title>
+    <link rel="stylesheet" href="{% static 'styles/seller_wallet.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        <h2>💰 กระเป๋าเงินร้านค้า</h2>
+        <p><strong>ยอดเงินคงเหลือ:</strong> ฿{{ wallet.balance }}</p>
+
+        <h3>📜 รายการขาย</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>หมายเลขออเดอร์</th>
+                    <th>ลูกค้า</th>
+                    <th>ยอดขาย</th>
+                    <th>วันที่</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>฿{{ order.total_price }}</td>
+                    <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">❌ ยังไม่มีคำสั่งซื้อ</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

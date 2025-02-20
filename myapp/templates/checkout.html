@@ -29,19 +29,32 @@
     <div class="checkout-container">
         <h2>🛒 สรุปรายการสินค้าที่ต้องชำระ</h2>
 
-        <form method="POST" action="{% url 'confirm_order' %}">
+        <form method="POST" action="{% url 'confirm_order' %}" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <h3>📍 ข้อมูลที่อยู่จัดส่ง</h3>
-            <label>ที่อยู่จัดส่ง:</label>
-            <textarea name="shipping_address" required>{{ user_shipping_info.address }}</textarea>
+            <fieldset class="address-selection">
+                <legend>📍 เลือกที่อยู่จัดส่ง</legend>
 
-            <label>เบอร์โทรศัพท์:</label>
-            <input type="text" name="phone_number" value="{{ user_shipping_info.phone_number }}" required>
+                <label for="shipping_address">ที่อยู่:</label>
+                <select name="shipping_address" id="shipping_address" required>
+                    {% for address in saved_addresses %}
+                        <option value="{{ address.id }}">
+                            📍 {{ address.address }}, {{ address.city }} {{ address.postal_code }} (📞 {{ address.phone_number }})
+                        </option>
+                    {% empty %}
+                        <option disabled>⚠️ ไม่มีที่อยู่ กรุณาเพิ่มใหม่</option>
+                    {% endfor %}
+                </select>
+
+                <div class="address-actions">
+                    <a href="{% url 'manage_addresses' %}" class="btn btn-secondary">📌 จัดการที่อยู่</a>
+                    <a href="{% url 'add_address' %}" class="btn btn-primary">➕ เพิ่มที่อยู่ใหม่</a>
+                </div>
+            </fieldset>
 
             <h3>🛍 รายการสินค้าทั้งหมด</h3>
             {% for seller, items in orders_by_seller.items %}
-                <h4>🏪 ร้านค้า: {{ seller.store_name }}</h4>
+                <h4>🏪 ร้านค้า: <strong>{{ seller.store_name }}</strong></h4>
                 <ul>
                     {% for item in items %}
                         <li>{{ item.product.name }} - {{ item.quantity }} ชิ้น (฿{{ item.product.price }})</li>
@@ -49,7 +62,7 @@
                 </ul>
             {% endfor %}
 
-            <h3>💰 ยอดรวมทั้งหมด: ฿{{ total_checkout_price }}</h3>
+            <h3>💰 ยอดรวมทั้งหมด: <strong style="color: red;">฿{{ total_checkout_price }}</strong></h3>
 
             <button type="submit" class="btn btn-success">✅ ยืนยันคำสั่งซื้อ</button>
         </form>

@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -7,38 +6,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ product.name }}</title>
 
-    <!-- CSS -->
+    <!-- ✅ CSS -->
     <link rel="stylesheet" href="{% static 'styles/product_detail.css' %}">
 
-    <!-- Google Font -->
+    <!-- ✅ Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <!-- Slick Slider (ใช้สำหรับแสดงรูปสินค้า) -->
+    <!-- ✅ Slick Slider -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 </head>
 <body>
 
-    <!-- Navbar -->
+    <!-- 🌸 Navbar -->
     <header>
         <nav class="navbar">
             <div class="logo">
-                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+                </a>
             </div>
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">🏠 Home</a></li>
                 <li><a href="{% url 'community_list' %}">👥 Community</a></li>
                 <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                <li><a href="{% url 'profile' request.user.id  %}">📄 Profile</a></li>
+                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
                 <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Product Detail Section -->
+    <!-- 📦 Product Detail Section -->
     <div class="product-container">
         <div class="product-box">
-            <!-- Product Image Slider -->
+            <!-- 🔹 Product Image Slider -->
             <div class="product-slider">
                 {% if product.image %}
                     <div><img src="{{ product.image.url }}" alt="{{ product.name }}"></div>
@@ -48,37 +49,60 @@
                 {% endfor %}
             </div>
 
-            <!-- Product Details -->
+            <!-- ℹ️ Product Details -->
             <div class="product-info">
                 <h2>{{ product.name }}</h2>
                 <p class="price">💰 ราคา: ฿{{ product.price }}</p>
-                <p class="stock">📦 จำนวนคงเหลือ: {{ product.stock }}</p>
-                <p class="description">📜 รายละเอียดสินค้า: {{ product.description }}</p>
+                <p class="stock">📦 คงเหลือ: 
+                    {% if product.stock > 0 %}
+                        {{ product.stock }}
+                    {% else %}
+                        <span class="out-of-stock">❌ สินค้าหมด</span>
+                    {% endif %}
+                </p>
+                <p class="sold">🔥 ขายแล้ว: {{ product.total_sold }} ชิ้น</p>
+                <p class="description">📜 รายละเอียด: {{ product.description }}</p>
                 <p class="category">📌 หมวดหมู่: {{ product.get_category_display }}</p>
-                <p class="seller">🏪 ร้านค้า: <a href="{% url 'store_detail' product.seller.id %}"><strong>{{ product.seller.store_name }}</strong></a></p>
+                <p class="seller">🏪 ร้านค้า: 
+                    <a href="{% url 'store_detail' product.seller.id %}" class="store-link">
+                        <strong>{{ product.seller.store_name }}</strong>
+                    </a>
+                </p>
 
-                <!-- 🛒 ปุ่มเพิ่มลงในตะกร้า -->
-                <form method="POST" action="{% url 'add_to_cart' product.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success">➕ เพิ่มในตะกร้า</button>
-                </form>
+                <!-- 🛒 Add to Cart -->
+                <div class="cart-section">
+                    {% if product.stock > 0 %}
+                        <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
+                            ➕ เพิ่มในตะกร้า
+                        </button>
+                    {% else %}
+                        <button class="btn btn-secondary" disabled>❌ สินค้าหมด</button>
+                    {% endif %}
+                </div>
+
+                <!-- 🛍 แจ้งเตือนเพิ่มตะกร้า -->
+                <p id="cart-message" style="display: none; text-align: center; font-weight: bold;"></p>
 
                 <!-- 🔙 กลับไปหน้าสินค้า -->
-                <a href="{% url 'product_list' %}" class="btn btn-secondary">🔙 กลับไปที่สินค้าทั้งหมด</a>
+                <a href="{% url 'product_list' %}" class="btn btn-secondary back-btn">
+                    🔙 กลับไปที่สินค้าทั้งหมด
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- 🌟 ส่วนแสดงรีวิว -->
+    <!-- 🌟 รีวิวสินค้า -->
     <div class="reviews-section">
         <h3>🌟 รีวิวสินค้า</h3>
 
         {% for review in product.reviews.all %}
             <div class="review-box">
                 <p><strong>{{ review.user.username }}</strong>: ⭐ {{ review.rating }}/5</p>
+                <p>🛒 รีวิวจากร้าน <strong>{{ review.order.seller.store_name }}</strong></p>
+                <p>🛍 สินค้า: <strong>{{ review.product.name }}</strong></p>
                 <p>{{ review.comment }}</p>
 
-                <!-- แสดงรูปภาพ & วิดีโอ -->
+                <!-- 🎥 แสดงรูปภาพ & วิดีโอในรีวิว -->
                 <div class="review-media">
                     {% for media in review.media.all %}
                         {% if media.media_type == "image" %}
@@ -86,7 +110,6 @@
                         {% elif media.media_type == "video" %}
                             <video controls class="review-video">
                                 <source src="{{ media.file.url }}" type="video/mp4">
-                                Your browser does not support the video tag.
                             </video>
                         {% endif %}
                     {% endfor %}
@@ -97,48 +120,46 @@
         {% endfor %}
     </div>
 
-    <!-- 🌟 ฟอร์มเพิ่มรีวิว -->
-    {% if user.is_authenticated %}
-        <div class="review-form">
-            <h3>📝 รีวิวสินค้า</h3>
-            <form method="POST" action="{% url 'add_review' product.id %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                <label>ให้คะแนนสินค้า:</label>
-                <select name="rating">
-                    <option value="5">⭐ 5</option>
-                    <option value="4">⭐ 4</option>
-                    <option value="3">⭐ 3</option>
-                    <option value="2">⭐ 2</option>
-                    <option value="1">⭐ 1</option>
-                </select>
+<!-- ✅ JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.product-slider').slick({
+            dots: true,
+            infinite: true,
+            speed: 300,
+            slidesToShow: 1,
+            adaptiveHeight: true
+        });
 
-                <label>แสดงความคิดเห็น:</label>
-                <textarea name="comment" required></textarea>
+        // 🛒 เพิ่มสินค้าไปยังตะกร้าแบบ AJAX
+        $(".add-to-cart-btn").click(function(event) {
+            event.preventDefault();  // ป้องกันหน้าโหลดซ้ำ
 
-                <label>อัปโหลดรูปภาพ/วิดีโอ:</label>
-                <input type="file" name="media" accept="image/*,video/*" multiple>
+            let productId = $(this).data("product-id");
+            let cartMessage = $("#cart-message");
 
-                <button type="submit" class="btn btn-primary">✅ ส่งรีวิว</button>
-            </form>
-        </div>
-    {% else %}
-        <p>🔒 กรุณา <a href="{% url 'login' %}">เข้าสู่ระบบ</a> เพื่อรีวิวสินค้า</p>
-    {% endif %}
-
-    <!-- JS สำหรับ Slider -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            $('.product-slider').slick({
-                dots: true,
-                infinite: true,
-                speed: 300,
-                slidesToShow: 1,
-                adaptiveHeight: true
+            $.ajax({
+                url: `/cart/add/${productId}/`,  // ✅ ตรวจสอบ URL
+                method: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                dataType: "json",
+                success: function(response) {
+                    if (response.success) {
+                        $("#cart-count").text(response.cart_count); // 🔄 อัปเดตตะกร้า
+                        cartMessage.text("✅ เพิ่มสินค้าในตะกร้าเรียบร้อย!").css("color", "green").fadeIn().delay(2000).fadeOut();
+                    } else {
+                        cartMessage.text("❌ " + response.message).css("color", "red").fadeIn().delay(2000).fadeOut();
+                    }
+                },
+                error: function() {
+                    cartMessage.text("❌ เกิดข้อผิดพลาด กรุณาลองใหม่").css("color", "red").fadeIn().delay(2000).fadeOut();
+                }
             });
         });
-    </script>
+    });
+</script>
 
-</body>  
+</body>
 </html>

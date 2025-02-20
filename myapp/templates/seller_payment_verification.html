@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 ตรวจสอบการชำระเงิน</title>
+    <link rel="stylesheet" href="{% static 'styles/payments_sellers.css' %}">
+</head>
+<body>
+
+    <!-- 🌸 Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'seller_dashboard' %}">📋 จัดการร้านค้า</a></li>
+            <li><a href="{% url 'my_products' %}">📦 สินค้าของฉัน</a></li>
+            <li><a href="{% url 'seller_orders' %}">📑 คำสั่งซื้อ</a></li>
+            <li><a href="{% url 'seller_logout' %}" class="logout">🚪 ออกจากระบบ</a></li>
+        </ul>
+    </header>
+
+    <div class="payment-container">
+        <h2>💰 ตรวจสอบการชำระเงิน</h2>
+
+        {% if orders %}
+        <table>
+            <thead>
+                <tr>
+                    <th>หมายเลขออเดอร์</th>
+                    <th>ลูกค้า</th>
+                    <th>ยอดชำระ</th>
+                    <th>สลิปโอนเงิน</th>
+                    <th>สถานะ</th>
+                    <th>การดำเนินการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>฿{{ order.total_price }}</td>
+
+                    <!-- ✅ ตรวจสอบว่ามีสลิปหรือไม่ -->
+                    <td>
+                        {% if order.payment and order.payment.slip %}
+                            <a href="{{ order.payment.slip.url }}" target="_blank" class="slip-btn">📜 ดูสลิป</a>
+                        {% else %}
+                            ❌ ไม่มีสลิป
+                        {% endif %}
+                    </td>
+
+                    <!-- ✅ แสดงสถานะปัจจุบัน -->
+                    <td class="status">
+                        {% if order.payment_status == "pending" %}
+                            ⏳ รออนุมัติ
+                        {% elif order.payment_status == "paid" %}
+                            ✅ อนุมัติแล้ว
+                        {% else %}
+                            ❌ ถูกปฏิเสธ
+                        {% endif %}
+                    </td>
+
+                    <!-- ✅ ปุ่มอนุมัติ & ปฏิเสธ -->
+                    <td>
+                        {% if order.payment_status == "pending" %}
+                            <a href="{% url 'approve_seller_payment' order.id %}" class="btn approve">✅ อนุมัติ</a>
+                            <a href="{% url 'reject_seller_payment' order.id %}" class="btn reject">❌ ปฏิเสธ</a>
+                        {% elif order.payment_status == "paid" %}
+                            ✅ อนุมัติแล้ว
+                        {% else %}
+                            ❌ ถูกปฏิเสธ
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>❌ ไม่มีคำสั่งซื้อที่รออนุมัติ</p>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Your Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

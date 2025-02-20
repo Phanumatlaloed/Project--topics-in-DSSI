@@ -51,6 +51,7 @@ urlpatterns = [
     # Profile management and view
     path('profile/settings/', views.profile_management, name='profile_management'),  # เส้นทางตั้งค่าโปรไฟล์
     path('profile/<int:user_id>/', views.profile_view, name='profile'),  # เส้นทางแสดงโปรไฟล์
+    path('profile/', views.profile_view, name='profile'),  # เส้นทางแสดงโปรไฟล์
 
     #จัดการโพสต์ในกลุ่ม group_deta
     path('group_post/like/<int:post_id>/', views.toggle_group_post_like, name='toggle_group_post_like'),
@@ -75,11 +76,11 @@ urlpatterns = [
     path("products/add/", add_product, name="add_product"),
     path("products/<int:product_id>/", product_detail, name="product_detail"),
     path('seller/edit/', edit_store, name='edit_store'),
-    path('edit-seller-profile/', views.seller_edit_profile, name='seller_edit_profile'),
+    path('edit-seller-profile/', views.edit_seller_profile, name='edit_seller_profile'),
 
     # ✅ ตะกร้าสินค้า (Shopping Cart)
     path('cart/', view_cart, name='cart'),
-    path('cart/add/<int:product_id>/', add_to_cart, name='add_to_cart'),
+    #path('cart/add/<int:product_id>/', add_to_cart, name='add_to_cart'),
     path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/update/<int:item_id>/<str:action>/', views.update_cart, name='update_cart'),
 
@@ -142,13 +143,22 @@ urlpatterns = [
     path('addresses/delete/<int:address_id>/', views.delete_address, name='delete_address'),
 
     #path("edit-profile/", views.edit_seller_profile, name="edit_seller_profile"),
-    path("edit-seller-profile/", views.seller_edit_profile, name="seller_edit_profile"),
+    #path("edit-seller-profile/", views.seller_edit_profile, name="seller_edit_profile"),
 
     
     #path('store/<int:store_id>/', views.store_detail, name='store_detail'),
     path('cart/add/<int:product_id>/', views.add_to_cart_ajax, name='add_to_cart_ajax'),
+    path("cart/add/<int:product_id>/", add_to_cart, name="add_to_cart"),
     path('store/<slug:store_id>/', views.store_detail, name='store_detail'),
 
     path("review/add/<int:order_id>/<int:product_id>/", add_review, name="add_review"),
+
+    path("seller/wallet/", views.seller_wallet, name="seller_wallet"),
+    #path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
+
+    path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
+    #path("order/<int:order_id>/update/<str:status>/", views.update_order_status, name="update_order_status"),
+    path("order/<int:order_id>/confirm_delivery/", views.confirm_delivery, name="confirm_delivery"),
+
 
 ]

@@ -339,3 +339,4 @@ class SellerProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Seller
         fields = ("store_name", "store_image", "contact_info")
+

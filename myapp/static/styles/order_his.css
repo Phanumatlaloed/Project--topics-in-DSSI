@@ -1,59 +1,48 @@
 /* ✅ ตั้งค่าแบบอักษรและโครงสร้างพื้นฐาน */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #fff0f3; /* พื้นหลังชมพูอ่อน */
+    background-color: #fde5e5; /* ชมพูอ่อน */
     color: #333;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 /* ✅ Navbar */
 .navbar {
-    background-color: #ffdde1; /* ชมพูอ่อน */
-    padding: 10px 20px; /* ลด padding */
+    background-color: #ffdde1; /* สีชมพูอ่อน */
+    padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ ปรับขนาดโลโก้ */
-.navbar .logo img {
-    height: 50px; /* ✅ ลดขนาดโลโก้ */
+.navbar .logo {
+    height: 50px; /* ลดขนาดโลโก้ */
     width: auto;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
-.nav-links {
-    list-style: none;
-    display: flex;
+/* ✅ ปรับเมนูด้านขวา */
+.navbar-nav {
     gap: 15px;
-    padding: 0;
 }
 
-.nav-links li {
-    display: inline;
-}
-
-.nav-links a {
+.navbar-nav .nav-link {
     text-decoration: none;
     color: #e75480; /* ชมพูเข้ม */
     font-weight: bold;
-    padding: 6px 12px;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
     transition: 0.3s;
 }
 
-.nav-links a:hover {
-    background-color: #ffb6c1; /* ชมพูอ่อน */
+.navbar-nav .nav-link:hover {
+    background-color: #ffb6c1;
     color: white;
 }
 
-/* ✅ ปรับขนาดและจัดวางโลโก้ตรงกลาง */
+/* ✅ ปรับขนาดโลโก้ใหญ่ */
 .logo-container {
     display: flex;
     justify-content: center;
@@ -62,26 +51,22 @@ body {
 }
 
 .logo-container img {
-    max-width: 150px; /* ✅ ปรับขนาดโลโก้ให้อยู่ในกรอบ */
+    max-width: 200px; /* ปรับขนาดโลโก้ให้เหมาะสม */
+    width: 100%;
     height: auto;
-    border-radius: 10px;
+    border-radius: 50%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ คอนเทนเนอร์ของคำสั่งซื้อ */
+/* ✅ กล่องข้อมูลคำสั่งซื้อ */
 .order-container {
-    width: 90%;
-    max-width: 1000px;
+    max-width: 90%;
     margin: 30px auto;
     padding: 20px;
     background-color: white;
     border-radius: 15px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-}
-
-h2 {
-    color: #e75480;
-    margin-bottom: 20px;
 }
 
 /* ✅ ตารางคำสั่งซื้อ */
@@ -95,7 +80,7 @@ table {
 }
 
 thead {
-    background-color: #ffdde1; /* ชมพูอ่อน */
+    background-color: #ffdde1;
     color: #e75480;
     font-weight: bold;
 }
@@ -110,7 +95,7 @@ tr:hover {
     background-color: #fff0f3;
 }
 
-/* ✅ ปุ่มอัปเดตสถานะ */
+/* ✅ ปุ่มต่างๆ */
 .btn {
     display: inline-block;
     padding: 8px 12px;
@@ -123,18 +108,19 @@ tr:hover {
     cursor: pointer;
 }
 
+/* ✅ ปุ่มสถานะ */
 .processing {
-    background-color: #ffb6c1; /* ชมพูอ่อน */
+    background-color: #ffb6c1;
     color: white;
 }
 
 .shipped {
-    background-color: #ff69b4; /* ชมพูเข้ม */
+    background-color: #ff69b4;
     color: white;
 }
 
 .delivered {
-    background-color: #e75480; /* แดงเข้ม */
+    background-color: #e75480;
     color: white;
 }
 
@@ -145,6 +131,26 @@ tr:hover {
 
 .btn:hover {
     opacity: 0.8;
+}
+
+/* ✅ ปรับแต่ง Bootstrap Tabs */
+.nav-tabs {
+    border-bottom: 2px solid #ffb6c1;
+    margin-bottom: 20px;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: #e75480;
+    font-weight: bold;
+    padding: 10px 20px;
+    transition: 0.3s;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #ffb6c1;
+    color: white;
+    border-radius: 10px;
 }
 
 /* ✅ ปรับแต่งปุ่มดูสลิป */

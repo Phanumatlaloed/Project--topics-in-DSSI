@@ -1,0 +1,43 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✏️ แก้ไขที่อยู่</title>
+    <link rel="stylesheet" href="{% static 'styles/manage_addresses.css' %}">
+</head>
+<body>
+
+    <!-- 🌸 Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">🏠 Home</a></li>
+            <li><a href="{% url 'checkout' %}" class="active">🛒 Checkout</a></li>
+        </ul>
+    </header>
+
+    <div class="address-container">
+        <h2>✏️ แก้ไขที่อยู่</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">✅ บันทึกการเปลี่ยนแปลง</button>
+        </form>
+
+        <a href="{% url 'manage_addresses' %}" class="btn btn-secondary">🔙 กลับ</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Your Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

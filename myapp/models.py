@@ -228,7 +228,8 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.PositiveIntegerField()
+    stock = models.PositiveIntegerField(default=0)  # คงเหลือ
+    total_sold = models.PositiveIntegerField(default=0)  # ✅ เพิ่มฟิลด์จำนวนที่ขายได้
     image = models.ImageField(upload_to='products/')
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='makeup')  # ✅ หมวดหมู่สินค้า
     created_at = models.DateTimeField(auto_now_add=True)
@@ -393,12 +394,14 @@ def review_media_upload_path(instance, filename):
 class Review(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews")
-    rating = models.IntegerField(choices=[(i, f"⭐ {i}") for i in range(1, 6)])  # คะแนน 1-5
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="reviews", null=True, blank=True)  # ✅ รองรับค่า NULL ชั่วคราว
+    rating = models.IntegerField(choices=[(i, f"⭐ {i}") for i in range(1, 6)])  
     comment = models.TextField()
-    created_at = models.DateTimeField(default=timezone.now)  # ✅ ใช้ timezone.now แทน auto_now_add
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name} ({self.rating} ⭐)"
+
 
 
 class ReviewMedia(models.Model):
@@ -418,3 +421,26 @@ class ReviewMedia(models.Model):
 
     def __str__(self):
         return f"({self.media_type.upper()}) {os.path.basename(self.file.name)}"
+    
+
+
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+class SellerWallet(models.Model):
+    """ กระเป๋าเงินของผู้ขาย """
+    seller = models.OneToOneField('Seller', on_delete=models.CASCADE, related_name='wallet')
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)  # ยอดเงินในกระเป๋า
+    updated_at = models.DateTimeField(auto_now=True)  # อัปเดตล่าสุด
+
+    def __str__(self):
+        return f"Wallet of {self.seller.store_name}: ฿{self.balance}"
+
+@receiver(post_save, sender=Seller)
+def create_or_update_seller_wallet(sender, instance, created, **kwargs):
+    """ สร้างกระเป๋าเงินเมื่อผู้ขายถูกสร้าง หรืออัปเดตเมื่อผู้ขายมีอยู่แล้ว """
+    if created:
+        SellerWallet.objects.create(seller=instance)
+    else:
+        instance.wallet.save()  # อัปเดต timestamp ถ้ามีการเปลี่ยนแปลง

@@ -1,76 +1,119 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 จัดการคำสั่งซื้อ</title>
+    <link rel="stylesheet" href="{% static 'styles/seller_orders.css' %}">
+</head>
+<body>
 
-<link rel="stylesheet" href="{% static 'styles/seller_orders.css' %}">
-<div class="seller-dashboard">
-    <!-- 🌸 Sidebar Menu -->
-    <aside class="sidebar">
-        <ul class="menu">
-            <li class="menu-header">สินค้า</li>
-            <li class="menu-item"><a href="{% url 'seller_dashboard' %}">📋 จัดการร้านค้า</a></li>
-            <li class="menu-item"><a href="{% url 'my_products' %}">📋 สินค้าของฉัน</a></li>
-            <li class="menu-item"><a href="{% url 'add_product' %}">➕ เพิ่มสินค้าใหม่</a></li>
-            <li class="menu-item"><a href="{% url 'edit_store' %}">⚙️ แก้ไขร้านค้า</a></li>
-            <li class="menu-item"><a href="{% url 'seller_edit_profile' %}">⚙️ แก้ไขโปรไฟล์ผู้ขาย</a></li>
-            <li class="menu-item active"><a href="{% url 'seller_orders' %}">📦 คำสั่งซื้อของฉัน</a></li>
-            <li class="menu-item logout"><a href="{% url 'seller_logout' %}">🚪 Logout</a></li>
+    <!-- 🌸 Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'seller_dashboard' %}">📋 จัดการร้านค้า</a></li>
+            <li><a href="{% url 'my_products' %}">📦 สินค้าของฉัน</a></li>
+            <li><a href="{% url 'seller_orders' %}">📑 คำสั่งซื้อ</a></li>
+            <li><a href="{% url 'seller_logout' %}" class="logout">🚪 ออกจากระบบ</a></li>
         </ul>
-    </aside>
+    </header>
 
-    <!-- 🌸 Main Content -->
-    <main class="order-management-container">
-        <h1>📦 คำสั่งซื้อของฉัน</h1>
+    <div class="order-container">
+        <h2>📦 จัดการคำสั่งซื้อ</h2>
 
-        <table class="order-table">
+        {% if orders %}
+        <table>
             <thead>
                 <tr>
-                    <th>📌 Order ID</th>
-                    <th>📦 รายการสินค้า</th>
-                    <th>💳 สถานะชำระเงิน</th>
-                    <th>🚚 สถานะการจัดส่ง</th>
-                    <th>📍 ที่อยู่จัดส่ง</th>
-                    <th>⚙️ จัดการ</th>
+                    <th>หมายเลขออเดอร์</th>
+                    <th>ลูกค้า</th>
+                    <th>ยอดรวม</th>
+                    <th>สถานะการชำระเงิน</th>
+                    <th>สลิป</th>
+                    <th>สถานะการจัดส่ง</th>
+                    <th>อัปเดตสถานะ</th>
                 </tr>
             </thead>
             <tbody>
                 {% for order in orders %}
                 <tr>
                     <td>#{{ order.id }}</td>
-                    <td>
-                        <ul>
-                            {% for item in order.order_items.all %}
-                                <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.price_per_item }})</li>
-                            {% empty %}
-                                <li>❌ ไม่มีสินค้าในคำสั่งซื้อ</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td class="{% if order.payment_status == 'paid' %}paid{% else %}pending{% endif %}">
-                        {{ order.get_payment_status_display }}
-                    </td>
-                    <td class="status">{{ order.get_status_display }}</td>
-                    <td>
-                        {{ order.shipping_address }}<br>
-                        📞 {{ order.phone_number }}
-                    </td>
-                    <td>
-                        {% if order.status == "pending" %}
-                            <a href="{% url 'update_order_status' order.id 'shipped' %}" class="btn shipped">🚚 จัดส่งแล้ว</a>
-                        {% elif order.status == "shipped" %}
-                            <a href="{% url 'update_order_status' order.id 'delivered' %}" class="btn delivered">✅ ส่งสำเร็จ</a>
-                        {% endif %}
+                    <td>{{ order.user.username }}</td>
+                    <td>฿{{ order.total_price }}</td>
 
-                        {% if order.status == "pending" %}
-                            <a href="{% url 'cancel_order' order.id %}" class="btn cancel">❌ ยกเลิก</a>
+                    <!-- ✅ สถานะการชำระเงิน -->
+                    <td>
+                        {% if order.payment_status == "pending" %}
+                            {% if order.payment %}
+                                ⏳ รออนุมัติการชำระเงิน
+                            {% else %}
+                                ⏳ รอการชำระเงิน
+                            {% endif %}
+                        {% elif order.payment_status == "paid" %}
+                            ✅ ชำระเงินแล้ว
+                        {% else %}
+                            ❌ ถูกปฏิเสธ
                         {% endif %}
                     </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6">❌ ไม่มีคำสั่งซื้อเข้ามา</td>
+
+                    <!-- ✅ ดูสลิป -->
+                    <td>
+                        {% if order.payment %}
+                            <a href="{{ order.payment.slip.url }}" target="_blank" class="slip-btn">📜 ดูสลิป</a>
+                        {% else %}
+                            ❌ ไม่มีสลิป
+                        {% endif %}
+                    </td>
+
+                    <!-- ✅ สถานะการจัดส่ง -->
+                    <td>
+                        {% if order.status == "pending" %}
+                            ⏳ รอการยืนยันจากผู้ขาย
+                        {% elif order.status == "processing" %}
+                            📦 กำลังแพ็คสินค้า
+                        {% elif order.status == "shipped" %}
+                            🚚 กำลังจัดส่ง
+                        {% elif order.status == "delivered" %}
+                            ✅ จัดส่งสำเร็จ
+                        {% elif order.status == "cancelled" %}
+                            ❌ ยกเลิกแล้ว
+                        {% endif %}
+                    </td>
+
+                    <!-- ✅ ปุ่มอัปเดตสถานะ (เฉพาะผู้ขาย) -->
+                    <td>
+                        {% if order.status == "pending" %}
+                            <a href="{% url 'update_order_status' order.id 'processing' %}" class="btn processing">📦 แพ็คสินค้า</a>
+                        {% elif order.status == "processing" %}
+                            <a href="{% url 'update_order_status' order.id 'shipped' %}" class="btn shipped">🚚 กำลังจัดส่ง</a>
+                        {% elif order.status == "shipped" %}
+                            ⏳ รอการยืนยันจากลูกค้า
+                        {% elif order.status == "delivered" %}
+                            ✅ จัดส่งสำเร็จ
+                        {% endif %}
+                        
+                        {% if order.status != "cancelled" and order.status != "delivered" %}
+                            <a href="{% url 'update_order_status' order.id 'cancelled' %}" class="btn cancel">❌ ยกเลิกออเดอร์</a>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </main>
-</div>
+        {% else %}
+            <p>❌ ยังไม่มีคำสั่งซื้อ</p>
+        {% endif %}
+    </div>
 
+    <footer>
+        <p>&copy; 2025 Your Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

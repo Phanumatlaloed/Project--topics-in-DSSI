@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แก้ไขโปรไฟล์ผู้ขาย</title>
+    <link rel="stylesheet" href="{% static 'styles/sellers_edit_profile.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>🔧 แก้ไขโปรไฟล์ผู้ขาย</h2>
+
+        <!-- ✅ แสดงข้อความแจ้งเตือน -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- ✅ ฟอร์มแก้ไขข้อมูลผู้ใช้ -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="update_profile" value="1">
+            <fieldset>
+                <legend>👤 ข้อมูลผู้ใช้</legend>
+                {{ user_form.as_p }}
+            </fieldset>
+
+            <fieldset>
+                <legend>🏪 ข้อมูลร้านค้า</legend>
+                {{ seller_form.as_p }}
+            </fieldset>
+
+            <button type="submit" class="btn btn-primary">💾 บันทึก</button>
+        </form>
+
+        <hr>
+
+        <!-- ✅ ฟอร์มเปลี่ยนรหัสผ่าน -->
+        <h3>🔑 เปลี่ยนรหัสผ่าน</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="change_password" value="1">
+            {{ password_form.as_p }}
+            <button type="submit" class="btn btn-warning">🔄 อัปเดตรหัสผ่าน</button>
+            <a href="{% url 'seller_dashboard' %}" class="btn-cancel">⬅️ ยกเลิก</a>
+        </form>
+    </div>
+
+    <!-- ✅ สคริปต์แจ้งเตือนแบบ fade-out -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(function () {
+                let alerts = document.querySelectorAll(".alert");
+                alerts.forEach(alert => {
+                    alert.style.transition = "opacity 0.5s";
+                    alert.style.opacity = "0";
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
+
