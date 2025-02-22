@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post</title>
+
+    <!-- ✅ CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles/edit_post.css' %}">
+
+    <!-- ✅ JavaScript -->
+    <script src="{% static 'js/edit.js' %}" defer></script>
+</head>
+<body>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="edit-post-card p-4">
+            <h2 class="text-center">📝 แก้ไขโพสต์</h2>
+
+            <!-- ฟอร์มแก้ไขโพสต์ -->
+            <form id="editPostForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <!-- ✅ แสดงไฟล์ที่อัปโหลดไว้ก่อนหน้า -->
+                <div class="existing-files mt-3">
+                    <h5>📂 ไฟล์ที่อัปโหลดไว้</h5>
+                    <div id="existingFilesList">
+                        {% for media in post.media.all %}
+                            <div class="file-item d-flex align-items-center" data-file-id="{{ media.id }}">
+                                {% if media.media_type == "image" %}
+                                    <img src="{{ media.file.url }}" class="file-preview me-2">
+                                {% else %}
+                                    <video src="{{ media.file.url }}" class="file-preview me-2" controls></video>
+                                {% endif %}
+                                <button type="button" class="btn btn-sm btn-danger remove-existing-file" data-file-id="{{ media.id }}">✖</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- ✅ อัปโหลดรูป -->
+                <div class="upload-section mt-3">
+                    <label for="editPostImages" class="btn btn-light upload-btn">🖼️ เพิ่มรูปภาพ</label>
+                    <input type="file" name="images" id="editPostImages" accept="image/*" multiple hidden>
+                </div>
+
+                <!-- ✅ อัปโหลดวิดีโอ -->
+                <div class="upload-section mt-2">
+                    <label for="editPostVideos" class="btn btn-light upload-btn">🎥 เพิ่มวิดีโอ</label>
+                    <input type="file" name="videos" id="editPostVideos" accept="video/*" multiple hidden>
+                </div>
+
+                <!-- ✅ แสดงไฟล์ที่เลือกใหม่ -->
+                <div id="selectedEditFiles" class="selected-files mt-3"></div>
+
+                <button type="submit" id="savePostButton" class="btn btn-pink w-100 mt-3">💾 Save</button>
+                  <!-- ปุ่มยกเลิก -->
+                <a href="{% url 'home' %}" class="btn btn-danger w-100 mt-2">❌ ยกเลิก</a>
+
+            </form>
+        </div>
+    </div>
+</body>
+</html>

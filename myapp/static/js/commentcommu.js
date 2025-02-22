@@ -1,58 +1,45 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const toast = document.getElementById("toast");
-
-    // Function to show Toast Notification
-    function showToast(message, isError = false) {
-        if (toast) {
-            toast.textContent = message;
-            toast.className = isError ? "show error" : "show success";
-            setTimeout(() => {
-                toast.className = toast.className.replace("show", "").trim();
-            }, 3000);
-        }
+    function getCSRFToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
     }
 
-    // Function to send POST request
-    async function sendPostRequest(url, body = null) {
-        const headers = {
-            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
-        };
-        const options = {
-            method: "POST",
-            headers: headers,
-        };
-        if (body) options.body = body;
+    // ✅ ฟังก์ชันเพิ่มคอมเมนต์
+    document.querySelectorAll(".add-comment-form").forEach(form => {
+        form.addEventListener("submit", function (event) {
+            event.preventDefault(); // ป้องกันรีเฟรชหน้า
 
-        try {
-            const response = await fetch(url, options);
-            if (!response.ok) throw new Error("Network response was not ok");
-            return await response.json();
-        } catch (error) {
-            console.error("Error:", error);
-            return { success: false, error: error.message };
-        }
-    }
+            let postId = this.dataset.postId;
+            let content = this.querySelector("input[name='content']").value;
 
-    // Handle Comment form for community posts
-    document.querySelectorAll(".comment-form").forEach((form) => {
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault(); // Prevent default form submission behavior
-
-            const formData = new FormData(form);
-            const result = await sendPostRequest(form.action, formData);
-
-            if (result.success) {
-                const commentSection = form.closest(".post-card").querySelector(".comments-section");
-                const newComment = document.createElement("div");
-                newComment.className = "comment";
-                newComment.innerHTML = `<strong>${result.comment.user}</strong>: ${result.comment.content}`;
-                commentSection.appendChild(newComment);
-                form.reset();
-                showToast("Comment added successfully!");
-            } else {
-                console.error("Error adding comment:", result.error);
-                showToast("Error adding comment.", true);
+            if (!content.trim()) {
+                alert("⚠️ กรุณากรอกข้อความก่อนส่งคอมเมนต์!");
+                return;
             }
+
+            fetch(`/group_post/comment/${postId}/`, {  // ✅ แก้ URL ให้ตรงกับ Django
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let commentSection = document.getElementById(`comments-${postId}`);
+                    let newComment = document.createElement("div");
+                    newComment.className = "comment border p-2 mb-1 rounded bg-white";
+                    newComment.innerHTML = `<b>${data.comment.user}</b>: ${data.comment.content}`;
+                    commentSection.appendChild(newComment);
+                    
+                    // ✅ เคลียร์ฟอร์มหลังจากโพสต์สำเร็จ
+                    form.querySelector("input[name='content']").value = "";
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error("Error:", error));
         });
     });
 });

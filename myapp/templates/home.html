@@ -35,7 +35,7 @@
                     <li><a href="{% url 'savelist' %}" class="nav-link ">💾 Save </a></li>
                     <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
                     <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
-                    <li><a href="{% url 'notification_list' %}" class="nav-link">notification</a></li>
+                    <li><a href="{% url 'notification_list' %}" class="nav-link">🔔 notification</a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">
@@ -131,7 +131,7 @@
 
                             <!-- Actions -->
                             <div class="actions mt-2 d-flex gap-2">
-                                <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">👍 Like</button>
+                                <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">🤍 Like</button>
                                 <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
                                 <button class="btn btn-light share-btn" data-post-id="{{ post.id }}">🔗 Share</button>
                                 <button class="btn btn-light save-btn" data-post-id="{{ post.id }}">
@@ -150,23 +150,40 @@
                             </div>
 
                             <!-- Comments Section -->
+                            <!-- Comments Section -->
                             <div class="comments mt-2">
                                 <h6>💬 Comments</h6>
                                 <div id="comments-{{ post.id }}">
                                     {% for comment in post.comments.all %}
-                                        <div class="comment border p-2 mb-1 rounded bg-white">
-                                            <b>{{ comment.user.username }}</b>: {{ comment.content }}
+                                        <div class="comment border p-2 mb-1 rounded bg-white d-flex align-items-center justify-content-between" id="comment-{{ comment.id }}">
+                                            <div>
+                                                <b>{{ comment.user.username }}</b>: 
+                                                <span class="comment-content">{{ comment.content }}</span>
+                                            </div>
+                            
+                                            {% if request.user == comment.user %}
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-light comment-options" data-bs-toggle="dropdown">
+                                                        ⋮
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><button class="dropdown-item edit-comment" data-comment-id="{{ comment.id }}">✏️ Edit</button></li>
+                                                        <li><button class="dropdown-item text-danger delete-comment" data-comment-id="{{ comment.id }}">🗑 Delete</button></li>
+                                                    </ul>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     {% endfor %}
                                 </div>
-
+                            
                                 <!-- Add Comment Form -->
                                 <form class="add-comment-form mt-2" data-post-id="{{ post.id }}">
                                     {% csrf_token %}
                                     <input type="text" name="content" placeholder="Write a comment..." class="form-control mb-1">
                                     <button type="submit" class="btn btn-primary btn-sm">Comment</button>
-                                </form>
+                                </form>                                
                             </div>
+                            
                         </div>
                     {% endif %}
                 {% endfor %}

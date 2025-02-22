@@ -7,10 +7,11 @@ from .views import logout_view, login_view, seller_login, seller_logout, registe
 from .views import (
     logout_view, login_view, seller_login, seller_logout, register_seller, product_list, 
     add_product, my_products, product_detail, delete_product, delete_post, edit_post, 
-    edit_store, edit_group_post, delete_group_post, save_group_post, share_group_post,
+    edit_store, group_edit_post, delete_group_post, save_group_post, share_group_post,
     add_to_cart, view_cart, update_cart, remove_from_cart, checkout, update_shipping,
     add_review, order_tracking, return_order, cancel_order, report_post, remove_saved_group_post,
-    admin_login, admin_dashboard, delete_reported_post, admin_register, block_user,create_group_post, edit_group,
+    admin_login, admin_dashboard, delete_reported_post, admin_register, block_user,create_group_post, edit_group, 
+    group_post_detail, follow_user, post_like_detail
 )
 
 
@@ -39,7 +40,7 @@ urlpatterns = [
     path('create_post/', views.create_post, name='create_post'),
     path('like/<int:post_id>/', views.toggle_like, name='toggle_like'),
     path('save/<int:post_id>/', views.saved_post, name='save_post'),
-    path('community/<int:group_id>/group/post/<int:post_id>/delete/', remove_saved_group_post, name='remove_saved_group_post'),
+    path('community/<int:group_id>/group/post/<int:post_id>/unsave/', remove_saved_group_post, name='remove_saved_group_post'),
     path('add_comment/<int:post_id>/', views.add_comment, name='add_comment'),
 
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
@@ -47,19 +48,26 @@ urlpatterns = [
     path('post/<int:post_id>/', views.post_detail, name='post_detail'),  # ✅ แก้ปัญหา NoReverseMatch
     path('delete_media/<int:media_id>/', views.delete_media, name='delete_media'),
     path('post/<int:post_id>/share/', views.share_post, name='share_post'),
+    path('post_like_detail/<int:post_id>/', views.post_like_detail, name='post_like_detail'),
 
     # Profile management and view
     path('profile/settings/', views.profile_management, name='profile_management'),  # เส้นทางตั้งค่าโปรไฟล์
     path('profile/<int:user_id>/', views.profile_view, name='profile'),  # เส้นทางแสดงโปรไฟล์
 
     #จัดการโพสต์ในกลุ่ม group_deta
-    path('group_post/like/<int:post_id>/', views.toggle_group_post_like, name='toggle_group_post_like'),
+    path('group_post/like/<int:post_id>/like', views.toggle_group_post_like, name='toggle_group_post_like'),
     path('group_post/comment/<int:post_id>/', views.add_group_post_comment, name='add_group_post_comment'),
     path('community/<int:group_id>/post/', create_group_post, name='create_group_post'),
-    path('group/post/<int:post_id>/edit/', edit_group_post, name='edit_group_post'),
+    path('group/post/<int:post_id>/edit/', group_edit_post, name='group_edit_post'),
     path('community/<int:group_id>/group/post/<int:post_id>/delete/', delete_group_post, name='delete_group_post'),
     path('community/<int:group_id>/group/post/<int:post_id>/save/', save_group_post, name='save_group_post'),
-    path('group/post/<int:post_id>/share/', share_group_post, name='share_group_post'),
+    path('group_post/<int:post_id>/share/', share_group_post, name='share_group_post'),
+
+    # เส้นทางสำหรับแก้ไขคอมเมนต์
+    path('comment/edit/<int:comment_id>/', views.edit_comment, name='edit_comment'),
+    # เส้นทางสำหรับลบคอมเมนต์
+    path('comment/delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
+
 
     # ✅ เส้นทางสำหรับผู้ขาย
     path("seller/login/", seller_login, name="seller_login"),
@@ -150,5 +158,9 @@ urlpatterns = [
     path('store/<slug:store_id>/', views.store_detail, name='store_detail'),
 
     path("review/add/<int:order_id>/<int:product_id>/", add_review, name="add_review"),
+
+    path('group_post/<int:post_id>/', views.group_post_detail, name='group_post_detail'),
+    path('delete_media/<int:media_id>/', views.delete_media, name='delete_media'),
+
 
 ]

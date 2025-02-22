@@ -168,6 +168,22 @@ body {
     color: #333;
 }
 
+
+
+.post .user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.post .profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ff6b81;
+    margin-right: 10px;
+}
+
 .post-media {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));

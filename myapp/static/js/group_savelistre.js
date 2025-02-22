@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return cookieValue;
             }
 
-            fetch(`/community/${groupId}/group/post/${postId}/save/`, {
+            fetch(`/community/${groupId}/group/post/${postId}/unsave/`, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCSRFToken(),

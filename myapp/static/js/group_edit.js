@@ -1,24 +1,39 @@
-document.querySelectorAll(".edit-btn").forEach(button => {
-    button.addEventListener("click", function () {
-        let postId = this.getAttribute("data-post-id");
-        let newContent = prompt("กรุณาแก้ไขข้อความ:", "");
+document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.getElementById("editPostImages");
+    const fileVideoInput = document.getElementById("editPostVideos");
+    const selectedFilesContainer = document.getElementById("selectedEditFiles");
 
-        if (newContent !== null && newContent.trim() !== "") {
-            fetch(`/group/post/${postId}/edit/`, {
-                method: "POST", // ✅ ใช้ POST (เดิมอาจเป็น GET)
-                headers: {
-                    "X-CSRFToken": getCSRFToken(),
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ content: newContent }) // ✅ ส่งข้อมูลใหม่
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                if (data.success) {
-                    document.getElementById(`post-${postId}`).querySelector(".post-content").textContent = newContent;
-                }
-            });
+    fileInput.addEventListener("change", function () {
+        selectedFilesContainer.innerHTML = ""; // ล้างรายการไฟล์ที่เลือก
+
+        for (let i = 0; i < fileInput.files.length; i++) {
+            let file = fileInput.files[i];
+            let fileName = document.createElement("p");
+            fileName.textContent = file.name;
+            selectedFilesContainer.appendChild(fileName);
         }
+    });
+
+    fileVideoInput.addEventListener("change", function () {
+        for (let i = 0; i < fileVideoInput.files.length; i++) {
+            let file = fileVideoInput.files[i];
+            let fileName = document.createElement("p");
+            fileName.textContent = file.name;
+            selectedFilesContainer.appendChild(fileName);
+        }
+    });
+
+    // ✅ ลบไฟล์ที่อัปโหลดแล้ว
+    document.querySelectorAll(".remove-existing-file").forEach((button) => {
+        button.addEventListener("click", function () {
+            const mediaId = this.getAttribute("data-file-id");
+            fetch(`/delete_media/${mediaId}/`, { method: "DELETE" })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        this.parentElement.remove();
+                    }
+                });
+        });
     });
 });

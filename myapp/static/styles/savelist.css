@@ -10,7 +10,7 @@ body {
 
 /* 📌 Sidebar */
 .sidebar {
-    width: 220px;
+    width: 250px;
     height: 100vh;
     position: fixed;
     background-color: #fde5e5;

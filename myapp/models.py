@@ -345,9 +345,10 @@ class RefundRequest(models.Model):
 
 
 class Follow(models.Model):
-    follower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="following")
-    following = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="followers")
+    follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="following")
+    following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="followers")
     created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         unique_together = ("follower", "following")  # ป้องกันการติดตามซ้ำ
@@ -418,3 +419,22 @@ class ReviewMedia(models.Model):
 
     def __str__(self):
         return f"({self.media_type.upper()}) {os.path.basename(self.file.name)}"
+    
+class GroupPostMedia(models.Model):
+    MEDIA_TYPE_CHOICES = (
+        ('image', 'Image'),
+        ('video', 'Video'),
+    )
+    
+    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name="media")
+    file = models.FileField(upload_to="group_posts/")  # ✅ กำหนด path ให้เก็บรูป  # ใช้ฟังก์ชันอัปโหลดเดิม
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPE_CHOICES)
+    caption = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name_plural = "Group Post Media"
+
+    def __str__(self):
+        return f"({self.media_type.upper()}) {os.path.basename(self.file.name)} for GroupPost {self.post.id}"
