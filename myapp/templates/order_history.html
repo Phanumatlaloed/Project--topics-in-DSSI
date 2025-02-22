@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📜 ประวัติคำสั่งซื้อ</title>
-    
+
     <!-- ✅ Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'styles/order_his.css' %}">
@@ -14,8 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 <body>
-
-    <!-- 🌸 Navbar -->
+    <!-- ✅ Navbar -->
     <header class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a href="{% url 'home' %}" class="navbar-brand">
@@ -34,18 +33,21 @@
         <h2 class="text-center text-primary">📜 ประวัติคำสั่งซื้อของฉัน</h2>
 
         <!-- 🔹 Bootstrap Tabs -->
-        <ul class="nav nav-tabs mt-3" id="orderTabs">
+        <ul class="nav nav-tabs mt-3">
             <li class="nav-item">
                 <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pendingOrders">📦 ที่ต้องจัดส่ง</button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completedOrders">✅ จัดส่งสำเร็จ</button>
             </li>
+            <li class="nav-item">
+                <a href="{% url 'refund_history' %}" class="nav-link">🔄 การคืนสินค้า</a>  <!-- ✅ ปุ่มลิงก์ไปหน้า refund_history -->
+            </li>
         </ul>
 
         <!-- 🔹 Tab Content -->
         <div class="tab-content mt-3">
-            <!-- ✅ ที่ต้องจัดส่ง -->
+            <!-- 📦 ออเดอร์ที่ต้องจัดส่ง -->
             <div class="tab-pane fade show active" id="pendingOrders">
                 {% if pending_orders %}
                 <table class="table table-striped text-center">
@@ -121,66 +123,55 @@
                 {% endif %}
             </div>
 
-            <!-- ✅ จัดส่งสำเร็จ -->
-<div class="tab-pane fade" id="completedOrders">
-    {% if completed_orders %}
-    <table class="table table-striped text-center">
-        <thead class="table-success">
-            <tr>
-                <th>#</th>
-                <th>ร้านค้า</th>
-                <th>สินค้า</th>
-                <th>ที่อยู่</th>
-                <th>เบอร์โทร</th>
-                <th>ยอดรวม</th>
-                <th>สถานะชำระเงิน</th>
-                <th>สถานะจัดส่ง</th>
-                <th>รีวิว</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for order in completed_orders %}
-            <tr>
-                <td>#{{ order.id }}</td>
-                <td>{{ order.seller.store_name }}</td>
-                <td>
-                    <ul>
-                        {% for item in order.order_items.all %}
-                            <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.price_per_item }})</li>
+            <!-- ✅ ออเดอร์ที่จัดส่งสำเร็จ -->
+            <div class="tab-pane fade" id="completedOrders">
+                {% if completed_orders %}
+                <table class="table table-striped text-center">
+                    <thead class="table-success">
+                        <tr>
+                            <th>#</th>
+                            <th>ร้านค้า</th>
+                            <th>สินค้า</th>
+                            <th>ที่อยู่</th>
+                            <th>เบอร์โทร</th>
+                            <th>ยอดรวม</th>
+                            <th>สถานะชำระเงิน</th>
+                            <th>สถานะจัดส่ง</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in completed_orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.seller.store_name }}</td>
+                            <td>
+                                <ul>
+                                    {% for item in order.order_items.all %}
+                                        <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.price_per_item }})</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>{{ order.shipping_address }}</td>
+                            <td>{{ order.phone_number }}</td>
+                            <td>฿{{ order.total_price }}</td>
+                            <td>✅ ชำระเงินแล้ว</td>
+                            <td>✅ จัดส่งสำเร็จ</td>
+                            <td>
+                                {% for item in order.order_items.all %}
+                                    <a href="{% url 'add_review' order.id item.product.id %}" class="btn btn-primary btn-sm">📝 รีวิว</a>
+                                    <a href="{% url 'request_refund' order.id item.id %}" class="btn btn-danger btn-sm">🔄 ขอคืนเงิน</a>
+                                {% endfor %}
+                            </td>
+                        </tr>
                         {% endfor %}
-                    </ul>
-                </td>
-                <td>{{ order.shipping_address }}</td>
-                <td>{{ order.phone_number }}</td>
-                <td>฿{{ order.total_price }}</td>
-                <td>✅ ชำระเงินแล้ว</td>
-                <td>✅ จัดส่งสำเร็จ</td>
-                <td>
-                    {% for item in order.order_items.all %}
-                        {% with already_reviewed=False %}
-                            {% for review in item.product.reviews.all %}
-                                {% if review.user == request.user and review.order.id == order.id %}
-                                    {% with already_reviewed=True %}
-                                        <span class="reviewed">✅ รีวิวแล้ว</span><br>
-                                    {% endwith %}
-                                {% endif %}
-                            {% endfor %}
-
-                            {% if not already_reviewed %}
-                                <a href="{% url 'add_review' order.id item.product.id %}" class="btn-review">
-                                    📝 รีวิว {{ item.product.name }}
-                                </a><br>
-                            {% endif %}
-                        {% endwith %}
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-        <p class="text-center text-muted">😢 ยังไม่มีออเดอร์ที่สำเร็จ</p>
-    {% endif %}
-</div>
+                    </tbody>
+                </table>
+                {% else %}
+                    <p class="text-center text-muted">😢 ยังไม่มีออเดอร์ที่สำเร็จ</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </body>
 </html>

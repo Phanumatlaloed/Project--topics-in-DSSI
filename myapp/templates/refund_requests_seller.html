@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำขอคืนเงิน - ผู้ขาย</title>
+    <link rel="stylesheet" href="{% static 'styles/refund_requests_seller.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2>
+            <ul class="menu">
+                <li class="menu-header">คำสั่งซื้อ</li>
+                <li class="menu-item"><a href="{% url 'seller_dashboard' %}">แดชบอร์ด</a></li>
+                <li class="menu-item"><a href="{% url 'seller_orders' %}">คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
+                <li class="menu-item active"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
+
+                <li class="menu-header">สินค้า</li>
+                <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
+
+                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
+                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
+
+                <li class="menu-header">การตั้งค่า</li>
+                <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
+                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
+                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <h2>คำขอคืนเงิน (สำหรับผู้ขาย)</h2>
+            <p class="text-center text-muted">จำนวนคำขอคืนเงินทั้งหมด: <strong>{{ refund_requests.count }}</strong></p>
+
+            {% if refund_requests %}
+            <div class="refund-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>ลูกค้า</th>
+                            <th>สินค้า</th>
+                            <th>เหตุผล</th>
+                            <th>ยอดรวม</th>
+                            <th>สถานะ</th>
+                            <th>หลักฐานการชำระเงิน</th>
+                            <th>อัปโหลดสลิปคืนเงิน</th>
+                            <th>ลูกค้ายืนยัน</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for refund in refund_requests %}
+                        <tr>
+                            <td>#{{ refund.order.id }}</td>
+                            <td>{{ refund.user.username }}</td>
+                            <td>
+                                {% if refund.item %}
+                                    {{ refund.item.product.name }} x {{ refund.item.quantity }} (฿{{ refund.item.price_per_item }})
+                                {% else %}
+                                    ❌ ไม่พบสินค้า
+                                {% endif %}
+                            </td>
+                            <td>{{ refund.refund_reason }}</td>
+                            <td>฿{{ refund.order.total_price }}</td>
+                            <td>
+                                {% if refund.status == "pending" %}
+                                    ⏳ รอการคืนเงิน
+                                {% elif refund.status == "approved" %}
+                                    ✅ อนุมัติแล้ว
+                                {% elif refund.status == "confirmed" %}
+                                    ✔ ลูกค้ายืนยันแล้ว
+                                {% elif refund.status == "rejected" %}
+                                    ❌ ถูกปฏิเสธ
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if refund.payment_proof %}
+                                    <a href="{{ refund.payment_proof.url }}" target="_blank" class="slip-btn">ดูหลักฐาน</a>
+                                {% else %}
+                                    ❌ ไม่มีหลักฐาน
+                                {% endif %}
+                            </td>                    
+                            <td>
+                                {% if refund.status == "approved" and not refund.refund_proof %}
+                                    <a href="{% url 'upload_refund_proof' refund.id %}" class="btn upload">อัปโหลด</a>
+                                {% elif refund.refund_proof %}
+                                    <a href="{{ refund.refund_proof.url }}" target="_blank" class="btn success">ดูสลิป</a>
+                                {% else %}
+                                    ❌ ยังไม่ได้อนุมัติ
+                                {% endif %}
+                            </td>                    
+                            <td>
+                                {% if refund.status == "approved" and refund.refund_proof %}
+                                    <a href="{% url 'confirm_refund_received' refund.id %}" class="btn confirm">ลูกค้ายืนยัน</a>
+                                {% elif refund.status == "confirmed" %}
+                                    ✔ ยืนยันแล้ว
+                                {% else %}
+                                    ❌ รออนุมัติ
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if refund.status == "pending" %}
+                                    <a href="{% url 'approve_refund' refund.id %}" class="btn approve">อนุมัติ</a>
+                                    <a href="{% url 'reject_refund' refund.id %}" class="btn reject">ปฏิเสธ</a>
+                                {% else %}
+                                    ✅ ดำเนินการแล้ว
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="text-center text-muted">ไม่มีคำขอคืนเงิน</p>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

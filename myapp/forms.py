@@ -340,3 +340,41 @@ class SellerProfileUpdateForm(forms.ModelForm):
         model = Seller
         fields = ("store_name", "store_image", "contact_info")
 
+from django import forms
+from .models import RefundRequest, Order
+
+class RefundRequestForm(forms.ModelForm):
+    """ ฟอร์มขอคืนเงิน """
+    class Meta:
+        model = RefundRequest
+        fields = ['bank_name', 'account_number', 'account_name', 'refund_reason', 'payment_proof']
+
+class RefundProofForm(forms.ModelForm):
+    """ ฟอร์มอัปโหลดสลิปคืนเงิน """
+    class Meta:
+        model = RefundRequest
+        fields = ["refund_proof"]
+        widgets = {
+            "refund_proof": forms.FileInput(attrs={"class": "form-control"}),
+        }
+
+class RefundProofUploadForm(forms.ModelForm):
+    class Meta:
+        model = RefundRequest
+        fields = ["payment_proof"]
+
+from django import forms
+from .models import WithdrawalRequest
+
+class WithdrawalForm(forms.ModelForm):
+    class Meta:
+        model = WithdrawalRequest
+        fields = ["amount"]
+class WithdrawalProofForm(forms.ModelForm):
+    """ ฟอร์มให้แอดมินอัปโหลดสลิปโอนเงิน """
+    class Meta:
+        model = WithdrawalRequest
+        fields = ["payment_proof"]
+        widgets = {
+            "payment_proof": forms.FileInput(attrs={"class": "form-control"}),
+        }

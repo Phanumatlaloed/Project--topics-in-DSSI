@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>📜 อนุมัติคำขอถอนเงิน</h2>
+
+<p><strong>ร้านค้า:</strong> {{ withdrawal.seller.store_name }}</p>
+<p><strong>จำนวนเงิน:</strong> ฿{{ withdrawal.amount }}</p>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">✅ ยืนยันการโอน</button>
+</form>
+{% endblock %}

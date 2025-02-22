@@ -1,139 +1,177 @@
-/* 🌸 ฟอนต์และสีหลัก */
+/* ✅ ตั้งค่า Theme */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #ffe6ea; /* พื้นหลังสีชมพูอ่อน */
+    background-color: #FFC0CB;
+    color: #333;
     margin: 0;
     padding: 0;
+}
+
+/* ✅ Layout */
+.dashboard-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    min-height: 100vh;
 }
 
-/* 🌸 Container */
-.container {
-    background: white;
-    padding: 30px;
-    width: 500px;
-    border-radius: 12px;
-    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+/* ✅ Sidebar */
+.sidebar {
+    width: 260px;
+    background: linear-gradient(135deg, #FFC0CB, #FFC0CB);
+    color: white;
+    padding: 20px;
+    min-height: 100vh;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease-in-out;
 }
 
-/* 🌸 หัวข้อหลัก */
-h2, h3 {
-    color: #ff4d79;
+.sidebar-title {
+    font-size: 22px;
     font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-/* 🌸 ฟอร์ม */
-form {
-    text-align: left;
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-header {
+    font-weight: bold;
     margin-top: 15px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
 }
 
+.menu-item {
+    margin-top: 10px;
+}
+
+.menu-item a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.menu-item a i {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.menu-item a:hover, .menu-item.active a {
+    background: white;
+    color: #FFC0CB;
+    font-weight: bold;
+    transform: translateX(5px);
+    box-shadow: 0px 4px 10px rgba(255, 99, 132, 0.3);
+}
+
+/* ✅ Main Content */
+.content {
+    flex-grow: 1;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    margin: 30px auto;
+    width: 85%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ฟอร์มแก้ไขโปรไฟล์ */
+.card {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ฟอร์ม */
 fieldset {
-    border: 2px solid #ff4d79;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    background: #fff5f8;
+    border: 2px solid #FF85A2;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #fff0f3;
 }
 
 legend {
-    font-size: 16px;
     font-weight: bold;
-    color: #ff4d79;
-    padding: 0 8px;
+    color: #FF6384;
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 
-/* 🌸 ช่องกรอกข้อมูล */
-input[type="text"], 
-input[type="email"],
-input[type="password"],
-textarea, 
-select {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid #ff4d79;
-    border-radius: 8px;
-    margin-top: 5px;
-    font-size: 14px;
-}
-
-/* 🌸 ปุ่ม */
-.btn {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
+.form-label {
     font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
-    display: inline-block;
+    color: #FF6384;
 }
 
-.btn-primary {
-    background: #ff4d79;
-    color: white;
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 2px solid #FFB6C1;
+    outline: none;
     transition: 0.3s;
 }
 
-.btn-primary:hover {
-    background: #e6456b;
+input:focus, select:focus, textarea:focus {
+    border-color: #FF6384;
+    box-shadow: 0 0 5px #FF85A2;
 }
 
-.btn-warning {
-    background: #ffcc00;
-    color: white;
-}
-
-.btn-warning:hover {
-    background: #e6b800;
-}
-
-.btn-cancel {
-    display: block;
-    margin-top: 10px;
-    text-decoration: none;
-    color: #ff4d79;
-    font-weight: bold;
-}
-
-.btn-cancel:hover {
-    text-decoration: underline;
-}
-
-/* 🌸 แจ้งเตือน */
-.messages {
-    margin-bottom: 15px;
-}
-
-.alert {
-    padding: 10px;
+/* ✅ ปุ่ม */
+.btn {
+    padding: 10px 15px;
+    font-size: 14px;
     border-radius: 8px;
+    text-decoration: none;
     font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.submit-btn {
+    background-color: #FF869B;
+    color: white;
+    border: none;
+}
+
+.submit-btn:hover {
+    background-color: #FF4F5E;
+}
+
+.back-btn {
+    background-color: #ccc;
+    color: black;
+    display: block;
     text-align: center;
+    margin-top: 20px;
 }
 
-.alert-success {
-    background: #d4edda;
-    color: #155724;
+.back-btn:hover {
+    background-color: #aaa;
 }
 
-.alert-warning {
-    background: #fff3cd;
-    color: #856404;
-}
+/* ✅ Responsive */
+@media (max-width: 992px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
 
-.alert-error {
-    background: #f8d7da;
-    color: #721c24;
-}
+    .sidebar {
+        width: 100%;
+    }
 
-/* 🌸 Responsive */
-@media (max-width: 576px) {
-    .container {
-        width: 90%;
+    .content {
+        width: 95%;
+        margin: 20px auto;
     }
 }

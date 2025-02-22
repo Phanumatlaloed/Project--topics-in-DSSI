@@ -1,44 +1,79 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แก้ไขโปรไฟล์ผู้ขาย</title>
+    
+    <!-- ✅ Custom CSS -->
     <link rel="stylesheet" href="{% static 'styles/edit_profile.css' %}">
 </head>
 <body>
-    <div class="container">
-        <h2>🔧 แก้ไขโปรไฟล์ผู้ขาย</h2>
 
-        <!-- ฟอร์มแก้ไขข้อมูลผู้ใช้ -->
-        <form method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="update_profile" value="1">
-            <fieldset>
-                <legend>👤 ข้อมูลผู้ใช้</legend>
-                {{ user_form.as_p }}
-            </fieldset>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2>
+            <ul class="menu">
+                <li class="menu-header">คำสั่งซื้อ</li>
+                <li class="menu-item"><a href="{% url 'seller_orders' %}">คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
 
-            <fieldset>
-                <legend>🏪 ข้อมูลร้านค้า</legend>
-                {{ seller_form.as_p }}
-            </fieldset>
+                <li class="menu-header">สินค้า</li>
+                <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
 
-            <button type="submit" class="btn btn-primary">💾 บันทึก</button>
-        </form>
+                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
+                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
 
-        <hr>
+                <li class="menu-header">การตั้งค่า</li>
+                <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
+                <li class="menu-item active"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
+                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
+                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
+            </ul>
+        </aside>
 
-        <!-- ฟอร์มเปลี่ยนรหัสผ่าน -->
-        <h3>🔑 เปลี่ยนรหัสผ่าน</h3>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="change_password" value="1">
-            {{ password_form.as_p }}
-            <button type="submit" class="btn btn-warning">🔄 อัปเดตรหัสผ่าน</button>
-            <a href="{% url 'seller_dashboard' %}" class="btn-cancel">⬅️ ยกเลิก</a>
-        </form>
+        <!-- Main Content -->
+        <main class="content">
+            <div class="card">
+                <h2 class="text-pink">แก้ไขโปรไฟล์ผู้ขาย</h2>
+                <p class="text-muted">กรุณากรอกข้อมูลให้ครบทุกช่องเพื่ออัปเดตโปรไฟล์ของคุณ</p>
+
+                <!-- ฟอร์มแก้ไขข้อมูลผู้ใช้ -->
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="update_profile" value="1">
+                    
+                    <fieldset>
+                        <legend>ข้อมูลผู้ใช้</legend>
+                        {{ user_form.as_p }}
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>ข้อมูลร้านค้า</legend>
+                        {{ seller_form.as_p }}
+                    </fieldset>
+
+                    <button type="submit" class="btn submit-btn">บันทึก</button>
+                </form>
+
+                <hr>
+
+                <!-- ฟอร์มเปลี่ยนรหัสผ่าน -->
+                <h3>เปลี่ยนรหัสผ่าน</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="change_password" value="1">
+                    {{ password_form.as_p }}
+                    <button type="submit" class="btn submit-btn">อัปเดตรหัสผ่าน</button>
+                    <a href="{% url 'seller_dashboard' %}" class="btn back-btn">กลับไปที่แดชบอร์ด</a>
+                </form>
+            </div>
+        </main>
     </div>
+
 </body>
 </html>

@@ -1,10 +1,7 @@
-/* ✅ ตั้งค่า Theme */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
+/* ✅ ตั้งค่าพื้นฐานของ Body */
 body {
+    background-color: #FFC0CB; /* พื้นหลังชมพูอ่อน */
     font-family: 'Poppins', sans-serif;
-    background-color: #FFC0CB;
-    color: #333;
     margin: 0;
     padding: 0;
 }
@@ -18,21 +15,23 @@ body {
 /* ✅ Sidebar */
 .sidebar {
     width: 260px;
-    background: linear-gradient(135deg, #FFC0CB, #FFC0CB);
+    background: linear-gradient(135deg, #FFC0CB, #f8c8dc);
     color: white;
     padding: 20px;
     min-height: 100vh;
+    border-radius: 0 15px 15px 0;
     box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s ease-in-out;
 }
 
+/* ✅ Sidebar Title */
 .sidebar-title {
-    font-size: 22px;
-    font-weight: bold;
     text-align: center;
+    font-weight: bold;
+    font-size: 22px;
     margin-bottom: 20px;
 }
 
+/* ✅ Sidebar Menu */
 .menu {
     list-style: none;
     padding: 0;
@@ -46,6 +45,11 @@ body {
     border-radius: 8px;
 }
 
+/* ✅ เพิ่มจุดนำหน้า menu-header */
+.menu-header::before {
+    content: "•";
+    margin-right: 8px;
+}
 
 .menu-item {
     margin-top: 10px;
@@ -54,26 +58,16 @@ body {
 .menu-item a {
     color: white;
     text-decoration: none;
-    display: flex;
-    align-items: center;
     padding: 12px;
+    display: block;
     border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-.menu-item a i {
-    margin-right: 8px;
-    font-size: 18px;
 }
 
 .menu-item a:hover, .menu-item.active a {
     background: white;
-    color: #FFC0CB;
+    color: #f8c8dc;
     font-weight: bold;
-    transform: translateX(5px);
-    box-shadow: 0px 4px 10px rgba(255, 99, 132, 0.3);
 }
-
 
 /* ✅ Main Content */
 .content {
@@ -86,13 +80,15 @@ body {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* ✅ Header */
 h2 {
-    color: #000000;
+    color: #ff4f5e;
+    font-weight: bold;
     text-align: center;
 }
 
-/* ✅ ตารางคำสั่งซื้อ */
-.order-table {
+/* ✅ ตาราง Refund Requests */
+.refund-table {
     background: white;
     border-radius: 15px;
     padding: 20px;
@@ -103,79 +99,71 @@ h2 {
 table {
     width: 100%;
     border-collapse: collapse;
-    text-align: center;
+}
+
+thead {
+    background: #FFC0CB; /* พื้นหลังหัวตารางสีชมพูอ่อน */
+    color: white;
+    font-weight: bold;
 }
 
 th, td {
     padding: 12px;
+    text-align: center;
     border-bottom: 1px solid #ddd;
 }
 
-thead {
-    background: #FFC0CB;
-    color: white;
-    font-weight: bold;
+.table-warning {
+    background-color: #ffe4e1;
 }
 
-/* ✅ ปุ่มสลิป */
-.slip-btn {
-    background: #ffb347;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: 0.3s;
-}
-
-.slip-btn:hover {
-    background: #ff9f1a;
-}
-
-/* ✅ ปุ่มอัปเดตสถานะ */
+/* ✅ ปุ่ม */
 .btn {
     padding: 8px 12px;
-    border-radius: 8px;
     font-size: 14px;
-    font-weight: bold;
-    text-decoration: none;
-    display: inline-block;
-    margin: 5px;
-    transition: all 0.3s ease-in-out;
+    border-radius: 5px;
 }
 
-.processing {
-    background-color: #ffa502;
-    color: white;
+.btn-primary {
+    background-color: #ff869b;
+    border: none;
 }
 
-.processing:hover {
-    background-color: #ff7f00;
+.btn-primary:hover {
+    background-color: #ff4f5e;
 }
 
-.shipped {
-    background-color: #2ed573;
-    color: white;
+.btn-success {
+    background-color: #28a745;
+    border: none;
 }
 
-.shipped:hover {
-    background-color: #1dd1a1;
+.btn-success:hover {
+    background-color: #218838;
 }
 
-.cancel {
-    background-color: #ff4757;
-    color: white;
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
 }
 
-.cancel:hover {
-    background-color: #ff1e2d;
+.btn-danger:hover {
+    background-color: #c82333;
 }
 
-/* ✅ ข้อความไม่มีคำสั่งซื้อ */
-.no-orders {
-    text-align: center;
-    font-style: italic;
-    padding: 20px;
-    color: #666;
+.btn-info {
+    background-color: #6c757d;
+    border: none;
+}
+
+.btn-info:hover {
+    background-color: #495057;
+}
+
+/* ✅ ปรับขนาดของปุ่มในตาราง */
+.table .btn {
+    font-size: 12px;
+    padding: 5px 10px;
 }
 
 /* ✅ Responsive */
@@ -200,7 +188,7 @@ thead {
         padding: 10px;
     }
 
-    .order-table {
+    .refund-table {
         overflow-x: auto;
     }
 }

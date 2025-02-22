@@ -40,3 +40,6 @@ class GroupPost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="group_posts")  # ✅ เปลี่ยน related_name
     content = models.TextField()
     group = models.ForeignKey(GroupPost, on_delete=models.CASCADE)  # ✅ ระบุ myapp
+
+
+    

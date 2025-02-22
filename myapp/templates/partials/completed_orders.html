@@ -1,0 +1,68 @@
+{% if completed_orders %}
+<table class="table table-striped text-center">
+    <thead class="table-success">
+        <tr>
+            <th>#</th>
+            <th>ร้านค้า</th>
+            <th>สินค้า</th>
+            <th>ที่อยู่</th>
+            <th>เบอร์โทร</th>
+            <th>ยอดรวม</th>
+            <th>สถานะชำระเงิน</th>
+            <th>สถานะจัดส่ง</th>
+            <th>รีวิวสินค้า</th>
+            <th>ขอคืนสินค้า</th>  <!-- ✅ เพิ่มคอลัมน์ขอคืนสินค้า -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in completed_orders %}
+        <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.seller.store_name }}</td>
+            <td>
+                <ul>
+                    {% for item in order.order_items.all %}
+                        <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.price_per_item }})</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>{{ order.shipping_address }}</td>
+            <td>{{ order.phone_number }}</td>
+            <td>฿{{ order.total_price }}</td>
+            <td>✅ ชำระเงินแล้ว</td>
+            <td>✅ จัดส่งสำเร็จ</td>
+            <td>
+                {% for item in order.order_items.all %}
+                    {% with already_reviewed=False %}
+                        {% for review in item.product.reviews.all %}
+                            {% if review.user == request.user and review.order.id == order.id %}
+                                {% with already_reviewed=True %}
+                                    <span class="text-success">✅ รีวิวแล้ว</span><br>
+                                {% endwith %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if not already_reviewed %}
+                            <a href="{% url 'add_review' order.id item.product.id %}" class="btn btn-warning btn-sm">
+                                📝 รีวิว {{ item.product.name }}
+                            </a><br>
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            </td>
+            <td>
+                {% if order.status == "delivered" %}
+                    <a href="{% url 'request_refund' order.id %}" class="btn btn-danger btn-sm">
+                        💰 ขอคืนสินค้า
+                    </a>
+                {% else %}
+                    ❌ ไม่สามารถขอคืนสินค้าได้
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p class="text-center text-muted">😢 ยังไม่มีออเดอร์ที่สำเร็จ</p>
+{% endif %}

@@ -1526,10 +1526,17 @@ def cancel_order(request, order_id):
 
     return render(request, "cancel_order.html", {"order": order})
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Order, RefundRequest
+from .forms import RefundRequestForm, RefundProofForm
+
 
 @login_required
 def order_history(request):
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')  # ✅ ดึงออเดอร์ของผู้ใช้ที่ล็อกอินอยู่
+    """ แสดงประวัติคำสั่งซื้อของผู้ใช้ """
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
     pending_orders = orders.filter(status__in=["pending", "processing", "shipped"])
     completed_orders = orders.filter(status="delivered")
 
@@ -1539,6 +1546,19 @@ def order_history(request):
         'completed_orders': completed_orders,
     }
     return render(request, 'order_history.html', context)
+
+@login_required
+def refund_history(request):
+    """ แสดงประวัติการคืนเงินของผู้ใช้ """
+    return_orders = RefundRequest.objects.filter(
+        user=request.user, status="refunded", confirmed_by_user=False
+    ).select_related('order', 'item', 'item__product')
+
+    context = {
+        'return_orders': return_orders,
+    }
+    return render(request, 'refund_history.html', context)
+
 
 
 
@@ -2033,10 +2053,12 @@ def add_review(request, order_id, product_id):
 
 def seller_wallet(request):
     """ แสดงข้อมูลกระเป๋าเงินของผู้ขาย """
-    seller = request.user.seller_profile  # สมมติว่า user มี OneToOneField กับ Seller
-    wallet, created = SellerWallet.objects.get_or_create(seller=seller)  # ✅ ใช้ get_or_create()
-    
-    return render(request, 'seller_wallet.html', {'wallet': wallet})
+    seller = request.user.seller_profile
+    wallet, created = SellerWallet.objects.get_or_create(seller=seller)
+    withdrawals = WithdrawalRequest.objects.filter(seller=seller).order_by('-created_at')
+
+    return render(request, 'seller_wallet.html', {'wallet': wallet, 'withdrawals': withdrawals})
+
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -2049,3 +2071,274 @@ def update_product_sales(sender, instance, **kwargs):
         for item in instance.order_items.all():
             item.product.total_sold += item.quantity
             item.product.save()
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Order, RefundRequest
+from .forms import RefundRequestForm
+
+# ✅ 2. ขอคืนเงิน (ลูกค้า)
+@login_required
+def request_refund(request, order_id, item_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    item = get_object_or_404(OrderItem, id=item_id, order=order)  # ✅ ค้นหาสินค้าที่ต้องการคืน
+
+    if request.method == "POST":
+        form = RefundRequestForm(request.POST, request.FILES)
+        if form.is_valid():
+            refund_request = form.save(commit=False)
+            refund_request.user = request.user
+            refund_request.order = order
+            refund_request.item = item  # ✅ ผูกกับสินค้าที่ต้องการคืน
+            refund_request.save()
+            return redirect("order_history")  # ✅ กลับไปหน้าประวัติคำสั่งซื้อ
+    else:
+        form = RefundRequestForm()
+
+    return render(request, "partials/refund_request.html", {"form": form, "order": order, "item": item})
+
+
+
+@login_required
+def seller_refund_requests(request):
+    seller = request.user.seller_profile  
+    refund_requests = RefundRequest.objects.filter(order__seller=seller)  # ✅ แสดงทุกสถานะ
+    return render(request, "refund_requests_seller.html", {"refund_requests": refund_requests})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from myapp.models import RefundRequest
+from myapp.forms import RefundProofForm
+
+@login_required
+def upload_refund_proof(request, refund_id):
+    """ อัปโหลดสลิปคืนเงินสำหรับผู้ขาย """
+    refund_request = get_object_or_404(RefundRequest, id=refund_id)
+
+    if request.method == "POST":
+        form = RefundProofForm(request.POST, request.FILES, instance=refund_request)
+        if form.is_valid():
+            refund_request.status = "refunded"  # ✅ อัปเดตสถานะเป็น Refunded
+            form.save()
+            messages.success(request, "✅ อัปโหลดสลิปคืนเงินเรียบร้อยแล้ว")
+            return redirect("seller_refund_requests")
+    else:
+        form = RefundProofForm(instance=refund_request)
+
+    return render(request, "refund_upload.html", {"form": form, "refund_request": refund_request})
+
+@login_required
+def approve_refund(request, refund_id):
+    """ อนุมัติการคืนเงินของผู้ขาย """
+    refund_request = get_object_or_404(RefundRequest, id=refund_id, order__seller=request.user.seller_profile)
+
+    # ✅ เปลี่ยนสถานะเป็น "approved"
+    refund_request.status = "approved"
+    refund_request.order.status = "refunded"  # ✅ อัปเดตสถานะออเดอร์ให้เป็น "refunded"
+    refund_request.order.save()
+    refund_request.save()
+
+    messages.success(request, f"✅ อนุมัติการคืนเงินสำหรับคำขอ #{refund_request.id} สำเร็จแล้ว")
+    return redirect("seller_refund_requests")
+
+@login_required
+def reject_refund(request, refund_id):
+    """ ปฏิเสธคำขอคืนเงิน """
+    refund_request = get_object_or_404(RefundRequest, id=refund_id, order__seller=request.user.seller_profile)
+
+    # ❌ เปลี่ยนสถานะเป็น "rejected"
+    refund_request.status = "rejected"
+    refund_request.save()
+
+    messages.error(request, f"❌ ปฏิเสธคำขอคืนเงินสำหรับคำขอ #{refund_request.id} เรียบร้อย")
+    return redirect("seller_refund_requests")
+
+@login_required
+def confirm_refund_received(request, refund_id):
+    """ ผู้ใช้กดยืนยันว่าได้รับเงินคืนแล้ว """
+    refund_request = get_object_or_404(RefundRequest, id=refund_id, user=request.user)
+
+    if refund_request.status == "refunded":  # ✅ ตรวจสอบว่าสถานะคือ "refunded"
+        refund_request.status = "confirmed"  # ✅ อัปเดตเป็น "confirmed"
+        refund_request.save()
+        messages.success(request, "✅ คุณได้ยืนยันการรับเงินคืนแล้ว!")
+    else:
+        messages.error(request, "❌ ไม่สามารถยืนยันได้ โปรดลองใหม่")
+
+    return redirect("order_history")  # ✅ กลับไปที่หน้าประวัติคำสั่งซื้อ
+
+from .models import SellerWallet, WithdrawalRequest
+from .forms import WithdrawalForm
+
+@login_required
+def request_withdrawal(request):
+    if request.method == "POST":
+        seller = request.user.seller_profile  # ดึงข้อมูลผู้ขาย
+        wallet = seller.wallet
+        
+        if wallet.balance <= 0:
+            messages.error(request, "❌ ยอดเงินไม่พอสำหรับการถอน")
+            return redirect("seller_wallet")
+
+        # บันทึกคำขอถอนเงิน
+        WithdrawalRequest.objects.create(
+            seller=seller,
+            amount=wallet.balance,
+            status="pending"
+        )
+
+        # รีเซ็ตยอดเงินให้เป็น 0
+        wallet.balance = 0
+        wallet.save()
+
+        messages.success(request, "✅ คำขอถอนเงินถูกส่งไปยังแอดมินแล้ว")
+        return redirect("seller_wallet")
+    
+    return redirect("seller_wallet")
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib import messages
+from .models import WithdrawalRequest
+from .models import WithdrawalRequest
+from .forms import WithdrawalProofForm
+
+from django.contrib.auth.decorators import user_passes_test
+
+def is_admin(user):
+    return user.is_authenticated and user.is_staff  # ✅ เฉพาะแอดมิน
+@login_required
+def admin_withdrawals(request):
+    if not request.user.is_staff:  # ✅ ถ้าไม่ใช่แอดมิน รีไดเรกต์ไปหน้าอื่น
+        return redirect('home')
+
+    withdrawals = WithdrawalRequest.objects.all().order_by("-created_at")
+    return render(request, "admin_withdrawals.html", {"withdrawals": withdrawals})
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib import messages
+from .models import WithdrawalRequest
+
+@user_passes_test(lambda u: u.is_staff)  # ✅ ให้เฉพาะแอดมินเข้าถึง
+def approve_withdrawal(request, withdrawal_id):
+    withdrawal = get_object_or_404(WithdrawalRequest, id=withdrawal_id)
+    
+    if request.method == "POST" and request.FILES.get("payment_proof"):
+        withdrawal.status = "approved"
+        withdrawal.payment_proof = request.FILES["payment_proof"]
+        withdrawal.save()
+        messages.success(request, "✅ อนุมัติคำขอถอนเงินเรียบร้อย")
+
+    return redirect("admin_withdrawals")
+
+@user_passes_test(lambda u: u.is_staff)
+def reject_withdrawal(request, withdrawal_id):
+    withdrawal = get_object_or_404(WithdrawalRequest, id=withdrawal_id)
+    
+    if request.method == "POST":
+        withdrawal.status = "rejected"
+        withdrawal.save()
+        messages.error(request, "❌ ปฏิเสธคำขอถอนเงินเรียบร้อย")
+
+    return redirect("admin_withdrawals")
+
+@login_required
+def confirm_withdrawal(request, withdrawal_id):
+    withdrawal = get_object_or_404(WithdrawalRequest, id=withdrawal_id, seller=request.user.seller_profile)
+    
+    if request.method == "POST":
+        withdrawal.confirmed_by_seller = True
+        withdrawal.save()
+        messages.success(request, "✅ ยืนยันการรับเงินสำเร็จ")
+
+    return redirect("seller_wallet")
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Avg, Count
+from .models import Order, Product, Review, RefundRequest
+
+@login_required
+def seller_performance(request):
+    """ แสดงรายงานสถิติการขายของผู้ขาย """
+    seller = request.user.seller_profile  # สมมติว่า user มี OneToOneField กับ Seller
+
+    # ✅ รายได้รวมจากคำสั่งซื้อที่เสร็จสมบูรณ์
+        # ✅ ตรวจสอบว่ามีคำสั่งซื้อที่เสร็จสมบูรณ์หรือไม่
+    total_sales = Order.objects.filter(seller=seller, status="delivered").aggregate(Sum("total_price"))["total_price__sum"] or 0
+
+
+    # ✅ สินค้าขายดี (Top 5) - แก้ไขตรงนี้
+    top_products = (
+        Product.objects.filter(seller=seller)
+        .annotate(total_sold_count=Sum("orderitem__quantity"))  # แก้จาก order_items เป็น orderitem
+        .order_by("-total_sold_count")[:5]
+    )
+
+    # ✅ จำนวนการคืนสินค้า
+    refunds = RefundRequest.objects.filter(order__seller=seller).count()
+
+    # ✅ คะแนนรีวิวเฉลี่ย
+    avg_rating = Review.objects.filter(product__seller=seller).aggregate(Avg("rating"))["rating__avg"] or 0
+
+    # ✅ รีวิวล่าสุด (5 รีวิว)
+    recent_reviews = Review.objects.filter(product__seller=seller).order_by("-created_at")[:5]
+
+    context = {
+        "total_sales": total_sales,
+        "top_products": top_products,
+        "refunds": refunds,
+        "avg_rating": avg_rating,
+        "recent_reviews": recent_reviews,
+    }
+
+    return render(request, "seller_performance.html", context)
+
+def is_admin(user):
+    return user.is_staff  # ✅ อนุญาตเฉพาะแอดมิน
+
+@user_passes_test(is_admin)
+def admin_performance(request):
+    """ แสดงรายงานสถิติของผู้ขายทั้งหมด """
+
+    # ✅ ยอดขายรวมทั้งหมด
+    total_sales = Order.objects.filter(status="delivered").aggregate(Sum("total_price"))["total_price__sum"] or 0
+
+    # ✅ ยอดขายรายเดือน
+    sales_by_month = (
+        Order.objects.filter(status="delivered")
+        .values("created_at__year", "created_at__month")
+        .annotate(total_sales=Sum("total_price"))
+        .order_by("created_at__year", "created_at__month")
+    )
+
+    # ✅ ผู้ขายที่มียอดขายสูงสุด
+    top_sellers = (
+        Seller.objects.annotate(total_revenue=Sum("orders__total_price"))
+        .order_by("-total_revenue")[:5]
+    )
+
+    # ✅ การคืนสินค้ารายเดือน
+    refunds_by_month = (
+        RefundRequest.objects.values("created_at__year", "created_at__month")
+        .annotate(total_refunds=Count("id"))
+        .order_by("created_at__year", "created_at__month")
+    )
+
+    context = {
+        "total_sales": total_sales,
+        "sales_by_month": list(sales_by_month),
+        "top_sellers": top_sellers,
+        "refunds_by_month": list(refunds_by_month),
+    }
+
+    return render(request, "admin_performance.html", context)
+

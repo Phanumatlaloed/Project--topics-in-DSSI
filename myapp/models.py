@@ -284,6 +284,8 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(default=timezone.now)
+    refund_proof = models.ImageField(upload_to='refund_proofs/', blank=True, null=True)
+
 
     def __str__(self):
         return f"Order {self.id} by {self.user.username}"
@@ -338,11 +340,6 @@ class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])
     comment = models.TextField()
-
-class RefundRequest(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    reason = models.TextField()
-    status = models.CharField(choices=[('pending', 'รอดำเนินการ'), ('approved', 'อนุมัติแล้ว')], default='pending', max_length=20)
 
 
 class Follow(models.Model):
@@ -434,6 +431,14 @@ class SellerWallet(models.Model):
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)  # ยอดเงินในกระเป๋า
     updated_at = models.DateTimeField(auto_now=True)  # อัปเดตล่าสุด
 
+    def withdraw(self, amount):
+        """ ถอนเงินออกจากกระเป๋าเงิน """
+        if self.balance >= amount:
+            self.balance -= amount
+            self.save()
+            return True
+        return False  # ถอนเงินไม่สำเร็จ
+
     def __str__(self):
         return f"Wallet of {self.seller.store_name}: ฿{self.balance}"
 
@@ -444,3 +449,70 @@ def create_or_update_seller_wallet(sender, instance, created, **kwargs):
         SellerWallet.objects.create(seller=instance)
     else:
         instance.wallet.save()  # อัปเดต timestamp ถ้ามีการเปลี่ยนแปลง
+
+class WithdrawalRequest(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "รอดำเนินการ"),
+        ("approved", "อนุมัติแล้ว"),
+        ("rejected", "ถูกปฏิเสธ"),
+        ("paid", "โอนเงินแล้ว"),  # ✅ เพิ่มสถานะใหม่
+    ]
+
+    seller = models.ForeignKey('Seller', on_delete=models.CASCADE, related_name="withdraw_requests")
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # ✅ แอดมินอัปโหลดสลิปโอนเงิน
+    payment_proof = models.ImageField(upload_to="withdraw_proofs/", blank=True, null=True)
+
+    # ✅ ผู้ขายกดยืนยันว่าได้รับเงินแล้ว
+    confirmed_by_seller = models.BooleanField(default=False)
+
+    def approve(self):
+        """ อนุมัติคำขอถอนเงิน """
+        if self.status == "pending":
+            self.status = "approved"
+            self.save()
+
+    def mark_paid(self, proof):
+        """ แอดมินอัปโหลดสลิปเมื่อโอนเงินแล้ว """
+        if self.status == "approved":
+            self.status = "paid"
+            self.payment_proof = proof
+            self.save()
+
+    def confirm_received(self):
+        """ ผู้ขายกดยืนยันว่าได้รับเงินแล้ว """
+        if self.status == "paid":
+            self.confirmed_by_seller = True
+            self.save()
+
+    def __str__(self):
+        return f"Withdrawal Request of {self.seller.store_name} - ฿{self.amount}"
+
+
+
+class RefundRequest(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="refund_requests")
+    item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name="refund_requests", null=True, blank=True)  # ✅ สามารถคืนสินค้าเป็นรายชิ้นได้
+    bank_name = models.CharField(max_length=100, blank=True, null=True)  # ✅ เพิ่มฟิลด์นี้
+    account_number = models.CharField(max_length=50, blank=True, null=True)  # ✅ เพิ่มฟิลด์นี้
+    account_name = models.CharField(max_length=100, blank=True, null=True)  # ✅ เพิ่มฟิลด์นี้
+    refund_reason = models.TextField()
+    payment_proof = models.ImageField(upload_to="payment_proof/", blank=True, null=True)
+    refund_proof = models.ImageField(upload_to="refund_proofs/", blank=True, null=True)  # ✅ เพิ่มฟิลด์สำหรับแนบสลิปคืนเงิน
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("refunded", "Refunded"),  # ✅ ผู้ขายโอนเงินคืนแล้ว
+        ("rejected", "Rejected"),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    confirmed_by_user = models.BooleanField(default=False)  # ✅ เพิ่มฟิลด์ให้ผู้ใช้กดยืนยัน
+
+    def __str__(self):
+        return f"Refund Request for {self.item.product.name if self.item else 'Unknown Item'} in Order #{self.order.id}"

@@ -27,3 +27,13 @@ class BlockedUserAdmin(admin.ModelAdmin):
 admin.site.register(Post, PostAdmin)
 admin.site.register(Report, ReportAdmin)
 admin.site.register(BlockedUser, BlockedUserAdmin)
+
+
+from django.contrib import admin
+from .models import WithdrawalRequest
+
+@admin.register(WithdrawalRequest)
+class WithdrawalRequestAdmin(admin.ModelAdmin):
+    list_display = ("seller", "amount", "status", "created_at")
+    list_filter = ("status",)
+    search_fields = ("seller__store_name", "amount")

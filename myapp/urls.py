@@ -160,5 +160,38 @@ urlpatterns = [
     #path("order/<int:order_id>/update/<str:status>/", views.update_order_status, name="update_order_status"),
     path("order/<int:order_id>/confirm_delivery/", views.confirm_delivery, name="confirm_delivery"),
 
+    # ✅ ประวัติคำสั่งซื้อ
+    path('order/history/', views.order_history, name='order_history'),
+
+    # ✅ ลูกค้าขอคืนเงิน (ต้องมีทั้ง order_id และ item_id)
+    path("order/request_refund/<int:order_id>/<int:item_id>/", views.request_refund, name="request_refund"),
+
+    # ✅ ผู้ขายดูคำขอคืนเงิน
+    path("refunds/seller/", views.seller_refund_requests, name="seller_refund_requests"),
+
+    # ✅ อนุมัติ / ปฏิเสธ การคืนเงิน
+    path("refunds/approve/<int:refund_id>/", views.approve_refund, name="approve_refund"),
+    path("refunds/reject/<int:refund_id>/", views.reject_refund, name="reject_refund"),
+
+    # ✅ อัปโหลดสลิปคืนเงิน
+    path("refunds/upload/<int:refund_id>/", views.upload_refund_proof, name="upload_refund_proof"),
+
+    # ✅ ลูกค้ายืนยันการได้รับเงินคืน
+    path("refunds/confirm/<int:refund_id>/", views.confirm_refund_received, name="confirm_refund_received"),
+
+    path('refunds/', views.refund_history, name='refund_history'),  # ✅ แสดงคำขอคืนเงิน
+    path("wallet/withdraw/", views.request_withdrawal, name="request_withdrawal"),
+
+    path("admins/withdrawals/", views.admin_withdrawals, name="admin_withdrawals"),
+    #path("admins/withdrawals/approve/<int:withdrawal_id>/", views.approve_withdrawal, name="approve_withdrawal"),
+    path("admins/withdrawals/reject/<int:withdrawal_id>/", views.reject_withdrawal, name="reject_withdrawal"),
+    path("withdrawals/approve/<int:withdrawal_id>/", views.approve_withdrawal, name="approve_withdrawal"),
+    path("withdrawals/confirm/<int:withdrawal_id>/", views.confirm_withdrawal, name="confirm_withdrawal"),
+
+    path("seller/performance/", views.seller_performance, name="seller_performance"),
+    path("admins/performance/", views.admin_performance, name="admin_performance"),  # ✅ ต้องอยู่ที่นี่
 
 ]
+
+    
+

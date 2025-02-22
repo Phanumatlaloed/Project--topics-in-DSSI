@@ -83,7 +83,7 @@ body {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ ฟอร์มแก้ไขร้านค้า */
+/* ✅ การ์ดกระเป๋าเงิน */
 .card {
     max-width: 600px;
     margin: auto;
@@ -94,28 +94,24 @@ body {
 }
 
 /* ✅ ฟอร์ม */
-.form-group {
-    margin-bottom: 15px;
-}
-
 .form-label {
     font-weight: bold;
-    color: #ff4f5e;
+    color: #FF6384;
 }
 
-input, select, textarea {
+input, select {
     width: 100%;
     padding: 12px;
     margin-top: 8px;
     border-radius: 8px;
-    border: 2px solid #ffb6c1;
+    border: 2px solid #FFB6C1;
     outline: none;
     transition: 0.3s;
 }
 
-input:focus, select:focus, textarea:focus {
-    border-color: #ff6384;
-    box-shadow: 0 0 5px #ff85a2;
+input:focus, select:focus {
+    border-color: #FF6384;
+    box-shadow: 0 0 5px #FF85A2;
 }
 
 /* ✅ ปุ่ม */
@@ -129,25 +125,40 @@ input:focus, select:focus, textarea:focus {
 }
 
 .submit-btn {
-    background-color: #ff869b;
+    background-color: #FF869B;
     color: white;
     border: none;
 }
 
 .submit-btn:hover {
-    background-color: #ff4f5e;
+    background-color: #FF4F5E;
 }
 
-.back-btn {
-    background-color: #ccc;
-    color: black;
-    display: block;
-    text-align: center;
+.confirm-btn {
+    background-color: #28A745;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background-color: #218838;
+}
+
+/* ✅ ตาราง */
+table {
+    width: 100%;
+    border-collapse: collapse;
     margin-top: 20px;
 }
 
-.back-btn:hover {
-    background-color: #aaa;
+thead {
+    background: #FF85A2;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
 }
 
 /* ✅ Responsive */
@@ -164,4 +175,40 @@ input:focus, select:focus, textarea:focus {
         width: 95%;
         margin: 20px auto;
     }
+}
+
+
+/* 📜 ตารางรายการถอนเงิน */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: #ffb6c1;
+    font-size: 16px;
+}
+
+td {
+    font-size: 14px;
+}
+
+/* 📝 สถานะ */
+.status-pending {
+    color: orange;
+}
+
+.status-approved {
+    color: green;
+}
+
+.status-rejected {
+    color: red;
 }

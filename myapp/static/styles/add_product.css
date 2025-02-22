@@ -1,80 +1,188 @@
-/* ใช้โทนสีชมพูอ่อน (#ff6b81) และสีขาว */
+/* ✅ ตั้งค่า Theme */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #ffe6e9;
+    background-color: #FFC0CB;
+    color: #333;
     margin: 0;
+    padding: 0;
+}
+
+/* ✅ Layout */
+.dashboard-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    align-items: flex-start;
 }
 
-.product-container {
-    width: 100%;
-    max-width: 500px;
-    background-color: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+/* ✅ Sidebar */
+.sidebar {
+    width: 260px;
+    background: linear-gradient(135deg, #FFC0CB, #FFC0CB);
+    color: white;
+    padding: 20px;
+    min-height: 100vh;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease-in-out;
+}
+
+.sidebar-title {
+    font-size: 22px;
+    font-weight: bold;
     text-align: center;
-}
-
-h2 {
-    color: #ff6b81;
     margin-bottom: 20px;
 }
 
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-header {
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+}
+
+.menu-item {
+    margin-top: 10px;
+}
+
+.menu-item a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.menu-item a i {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.menu-item a:hover, .menu-item.active a {
+    background: white;
+    color: #FFC0CB;
+    font-weight: bold;
+    transform: translateX(5px);
+    box-shadow: 0px 4px 10px rgba(255, 99, 132, 0.3);
+}
+
+/* ✅ Main Content */
+.content {
+    flex-grow: 1;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    margin: 30px auto;
+    width: 85%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ฟอร์มเพิ่มสินค้า */
+.product-form {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .form-group {
-    text-align: left;
     margin-bottom: 15px;
 }
 
-label {
+.form-label {
     font-weight: bold;
-    color: #ff6b81;
-    display: block;
-    margin-bottom: 5px;
+    color: #ff4f5e;
 }
 
-input, textarea {
+input, select, textarea {
     width: 100%;
-    padding: 10px;
-    border: 2px solid #ff6b81;
+    padding: 12px;
+    margin-top: 8px;
     border-radius: 8px;
+    border: 2px solid #ffb6c1;
     outline: none;
-    font-size: 14px;
-    background-color: #fff5f7;
+    transition: 0.3s;
 }
 
-input:focus, textarea:focus {
-    border-color: #ff4d69;
+input:focus, select:focus, textarea:focus {
+    border-color: #ff6384;
+    box-shadow: 0 0 5px #ff85a2;
+}
+
+/* ✅ ปุ่ม */
+.btn {
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
 }
 
 .submit-btn {
-    width: 100%;
-    background-color: #ff6b81;
+    background-color: #ff869b;
     color: white;
     border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: background 0.3s;
 }
 
 .submit-btn:hover {
-    background-color: #ff4d69;
+    background-color: #ff4f5e;
 }
 
 .back-btn {
+    background-color: #ccc;
+    color: black;
     display: block;
-    margin-top: 15px;
-    color: #ff6b81;
-    text-decoration: none;
-    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
 }
 
 .back-btn:hover {
-    text-decoration: underline;
+    background-color: #aaa;
+}
+
+/* ✅ Responsive */
+@media (max-width: 992px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+    }
+
+    .content {
+        width: 95%;
+        margin: 20px auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+    }
+
+    .content {
+        width: 100%;
+        padding: 20px;
+    }
+
+    input, select, textarea {
+        font-size: 14px;
+    }
+
+    .btn {
+        font-size: 12px;
+    }
 }

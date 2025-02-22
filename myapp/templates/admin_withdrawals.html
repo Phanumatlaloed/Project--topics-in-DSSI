@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💼 จัดการคำขอถอนเงิน</title>
+    <link rel="stylesheet" href="{% static 'styles/admin_withdrawals.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        <h2>💼 คำขอถอนเงินจากร้านค้า</h2>
+
+        {% if withdrawals %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ร้านค้า</th>
+                    <th>จำนวนเงิน</th>
+                    <th>สถานะ</th>
+                    <th>สลิปการโอน</th>
+                    <th>ดำเนินการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for withdrawal in withdrawals %}
+                <tr>
+                    <td>{{ withdrawal.seller.store_name }}</td>
+                    <td>฿{{ withdrawal.amount }}</td>
+                    <td>
+                        {% if withdrawal.status == "pending" %}
+                            <span class="status pending">รอดำเนินการ</span>
+                        {% elif withdrawal.status == "approved" %}
+                            <span class="status approved">✅ อนุมัติ</span>
+                        {% elif withdrawal.status == "rejected" %}
+                            <span class="status rejected">❌ ปฏิเสธ</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if withdrawal.payment_proof %}
+                            <a href="{{ withdrawal.payment_proof.url }}" target="_blank" class="btn-view">📄 ดูสลิป</a>
+                        {% else %}
+                            ⛔ ไม่มีหลักฐาน
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if withdrawal.status == "pending" %}
+                            <form method="post" action="{% url 'approve_withdrawal' withdrawal.id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="payment_proof" required>
+                                <button type="submit" class="btn-approve">✅ อนุมัติ</button>
+                            </form>
+                            <form method="post" action="{% url 'reject_withdrawal' withdrawal.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-reject">❌ ปฏิเสธ</button>
+                            </form>
+                        {% elif withdrawal.status == "approved" and withdrawal.confirmed_by_seller == False %}
+                            <form method="post" action="{% url 'confirm_withdrawal' withdrawal.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-confirm">✅ ยืนยันการรับเงิน</button>
+                            </form>
+                        {% else %}
+                            <span class="disabled">✅ ดำเนินการแล้ว</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="no-requests">❌ ยังไม่มีคำขอถอนเงิน</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>
