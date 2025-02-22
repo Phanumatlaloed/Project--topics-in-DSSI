@@ -24,6 +24,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, Review, ReviewMedia
 from django.contrib.auth.decorators import login_required
 User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
+from django.contrib.auth import get_user_model
+User = get_user_model()  # ✅ ใช้ CustomUser แทน
+
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -58,21 +61,27 @@ def register(request):
             messages.error(request, "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว")
             return render(request, "register.html")
 
-        # สร้าง User
-        user = CustomUser.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            role='member'
-        )
+        try:
+            # ✅ สร้าง User
+            user = CustomUser.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                role='member'
+            )
 
-        # สร้างโปรไฟล์ Member
-        Member.objects.create(user=user, gender=gender, date_of_birth=date_of_birth)
+            # ✅ ตรวจสอบว่าผู้ใช้มี Member อยู่แล้วหรือไม่
+            if not Member.objects.filter(user=user).exists():
+                Member.objects.create(user=user, gender=gender, date_of_birth=date_of_birth)
 
-        messages.success(request, "สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ")
-        return redirect("login")
+            messages.success(request, "สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ")
+            return redirect("login")
+
+        except IntegrityError as e:
+            messages.error(request, f"❌ การสมัครล้มเหลว: {str(e)}")
+            return render(request, "register.html")
 
     return render(request, "register.html")
 
@@ -85,8 +94,10 @@ def all_posts(request):
         ).order_by('-created_at')
     else:
         posts = Post.objects.all().order_by('-created_at')  # แสดงโพสต์ทั้งหมด
+        
+    products = Product.objects.all()[:6]  # ✅ ดึงสินค้าสูงสุด 6 รายการ
 
-    return render(request, "all_posts.html", {"posts": posts, "query": query})
+    return render(request, "all_posts.html", {"posts": posts, "products": products, "query": query})
 
 def search_content(request):
     query = request.GET.get('query', '')
@@ -293,6 +304,8 @@ def profile_edit(request):
         'member_form': member_form,
     })
 
+
+#โพสในหน้าหลัก
 @login_required
 def create_post(request):
     if request.method == "POST":
@@ -382,48 +395,79 @@ def edit_post(request, post_id):
     return render(request, "edit_post.html", {"post": post, "form": form})
 
 
-@csrf_exempt  # ❌ ปิด CSRF สำหรับฟังก์ชันนี้
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import PostMedia
+import os
+@login_required
 @login_required
 def delete_media(request, media_id):
-    """ ฟังก์ชันลบไฟล์สื่อออกจากโพสต์ """
+    print(f"📌 DELETE request received for media_id: {media_id}")  # ✅ Debug Log
+
     if request.method == "DELETE":
-        media = get_object_or_404(PostMedia, id=media_id)
+        # ✅ ลองค้นหาในทั้งสองโมเดล
+        media = (
+            PostMedia.objects.filter(id=media_id).first() or
+            GroupPostMedia.objects.filter(id=media_id).first()
+        )
 
-        if media.post.user != request.user:
-            return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบไฟล์นี้"}, status=403)
+        if not media:
+            return JsonResponse({"success": False, "error": "Media not found"}, status=404)
 
-        media.delete()
-        return JsonResponse({"success": True, "message": "ไฟล์ถูกลบเรียบร้อยแล้ว!"})
+        # ✅ ตรวจสอบไฟล์ที่เซิร์ฟเวอร์
+        if media.file:
+            file_path = media.file.path
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)  # ✅ ลบไฟล์จากเซิร์ฟเวอร์
+                    media.delete()  # ✅ ลบจากฐานข้อมูล
+                    return JsonResponse({"success": True})
+                except Exception as e:
+                    return JsonResponse({"success": False, "error": str(e)}, status=500)
+            else:
+                media.delete()  # ✅ ลบจากฐานข้อมูลแม้ว่าไฟล์ไม่มีอยู่แล้ว
+                return JsonResponse({"success": True, "message": "File not found but deleted from database"})
 
-    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+        return JsonResponse({"success": False, "error": "File does not exist"}, status=404)
 
+    return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
+
+
+
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
+
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Post  # ✅ ตรวจสอบว่า import ถูกต้อง
 
 @login_required
 def toggle_like(request, post_id):
     if request.method == "POST":
-        try:
-            post = get_object_or_404(Post, id=post_id)
-            user = request.user  # ✅ ใช้ request.user ตรงๆ
+        post = get_object_or_404(Post, id=post_id)
+        user = request.user  # ✅ ใช้ request.user ตรงๆ
+        
+        if post.likes.filter(id=user.id).exists():
+            post.likes.remove(user)  # ✅ ถ้าเคยไลค์ -> กดอีกครั้งเพื่อลบ
+            liked = False
+        else:
+            post.likes.add(user)  # ✅ ถ้ายังไม่เคยไลค์ -> กดไลค์
+            liked = True
 
-            if post.likes.filter(id=user.id).exists():
-                post.likes.remove(user)  # ✅ ถ้าเคยไลค์ -> กดอีกครั้งเพื่อลบ
-                liked = False
-            else:
-                post.likes.add(user)  # ✅ ถ้ายังไม่เคยไลค์ -> กดไลค์
-                liked = True
+        like_count = post.likes.count()
 
-            like_count = post.likes.count()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({"success": True, "liked": liked, "like_count": like_count})
 
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({"success": True, "liked": liked, "like_count": like_count})
-
-            return redirect(request.META.get('HTTP_REFERER', 'home'))
-
-        except Exception as e:
-            print(f"❌ Error: {e}")
-            return JsonResponse({"success": False, "error": str(e)}, status=500)
+        return redirect(request.META.get('HTTP_REFERER', 'home'))
 
     return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
+
+
+
 
 @login_required
 def post_detail(request, post_id):
@@ -431,6 +475,11 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, 'post_detail.html', {'post': post})
 
+@login_required
+def post_like_detail(request, post_id):
+    """ แสดงรายละเอียดโพสต์ """
+    post = get_object_or_404(Post, id=post_id)
+    return render(request, 'post_like_detail.html', {'post': post})
 
 #หน้าบันทึก
 @login_required
@@ -570,15 +619,19 @@ def edit_group(request, group_id):
     return render(request, 'edit_group.html', {'form': form, 'group': group})
 
 @login_required
-def delete_group(request, group_id):
+def delete_group(request, group_id, post_id):
     """ ให้เจ้าของกลุ่มสามารถลบกลุ่ม """
+    post = get_object_or_404(GroupPost, id=post_id, group=group, user=request.user)
+
     group = get_object_or_404(CommunityGroup, id=group_id, created_by=request.user)
-    group.delete()
-    messages.success(request, "กลุ่มถูกลบเรียบร้อยแล้ว!")
+    if request.method == "POST":
+        post.delete()
+        return JsonResponse({"success": True, "message": "โพสต์ถูกลบแล้ว!"})
+
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
     return redirect('community_list')
 
 from django.http import JsonResponse
-
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(CommunityGroup, id=group_id)
@@ -619,32 +672,47 @@ def group_detail(request, group_id):
     })
 
 #โพสต์ในกลุ่ม
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.contrib import messages
+
 @login_required
 def create_group_post(request, group_id):
     group = get_object_or_404(CommunityGroup, id=group_id)
 
     if request.method == "POST":
         content = request.POST.get("content", "").strip()
-        image = request.FILES.get("image")
-        video = request.FILES.get("video")
+        image_files = request.FILES.getlist("images")  # ✅ ดึงรูปภาพ
+        video_files = request.FILES.getlist("videos")  # ✅ ดึงวิดีโอ
+        max_size = 15 * 1024 * 1024  # 15MB
 
-        if content or image or video:
+        if content or image_files or video_files:
             post = GroupPost.objects.create(
                 group=group,
                 user=request.user,
-                content=content,
-                image=image,
-                video=video
+                content=content
             )
-            return JsonResponse({
-                "success": True,
-                "message": "โพสต์สำเร็จ!",
-                "post_id": post.id
-            })
 
-    return JsonResponse({"success": False, "message": "กรุณากรอกเนื้อหาหรืออัปโหลดไฟล์"}, status=400)
+            # ✅ เพิ่มการอัปโหลดรูปภาพ
+            for img in image_files:
+                if isinstance(img, InMemoryUploadedFile) and img.size > max_size:
+                    messages.error(request, f"❌ ไฟล์ {img.name} มีขนาดใหญ่เกิน 15MB")
+                    continue  
+                GroupPostMedia.objects.create(post=post, file=img, media_type="image")
+
+            # ✅ เพิ่มการอัปโหลดวิดีโอ
+            for vid in video_files:
+                if isinstance(vid, InMemoryUploadedFile) and vid.size > max_size:
+                    messages.error(request, f"❌ ไฟล์ {vid.name} มีขนาดใหญ่เกิน 15MB")
+                    continue  
+                GroupPostMedia.objects.create(post=post, file=vid, media_type="video")
+
+            return redirect('group_detail', group_id=group.id)
+
+    return redirect('group_detail', group_id=group.id)
 
 
+
+#เข้าร่วมกลุ่ม
 @login_required
 def join_group(request, group_id):
     group = get_object_or_404(CommunityGroup, id=group_id)
@@ -655,29 +723,31 @@ def join_group(request, group_id):
         messages.info(request, "You are already a member of this group.")
     return redirect('group_detail', group_id=group.id)
 
-from notifications.utils import create_notification  # ✅ Import ระบบแจ้งเตือน
+# ไลค์โพสในกลุ่ม
+from notifications.utils import create_notification  # ✅ นำเข้า Notification
+
 @login_required
 def toggle_group_post_like(request, post_id):
     """
-    Toggle the like status for a group post.
+    กดไลค์/เลิกไลค์โพสต์ในกลุ่ม
     """
-    post = get_object_or_404(GroupPost, id=post_id)
-    user = request.user  # ✅ ใช้ request.user โดยตรง
+    post = get_object_or_404(GroupPost, id=post_id)  # ✅ ดึงข้อมูล GroupPost
+    user = request.user  
 
     if post.likes.filter(id=user.id).exists():
-        post.likes.remove(user)  # ✅ ใช้ User
+        post.likes.remove(user)
         liked = False
     else:
-        post.likes.add(user)  # ✅ ใช้ User
+        post.likes.add(user)
         liked = True
 
-         # ✅ แจ้งเตือนเจ้าของโพสต์เมื่อมีคนกดไลค์
+        # ✅ FIX: ส่ง `group_post` แทน `post`
         create_notification(
-                user=post.user,  # ผู้รับแจ้งเตือนคือเจ้าของโพสต์
-                sender=user,  # ผู้ที่กดไลค์
-                notification_type="like_post",
-                post=post
-            )
+            user=post.user,  # เจ้าของโพสต์
+            sender=user,  # คนที่กดไลค์
+            notification_type="like_post",
+            group_post=post  # ✅ ใช้ `group_post` แทน `post`
+        )
 
     return JsonResponse({
         'success': True,
@@ -686,39 +756,43 @@ def toggle_group_post_like(request, post_id):
     })
 
 
+#เพิ่มคอมเม้นในกลุ่ม
+import json
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from myapp.models import GroupPost, GroupComment
+
 @login_required
 def add_group_post_comment(request, post_id):
     post = get_object_or_404(GroupPost, id=post_id)
 
     if request.method == "POST":
-        content = request.POST.get("content")
-        if content:
-            comment = GroupComment.objects.create(
-                post=post, user=request.user, content=content
-            )
-            return JsonResponse(
-                {
+        try:
+            data = json.loads(request.body)  # ✅ อ่าน JSON ที่ส่งมา
+            content = data.get("content")
+
+            if content:
+                comment = GroupComment.objects.create(post=post, user=request.user, content=content)
+                return JsonResponse({
                     "success": True,
                     "message": "Comment added successfully!",
                     "comment": {
                         "user": comment.user.username,
                         "content": comment.content,
-                        "created_at": comment.created_at.strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        ),
+                        "created_at": comment.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                     },
-                },
-                status=201,
-            )
-        return JsonResponse({"success": False, "message": "Comment cannot be empty!"}, status=400)
+                }, status=201)
+            return JsonResponse({"success": False, "message": "Comment cannot be empty!"}, status=400)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "message": "Invalid JSON request!"}, status=400)
 
     return JsonResponse({"success": False, "message": "Invalid request!"}, status=400)
 
 
 #อัพเดทโปรไฟล์
-
 from .forms import AccountEditForm, PasswordChangeForm
-
 @login_required
 def profile_management(request):
     """ จัดการข้อมูลโปรไฟล์ของสมาชิก """
@@ -860,7 +934,6 @@ def save_group_post(request, group_id, post_id):
 
 
 # ลบโพสต์ในกลุ่มจากรายการบันทึก
-# ลบโพสต์ในกลุ่มจากรายการบันทึก
 @login_required
 def remove_saved_group_post(request, group_id, post_id):
     """ ฟังก์ชันลบโพสต์จาก Saved List (โพสต์ในกลุ่ม) """
@@ -883,43 +956,43 @@ def remove_saved_group_post(request, group_id, post_id):
 # แชร์โพสต์ในกลุ่ม
 @login_required
 def share_group_post(request, post_id):
-    if request.method != "POST":
-        return JsonResponse({"error": "Invalid request"}, status=400)
-
     post = get_object_or_404(GroupPost, id=post_id)
+    group = post.group  # ใช้กลุ่มเดียวกันที่โพสต์อยู่
 
-    # ตรวจสอบว่ามี `group_id` หรือไม่
-    group_id = request.POST.get("group_id")
-    if not group_id:
-        return JsonResponse({'success': False, 'error': 'Group ID is required'}, status=400)
-
-    group = get_object_or_404(CommunityGroup, id=group_id)
-
-    # แชร์โพสต์ไปยังกลุ่มอื่น
-    GroupPost.objects.create(
+    # สร้างโพสต์ใหม่โดยคัดลอกเนื้อหาต้นฉบับ
+    shared_post = GroupPost.objects.create(
         group=group,
         user=request.user,
-        content=f"📢 Shared from {post.group.name}:\n{post.content}",
-        image=post.image,
-        video=post.video,
-        shared_from=post
+        content=f"📢 Shared from {post.user.username}: {post.content}",
+        shared_from=post  # เชื่อมโยงโพสต์ต้นฉบับ
     )
+
+    # คัดลอกไฟล์สื่อ (ถ้ามี)
+    for media in post.media.all():
+        GroupPostMedia.objects.create(
+            post=shared_post, 
+            file=media.file, 
+            media_type=media.media_type
+        )
 
     return JsonResponse({
         'success': True,
-        'message': f"Post shared to {group.name}!",
-    })
+        'message': "โพสต์ถูกแชร์แล้ว!",
+        'post_id': shared_post.id
+    }, status=201)
+
+
 
 
 # แก้ไขโพสต์ในกลุ่ม
 @login_required
-def edit_group_post(request, post_id):
-    """ ฟังก์ชันแก้ไขโพสต์ """
+def group_edit_post(request, post_id):
+    """ ฟังก์ชันแก้ไขโพสต์ในกลุ่ม """
     post = get_object_or_404(GroupPost, id=post_id)
 
     # ✅ ตรวจสอบว่าเป็นเจ้าของโพสต์หรือไม่
     if post.user != request.user:
-        return redirect('community_list')  # ✅ ส่งกลับไปหน้าชุมชนถ้าไม่ใช่เจ้าของ
+        return redirect('community_list')  # ✅ ส่งกลับไปหน้าชุมชนถ้าไม่ใช่เจ้าของโพสต์
 
     if request.method == "POST":
         form = EditPostForm(request.POST, instance=post)
@@ -932,10 +1005,10 @@ def edit_group_post(request, post_id):
             videos = request.FILES.getlist("videos")
 
             for file in images:
-                PostMedia.objects.create(post=post, file=file, media_type='image')
+                GroupPostMedia.objects.create(post=post, file=file, media_type='image')
 
             for file in videos:
-                PostMedia.objects.create(post=post, file=file, media_type='video')
+                GroupPostMedia.objects.create(post=post, file=file, media_type='video')
 
             # ✅ กลับไปที่หน้ากลุ่มหลังจากแก้ไขเสร็จ
             return redirect('group_detail', group_id=post.group.id)
@@ -943,17 +1016,27 @@ def edit_group_post(request, post_id):
     else:
         form = EditPostForm(instance=post)
 
-    return render(request, "edit_group_post.html", {"form": form, "post": post})
+    return render(request, "group_edit_post.html", {"form": form, "post": post})
 
-# ลบโพสต์ในกลุ่ม
-@login_required
-def delete_group_post(request, post_id):
-    """ ลบโพสต์เฉพาะเจ้าของโพสต์ """
-    post = get_object_or_404(GroupPost, id=post_id, user=request.user)
+
+from django.http import JsonResponse, HttpResponseForbidden
+def delete_group_post(request, group_id, post_id):
     if request.method == "POST":
-        post.delete()
-        return JsonResponse({"success": True, "message": "Post deleted successfully!"})
-    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+        try:
+            print(f"Debug: group_id={group_id}, post_id={post_id}, user={request.user}")  # ✅ Debugging
+
+            post = get_object_or_404(GroupPost, id=post_id, group_id=group_id)
+
+            if post.user != request.user:
+                return JsonResponse({'success': False, 'message': 'คุณไม่มีสิทธิ์ลบโพสต์นี้'}, status=403)
+
+            post.delete()
+            return JsonResponse({'success': True, 'message': 'โพสต์ถูกลบเรียบร้อยแล้ว'})
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+    return HttpResponseForbidden("Method not allowed")
 
 # ✅ ฟังก์ชันแดชบอร์ดผู้ขาย
 @login_required
@@ -1774,20 +1857,126 @@ def reject_seller_payment(request, order_id):
 
 from .models import Follow, CustomUser
 # ✅ สร้างฟังก์ชันสำหรับการติดตามผู้ใช้
+from .models import Follow, CustomUser
+# ✅ สร้างฟังก์ชันสำหรับการติดตามผู้ใช้
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from .models import Follow, CustomUser  # ใช้ CustomUser แทน User
+
 @login_required
 def follow_user(request, user_id):
-    user_to_follow = get_object_or_404(CustomUser, id=user_id)
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
 
-    if user_to_follow == request.user:
-        return JsonResponse({"success": False, "message": "You cannot follow yourself."}, status=400)
+    target_user = get_object_or_404(CustomUser, id=user_id)
 
-    follow, created = Follow.objects.get_or_create(follower=request.user, following=user_to_follow)
+    if request.user == target_user:
+        return JsonResponse({"success": False, "message": "คุณไม่สามารถติดตามตัวเองได้"}, status=400)
+
+    follow_instance, created = Follow.objects.get_or_create(follower=request.user, following=target_user)
 
     if not created:
-        follow.delete()  # ยกเลิกการติดตามถ้ากดซ้ำ
-        return JsonResponse({"success": True, "message": "Unfollowed successfully."})
+        follow_instance.delete()
+        is_following = False
+    else:
+        is_following = True
 
-    return JsonResponse({"success": True, "message": "Followed successfully."})
+    # ✅ ดึงค่าล่าสุดจาก Database
+    followers_count = Follow.objects.filter(following=target_user).count()
+    following_count = Follow.objects.filter(follower=request.user).count()
+
+    return JsonResponse({
+        "success": True,
+        "is_following": is_following,
+        "followers_count": followers_count,
+        "following_count": following_count
+    })
+
+@login_required
+def delete_uploaded_file(request, file_id):
+    media = get_object_or_404(PostMedia, id=file_id)
+    
+    # ตรวจสอบว่าเป็นไฟล์ของโพสต์ที่ผู้ใช้เป็นเจ้าของ
+    if media.post.user != request.user:
+        return JsonResponse({"success": False, "message": "Unauthorized"}, status=403)
+
+    media.delete()
+    return JsonResponse({"success": True, "message": "File deleted"}, status=200)
+
+from django.shortcuts import render, get_object_or_404
+from .models import GroupPost
+
+def group_post_detail(request, post_id):
+    post = get_object_or_404(GroupPost, id=post_id)
+    return render(request, 'group_post_detail.html', {'post': post})
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+import os
+from django.conf import settings
+from .models import GroupPostMedia
+
+@login_required
+def edit_group_post(request, post_id):
+    post = get_object_or_404(GroupPost, id=post_id, user=request.user)
+
+    if request.method == "POST":
+        content = request.POST.get("content", "").strip()
+        images = request.FILES.getlist("images")
+        videos = request.FILES.getlist("videos")
+
+        # ✅ อัปเดตเนื้อหาโพสต์
+        post.content = content
+        post.save()
+
+        # ✅ ลบไฟล์ที่ผู้ใช้เลือก
+        delete_media_ids = request.POST.getlist("delete_media")
+        GroupPostMedia.objects.filter(id__in=delete_media_ids, post=post).delete()
+
+        # ✅ เพิ่มไฟล์ใหม่
+        for image in images:
+            GroupPostMedia.objects.create(post=post, file=image, media_type="image")
+
+        for video in videos:
+            GroupPostMedia.objects.create(post=post, file=video, media_type="video")
+
+        return redirect('group_post_detail', post_id=post.id)
+
+
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Comment
+
+# ✅ ลบคอมเมนต์
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+
+    if request.method == "POST":
+        comment.delete()
+        return JsonResponse({"success": True, "message": "คอมเมนต์ถูกลบเรียบร้อยแล้ว"}, status=200)
+
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+# ✅ แก้ไขคอมเมนต์
+from .models import Comment
+from .forms import CommentForm
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+
+    if request.method == "POST":
+        content = request.POST.get("content")
+        if content:
+            comment.content = content
+            comment.save()
+            return JsonResponse({"success": True, "message": "Comment updated!", "content": comment.content})
+        return JsonResponse({"success": False, "message": "Comment cannot be empty!"}, status=400)
+
+    return JsonResponse({"success": False, "message": "Invalid request!"}, status=400)
 
 
 '''@login_required

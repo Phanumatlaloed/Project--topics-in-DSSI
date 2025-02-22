@@ -1,24 +1,32 @@
-document.querySelectorAll(".edit-btn").forEach(button => {
-    button.addEventListener("click", function () {
-        let postId = this.getAttribute("data-post-id");
-        let newContent = prompt("กรุณาแก้ไขข้อความ:", "");
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ group_edit.js Loaded!");
 
-        if (newContent !== null && newContent.trim() !== "") {
-            fetch(`/group/post/${postId}/edit/`, {
-                method: "POST", // ✅ ใช้ POST (เดิมอาจเป็น GET)
+    function getCSRFToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+    }
+
+    document.querySelectorAll(".remove-existing-file").forEach((button) => {
+        button.addEventListener("click", function () {
+            const mediaId = this.getAttribute("data-file-id");
+            console.log(`📌 Trying to delete media ID: ${mediaId}`);
+
+            fetch(`/delete_media/${mediaId}/`, {
+                method: "DELETE",
                 headers: {
                     "X-CSRFToken": getCSRFToken(),
-                    "Content-Type": "application/json"
+                    "X-Requested-With": "XMLHttpRequest",
                 },
-                body: JSON.stringify({ content: newContent }) // ✅ ส่งข้อมูลใหม่
             })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                if (data.success) {
-                    document.getElementById(`post-${postId}`).querySelector(".post-content").textContent = newContent;
-                }
-            });
-        }
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        console.log("✅ Media deleted successfully:", mediaId);
+                        this.parentElement.remove();
+                    } else {
+                        console.error("❌ Error deleting media:", data.error);
+                    }
+                })
+                .catch((error) => console.error("❌ AJAX Error:", error));
+        });
     });
 });

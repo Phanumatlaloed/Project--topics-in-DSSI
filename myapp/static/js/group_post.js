@@ -14,41 +14,30 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         return cookieValue;
     }
-    
-    // ✅ Share Post
-    document.querySelectorAll(".share-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            let postId = this.getAttribute("data-post-id");
-            fetch(`/group/post/${postId}/share/`, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCSRFToken(),
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => response.json())
-            .then(data => alert(data.message));
-        });
-    });
 
-    // ✅ Delete Post
-    document.querySelectorAll(".delete-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            let postId = this.getAttribute("data-post-id");
-            if (confirm("Are you sure?")) {
-                fetch(`/group/post/delete/${postId}/`, {
+    document.addEventListener("DOMContentLoaded", function () {
+        const postForm = document.getElementById("postForm");
+        
+        if (postForm) {
+            postForm.addEventListener("submit", function (e) {
+                e.preventDefault();
+    
+                const formData = new FormData(postForm);
+                fetch(postForm.action, {
                     method: "POST",
-                    headers: {
-                        "X-CSRFToken": getCSRFToken(),
-                        "Content-Type": "application/json"
-                    }
+                    body: formData,
+                    headers: { "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value },
                 })
                 .then(response => response.json())
                 .then(data => {
-                    alert(data.message);
-                    document.getElementById(`post-${postId}`).remove();
-                });
-            }
-        });
+                    if (data.success) {
+                        window.location.reload();  // ✅ รีเฟรชหน้าเพื่อแสดงโพสต์ใหม่
+                    } else {
+                        alert("โพสต์ไม่สำเร็จ: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        }
     });
 });

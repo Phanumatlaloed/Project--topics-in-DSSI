@@ -1,31 +1,51 @@
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".follow-form").forEach(form => {
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-            let button = this.querySelector(".follow-btn");
-            let userId = button.dataset.userId;
-            
+    const followButton = document.getElementById("follow-button");
+
+    if (followButton) {
+        followButton.addEventListener("click", function () {
+            const userId = this.dataset.userId;
+            const followersCountSpan = document.getElementById("followers-count");
+            const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
+
+            // ✅ แสดงสถานะกำลังดำเนินการ
+            followButton.textContent = "Processing...";
+            followButton.disabled = true;
+
             fetch(`/follow/${userId}/`, {
                 method: "POST",
-                headers: { "X-CSRFToken": this.querySelector("input[name='csrfmiddlewaretoken']").value },
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    if (button.textContent.trim() === "Follow") {
-                        button.textContent = "Unfollow";
-                        button.classList.remove("btn-outline-primary");
-                        button.classList.add("btn-danger");
+                    // ✅ อัปเดตปุ่ม Follow/Unfollow
+                    if (data.is_following) {
+                        followButton.textContent = "Unfollow";
+                        followButton.classList.remove("btn-outline-primary");
+                        followButton.classList.add("btn-danger");
                     } else {
-                        button.textContent = "Follow";
-                        button.classList.remove("btn-danger");
-                        button.classList.add("btn-outline-primary");
+                        followButton.textContent = "Follow";
+                        followButton.classList.remove("btn-danger");
+                        followButton.classList.add("btn-outline-primary");
                     }
+
+                    // ✅ อัปเดตจำนวน Followers
+                    followersCountSpan.textContent = data.followers_count;
                 } else {
                     alert(data.message);
                 }
             })
-            .catch(error => console.error("Follow error:", error));
+            .catch(error => {
+                console.error("Error:", error);
+                alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง!");
+            })
+            .finally(() => {
+                // ✅ เปิดปุ่มให้กดใหม่
+                followButton.disabled = false;
+            });
         });
-    });
+    }
 });

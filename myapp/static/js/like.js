@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const result = await response.json();
                 if (result.success) {
-                    button.innerHTML = result.liked ? "👎 Unlike" : "👍 Like";
+                    button.innerHTML = result.liked ?  "❤️ Unlike" : "🤍 Like";
                     likeCountSpan.textContent = `${result.like_count} Likes`;
                 } else {
                     console.error("Error:", result.error);

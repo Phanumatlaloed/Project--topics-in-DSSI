@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const likeCount = document.getElementById(`like-count-${postId}`);
             const csrfToken = getCookie("csrftoken");
 
-            fetch(`/group_post/like/${postId}/`, {  // ✅ ใช้ URL ที่ถูกต้อง
+            fetch(`/group_post/like/${postId}/like`, {  // ✅ ใช้ URL ที่ถูกต้อง
                 method: "POST",
                 headers: {
                     "X-CSRFToken": csrfToken,
@@ -39,4 +39,3 @@ document.addEventListener("DOMContentLoaded", function () {
         return cookieValue;
     }
 });
-

@@ -58,7 +58,7 @@ class Member(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='member_profile')  # ✅ ใช้ member_profile
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     gender = models.CharField(max_length=10, choices=[('male', 'Male'), ('female', 'Female'), ('other', 'Other')])
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)  # ✅ แก้ไขตรงนี้
 
     def __str__(self):
         return self.user.username
@@ -343,15 +343,35 @@ class Review(models.Model):
 
 
 class Follow(models.Model):
-    follower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="following")
-    following = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="followers")
+    follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="following")
+    following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="followers")
     created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         unique_together = ("follower", "following")  # ป้องกันการติดตามซ้ำ
 
     def __str__(self):
         return f"{self.follower.username} follows {self.following.username}"
+    
+class GroupPostMedia(models.Model):
+    MEDIA_TYPE_CHOICES = (
+        ('image', 'Image'),
+        ('video', 'Video'),
+    )
+    
+    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name="media")
+    file = models.FileField(upload_to="group_posts/")  # ✅ กำหนด path ให้เก็บรูป  # ใช้ฟังก์ชันอัปโหลดเดิม
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPE_CHOICES)
+    caption = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name_plural = "Group Post Media"
+
+    def __str__(self):
+        return f"({self.media_type.upper()}) {os.path.basename(self.file.name)} for GroupPost {self.post.id}"
     
 
 class Report(models.Model):

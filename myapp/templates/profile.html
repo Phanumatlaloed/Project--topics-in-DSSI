@@ -58,20 +58,19 @@
                 </div>
                 <h2 class="mb-1">{{ user.username }}</h2>
 
-                <!-- Followers / Following -->
+                <!-- จำนวนผู้ติดตาม -->
                 <div class="d-flex justify-content-center gap-4 my-2">
-                    <span><strong>{{ user.followers.count }}</strong> Followers</span>
-                    <span><strong>{{ user.following.count }}</strong> Following</span>
+                    <span><strong id="followers-count">{{ user.followers.count }}</strong> Followers</span>
+                    <span><strong id="following-count">{{ user.following.count }}</strong> Following</span>
                 </div>
 
-                <!-- Follow Button -->
+                <!-- ปุ่มติดตาม -->
                 {% if user != request_user %}
-                    <form id="follow-form" method="POST" action="{% url 'follow_user' user.id %}" class="mb-2">
-                        {% csrf_token %}
-                        <button type="submit" class="btn {% if request_user in user.followers.all %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn">
-                            {% if request_user in user.followers.all %}Unfollow{% else %}Follow{% endif %}
-                        </button>
-                    </form>
+                    <button id="follow-button"
+                        data-user-id="{{ user.id }}"
+                        class="btn {% if request_user in user.followers.all %}btn-danger{% else %}btn-outline-primary{% endif %}">
+                        {% if request_user in user.followers.all %}Unfollow{% else %}Follow{% endif %}
+                    </button>    
                 {% endif %}
 
                 <a href="{% url 'profile_management' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
