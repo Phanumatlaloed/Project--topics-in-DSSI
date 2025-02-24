@@ -127,16 +127,9 @@
                                 {{ notification.created_at|timesince }} ที่ผ่านมา
                             </div>
                             {% if notification.post %}
-                                {% if notification.post.group_post %}
-                                    <a href="{% url 'group_post_detail' notification.post.id %}" style="color: #3498db; text-decoration: none; margin-top: 8px;">
-                                        ดูโพสต์ในกลุ่ม →
-                                    </a>
-                                {% else %}
-                                    <a href="{% url 'post_like_detail' notification.post.id %}" style="color: #3498db; text-decoration: none; margin-top: 8px;">
-                                        ดูโพสต์หลัก →
-                                    </a>
-                                {% endif %}
-
+                                <a href="{% url 'post_like_detail' notification.post.id %}" style="color: #3498db; text-decoration: none; margin-top: 8px;">
+                                    ดูโพสต์ →
+                                </a>
                             {% elif notification.order %}
                                 <a href="/orders/{{ notification.order.id }}" style="color: #e67e22; text-decoration: none; margin-top: 8px;">
                                     ดูคำสั่งซื้อ →

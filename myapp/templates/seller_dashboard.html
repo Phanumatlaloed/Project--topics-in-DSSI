@@ -4,36 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Dashboard</title>
-    
-    <!-- CSS -->
+    <title>แดชบอร์ดร้านค้า</title>
     <link rel="stylesheet" href="{% static 'styles/seller_dashboard.css' %}">
-    
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <h2>แดชบอร์ดร้านค้า</h2>
+            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2> 
             <ul class="menu">
-                <li class="menu-header">คำสั่งซื้อ</li>
-                <li class="menu-item"><a href="{% url 'seller_orders' %}">📦 คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-header">📦 คำสั่งซื้อ</li>
+                <li class="menu-item active"><a href="{% url 'seller_dashboard' %}">แดชบอร์ด</a></li>
+                <li class="menu-item"><a href="{% url 'seller_orders' %}">คำสั่งซื้อของฉัน</a></li>
                 <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
-                <li class="menu-item"><a href="#">📌 จัดส่งแบบชุด</a></li>
-                <li class="menu-item"><a href="#">🚚 พัสดุเตรียมส่งมอบ</a></li>
-                <li class="menu-item"><a href="#">↩️ ขอคืนสินค้า</a></li>
-                <li class="menu-item"><a href="#">⚙️ ตั้งค่าการจัดส่ง</a></li>
-                
-                <li class="menu-header">สินค้า</li>
-                <li class="menu-item active"><a href="{% url 'seller_dashboard' %}">📋 จัดการร้านค้า</a></li>
-                <li class="menu-item active"><a href="{% url 'my_products' %}">📋 สินค้าของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'add_product' %}">➕ เพิ่มสินค้าใหม่</a></li>
-                <li class="menu-item"><a href="{% url 'edit_store' %}">⚙️ แก้ไขร้านค้า</a></li>
-                <li class="menu-item"><a href="{% url 'seller_edit_profile' %}">⚙️ แก้ไขโปรไฟล์ผู้ขาย</a></li>
-                <li class="menu-item"><a href="{% url 'seller_orders' %}">📦 คำสั่งซื้อของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_logout' %}">Logout</a></li>
+                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
+
+                <li class="menu-header">🛍 สินค้า</li>
+                <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
+
+                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
+                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
+
+                <li class="menu-header">⚙️ การตั้งค่า</li>
+                <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
+                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
+                <li class="menu-item"><a href="{% url 'notification_list' %}" class="nav-link"> Notifications</a></li>
+                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
             </ul>
         </aside>
 
@@ -42,10 +41,9 @@
             <header class="content-header">
                 <h1>สินค้าของฉัน</h1>
                 <button class="btn-add-product" onclick="window.location.href='{% url 'add_product' %}';">
-                    ➕ เพิ่มสินค้าใหม่
+                    เพิ่มสินค้าใหม่
                 </button>                
             </header>
-            
 
             <!-- Tab Menu -->
             <nav class="tab-menu">
@@ -55,17 +53,17 @@
                 <button>ยังไม่ลงขาย (3)</button>
             </nav>
 
-            <!-- Table -->
+            <!-- ตารางสินค้า -->
             <div class="product-table">
                 <table>
                     <thead>
                         <tr>
                             <th>สินค้า</th>
-                            <th>หมวดหมู่</th>  <!-- ✅ เพิ่มคอลัมน์แสดงหมวดหมู่สินค้า -->
+                            <th>หมวดหมู่</th>
                             <th>ยอดขาย</th>
                             <th>ราคา</th>
-                            <th>คลัง</th>
-                            <th>คุณภาพรายการสินค้า</th>
+                            <th>คลังสินค้า</th>
+                            <th>คุณภาพ</th>
                             <th>การดำเนินการ</th>
                         </tr>
                     </thead>
@@ -77,14 +75,14 @@
                                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
                                     <span>{{ product.name }}</span>
                                 </td>
-                                <td>{{ product.get_category_display }}</td>  <!-- ✅ ใช้ get_category_display() เพื่อดึงค่าที่แสดง -->
+                                <td>{{ product.get_category_display }}</td>
                                 <td>{{ product.sales_count }} รายการ</td>
                                 <td>฿{{ product.price }}</td>
                                 <td>{{ product.stock }} ชิ้น</td>
                                 <td>{{ product.quality_score }}%</td>
                                 <td>
-                                    <a href="{% url 'edit_product' product.id %}" class="edit-btn">✏️ แก้ไข</a>
-                                    <a href="{% url 'delete_product' product.id %}" class="delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">🗑 ลบ</a>
+                                    <a href="{% url 'edit_product' product.id %}" class="edit-btn">แก้ไข</a>
+                                    <a href="{% url 'delete_product' product.id %}" class="delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">ลบ</a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -98,5 +96,18 @@
             </div>
         </main>
     </div>
+
+    <!-- JavaScript for Active Tab -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tabs = document.querySelectorAll(".tab-menu button");
+            tabs.forEach(tab => {
+                tab.addEventListener("click", function() {
+                    tabs.forEach(t => t.classList.remove("active"));
+                    this.classList.add("active");
+                });
+            });
+        });
+    </script>
 </body>
 </html>

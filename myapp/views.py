@@ -7,16 +7,26 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 import os
+from decimal import Decimal
 from django.db.models import Q
 from django.middleware.csrf import get_token
 from requests import post
 from .models import Cart, CartItem  # ✅ Import Cart และ CartItem
 from .models import Order, OrderItem  # ✅ เพิ่ม OrderItem เข้าไปด้วย
 
-from .models import Member,CustomUser, Post, Comment, CommunityGroup,PostMedia, GroupPost, Seller, Product, SavedPost, SavedGroupPost, GroupComment, Cart, ShippingAddress, Payment, Order, Review, RefundRequest, Follow, BlockedUser, GroupPostMedia
+from .models import Member,CustomUser,SellerWallet, Post, Comment, CommunityGroup,PostMedia, GroupPost, Seller, Product, SavedPost, SavedGroupPost, GroupComment, Cart, ShippingAddress, Payment, Order, Review,RefundRequest 
 from .forms import CustomUserCreationForm, ShippingAddressForm, SelleruserUpdateForm, SellerUpdateForm, SelleruserPasswordUpdateForm,UserChangeForm, PasswordChangeForm,EditPostForm, SellerForm, AccountEditForm, UserEditForm, PasswordChangeForm, CommunityGroupForm, ProductForm, SellerForm, SellerUpdateForm, UserCreationForm
 
 User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
+from .models import Member,Payment,CustomUser, Post, Comment, CommunityGroup,PostMedia, GroupPost, Seller, Product, SavedPost, SavedGroupPost, GroupComment, Cart, ShippingAddress, Payment, Order, Review,RefundRequest 
+from .forms import CustomUserCreationForm,CustomUserUpdateForm,PasswordChangeForm,SellerProfileUpdateForm, ShippingAddressForm, SelleruserUpdateForm, SellerUpdateForm, SelleruserPasswordUpdateForm,UserChangeForm, PasswordChangeForm,EditPostForm, SellerForm, AccountEditForm, UserEditForm, PasswordChangeForm, CommunityGroupForm, ProductForm, SellerForm, SellerUpdateForm, UserCreationForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Product, Review, ReviewMedia
+from django.contrib.auth.decorators import login_required
+User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
+from django.contrib.auth import get_user_model
+User = get_user_model()  # ✅ ใช้ CustomUser แทน
+
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -26,6 +36,7 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ['username','email', 'password1', 'password2']
 
 #สมัครใช้งาน
+from django.db import IntegrityError
 def register(request):
     if request.method == "POST":
         first_name = request.POST.get("first_name")
@@ -51,21 +62,27 @@ def register(request):
             messages.error(request, "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว")
             return render(request, "register.html")
 
-        # สร้าง User
-        user = CustomUser.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            role='member'
-        )
+        try:
+            # ✅ สร้าง User
+            user = CustomUser.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                role='member'
+            )
 
-        # สร้างโปรไฟล์ Member
-        Member.objects.create(user=user, gender=gender, date_of_birth=date_of_birth)
+            # ✅ ตรวจสอบว่าผู้ใช้มี Member อยู่แล้วหรือไม่
+            if not Member.objects.filter(user=user).exists():
+                Member.objects.create(user=user, gender=gender, date_of_birth=date_of_birth)
 
-        messages.success(request, "สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ")
-        return redirect("login")
+            messages.success(request, "สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ")
+            return redirect("login")
+
+        except IntegrityError as e:
+            messages.error(request, f"❌ การสมัครล้มเหลว: {str(e)}")
+            return render(request, "register.html")
 
     return render(request, "register.html")
 
@@ -174,16 +191,17 @@ def reset_password(request):
 
     return render(request, "reset_password.html")
 
-from django.db.models import Q
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Post, Follow, BlockedUser
+from django.contrib import messages
+from django.db.models import Q
+from .models import Post, Product, Follow, BlockedUser  # ✅ นำเข้าโมเดลที่เกี่ยวข้อง
+from notifications.models import Notification  # ✅ นำเข้าโมเดล Notification
 
 @login_required
 def home(request):
     """ 
-    แสดงหน้า Home โดยกรองโพสต์ที่ถูกบล็อก, ถูกรีพอร์ต ยกเว้นโพสต์ของตัวเอง
+    แสดงหน้า Home โดยกรองโพสต์ที่ถูกบล็อก, ถูกรีพอร์ต ยกเว้นโพสต์ของตัวเอง และแสดงสินค้าด้วย
     """   
     if request.user.role != 'member':
         messages.error(request, "❌ เฉพาะสมาชิก (Member) เท่านั้นที่สามารถเข้าถึงหน้านี้!")
@@ -208,11 +226,20 @@ def home(request):
     # ✅ เก็บ `followed_users` เป็นเซ็ตเพื่อใช้ใน template
     followed_users = set(following_users)
 
+    # ✅ ดึงสินค้าที่แนะนำมาแสดง (เช่น 6 รายการล่าสุด)
+    products = Product.objects.all()[:6]  
+
+    # ✅ ดึงการแจ้งเตือนของผู้ใช้
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:10]
+
+
     return render(request, 'home.html', {
         'username': request.user.username,
         'posts': posts,
         'following_users': following_users,
-        'followed_users': followed_users
+        'followed_users': followed_users,
+        'products': products,  # ✅ ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
+        'notifications': notifications,  # ✅ ส่งการแจ้งเตือนไปยังเทมเพลต
     })
 
 #logout
@@ -288,6 +315,7 @@ def profile_edit(request):
         'member_form': member_form,
     })
 
+
 #โพสในหน้าหลัก
 @login_required
 def create_post(request):
@@ -318,6 +346,7 @@ def create_post(request):
 
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
+#ลบโพสต์ในหน้าหลัก
 @login_required
 def delete_post(request, post_id):
     """ ฟังก์ชันลบโพสต์และไฟล์แนบที่เกี่ยวข้อง """
@@ -331,7 +360,13 @@ def delete_post(request, post_id):
         if post.user != request.user:
             return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบโพสต์นี้"}, status=403)
 
-        # ✅ ลบไฟล์แนบ
+        # ✅ เช็คว่าโพสต์นี้เป็นโพสต์ที่ถูกแชร์มาหรือไม่
+        if post.shared_from:
+            # ✅ ถ้าเป็นโพสต์ที่แชร์มา แค่ลบโพสต์นี้ ไม่ต้องลบโพสต์ต้นฉบับ
+            post.delete()
+            return JsonResponse({"success": True, "message": "โพสต์แชร์ถูกลบเรียบร้อยแล้ว แต่โพสต์ต้นฉบับยังคงอยู่"}, status=200)
+
+        # ✅ ลบไฟล์แนบถ้าเป็นโพสต์ต้นฉบับ
         for media in post.media.all():
             if media.file:
                 file_path = os.path.join(settings.MEDIA_ROOT, str(media.file))
@@ -339,8 +374,8 @@ def delete_post(request, post_id):
                     os.remove(file_path)
             media.delete()
 
-        post.delete()  # ✅ ลบโพสต์
-        return JsonResponse({"success": True, "message": "โพสต์ถูกลบเรียบร้อยแล้ว!"}, status=200)
+        post.delete()  # ✅ ลบโพสต์ต้นฉบับ
+        return JsonResponse({"success": True, "message": "โพสต์ต้นฉบับถูกลบเรียบร้อยแล้ว!"}, status=200)
     
     return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
 
@@ -378,48 +413,79 @@ def edit_post(request, post_id):
     return render(request, "edit_post.html", {"post": post, "form": form})
 
 
-@csrf_exempt  # ❌ ปิด CSRF สำหรับฟังก์ชันนี้
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import PostMedia
+import os
+@login_required
 @login_required
 def delete_media(request, media_id):
-    """ ฟังก์ชันลบไฟล์สื่อออกจากโพสต์ """
+    print(f"📌 DELETE request received for media_id: {media_id}")  # ✅ Debug Log
+
     if request.method == "DELETE":
-        media = get_object_or_404(PostMedia, id=media_id)
+        # ✅ ลองค้นหาในทั้งสองโมเดล
+        media = (
+            PostMedia.objects.filter(id=media_id).first() or
+            GroupPostMedia.objects.filter(id=media_id).first()
+        )
 
-        if media.post.user != request.user:
-            return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบไฟล์นี้"}, status=403)
+        if not media:
+            return JsonResponse({"success": False, "error": "Media not found"}, status=404)
 
-        media.delete()
-        return JsonResponse({"success": True, "message": "ไฟล์ถูกลบเรียบร้อยแล้ว!"})
+        # ✅ ตรวจสอบไฟล์ที่เซิร์ฟเวอร์
+        if media.file:
+            file_path = media.file.path
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)  # ✅ ลบไฟล์จากเซิร์ฟเวอร์
+                    media.delete()  # ✅ ลบจากฐานข้อมูล
+                    return JsonResponse({"success": True})
+                except Exception as e:
+                    return JsonResponse({"success": False, "error": str(e)}, status=500)
+            else:
+                media.delete()  # ✅ ลบจากฐานข้อมูลแม้ว่าไฟล์ไม่มีอยู่แล้ว
+                return JsonResponse({"success": True, "message": "File not found but deleted from database"})
 
-    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+        return JsonResponse({"success": False, "error": "File does not exist"}, status=404)
 
+    return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
+
+
+
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
+
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Post  # ✅ ตรวจสอบว่า import ถูกต้อง
 
 @login_required
 def toggle_like(request, post_id):
     if request.method == "POST":
-        try:
-            post = get_object_or_404(Post, id=post_id)
-            user = request.user  # ✅ ใช้ request.user ตรงๆ
+        post = get_object_or_404(Post, id=post_id)
+        user = request.user  # ✅ ใช้ request.user ตรงๆ
+        
+        if post.likes.filter(id=user.id).exists():
+            post.likes.remove(user)  # ✅ ถ้าเคยไลค์ -> กดอีกครั้งเพื่อลบ
+            liked = False
+        else:
+            post.likes.add(user)  # ✅ ถ้ายังไม่เคยไลค์ -> กดไลค์
+            liked = True
 
-            if post.likes.filter(id=user.id).exists():
-                post.likes.remove(user)  # ✅ ถ้าเคยไลค์ -> กดอีกครั้งเพื่อลบ
-                liked = False
-            else:
-                post.likes.add(user)  # ✅ ถ้ายังไม่เคยไลค์ -> กดไลค์
-                liked = True
+        like_count = post.likes.count()
 
-            like_count = post.likes.count()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({"success": True, "liked": liked, "like_count": like_count})
 
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({"success": True, "liked": liked, "like_count": like_count})
-
-            return redirect(request.META.get('HTTP_REFERER', 'home'))
-
-        except Exception as e:
-            print(f"❌ Error: {e}")
-            return JsonResponse({"success": False, "error": str(e)}, status=500)
+        return redirect(request.META.get('HTTP_REFERER', 'home'))
 
     return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
+
+
+
 
 @login_required
 def post_detail(request, post_id):
@@ -513,7 +579,8 @@ def add_comment(request, post_id):
                 'success': True,
                 'message': 'Comment added successfully!',
                 'username': request.user.username,  # ✅ ส่งชื่อผู้ใช้กลับไป
-                'content': comment.content
+                'content': comment.content,
+                "is_owner": True,  # ส่งค่ากลับไปว่าเป็นเจ้าของคอมเมนต์
             }, status=201)
 
         return JsonResponse({'success': False, 'message': 'Comment cannot be empty!'}, status=400)
@@ -583,12 +650,15 @@ def delete_group(request, group_id, post_id):
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
     return redirect('community_list')
 
+#รายละเอียดในกลุ่ม
 from django.http import JsonResponse
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(CommunityGroup, id=group_id)
-    posts = GroupPost.objects.filter(group=group).order_by('-created_at')
+    
     is_member = request.user in group.members.all()
+    # ✅ ป้องกันไม่ให้เห็นโพสต์ ถ้าไม่ได้เป็นสมาชิก
+    posts = GroupPost.objects.filter(group=group).order_by('-created_at') if is_member else None
 
     if request.method == "POST":
         content = request.POST.get('content', '').strip()
@@ -674,6 +744,26 @@ def join_group(request, group_id):
     else:
         messages.info(request, "You are already a member of this group.")
     return redirect('group_detail', group_id=group.id)
+
+#ออกจากกลุ่ม
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import CommunityGroup
+
+@login_required
+def leave_group(request, group_id):
+    """ ให้สมาชิกออกจากกลุ่ม """
+    group = get_object_or_404(CommunityGroup, id=group_id)
+
+    if request.user in group.members.all():
+        group.members.remove(request.user)  # ลบสมาชิกออกจากกลุ่ม
+        messages.success(request, "คุณได้ออกจากกลุ่มเรียบร้อยแล้ว!")
+    else:
+        messages.error(request, "คุณไม่ได้เป็นสมาชิกของกลุ่มนี้!")
+
+    return redirect('community_list')  # หรือจะ redirect ไปหน้า 'group_detail' ก็ได้
+
 
 # ไลค์โพสในกลุ่ม
 from notifications.utils import create_notification  # ✅ นำเข้า Notification
@@ -939,12 +1029,12 @@ def share_group_post(request, post_id):
 # แก้ไขโพสต์ในกลุ่ม
 @login_required
 def group_edit_post(request, post_id):
-    """ ฟังก์ชันแก้ไขโพสต์ """
+    """ ฟังก์ชันแก้ไขโพสต์ในกลุ่ม """
     post = get_object_or_404(GroupPost, id=post_id)
 
     # ✅ ตรวจสอบว่าเป็นเจ้าของโพสต์หรือไม่
     if post.user != request.user:
-        return redirect('community_list')  # ✅ ส่งกลับไปหน้าชุมชนถ้าไม่ใช่เจ้าของ
+        return redirect('community_list')  # ✅ ส่งกลับไปหน้าชุมชนถ้าไม่ใช่เจ้าของโพสต์
 
     if request.method == "POST":
         form = EditPostForm(request.POST, instance=post)
@@ -969,6 +1059,7 @@ def group_edit_post(request, post_id):
         form = EditPostForm(instance=post)
 
     return render(request, "group_edit_post.html", {"form": form, "post": post})
+
 
 from django.http import JsonResponse, HttpResponseForbidden
 def delete_group_post(request, group_id, post_id):
@@ -1013,28 +1104,28 @@ def add_product(request):
         form = ProductForm()
     return render(request, "add_product.html", {"form": form})
 
-@login_required
-def edit_product(request, product_id):
-    """ แก้ไขสินค้า """
-    product = get_object_or_404(Product, id=product_id, seller=request.user.seller_profile)
-    if request.method == "POST":
-        form = ProductForm(request.POST, request.FILES, instance=product)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Product updated successfully!")
-            return redirect("seller_dashboard")
-    else:
-        form = ProductForm(instance=product)
-    return render(request, "edit_product.html", {"form": form})
+#@login_required
+#def edit_product(request, product_id):
+    #""" แก้ไขสินค้า """
+   # product = get_object_or_404(Product, id=product_id, seller=request.user.seller_profile)
+   # if request.method == "POST":
+      #  form = ProductForm(request.POST, request.FILES, instance=product)
+      #  if form.is_valid():
+      #      form.save()
+      #      messages.success(request, "Product updated successfully!")
+      #      return redirect("seller_dashboard")
+  #  else:
+    #    form = ProductForm(instance=product)
+   # return render(request, "edit_product.html", {"form": form})
 
 # ✅ ฟังก์ชันลบสินค้า
-'''@login_required
+@login_required
 def delete_product(request, product_id):
     """ ลบสินค้า """
     product = get_object_or_404(Product, id=product_id, seller=request.user.seller_profile)
     product.delete()
     messages.success(request, "Product deleted successfully!")
-    return redirect("seller_dashboard") '''
+    return redirect("seller_dashboard")
 
 
 # ✅ ฟังก์ชันสำหรับ Seller Login
@@ -1150,6 +1241,7 @@ def product_list(request):
 
     return render(request, "product_list.html", {"products": products, "query": query, "category_filter": category_filter})
 
+
 # ✅ แสดงสินค้าของร้านค้าตนเอง (เฉพาะผู้ขาย)
 @login_required
 def my_products(request):
@@ -1186,17 +1278,24 @@ def edit_product(request, product_id):
 
     return render(request, 'edit_product.html', {'form': form, 'product': product})
 
-
-
-
-
-
-@login_required
+# ✅ แสดงรายละเอียดสินค้า
 def product_detail(request, product_id):
-    """ แสดงรายละเอียดสินค้า """
     product = get_object_or_404(Product, id=product_id)
-    return render(request, "product_detail.html", {"product": product})
+    reviews = Review.objects.filter(product=product)  # ดึงรีวิวของสินค้า
 
+    return render(request, 'product_detail.html', {
+        'product': product,
+        'reviews': reviews
+    })
+@login_required
+def product_detail_user(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    reviews = Review.objects.filter(product=product)  # ดึงรีวิวของสินค้า
+
+    return render(request, 'product_detail_user.html', {
+        'product': product,
+        'reviews': reviews
+    })
 
 @login_required
 def delete_product(request, product_id):
@@ -1222,47 +1321,59 @@ def delete_product(request, product_id):
         return redirect('seller_dashboard')  # ค่าเริ่มต้นเป็นหน้าแดชบอร์ด
 
 
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import render, redirect
+from .forms import CustomUserUpdateForm, SellerProfileUpdateForm
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from .forms import CustomUserUpdateForm, SellerProfileUpdateForm
 
 @login_required
-def seller_edit_profile(request):
-    """ แก้ไขโปรไฟล์ผู้ขาย (User + Seller + รหัสผ่าน) """
-    seller = get_object_or_404(Seller, user=request.user)
+def edit_seller_profile(request):
+    """ แก้ไขโปรไฟล์ผู้ขาย + อัปเดตรหัสผ่าน """
+    
+    user = request.user  # ดึงข้อมูลผู้ใช้ที่ล็อกอิน
+    seller = get_object_or_404(Seller, user=user)  # ดึงข้อมูลร้านค้าของผู้ใช้
 
-    # ✅ กำหนดค่าเริ่มต้น
-    user_form = SelleruserUpdateForm(instance=request.user)
-    seller_form = SellerUpdateForm(instance=seller)
-    password_form = SelleruserPasswordUpdateForm(request.user)
+    # ✅ กำหนดค่าเริ่มต้นให้ user_form และ seller_form
+    user_form = CustomUserUpdateForm(instance=user)
+    seller_form = SellerProfileUpdateForm(instance=seller)
+    password_form = PasswordChangeForm(user)
 
-    if request.method == 'POST':
-        if 'update_profile' in request.POST:
-            user_form = SelleruserUpdateForm(request.POST, instance=request.user)
-            seller_form = SellerUpdateForm(request.POST, request.FILES, instance=seller)
+    if request.method == "POST":
+        # ✅ อัปเดตโปรไฟล์ผู้ใช้
+        if "update_profile" in request.POST:
+            user_form = CustomUserUpdateForm(request.POST, instance=user)
+            seller_form = SellerProfileUpdateForm(request.POST, request.FILES, instance=seller)
 
             if user_form.is_valid() and seller_form.is_valid():
                 user_form.save()
                 seller_form.save()
-                messages.success(request, "✅ โปรไฟล์ของคุณอัปเดตเรียบร้อยแล้ว!")
-                return redirect('seller_edit_profile')
+                messages.success(request, "✅ โปรไฟล์ของคุณได้รับการอัปเดตแล้ว!")
+                return redirect(request.path)  # ✅ กลับมาหน้าเดิม
 
-        elif 'change_password' in request.POST:
-            password_form = SelleruserPasswordUpdateForm(user=request.user, data=request.POST)
+        # ✅ อัปเดตรหัสผ่าน
+        elif "change_password" in request.POST:
+            password_form = PasswordChangeForm(user, request.POST)
             if password_form.is_valid():
-                user = password_form.user
-                user.set_password(password_form.cleaned_data['new_password1'])  # ✅ ใช้ `set_password()`
-                user.save()
-                update_session_auth_hash(request, user)  # ✅ ป้องกันการล็อกเอาต์
-                messages.success(request, "🔑 เปลี่ยนรหัสผ่านสำเร็จ!")
-                return redirect('seller_edit_profile')
+                user = password_form.save()
+                update_session_auth_hash(request, user)  # ป้องกันไม่ให้ต้องล็อกอินใหม่
+                messages.success(request, "🔑 รหัสผ่านของคุณถูกเปลี่ยนเรียบร้อยแล้ว!")
+                return redirect(request.path)  # ✅ กลับมาหน้าเดิม
             else:
-                messages.error(request, "❌ กรุณาตรวจสอบข้อมูลรหัสผ่านใหม่")
+                messages.error(request, "❌ โปรดตรวจสอบข้อมูลที่ป้อน")
 
-    return render(request, 'seller_edit_profile.html', {
-        'user_form': user_form,
-        'seller_form': seller_form,
-        'password_form': password_form
+    return render(request, "seller/edit_profile.html", {
+        "user_form": user_form,
+        "seller_form": seller_form,
+        "password_form": password_form
     })
 
 @login_required
@@ -1281,59 +1392,103 @@ def edit_store(request):
 
     return render(request, 'edit_store.html', {'form': form})
 
+# ✅ แสดงหน้าตะกร้าสินค้า
 @login_required
 def view_cart(request):
-    """ แสดงสินค้าที่อยู่ในตะกร้า """
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = CartItem.objects.filter(cart=cart)
-    total_price = sum(item.total_price() for item in cart_items)
+    total_price = sum(item.quantity * item.product.price for item in cart_items)
 
-    return render(request, "cart.html", {
-        "cart_items": cart_items,
-        "total_price": total_price
+    return render(request, 'cart.html', {
+        'cart_items': cart_items,
+        'total_price': total_price
     })
 
+# ✅ แสดงรายละเอียดร้านค้า
+def store_detail(request, store_id):
+    store = Seller.objects.get(id=store_id)
+    products = store.products.all()  # ดึงสินค้าทั้งหมดของร้านค้า
+    return render(request, 'store_detail.html', {'store': store, 'products': products})
+
 @login_required
+@csrf_exempt  # ✅ ใช้ @csrf_exempt สำหรับ AJAX (แต่ควรใช้ CSRF Token ดีกว่า)
 def add_to_cart(request, product_id):
-    """ เพิ่มสินค้าในตะกร้า """
-    product = get_object_or_404(Product, id=product_id)
-    
-    # ✅ ค้นหาหรือลงทะเบียนตะกร้าสำหรับผู้ใช้
-    cart, created = Cart.objects.get_or_create(user=request.user)
+    """ ✅ เพิ่มสินค้าลงตะกร้าแบบ AJAX """
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            product_id = data.get("product_id")
 
-    # ✅ เพิ่มหรืออัปเดตจำนวนสินค้าในตะกร้า
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+            if not request.user.is_authenticated:
+                return JsonResponse({"success": False, "message": "กรุณาเข้าสู่ระบบก่อน"}, status=401)
 
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
+            product = get_object_or_404(Product, id=product_id)
 
-    messages.success(request, "✅ เพิ่มสินค้าในตะกร้าเรียบร้อย!")
-    return redirect('cart')
+            if product.stock <= 0:
+                return JsonResponse({"success": False, "message": "❌ สินค้าหมด"}, status=400)
 
-@login_required
+            cart, created = Cart.objects.get_or_create(user=request.user)
+            cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+
+            if not created:
+                cart_item.quantity += 1
+                cart_item.save()
+
+            cart_count = sum(item.quantity for item in cart.cartitem_set.all())
+
+            return JsonResponse({"success": True, "cart_count": cart_count})
+
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+    return JsonResponse({"success": False, "message": "Method Not Allowed"}, status=405)
+
+def add_to_cart_ajax(request, product_id):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return JsonResponse({"success": False, "message": "กรุณาเข้าสู่ระบบก่อน"})
+
+        product = get_object_or_404(Product, id=product_id)
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+
+        if not created:
+            cart_item.quantity += 1
+            cart_item.save()
+
+        cart_count = CartItem.objects.filter(cart=cart).count()
+        return JsonResponse({"success": True, "cart_count": cart_count})
+
+    return JsonResponse({"success": False, "message": "Invalid request"})
+
 def update_cart(request, item_id, action):
-    """ เพิ่ม / ลด จำนวนสินค้าในตะกร้า """
-    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    cart_item = CartItem.objects.get(id=item_id)
+    product = cart_item.product
 
-    if action == "increase":
-        cart_item.quantity += 1
-    elif action == "decrease":
-        cart_item.quantity -= 1
+    if action == 'increase':
+        # ตรวจสอบสต๊อกสินค้า
+        if product.stock >= cart_item.quantity + 1:
+            cart_item.quantity += 1
+            cart_item.save()
+        else:
+            return JsonResponse({"success": False, "error": "ไม่มีสินค้าพอในสต๊อก"})
+    elif action == 'decrease':
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.save()
+        else:
+            return JsonResponse({"success": False, "error": "จำนวนสินค้าต่ำสุดไม่สามารถลดลงได้"})
 
-    if cart_item.quantity <= 0:
-        cart_item.delete()
-        return JsonResponse({"success": True, "new_quantity": 0, "new_total": 0, "cart_total": get_cart_total(request.user)})
-
-    cart_item.save()
+    # คำนวณราคาใหม่
+    new_total = cart_item.quantity * product.price
+    cart_total = sum([item.quantity * item.product.price for item in cart_item.cart.cartitem_set.all()])
 
     return JsonResponse({
         "success": True,
         "new_quantity": cart_item.quantity,
-        "new_total": cart_item.total_price(),
-        "cart_total": get_cart_total(request.user),
+        "new_total": new_total,
+        "cart_total": cart_total,
     })
-
 @login_required
 def remove_from_cart(request, item_id):
     """ ลบสินค้าออกจากตะกร้า """
@@ -1346,7 +1501,6 @@ def get_cart_total(user):
     """ คำนวณราคาทั้งหมดของตะกร้า """
     total = sum(item.total_price() for item in CartItem.objects.filter(cart__user=user))
     return total
-
 
 @login_required
 def update_shipping(request):
@@ -1397,15 +1551,13 @@ def upload_payment(request, order_ids):
                 payment.slip = payment_slip  # อัปเดตสลิปใหม่ถ้ามีอยู่แล้ว
                 payment.save()
 
-            order.payment_status = "paid"
+            order.payment_status = "pending"  # ✅ เปลี่ยนเป็น "รอยืนยันการชำระ"
             order.save()
 
-        messages.success(request, "✅ ชำระเงินสำเร็จ! กรุณารอการจัดส่ง")
+        messages.success(request, "✅ ชำระเงินสำเร็จ! กรุณารอการตรวจสอบจากผู้ขาย")
         return redirect('order_history')
 
     return render(request, "upload_payment.html", {"orders": orders, "total_payment": total_payment})
-
-
 
 @login_required
 def add_review(request, product_id):
@@ -1449,10 +1601,13 @@ def checkout(request):
         orders_by_seller[seller].append(item)
         total_checkout_price += item.quantity * item.product.price
 
+    # ✅ ดึงที่อยู่ของผู้ใช้ทั้งหมด
+    saved_addresses = ShippingAddress.objects.filter(user=request.user)
+
     return render(request, "checkout.html", {
         "orders_by_seller": orders_by_seller,
         "total_checkout_price": total_checkout_price,
-        "user_shipping_info": request.user.shipping_address.first(),
+        "saved_addresses": saved_addresses,  # ✅ ส่งที่อยู่ทั้งหมดไปยัง Template
     })
 
 @login_required
@@ -1505,14 +1660,38 @@ def cancel_order(request, order_id):
 
     return render(request, "cancel_order.html", {"order": order})
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Order, RefundRequest
+from .forms import RefundRequestForm, RefundProofForm
+
+
 @login_required
 def order_history(request):
-    # ดึงคำสั่งซื้อทั้งหมดของผู้ใช้
-    orders = Order.objects.filter(user=request.user)
+    """ แสดงประวัติคำสั่งซื้อของผู้ใช้ """
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    pending_orders = orders.filter(status__in=["pending", "processing", "shipped"])
+    completed_orders = orders.filter(status="delivered")
 
-    return render(request, 'order_history.html', {
-        'orders': orders
-    })
+    context = {
+        'orders': orders,
+        'pending_orders': pending_orders,
+        'completed_orders': completed_orders,
+    }
+    return render(request, 'order_history.html', context)
+
+@login_required
+def refund_history(request):
+    """ แสดงประวัติการคืนเงินของผู้ใช้ """
+    return_orders = RefundRequest.objects.filter(
+        user=request.user, status="refunded", confirmed_by_user=False
+    ).select_related('order', 'item', 'item__product')
+
+    context = {
+        'return_orders': return_orders,
+    }
+    return render(request, 'refund_history.html', context)
 
 
 
@@ -1521,6 +1700,8 @@ def order_detail(request, order_id):
     """ ดูรายละเอียดคำสั่งซื้อ """
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, "order_detail.html", {"order": order})
+
+
 
 from .models import ShippingAddress
 
@@ -1532,65 +1713,82 @@ def get_shipping_address(user):
     except ShippingAddress.DoesNotExist:
         return None
 
-
+# ✅ ฟังก์ชันสำหรับการสั่งซื้อสินค้า
 @login_required
 def confirm_order(request):
-    """ ยืนยันคำสั่งซื้อ และบันทึกลงฐานข้อมูล """
-    cart = Cart.objects.get(user=request.user)
-    cart_items = CartItem.objects.filter(cart=cart)
+    """ ยืนยันคำสั่งซื้อ แยกออเดอร์ตามร้านค้า ลดสต๊อก และแนบสลิปการชำระเงิน """
+    if request.method == "POST":
+        # รับค่าที่อยู่จัดส่งจากฟอร์ม
+        shipping_address_id = request.POST.get("shipping_address")
+        shipping_address = get_object_or_404(ShippingAddress, id=shipping_address_id, user=request.user)
 
-    if not cart_items:
-        messages.error(request, "❌ ไม่มีสินค้าในตะกร้า กรุณาเลือกสินค้าก่อนทำการสั่งซื้อ!")
-        return redirect('cart')
+        # ดึงข้อมูลตะกร้าสินค้า
+        cart = Cart.objects.get(user=request.user)
+        cart_items = CartItem.objects.filter(cart=cart)
 
-    shipping_address = request.POST.get("shipping_address", "").strip()
-    phone_number = request.POST.get("phone_number", "").strip()
+        if not cart_items:
+            messages.error(request, "❌ ไม่มีสินค้าในตะกร้า กรุณาเลือกสินค้าก่อนทำการสั่งซื้อ!")
+            return redirect("cart")
 
-    if not shipping_address or not phone_number:
-        messages.error(request, "❌ กรุณากรอกที่อยู่จัดส่งและเบอร์โทรศัพท์ให้ครบ!")
-        return redirect('checkout')
+        # แยกสินค้าออกเป็นออเดอร์ตามร้านค้า
+        orders_by_seller = {}
+        for item in cart_items:
+            seller = item.product.seller
+            if seller not in orders_by_seller:
+                orders_by_seller[seller] = []
+            orders_by_seller[seller].append(item)
 
-    orders_by_seller = {}
-    order_ids = []
+        order_ids = []  # เก็บ ID ของออเดอร์ทั้งหมดที่สร้างขึ้น
 
-    for item in cart_items:
-        seller = item.product.seller
-        if seller not in orders_by_seller:
-            orders_by_seller[seller] = []
-        orders_by_seller[seller].append(item)
+        # ✅ สร้างคำสั่งซื้อแยกตามร้านค้า
+        for seller, items in orders_by_seller.items():
+            total_price = sum(item.quantity * item.product.price for item in items)
 
-    for seller, items in orders_by_seller.items():
-        total_price = sum(item.product.price * item.quantity for item in items)
+            # ✅ ตรวจสอบว่าสินค้าในสต๊อกเพียงพอหรือไม่
+            for item in items:
+                if item.product.stock < item.quantity:
+                    messages.error(request, f"❌ สินค้า {item.product.name} มีไม่พอในสต๊อก! (เหลือ {item.product.stock} ชิ้น)")
+                    return redirect("cart")
 
-        order = Order.objects.create(
-            user=request.user,
-            seller=seller,
-            shipping_address=shipping_address,
-            phone_number=phone_number,
-            total_price=total_price,
-            status="pending",
-        )
-        order_ids.append(str(order.id))
-
-        for item in items:
-            # ✅ ลดจำนวนสินค้าคงเหลือ
-            if item.product.stock >= item.quantity:
-                item.product.stock -= item.quantity
-                item.product.save()  # ✅ อัปเดตค่าคงเหลือในฐานข้อมูล
-            else:
-                messages.error(request, f"❌ สินค้า {item.product.name} คงเหลือไม่เพียงพอ")
-                return redirect('cart')
-
-            OrderItem.objects.create(
-                order=order,
-                product=item.product,
-                seller=item.product.seller,
-                quantity=item.quantity,
-                price_per_item=item.product.price
+            # ✅ สร้างออเดอร์
+            order = Order.objects.create(
+                user=request.user,
+                seller=seller,
+                shipping_address=shipping_address.address,
+                phone_number=shipping_address.phone_number,
+                total_price=total_price,
+                status="pending",
+                payment_status="pending",
             )
 
-    cart_items.delete()  # ✅ ล้างตะกร้าหลังจากสร้างคำสั่งซื้อ
-    return redirect(f"/payment/upload/{','.join(order_ids)}/")
+            # ✅ เพิ่มสินค้าเข้าไปใน OrderItem และลดสต๊อก
+            for item in items:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    seller=item.product.seller,
+                    quantity=item.quantity,
+                    price_per_item=item.product.price,
+                )
+
+                item.product.stock -= item.quantity
+                item.product.save()
+
+            # ✅ แจ้งเตือนเจ้าของร้านค้าเกี่ยวกับคำสั่งซื้อใหม่
+            create_notification(user=seller.user, sender=request.user, notification_type='new_order', order=order)
+
+            order_ids.append(order.id)
+
+        # ✅ ลบสินค้าออกจากตะกร้า
+        cart_items.delete()
+
+        messages.success(request, "✅ คำสั่งซื้อของคุณถูกยืนยันเรียบร้อยแล้ว!")
+
+        # ✅ นำผู้ใช้ไปยังหน้าชำระเงิน (ถ้ามีการอัปโหลดสลิป)
+        return redirect("upload_payment", order_ids=",".join(map(str, order_ids)))
+
+    return redirect("checkout")
+
 
 
 @login_required
@@ -1642,16 +1840,32 @@ def seller_orders(request):
     orders = Order.objects.filter(seller=seller).prefetch_related("order_items__product").order_by("-created_at")
 
     return render(request, "seller_orders.html", {"orders": orders})
+
 @login_required
 def update_order_status(request, order_id, status):
-    """ อัปเดตสถานะการจัดส่งคำสั่งซื้อ """
+    """ ✅ ผู้ขายเปลี่ยนสถานะการจัดส่ง """
     order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
 
-    if status in ["shipped", "delivered"]:  # ตรวจสอบว่าสถานะที่อัปเดตถูกต้อง
+    if status in ["processing", "shipped", "cancelled"] and order.status not in ["delivered"]:
         order.status = status
         order.save()
-    
+        messages.success(request, f"✅ อัปเดตออเดอร์ #{order.id} เป็น '{status}' แล้ว!")
+
     return redirect("seller_orders")
+
+@login_required
+def confirm_delivery(request, order_id):
+    """ ให้ผู้ใช้กดยืนยันว่าได้รับสินค้าแล้ว """
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.status == "shipped":
+        order.status = "delivered"
+        order.save()
+        messages.success(request, "✅ คุณได้รับสินค้าเรียบร้อยแล้ว!")
+
+    return redirect("order_history")
+
+
 
 @login_required
 def cancel_order(request, order_id):
@@ -1665,59 +1879,41 @@ def cancel_order(request, order_id):
 
 @login_required
 def seller_payment_verification(request):
-    """แสดงออเดอร์ของผู้ขายที่มีการชำระเงิน (ทั้ง pending และ paid)"""
-    seller = getattr(request.user, 'seller_profile', None)
+    """ ✅ แสดงคำสั่งซื้อที่รอการตรวจสอบการชำระเงินสำหรับผู้ขาย """
+    orders = Order.objects.filter(seller=request.user.seller_profile, payment_status="pending")
 
-    if not seller:
-        messages.error(request, "คุณไม่ใช่ผู้ขาย ไม่สามารถเข้าถึงหน้านี้ได้")
-        return redirect("home")
-
-    # ✅ ดึงออเดอร์ที่เกี่ยวข้องกับผู้ขาย
-    orders = Order.objects.filter(
-        seller=seller,
-        payment_status__in=["pending", "paid"]
-    ).select_related('payment')
-
-    # ✅ ดึงข้อมูลการชำระเงินแยกต่างหาก (สำหรับการตรวจสอบ)
-    payments = {payment.order.id: payment for payment in Payment.objects.filter(order__seller=seller)}
-
-    return render(request, "payments/seller_payment_verification.html", {
-        "orders": orders,
-        "payments": payments  # ✅ ส่ง payments dictionary ไปให้ template
+    return render(request, "seller_payment_verification.html", {
+        "orders": orders
     })
 
-# ✅ สร้างฟังก์ชันสำหรับการอนุมัติหรือปฏิเสธการชำระเงิน
-@login_required
-def approve_seller_payment(request, order_id):
-    """ผู้ขายอนุมัติการชำระเงิน"""
-    order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
 
-    if not hasattr(order, 'payment'):
-        messages.error(request, f"❌ ไม่พบข้อมูลการชำระเงินของออเดอร์ #{order.id}")
-        return redirect("seller_payment_verification")
 
-    order.payment_status = "paid"
-    order.status = "pending"  # เปลี่ยนเป็นรอการจัดส่ง
-    order.save()
+#@login_required
+#def approve_seller_payment(request, order_id):
+    #""" ✅ อนุมัติการชำระเงิน """
+    #order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
 
-    messages.success(request, f"✅ ออเดอร์ #{order.id} ได้รับการอนุมัติแล้ว")
-    return redirect("seller_payment_verification")
+    #if order.payment_status == 'pending':
+       # order.payment_status = 'paid'
+      #  order.status = 'processing'
+       # order.save()
+       # messages.success(request, f"✅ อนุมัติการชำระเงินสำหรับออเดอร์ #{order.id}")
+
+   # return JsonResponse({'success': True, 'message': f'ออเดอร์ #{order.id} อนุมัติเรียบร้อย'})
 
 @login_required
 def reject_seller_payment(request, order_id):
-    """ผู้ขายปฏิเสธการชำระเงิน"""
+    """ ❌ ปฏิเสธการชำระเงิน """
     order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
 
-    if not hasattr(order, 'payment'):
-        messages.error(request, f"❌ ไม่พบข้อมูลการชำระเงินของออเดอร์ #{order.id}")
-        return redirect("seller_payment_verification")
-
-    order.payment_status = "pending"  # กลับไปเป็นรอการชำระเงิน
+    order.payment_status = "rejected"
     order.save()
 
-    messages.warning(request, f"❌ ออเดอร์ #{order.id} ถูกปฏิเสธ")
-    return redirect("seller_payment_verification")
+    messages.error(request, f"❌ ออเดอร์ #{order.id} ถูกปฏิเสธ")
+    return JsonResponse({"success": True, "message": f"ออเดอร์ #{order.id} ถูกปฏิเสธแล้ว!"})
 
+from .models import Follow, CustomUser
+# ✅ สร้างฟังก์ชันสำหรับการติดตามผู้ใช้
 from .models import Follow, CustomUser
 # ✅ สร้างฟังก์ชันสำหรับการติดตามผู้ใช้
 from django.http import JsonResponse
@@ -1754,35 +1950,115 @@ def follow_user(request, user_id):
         "following_count": following_count
     })
 
-'''@login_required
-def profile_view(request):
-    user = request.user
-    followers_count = user.followers.count()
-    following_count = user.following.count()
-    is_following = Follow.objects.filter(follower=request.user, following=user).exists()
+@login_required
+def delete_uploaded_file(request, file_id):
+    media = get_object_or_404(PostMedia, id=file_id)
+    
+    # ตรวจสอบว่าเป็นไฟล์ของโพสต์ที่ผู้ใช้เป็นเจ้าของ
+    if media.post.user != request.user:
+        return JsonResponse({"success": False, "message": "Unauthorized"}, status=403)
 
-    return render(request, 'profile.html', {
-        'user': user,
-        'followers_count': followers_count,
-        'following_count': following_count,
-        'is_following': is_following
-    }) '''
+    media.delete()
+    return JsonResponse({"success": True, "message": "File deleted"}, status=200)
 
+from django.shortcuts import render, get_object_or_404
+from .models import GroupPost
+
+def group_post_detail(request, post_id):
+    post = get_object_or_404(GroupPost, id=post_id)
+    return render(request, 'group_post_detail.html', {'post': post})
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+import os
+from django.conf import settings
+from .models import GroupPostMedia
+
+@login_required
+def edit_group_post(request, post_id):
+    post = get_object_or_404(GroupPost, id=post_id, user=request.user)
+
+    if request.method == "POST":
+        content = request.POST.get("content", "").strip()
+        images = request.FILES.getlist("images")
+        videos = request.FILES.getlist("videos")
+
+        # ✅ อัปเดตเนื้อหาโพสต์
+        post.content = content
+        post.save()
+
+        # ✅ ลบไฟล์ที่ผู้ใช้เลือก
+        delete_media_ids = request.POST.getlist("delete_media")
+        GroupPostMedia.objects.filter(id__in=delete_media_ids, post=post).delete()
+
+        # ✅ เพิ่มไฟล์ใหม่
+        for image in images:
+            GroupPostMedia.objects.create(post=post, file=image, media_type="image")
+
+        for video in videos:
+            GroupPostMedia.objects.create(post=post, file=video, media_type="video")
+
+        return redirect('group_post_detail', post_id=post.id)
+
+
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Comment
+
+# ✅ ลบคอมเมนต์
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+
+    if request.method == "POST":
+        comment.delete()
+        return JsonResponse({"success": True, "message": "คอมเมนต์ถูกลบเรียบร้อยแล้ว"}, status=200)
+
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+# ✅ แก้ไขคอมเมนต์
+from .models import Comment
+from .forms import CommentForm
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+
+    if request.method == "POST":
+        content = request.POST.get("content")
+        if content:
+            comment.content = content
+            comment.save()
+            return JsonResponse({"success": True, "message": "Comment updated!", "content": comment.content})
+        return JsonResponse({"success": False, "message": "Comment cannot be empty!"}, status=400)
+
+    return JsonResponse({"success": False, "message": "Invalid request!"}, status=400)
 
 @login_required
 def approve_seller_payment(request, order_id):
-    """อนุมัติการชำระเงินของออเดอร์ และอัปเดตสถานะเป็น 'เตรียมจัดส่ง'"""
+    """ ✅ อนุมัติการชำระเงิน และอัปเดตยอดเงินของผู้ขาย """
     order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
 
     if not hasattr(order, 'payment'):
-        return JsonResponse({"success": False, "message": f"❌ ไม่พบข้อมูลการชำระเงินของออเดอร์ #{order.id}"}, status=400)
+        messages.error(request, "❌ ไม่พบหลักฐานการชำระเงิน")
+        return redirect('seller_orders')  # 🔄 เปลี่ยนเส้นทางไปหน้าจัดการคำสั่งซื้อของผู้ขาย
 
-    # ✅ เปลี่ยนสถานะเป็น "เตรียมจัดส่ง"
+    # ✅ เปลี่ยนสถานะเป็น "paid" และ "processing"
     order.payment_status = "paid"
-    order.status = "processing"  # เปลี่ยนจาก 'pending' เป็น 'processing' (เตรียมจัดส่ง)
+    order.status = "processing"
     order.save()
 
-    return JsonResponse({"success": True, "message": f"✅ ออเดอร์ #{order.id} ได้รับการอนุมัติและเตรียมจัดส่งแล้ว"})
+    # ✅ อัปเดตกระเป๋าเงินของผู้ขาย
+    seller_wallet, created = SellerWallet.objects.get_or_create(seller=order.seller)
+
+    # 🔥 แปลง balance เป็น Decimal ก่อนบวก
+    seller_wallet.balance = Decimal(seller_wallet.balance) + order.total_price
+    seller_wallet.save()
+
+    messages.success(request, f"✅ ออเดอร์ #{order.id} อนุมัติแล้ว และเครดิตเงินเข้ากระเป๋า!")
+    
+    return redirect('seller_orders')  # 🔄 เปลี่ยนเส้นทางกลับไปที่หน้า seller_orders
 
 
 from .models import Report
@@ -1910,6 +2186,7 @@ def get_group_posts(request, group_id):
 
     return JsonResponse({'posts': post_list}, status=200)
 
+
 @login_required
 def manage_addresses(request):
     """ แสดงที่อยู่ทั้งหมดของผู้ใช้ """
@@ -1961,10 +2238,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from myapp.models import Product, Review, ReviewMedia
 
 @login_required
-@login_required
 def add_review(request, order_id, product_id):
+    """ ✅ ให้รีวิวสินค้าได้เฉพาะเมื่อออเดอร์จัดส่งสำเร็จ และไม่สามารถรีวิวซ้ำได้ """
     order = get_object_or_404(Order, id=order_id, user=request.user, status="delivered")
     product = get_object_or_404(Product, id=product_id)
+
+    # ✅ เช็คว่ารีวิวสินค้านี้ไปแล้วหรือยัง
+    existing_review = Review.objects.filter(user=request.user, product=product, order=order).exists()
+    if existing_review:
+        messages.error(request, "⚠️ คุณได้รีวิวสินค้านี้ไปแล้ว!")
+        return redirect("order_history")
 
     if request.method == "GET":
         return render(request, "add_review.html", {"product": product, "order": order})
@@ -1976,150 +2259,316 @@ def add_review(request, order_id, product_id):
 
         if not rating or not comment:
             messages.error(request, "⚠️ กรุณากรอกคะแนนและรีวิว")
-            return redirect("add_review", order_id=order.id, product_id=product.id)  # 🛠 กลับมาหน้าฟอร์มรีวิวถ้ากรอกไม่ครบ
+            return redirect("add_review", order_id=order.id, product_id=product.id)
 
-        review = Review.objects.create(user=request.user, product=product, rating=int(rating), comment=comment)
+        # ✅ บันทึกรีวิว และเชื่อมโยงกับออเดอร์
+        review = Review.objects.create(
+            user=request.user, 
+            product=product, 
+            order=order,  # ✅ เพิ่ม `order` เข้าไป
+            rating=int(rating), 
+            comment=comment
+        )
 
         for file in media_files:
             media_type = "image" if file.content_type.startswith("image") else "video"
             ReviewMedia.objects.create(review=review, file=file, media_type=media_type)
 
-        messages.success(request, "✅ รีวิวของคุณถูกบันทึกเรียบร้อย!")  # แสดงข้อความสำเร็จ
-        return redirect("product_detail", product_id=product.id)  # 🔄 **Redirect กลับไปที่หน้าสินค้า**
+        messages.success(request, "✅ รีวิวของคุณถูกบันทึกเรียบร้อย!")
+        return redirect("product_detail", product_id=product.id)
 
     return JsonResponse({"success": False, "message": "❌ Method Not Allowed"}, status=405)
 
-# ✅ เพิ่มสินค้าไปยังตะกร้า (รองรับ AJAX)
-def add_to_cart_ajax(request, product_id):
-    if request.method == "POST":
-        if not request.user.is_authenticated:
-            return JsonResponse({"success": False, "message": "กรุณาเข้าสู่ระบบก่อน"})
-
-        product = get_object_or_404(Product, id=product_id)
-        cart, created = Cart.objects.get_or_create(user=request.user)
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-
-        if not created:
-            cart_item.quantity += 1
-            cart_item.save()
-
-        cart_count = CartItem.objects.filter(cart=cart).count()
-        return JsonResponse({"success": True, "cart_count": cart_count})
-
-    return JsonResponse({"success": False, "message": "Invalid request"})
-
-# ✅ แสดงรายละเอียดร้านค้า
-def store_detail(request, store_id):
-    store = Seller.objects.get(id=store_id)
-    products = store.products.all()  # ดึงสินค้าทั้งหมดของร้านค้า
-    return render(request, 'store_detail.html', {'store': store, 'products': products})
 
 
+def seller_wallet(request):
+    """ แสดงข้อมูลกระเป๋าเงินของผู้ขาย """
+    seller = request.user.seller_profile
+    wallet, created = SellerWallet.objects.get_or_create(seller=seller)
+    withdrawals = WithdrawalRequest.objects.filter(seller=seller).order_by('-created_at')
+
+    return render(request, 'seller_wallet.html', {'wallet': wallet, 'withdrawals': withdrawals})
 
 
-@login_required
-def delete_uploaded_file(request, file_id):
-    media = get_object_or_404(PostMedia, id=file_id)
-    
-    # ตรวจสอบว่าเป็นไฟล์ของโพสต์ที่ผู้ใช้เป็นเจ้าของ
-    if media.post.user != request.user:
-        return JsonResponse({"success": False, "message": "Unauthorized"}, status=403)
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import Order, OrderItem
 
-    media.delete()
-    return JsonResponse({"success": True, "message": "File deleted"}, status=200)
+@receiver(post_save, sender=Order)
+def update_product_sales(sender, instance, **kwargs):
+    """ ✅ อัปเดตจำนวนสินค้าที่ขายได้เมื่อคำสั่งซื้อถูกส่งสำเร็จ """
+    if instance.status == "delivered":  # ตรวจสอบว่าจัดส่งแล้ว
+        for item in instance.order_items.all():
+            item.product.total_sold += item.quantity
+            item.product.save()
 
-from django.shortcuts import render, get_object_or_404
-from .models import GroupPost
-
-def group_post_detail(request, post_id):
-    post = get_object_or_404(GroupPost, id=post_id)
-    return render(request, 'group_post_detail.html', {'post': post})
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404
-import os
-from django.conf import settings
-from .models import GroupPostMedia
-
-@csrf_exempt
-def delete_media(request, media_id):
-    """ ฟังก์ชันลบไฟล์สื่อของโพสต์ """
-    if request.method == "DELETE":
-        media = get_object_or_404(GroupPostMedia, id=media_id)
-
-        # ✅ ตรวจสอบว่าเป็นเจ้าของโพสต์หรือไม่
-        if media.post.user != request.user:
-            return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบไฟล์นี้"}, status=403)
-
-        # ✅ ลบไฟล์จากระบบจริง ๆ
-        file_path = os.path.join(settings.MEDIA_ROOT, str(media.file))
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
-        media.delete()
-        return JsonResponse({"success": True, "message": "ไฟล์ถูกลบเรียบร้อยแล้ว!"})
-
-    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
-
-
-@login_required
-def edit_group_post(request, post_id):
-    post = get_object_or_404(GroupPost, id=post_id, user=request.user)
-
-    if request.method == "POST":
-        content = request.POST.get("content", "").strip()
-        images = request.FILES.getlist("images")
-        videos = request.FILES.getlist("videos")
-
-        # ✅ อัปเดตเนื้อหาโพสต์
-        post.content = content
-        post.save()
-
-        # ✅ ลบไฟล์ที่ผู้ใช้เลือก
-        delete_media_ids = request.POST.getlist("delete_media")
-        GroupPostMedia.objects.filter(id__in=delete_media_ids, post=post).delete()
-
-        # ✅ เพิ่มไฟล์ใหม่
-        for image in images:
-            GroupPostMedia.objects.create(post=post, file=image, media_type="image")
-
-        for video in videos:
-            GroupPostMedia.objects.create(post=post, file=video, media_type="video")
-
-        return redirect('group_post_detail', post_id=post.id)
-
-
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Comment
+from django.contrib import messages
+from .models import Order, RefundRequest
+from .forms import RefundRequestForm
 
-# ✅ ลบคอมเมนต์
+# ✅ 2. ขอคืนเงิน (ลูกค้า)
 @login_required
-def delete_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+def request_refund(request, order_id, item_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    item = get_object_or_404(OrderItem, id=item_id, order=order)  # ✅ ค้นหาสินค้าที่ต้องการคืน
 
     if request.method == "POST":
-        comment.delete()
-        return JsonResponse({"success": True, "message": "คอมเมนต์ถูกลบเรียบร้อยแล้ว"}, status=200)
+        form = RefundRequestForm(request.POST, request.FILES)
+        if form.is_valid():
+            refund_request = form.save(commit=False)
+            refund_request.user = request.user
+            refund_request.order = order
+            refund_request.item = item  # ✅ ผูกกับสินค้าที่ต้องการคืน
+            refund_request.save()
+            return redirect("order_history")  # ✅ กลับไปหน้าประวัติคำสั่งซื้อ
+    else:
+        form = RefundRequestForm()
 
-    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+    return render(request, "partials/refund_request.html", {"form": form, "order": order, "item": item})
 
-# ✅ แก้ไขคอมเมนต์
-from .models import Comment
-from .forms import CommentForm
+
+
 @login_required
-def edit_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+def seller_refund_requests(request):
+    seller = request.user.seller_profile  
+    refund_requests = RefundRequest.objects.filter(order__seller=seller)  # ✅ แสดงทุกสถานะ
+    return render(request, "refund_requests_seller.html", {"refund_requests": refund_requests})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from myapp.models import RefundRequest
+from myapp.forms import RefundProofForm
+
+@login_required
+def upload_refund_proof(request, refund_id):
+    """ อัปโหลดสลิปคืนเงินสำหรับผู้ขาย """
+    refund_request = get_object_or_404(RefundRequest, id=refund_id)
 
     if request.method == "POST":
-        content = request.POST.get("content")
-        if content:
-            comment.content = content
-            comment.save()
-            return JsonResponse({"success": True, "message": "Comment updated!", "content": comment.content})
-        return JsonResponse({"success": False, "message": "Comment cannot be empty!"}, status=400)
+        form = RefundProofForm(request.POST, request.FILES, instance=refund_request)
+        if form.is_valid():
+            refund_request.status = "refunded"  # ✅ อัปเดตสถานะเป็น Refunded
+            form.save()
+            messages.success(request, "✅ อัปโหลดสลิปคืนเงินเรียบร้อยแล้ว")
+            return redirect("seller_refund_requests")
+    else:
+        form = RefundProofForm(instance=refund_request)
 
-    return JsonResponse({"success": False, "message": "Invalid request!"}, status=400)
+    return render(request, "refund_upload.html", {"form": form, "refund_request": refund_request})
+
+@login_required
+def approve_refund(request, refund_id):
+    """ อนุมัติการคืนเงินของผู้ขาย """
+    refund_request = get_object_or_404(RefundRequest, id=refund_id, order__seller=request.user.seller_profile)
+
+    # ✅ เปลี่ยนสถานะเป็น "approved"
+    refund_request.status = "approved"
+    refund_request.order.status = "refunded"  # ✅ อัปเดตสถานะออเดอร์ให้เป็น "refunded"
+    refund_request.order.save()
+    refund_request.save()
+
+    messages.success(request, f"✅ อนุมัติการคืนเงินสำหรับคำขอ #{refund_request.id} สำเร็จแล้ว")
+    return redirect("seller_refund_requests")
+
+@login_required
+def reject_refund(request, refund_id):
+    """ ปฏิเสธคำขอคืนเงิน """
+    refund_request = get_object_or_404(RefundRequest, id=refund_id, order__seller=request.user.seller_profile)
+
+    # ❌ เปลี่ยนสถานะเป็น "rejected"
+    refund_request.status = "rejected"
+    refund_request.save()
+
+    messages.error(request, f"❌ ปฏิเสธคำขอคืนเงินสำหรับคำขอ #{refund_request.id} เรียบร้อย")
+    return redirect("seller_refund_requests")
+
+@login_required
+def confirm_refund_received(request, refund_id):
+    """ ผู้ใช้กดยืนยันว่าได้รับเงินคืนแล้ว """
+    refund_request = get_object_or_404(RefundRequest, id=refund_id, user=request.user)
+
+    if refund_request.status == "refunded":  # ✅ ตรวจสอบว่าสถานะคือ "refunded"
+        refund_request.status = "confirmed"  # ✅ อัปเดตเป็น "confirmed"
+        refund_request.save()
+        messages.success(request, "✅ คุณได้ยืนยันการรับเงินคืนแล้ว!")
+    else:
+        messages.error(request, "❌ ไม่สามารถยืนยันได้ โปรดลองใหม่")
+
+    return redirect("order_history")  # ✅ กลับไปที่หน้าประวัติคำสั่งซื้อ
+
+from .models import SellerWallet, WithdrawalRequest
+from .forms import WithdrawalForm
+
+@login_required
+def request_withdrawal(request):
+    if request.method == "POST":
+        seller = request.user.seller_profile  # ดึงข้อมูลผู้ขาย
+        wallet = seller.wallet
+        
+        if wallet.balance <= 0:
+            messages.error(request, "❌ ยอดเงินไม่พอสำหรับการถอน")
+            return redirect("seller_wallet")
+
+        # บันทึกคำขอถอนเงิน
+        WithdrawalRequest.objects.create(
+            seller=seller,
+            amount=wallet.balance,
+            status="pending"
+        )
+
+        # รีเซ็ตยอดเงินให้เป็น 0
+        wallet.balance = 0
+        wallet.save()
+
+        messages.success(request, "✅ คำขอถอนเงินถูกส่งไปยังแอดมินแล้ว")
+        return redirect("seller_wallet")
+    
+    return redirect("seller_wallet")
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib import messages
+from .models import WithdrawalRequest
+from .models import WithdrawalRequest
+from .forms import WithdrawalProofForm
+
+from django.contrib.auth.decorators import user_passes_test
+
+def is_admin(user):
+    return user.is_authenticated and user.is_staff  # ✅ เฉพาะแอดมิน
+@login_required
+def admin_withdrawals(request):
+    if not request.user.is_staff:  # ✅ ถ้าไม่ใช่แอดมิน รีไดเรกต์ไปหน้าอื่น
+        return redirect('home')
+
+    withdrawals = WithdrawalRequest.objects.all().order_by("-created_at")
+    return render(request, "admin_withdrawals.html", {"withdrawals": withdrawals})
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib import messages
+from .models import WithdrawalRequest
+
+@user_passes_test(lambda u: u.is_staff)  # ✅ ให้เฉพาะแอดมินเข้าถึง
+def approve_withdrawal(request, withdrawal_id):
+    withdrawal = get_object_or_404(WithdrawalRequest, id=withdrawal_id)
+    
+    if request.method == "POST" and request.FILES.get("payment_proof"):
+        withdrawal.status = "approved"
+        withdrawal.payment_proof = request.FILES["payment_proof"]
+        withdrawal.save()
+        messages.success(request, "✅ อนุมัติคำขอถอนเงินเรียบร้อย")
+
+    return redirect("admin_withdrawals")
+
+@user_passes_test(lambda u: u.is_staff)
+def reject_withdrawal(request, withdrawal_id):
+    withdrawal = get_object_or_404(WithdrawalRequest, id=withdrawal_id)
+    
+    if request.method == "POST":
+        withdrawal.status = "rejected"
+        withdrawal.save()
+        messages.error(request, "❌ ปฏิเสธคำขอถอนเงินเรียบร้อย")
+
+    return redirect("admin_withdrawals")
+
+@login_required
+def confirm_withdrawal(request, withdrawal_id):
+    withdrawal = get_object_or_404(WithdrawalRequest, id=withdrawal_id, seller=request.user.seller_profile)
+    
+    if request.method == "POST":
+        withdrawal.confirmed_by_seller = True
+        withdrawal.save()
+        messages.success(request, "✅ ยืนยันการรับเงินสำเร็จ")
+
+    return redirect("seller_wallet")
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Avg, Count
+from .models import Order, Product, Review, RefundRequest
+
+@login_required
+def seller_performance(request):
+    """ แสดงรายงานสถิติการขายของผู้ขาย """
+    seller = request.user.seller_profile  # สมมติว่า user มี OneToOneField กับ Seller
+
+    # ✅ รายได้รวมจากคำสั่งซื้อที่เสร็จสมบูรณ์
+        # ✅ ตรวจสอบว่ามีคำสั่งซื้อที่เสร็จสมบูรณ์หรือไม่
+    total_sales = Order.objects.filter(seller=seller, status="delivered").aggregate(Sum("total_price"))["total_price__sum"] or 0
+
+
+    # ✅ สินค้าขายดี (Top 5) - แก้ไขตรงนี้
+    top_products = (
+        Product.objects.filter(seller=seller)
+        .annotate(total_sold_count=Sum("orderitem__quantity"))  # แก้จาก order_items เป็น orderitem
+        .order_by("-total_sold_count")[:5]
+    )
+
+    # ✅ จำนวนการคืนสินค้า
+    refunds = RefundRequest.objects.filter(order__seller=seller).count()
+
+    # ✅ คะแนนรีวิวเฉลี่ย
+    avg_rating = Review.objects.filter(product__seller=seller).aggregate(Avg("rating"))["rating__avg"] or 0
+
+    # ✅ รีวิวล่าสุด (5 รีวิว)
+    recent_reviews = Review.objects.filter(product__seller=seller).order_by("-created_at")[:5]
+
+    context = {
+        "total_sales": total_sales,
+        "top_products": top_products,
+        "refunds": refunds,
+        "avg_rating": avg_rating,
+        "recent_reviews": recent_reviews,
+    }
+
+    return render(request, "seller_performance.html", context)
+
+def is_admin(user):
+    return user.is_staff  # ✅ อนุญาตเฉพาะแอดมิน
+
+@user_passes_test(is_admin)
+def admin_performance(request):
+    """ แสดงรายงานสถิติของผู้ขายทั้งหมด """
+
+    # ✅ ยอดขายรวมทั้งหมด
+    total_sales = Order.objects.filter(status="delivered").aggregate(Sum("total_price"))["total_price__sum"] or 0
+
+    # ✅ ยอดขายรายเดือน
+    sales_by_month = (
+        Order.objects.filter(status="delivered")
+        .values("created_at__year", "created_at__month")
+        .annotate(total_sales=Sum("total_price"))
+        .order_by("created_at__year", "created_at__month")
+    )
+
+    # ✅ ผู้ขายที่มียอดขายสูงสุด
+    top_sellers = (
+        Seller.objects.annotate(total_revenue=Sum("orders__total_price"))
+        .order_by("-total_revenue")[:5]
+    )
+
+    # ✅ การคืนสินค้ารายเดือน
+    refunds_by_month = (
+        RefundRequest.objects.values("created_at__year", "created_at__month")
+        .annotate(total_refunds=Count("id"))
+        .order_by("created_at__year", "created_at__month")
+    )
+
+    context = {
+        "total_sales": total_sales,
+        "sales_by_month": list(sales_by_month),
+        "top_sellers": top_sellers,
+        "refunds_by_month": list(refunds_by_month),
+    }
+
+    return render(request, "admin_performance.html", context)
 

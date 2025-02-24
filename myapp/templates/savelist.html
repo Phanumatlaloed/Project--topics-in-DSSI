@@ -26,11 +26,12 @@
             </div>
             <nav>
                 <ul class="nav">
-                    <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
-                    <li><a href="{% url 'community_list' %}" class="nav-link">👥 Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="nav-link active">💾 Saved </a></li>
-                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
-                    <li><a href="{% url 'product_list' %}" class="nav-link">🛍 Products</a></li>
+                    <li><a href="{% url 'home' %}" class="nav-link"><i>🏠</i> Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link active"><i>👥</i> Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link"><i>💾</i> Save</a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i>📄</i> Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link"><i>🛒</i> Product List</a></li>
+                    <li><a href="{% url 'notification_list' %}" class="nav-link"><i>🔔</i> Notifications</a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">

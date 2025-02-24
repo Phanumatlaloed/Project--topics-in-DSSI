@@ -6,12 +6,12 @@ from . import views
 from .views import logout_view, login_view, seller_login, seller_logout, register_seller, product_list, add_product, my_products, product_detail, delete_product
 from .views import (
     logout_view, login_view, seller_login, seller_logout, register_seller, product_list, 
-    add_product, my_products, product_detail, delete_product, delete_post, edit_post, 
-    edit_store, group_edit_post, delete_group_post, save_group_post, share_group_post,
+    add_product, my_products, product_detail, edit_post, 
+    edit_store, edit_group_post, delete_group_post, save_group_post, share_group_post,
     add_to_cart, view_cart, update_cart, remove_from_cart, checkout, update_shipping,
     add_review, order_tracking, return_order, cancel_order, report_post, remove_saved_group_post,
-    admin_login, admin_dashboard, delete_reported_post, admin_register, block_user,create_group_post, edit_group, 
-    group_post_detail, follow_user, post_like_detail
+    admin_login, admin_dashboard, delete_reported_post, admin_register, block_user,create_group_post, edit_group,
+    product_detail_user,
 )
 
 
@@ -36,6 +36,9 @@ urlpatterns = [
     path('community/<int:group_id>/join/', views.join_group, name='join_group'),
     path('community/<int:group_id>/edit/', views.edit_group, name='edit_group'),
     path('community/<int:group_id>/delete/', views.delete_group, name='delete_group'),
+    path('community/<int:group_id>/leave/', views.leave_group, name='leave_group'),
+
+
     #like
     path('create_post/', views.create_post, name='create_post'),
     path('like/<int:post_id>/', views.toggle_like, name='toggle_like'),
@@ -53,12 +56,13 @@ urlpatterns = [
     # Profile management and view
     path('profile/settings/', views.profile_management, name='profile_management'),  # เส้นทางตั้งค่าโปรไฟล์
     path('profile/<int:user_id>/', views.profile_view, name='profile'),  # เส้นทางแสดงโปรไฟล์
+    path('profile/', views.profile_view, name='profile'),  # เส้นทางแสดงโปรไฟล์
 
     #จัดการโพสต์ในกลุ่ม group_deta
     path('group_post/like/<int:post_id>/like', views.toggle_group_post_like, name='toggle_group_post_like'),
     path('group_post/comment/<int:post_id>/', views.add_group_post_comment, name='add_group_post_comment'),
     path('community/<int:group_id>/post/', create_group_post, name='create_group_post'),
-    path('group/post/<int:post_id>/edit/', group_edit_post, name='group_edit_post'),
+    path('group/post/<int:post_id>/edit/', views.group_edit_post, name='group_edit_post'),
     path('community/<int:group_id>/group/post/<int:post_id>/delete/', delete_group_post, name='delete_group_post'),
     path('community/<int:group_id>/group/post/<int:post_id>/save/', save_group_post, name='save_group_post'),
     path('group_post/<int:post_id>/share/', share_group_post, name='share_group_post'),
@@ -68,6 +72,8 @@ urlpatterns = [
     # เส้นทางสำหรับลบคอมเมนต์
     path('comment/delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
 
+    path('group_post/<int:post_id>/', views.group_post_detail, name='group_post_detail'),
+    #path('delete_media/<int:media_id>/', views.delete_media, name='delete_media'),
 
     # ✅ เส้นทางสำหรับผู้ขาย
     path("seller/login/", seller_login, name="seller_login"),
@@ -83,11 +89,12 @@ urlpatterns = [
     path("products/add/", add_product, name="add_product"),
     path("products/<int:product_id>/", product_detail, name="product_detail"),
     path('seller/edit/', edit_store, name='edit_store'),
-    path('edit-seller-profile/', views.seller_edit_profile, name='seller_edit_profile'),
+    path('edit-seller-profile/', views.edit_seller_profile, name='edit_seller_profile'),
+    path("products/user/<int:product_id>/", product_detail_user, name="product_detail_user"),
 
     # ✅ ตะกร้าสินค้า (Shopping Cart)
     path('cart/', view_cart, name='cart'),
-    path('cart/add/<int:product_id>/', add_to_cart, name='add_to_cart'),
+    #path('cart/add/<int:product_id>/', add_to_cart, name='add_to_cart'),
     path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/update/<int:item_id>/<str:action>/', views.update_cart, name='update_cart'),
 
@@ -150,17 +157,56 @@ urlpatterns = [
     path('addresses/delete/<int:address_id>/', views.delete_address, name='delete_address'),
 
     #path("edit-profile/", views.edit_seller_profile, name="edit_seller_profile"),
-    path("edit-seller-profile/", views.seller_edit_profile, name="seller_edit_profile"),
+    #path("edit-seller-profile/", views.seller_edit_profile, name="seller_edit_profile"),
 
     
     #path('store/<int:store_id>/', views.store_detail, name='store_detail'),
     path('cart/add/<int:product_id>/', views.add_to_cart_ajax, name='add_to_cart_ajax'),
+    path("cart/add/<int:product_id>/", add_to_cart, name="add_to_cart"),
     path('store/<slug:store_id>/', views.store_detail, name='store_detail'),
+    
 
     path("review/add/<int:order_id>/<int:product_id>/", add_review, name="add_review"),
 
-    path('group_post/<int:post_id>/', views.group_post_detail, name='group_post_detail'),
-    path('delete_media/<int:media_id>/', views.delete_media, name='delete_media'),
+    path("seller/wallet/", views.seller_wallet, name="seller_wallet"),
+    #path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
 
+    path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
+    #path("order/<int:order_id>/update/<str:status>/", views.update_order_status, name="update_order_status"),
+    path("order/<int:order_id>/confirm_delivery/", views.confirm_delivery, name="confirm_delivery"),
+
+    # ✅ ประวัติคำสั่งซื้อ
+    path('order/history/', views.order_history, name='order_history'),
+
+    # ✅ ลูกค้าขอคืนเงิน (ต้องมีทั้ง order_id และ item_id)
+    path("order/request_refund/<int:order_id>/<int:item_id>/", views.request_refund, name="request_refund"),
+
+    # ✅ ผู้ขายดูคำขอคืนเงิน
+    path("refunds/seller/", views.seller_refund_requests, name="seller_refund_requests"),
+
+    # ✅ อนุมัติ / ปฏิเสธ การคืนเงิน
+    path("refunds/approve/<int:refund_id>/", views.approve_refund, name="approve_refund"),
+    path("refunds/reject/<int:refund_id>/", views.reject_refund, name="reject_refund"),
+
+    # ✅ อัปโหลดสลิปคืนเงิน
+    path("refunds/upload/<int:refund_id>/", views.upload_refund_proof, name="upload_refund_proof"),
+
+    # ✅ ลูกค้ายืนยันการได้รับเงินคืน
+    path("refunds/confirm/<int:refund_id>/", views.confirm_refund_received, name="confirm_refund_received"),
+
+    path('refunds/', views.refund_history, name='refund_history'),  # ✅ แสดงคำขอคืนเงิน
+    path("wallet/withdraw/", views.request_withdrawal, name="request_withdrawal"),
+
+    path("admins/withdrawals/", views.admin_withdrawals, name="admin_withdrawals"),
+    #path("admins/withdrawals/approve/<int:withdrawal_id>/", views.approve_withdrawal, name="approve_withdrawal"),
+    path("admins/withdrawals/reject/<int:withdrawal_id>/", views.reject_withdrawal, name="reject_withdrawal"),
+    path("withdrawals/approve/<int:withdrawal_id>/", views.approve_withdrawal, name="approve_withdrawal"),
+    path("withdrawals/confirm/<int:withdrawal_id>/", views.confirm_withdrawal, name="confirm_withdrawal"),
+
+    path("seller/performance/", views.seller_performance, name="seller_performance"),
+    path("admins/performance/", views.admin_performance, name="admin_performance"),  # ✅ ต้องอยู่ที่นี่
 
 ]
+
+    
+

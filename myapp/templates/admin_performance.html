@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 รายงานประสิทธิภาพผู้ขาย</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{% static 'styles/admin_performance.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        <h2>📊 รายงานประสิทธิภาพผู้ขาย</h2>
+
+        <!-- ✅ ยอดขายรวม -->
+        <div class="summary-box">
+            <h3>💰 ยอดขายรวมทั้งหมด</h3>
+            <p>฿{{ total_sales }}</p>
+        </div>
+
+        <!-- ✅ กราฟยอดขายรายเดือน -->
+        <h3>📈 ยอดขายรายเดือน</h3>
+        <canvas id="salesChart"></canvas>
+
+        <!-- ✅ ผู้ขายที่มียอดขายสูงสุด -->
+        <h3>🏆 ผู้ขายที่มียอดขายสูงสุด</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ร้านค้า</th>
+                    <th>ยอดขาย</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for seller in top_sellers %}
+                <tr>
+                    <td>{{ seller.store_name }}</td>
+                    <td>฿{{ seller.total_revenue }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- ✅ กราฟจำนวนการคืนสินค้า -->
+        <h3>🔄 การคืนสินค้ารายเดือน</h3>
+        <canvas id="refundChart"></canvas>
+    </div>
+
+    <script>
+        // ✅ กราฟยอดขายรายเดือน
+        var salesCtx = document.getElementById('salesChart').getContext('2d');
+        var salesChart = new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: [{% for data in sales_by_month %} "{{ data.created_at__month }}/{{ data.created_at__year }}", {% endfor %}],
+                datasets: [{
+                    label: 'ยอดขาย (บาท)',
+                    data: [{% for data in sales_by_month %} {{ data.total_sales }}, {% endfor %}],
+                    borderColor: 'blue',
+                    borderWidth: 2
+                }]
+            }
+        });
+
+        // ✅ กราฟจำนวนการคืนสินค้า
+        var refundCtx = document.getElementById('refundChart').getContext('2d');
+        var refundChart = new Chart(refundCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for data in refunds_by_month %} "{{ data.created_at__month }}/{{ data.created_at__year }}", {% endfor %}],
+                datasets: [{
+                    label: 'จำนวนการคืนสินค้า',
+                    data: [{% for data in refunds_by_month %} {{ data.total_refunds }}, {% endfor %}],
+                    backgroundColor: 'red'
+                }]
+            }
+        });
+    </script>
+
+</body>
+</html>

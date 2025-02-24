@@ -1,0 +1,52 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📍 จัดการที่อยู่</title>
+    <link rel="stylesheet" href="{% static 'styles/manage_addresses.css' %}">
+</head>
+<body>
+
+    <!-- 🌸 Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">🏠 Home</a></li>
+            <li><a href="{% url 'checkout' %}" class="active">🛒 Checkout</a></li>
+        </ul>
+    </header>
+
+    <div class="address-container">
+        <h2>📍 ที่อยู่จัดส่งของคุณ</h2>
+
+        {% for address in saved_addresses %}
+        <div class="address-card">
+            <p><strong>📌 ที่อยู่:</strong> {{ address.address }}</p>
+            <p><strong>🏙 จังหวัด:</strong> {{ address.city }}</p>
+            <p><strong>📮 รหัสไปรษณีย์:</strong> {{ address.postal_code }}</p>
+            <p><strong>📞 เบอร์โทร:</strong> {{ address.phone_number }}</p>
+
+            <a href="{% url 'edit_address' address.id %}" class="btn btn-warning">✏️ แก้ไข</a>
+            <a href="{% url 'delete_address' address.id %}" class="btn btn-danger" onclick="return confirm('⚠️ ต้องการลบที่อยู่นี้ใช่หรือไม่?');">🗑 ลบ</a>
+        </div>
+        {% empty %}
+        <p>⚠️ คุณยังไม่มีที่อยู่ที่บันทึกไว้</p>
+        {% endfor %}
+
+        <a href="{% url 'add_address' %}" class="btn btn-primary">➕ เพิ่มที่อยู่ใหม่</a>
+        <a href="{% url 'checkout' %}" class="btn btn-secondary">🔙 กลับ</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Your Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

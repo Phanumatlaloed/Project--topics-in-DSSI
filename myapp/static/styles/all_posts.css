@@ -296,3 +296,115 @@ body {
 .btn-product:hover {
     background: #ff6384;
 }
+
+/* ✅ แนะนำสินค้า */
+.recommendations {
+    width: 320px;
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    right: 20px;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* ✅ ปรับขนาดให้ปุ่มสินค้า */
+.product-card {
+    background: #ffffff;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+/* ✅ แนะนำสินค้า */
+/* ✅ ปรับ Sidebar แนะนำสินค้าให้ติดขอบขวา */
+.recommendations {
+    width: 280px; /* ปรับขนาดให้เหมาะสม */
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000; /* ✅ ป้องกันการถูกทับ */
+}
+
+/* ✅ สินค้า */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+    padding: 10px;
+}
+
+/* ✅ ปรับสินค้าให้สวย */
+.product-card {
+    background: #ffffff;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    width: 100px;
+    position: relative;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+/* ✅ ป้ายโปรโมชั่น */
+.product-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 5px;
+}
+
+/* ✅ ปรับขนาดรูปสินค้า */
+.product-card img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* ✅ ปรับสไตล์ชื่อสินค้า */
+.product-card p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+/* ✅ ปรับขนาดปุ่ม */
+.product-card .btn {
+    margin-top: 5px;
+    width: 100%;
+    font-size: 12px;
+    padding: 5px 8px;
+    background-color: #e654a7;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    transition: background 0.2s;
+}
+
+.product-card .btn:hover {
+    background-color: #e654a7;
+}

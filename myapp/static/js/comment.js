@@ -1,14 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // การเพิ่มคอมเมนต์
     document.querySelectorAll(".add-comment-form").forEach(form => {
         form.addEventListener("submit", function (event) {
             event.preventDefault();
 
             let postId = this.dataset.postId;
-            let content = this.querySelector("input[name='content']").value;
+            let content = this.querySelector("input[name='content']").value.trim();
             let csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
 
-            if (!content.trim()) {
+            if (!content) {
                 alert("❌ Comment cannot be empty!");
                 return;
             }
@@ -27,11 +26,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.success) {
                     let commentSection = document.getElementById(`comments-${postId}`);
                     let newComment = document.createElement("div");
-                    newComment.classList.add("comment", "border", "p-2", "mb-1", "rounded", "bg-white");
-                    newComment.innerHTML = `<b>${data.username}</b>: ${data.content}`;
+                    newComment.classList.add("comment", "border", "p-2", "mb-1", "rounded", "bg-white", "d-flex", "align-items-center", "justify-content-between");
+                    newComment.id = `comment-${data.comment_id}`;
+
+                    let commentContent = `
+                        <div>
+                            <b>${data.username}</b>: <span class="comment-content">${data.content}</span>
+                        </div>`;
+
+                    // ถ้าผู้ใช้เป็นเจ้าของคอมเมนต์ ให้เพิ่มปุ่ม Edit & Delete
+                    if (data.is_owner) {
+                        commentContent += `
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light comment-options" data-bs-toggle="dropdown">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button class="dropdown-item edit-comment" data-comment-id="${data.comment_id}">✏️ Edit</button></li>
+                                    <li><button class="dropdown-item text-danger delete-comment" data-comment-id="${data.comment_id}">🗑 Delete</button></li>
+                                </ul>
+                            </div>`;
+                    }
+
+                    newComment.innerHTML = commentContent;
                     commentSection.appendChild(newComment);
 
                     form.querySelector("input[name='content']").value = ""; // เคลียร์ช่อง input
+
                 } else {
                     alert(`❌ Error: ${data.message}`);
                 }

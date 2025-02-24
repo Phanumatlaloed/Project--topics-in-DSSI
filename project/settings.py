@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",  # ใช้ MySQL
-        "NAME": "mydata3",                 # ชื่อฐานข้อมูลที่คุณสร้างไว้
+        "NAME": "mydata35",                 # ชื่อฐานข้อมูลที่คุณสร้างไว้
         "USER": "root",                       # ชื่อผู้ใช้ MySQL
         "PASSWORD": "1234",                   # รหัสผ่าน MySQL
         "HOST": "localhost",                  # โฮสต์ MySQL

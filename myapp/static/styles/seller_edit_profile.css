@@ -1,150 +1,189 @@
-/* ✅ ตั้งค่าธีม */
+/* ✅ ตั้งค่า Theme */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #ffdde1, #f9a8b4); /* พื้นหลังไล่สีชมพูอ่อน */
+    background-color: #fef3f7; /* สีชมพูอ่อน */
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* ✅ จัดหน้า Dashboard */
+.dashboard-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
+}
+
+/* ✅ Sidebar */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, #ff85a2, #ffb6c1);
+    color: white;
     padding: 20px;
+    min-height: 100vh;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ กล่องฟอร์ม */
-.edit-profile-container {
-    max-width: 600px;  /* ✅ ปรับให้กว้างขึ้น */
-    width: 100%;
-    background: white;
-    padding: 35px;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);  /* ✅ เงาแบบ Soft */
-    transition: 0.3s;
-}
-
-/* ✅ หัวข้อ */
-h2 {
-    text-align: center;
-    color: #ff4d6d; /* สีชมพูสด */
-    font-weight: bold;
+.sidebar-title {
     font-size: 22px;
-}
-
-/* ✅ คำอธิบาย */
-.subtitle {
+    font-weight: bold;
     text-align: center;
-    color: #666;
-    font-size: 14px;
     margin-bottom: 20px;
 }
 
-/* ✅ กลุ่มฟอร์ม */
-.form-group {
-    margin-bottom: 18px;
+.menu {
+    list-style: none;
+    padding: 0;
 }
 
-label {
-    font-weight: 600;
+.menu-header {
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+}
+
+.menu-item {
+    margin-top: 10px;
+}
+
+.menu-item a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.menu-item a i {
+    margin-right: 8px;
+}
+
+.menu-item a:hover, .menu-item.active a {
+    background: white;
     color: #ff6384;
-    display: block;
-    margin-bottom: 6px;
-    font-size: 15px;
+    font-weight: bold;
 }
 
-/* ✅ ปรับสไตล์ช่องกรอกข้อมูล */
-input, textarea {
+/* ✅ Main Content */
+.container {
+    flex-grow: 1;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    margin: 30px auto;
+    width: 80%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+h2, h3 {
+    color: #ff6384;
+    text-align: center;
+}
+
+/* ✅ ฟอร์ม */
+fieldset {
+    border: 2px solid #ff85a2;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #fff0f3;
+}
+
+legend {
+    font-weight: bold;
+    color: #ff6384;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+input, select, textarea {
     width: 100%;
     padding: 12px;
+    margin-top: 8px;
+    border-radius: 8px;
     border: 2px solid #ffb6c1;
-    border-radius: 10px;
-    font-size: 15px;
-    transition: 0.3s;
-    background-color: #fffafc;
-}
-
-/* ✅ เอฟเฟกต์ตอนโฟกัส */
-input:focus, textarea:focus {
-    border-color: #ff85a2;
     outline: none;
-    box-shadow: 0 0 8px rgba(255, 133, 162, 0.4);
-}
-
-/* ✅ ปรับแต่งรูปภาพที่อัปโหลด */
-.preview-img {
-    display: block;
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    margin: 15px auto;
-    border-radius: 50%;
-    border: 3px solid #ff85a2;
     transition: 0.3s;
 }
 
-.preview-img:hover {
-    transform: scale(1.05);
-    border-color: #ff4d6d;
+input:focus, select:focus, textarea:focus {
+    border-color: #ff6384;
+    box-shadow: 0 0 5px #ff85a2;
 }
 
-/* ✅ ส่วนเปลี่ยนรหัสผ่าน */
-.password-section {
-    background: #fff0f3;
-    padding: 20px;
-    border-radius: 12px;
-    margin-top: 25px;
-    border: 1px solid #ffb6c1;
-}
-
-.password-section h3 {
-    color: #ff4d6d;
-    text-align: center;
-    font-size: 18px;
+/* ✅ ปุ่ม */
+.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    margin-top: 10px;
     font-weight: bold;
-}
-
-/* ✅ ปรับแต่งปุ่ม */
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 25px;
-}
-
-.btn-save, .btn-cancel {
-    width: 48%;
-    padding: 12px;
-    border: none;
     border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
     text-align: center;
+    cursor: pointer;
     text-decoration: none;
-    font-size: 16px;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
-/* ✅ ปุ่มบันทึก */
-.btn-save {
-    background: linear-gradient(135deg, #ff85a2, #ff6384);
+.btn-primary {
+    background-color: #ff85a2;
     color: white;
-    box-shadow: 0 4px 10px rgba(255, 99, 132, 0.3);
 }
 
-.btn-save:hover {
-    background: linear-gradient(135deg, #ff6384, #ff4d6d);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(255, 99, 132, 0.5);
+.btn-primary:hover {
+    background-color: #ff6384;
 }
 
-/* ✅ ปุ่มยกเลิก */
+.btn-warning {
+    background-color: #ffb347;
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #ff9f1a;
+}
+
 .btn-cancel {
-    background-color: #b0b0b0;
-    color: white;
-    box-shadow: 0 4px 8px rgba(176, 176, 176, 0.3);
+    background-color: #ccc;
+    color: black;
 }
 
 .btn-cancel:hover {
-    background-color: #888888;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(136, 136, 136, 0.4);
+    background-color: #aaa;
 }
+
+/* ✅ ปรับแต่ง Alert */
+.alert {
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 12px;
+    text-align: center;
+    background: #ffefef;
+    border: 2px solid #ff85a2;
+    color: #ff6384;
+}
+
+/* ✅ ปรับแต่งให้ Responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        padding: 10px;
+    }
+
+    .container {
+        width: 90%;
+    }
+}
+
 
 /* ✅ เอฟเฟกต์แจ้งเตือน */
 .alert {

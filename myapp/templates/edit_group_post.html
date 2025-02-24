@@ -55,9 +55,9 @@
                 <!-- ✅ แสดงไฟล์ที่เลือกใหม่ -->
                 <div id="selectedEditFiles" class="selected-files mt-3"></div>
 
-                <button type="submit" id="savePostButton" class="btn btn-pink w-100 mt-3">💾 Save</button>
+                <button type="submit" id="savePostButton" class="btn btn-success w-100 mt-3">💾 Save</button>
                   <!-- ปุ่มยกเลิก -->
-                <a href="{% url 'home' %}" class="btn btn-danger w-100 mt-2">❌ ยกเลิก</a>
+                <a href="{% url 'group_detail' group.id %}" class="btn btn-danger w-100 mt-2">❌ ยกเลิก</a>
 
             </form>
         </div>

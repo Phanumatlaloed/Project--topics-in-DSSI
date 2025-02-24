@@ -8,6 +8,7 @@
     <title>Profile Page</title>
     <link rel="stylesheet" href="{% static 'styles/profile.css' %}">
     <script src="{% static 'js/profile.js' %}" defer></script>
+    
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 
@@ -28,12 +29,12 @@
             </div>
             <nav>
                 <ul class="nav">
-                    <li><a href="{% url 'home' %}" class="nav-link ">🏠 Home</a></li>
-                    <li><a href="{% url 'community_list' %}" class="nav-link">👥 Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="nav-link ">💾 Save </a></li>
-                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link active">📄 Profile</a></li>
-                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
-                    <li><a href="{% url 'notification_list' %}" class="nav-link">notification</a></li>
+                    <li><a href="{% url 'home' %}" class="nav-link"><i>🏠</i> Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link "><i>👥</i> Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link"><i>💾</i> Save</a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link active"><i>📄</i> Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link"><i>🛒</i> Product List</a></li>
+                    <li><a href="{% url 'notification_list' %}" class="nav-link"><i>🔔</i> Notifications</a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">
@@ -134,7 +135,7 @@
 
                     <!-- Actions -->
                     <div class="actions mt-2 d-flex gap-2">
-                        <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">👍 Like</button>
+                        <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">🤍 Like</button>
                         <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
                         <button class="btn btn-light share-btn" data-post-id="{{ post.id }}">🔗 Share</button>
                         <button class="btn btn-light save-btn" data-post-id="{{ post.id }}">

@@ -1,32 +1,28 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🛍 สินค้าทั้งหมด</title>
 
-    <!-- CSS -->
+    <!-- ✅ CSS -->
     <link rel="stylesheet" href="{% static 'styles/product_list.css' %}">
 
-    <!-- Slick Slider -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css"/>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css"/>
-
-    <!-- Google Font -->
+    <!-- ✅ Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- 🌸 Navbar -->
     <header>
         <nav class="navbar">
             <div class="logo">
-                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+                </a>
             </div>
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">🏠 Home</a></li>
-                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
-                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                <li><a href="{% url 'profile' request.user.id  %}">📄 Profile</a></li>
                 <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
                 <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
                 <li><a href="{% url 'cart' %}">🛒 Cart (<span id="cart-count">{{ cart_count }}</span>)</a></li>
@@ -43,7 +39,7 @@
         <!-- 📌 เลือกหมวดหมู่ -->
         <div class="filter-section">
             <label for="categoryFilter">📌 เลือกหมวดหมู่:</label>
-            <select id="categoryFilter" class="form-select">
+            <select id="categoryFilter" class="form-select" onchange="filterProducts()">
                 <option value="">ทั้งหมด</option>
                 <option value="makeup">Makeup</option>
                 <option value="skincare">Skincare</option>
@@ -55,7 +51,7 @@
             </select>
         </div>
 
-        <div class="row">
+        <div class="row" id="productList">
             {% for product in products %}
             <div class="col-md-4 product-item" data-category="{{ product.category }}" data-name="{{ product.name }}">
                 <div class="card">
@@ -64,13 +60,24 @@
                         <h5 class="card-title">{{ product.name }}</h5>
                         <p class="card-text">🛍 ร้านค้า: <a href="{% url 'store_detail' product.seller.id %}">{{ product.seller.store_name }}</a></p>
                         <p class="card-text">📌 หมวดหมู่: {{ product.get_category_display }}</p>
-                        <p class="card-text">📦 คงเหลือ: {{ product.stock }}</p>
+                        <p class="card-text">📦 คงเหลือ: 
+                            {% if product.stock > 0 %}
+                                {{ product.stock }}
+                            {% else %}
+                                <span class="out-of-stock">❌ สินค้าหมด</span>
+                            {% endif %}
+                        </p>
+                        <p class="card-text">🔥 ขายแล้ว: <strong>{{ product.total_sold }}</strong> ชิ้น</p>
                         <p class="text-primary">💰 ราคา: ฿{{ product.price }}</p>
 
-                        <!-- 🛒 ปุ่มเพิ่มในตะกร้า -->
-                        <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
-                            ➕ เพิ่มในตะกร้า
-                        </button>
+                        <!-- 🛒 ปุ่มเพิ่มในตะกร้า (ถ้าสินค้าเหลือ) -->
+                        {% if product.stock > 0 %}
+                            <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
+                                ➕ เพิ่มในตะกร้า
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-secondary" disabled>❌ สินค้าหมด</button>
+                        {% endif %}
 
                         <!-- 🔍 ดูรายละเอียดสินค้า -->
                         <a href="{% url 'product_detail' product.id %}" class="btn btn-info">📄 รายละเอียด</a>
@@ -78,12 +85,66 @@
                 </div>
             </div>
             {% empty %}
-            <p>⚠️ ไม่มีสินค้าที่ตรงกับการค้นหา</p>
+            <p id="noProducts" class="text-center text-muted">⚠️ ไม่มีสินค้าที่ตรงกับการค้นหา</p>
             {% endfor %}
         </div>
     </main>
 
-    <!-- JavaScript -->
-    <script src="{% static 'js/product_list.js' %}"></script>
+    <!-- ✅ JavaScript -->
+    <script>
+        function filterProducts() {
+            let searchInput = document.getElementById("searchBox").value.toLowerCase();
+            let categoryFilter = document.getElementById("categoryFilter").value;
+            let productItems = document.querySelectorAll(".product-item");
+            let noProductsMessage = document.getElementById("noProducts");
+            let hasVisibleProduct = false;
+
+            productItems.forEach(item => {
+                let productName = item.getAttribute("data-name").toLowerCase();
+                let productCategory = item.getAttribute("data-category");
+
+                let matchesSearch = productName.includes(searchInput);
+                let matchesCategory = categoryFilter === "" || productCategory === categoryFilter;
+
+                if (matchesSearch && matchesCategory) {
+                    item.style.display = "block";
+                    hasVisibleProduct = true;
+                } else {
+                    item.style.display = "none";
+                }
+            });
+
+            noProductsMessage.style.display = hasVisibleProduct ? "none" : "block";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
+
+            addToCartButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    let productId = this.getAttribute("data-product-id");
+
+                    fetch(`/cart/add/${productId}/`, {  // ✅ ตรวจสอบ URL ให้ตรงกับ backend
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}",
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ "product_id": productId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("✅ เพิ่มสินค้าในตะกร้าเรียบร้อย!");
+                            document.getElementById("cart-count").textContent = data.cart_count;
+                        } else {
+                            alert("❌ ไม่สามารถเพิ่มสินค้าได้: " + data.message);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                });
+            });
+        });
+    </script>
 </body>
 </html>

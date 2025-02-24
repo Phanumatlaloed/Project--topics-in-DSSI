@@ -1,0 +1,72 @@
+{% if pending_orders %}
+<table class="table table-striped text-center">
+    <thead class="table-danger">
+        <tr>
+            <th>#</th>
+            <th>ร้านค้า</th>
+            <th>สินค้า</th>
+            <th>ที่อยู่</th>
+            <th>เบอร์โทร</th>
+            <th>ยอดรวม</th>
+            <th>สถานะชำระเงิน</th>
+            <th>อัปโหลดสลิป</th>
+            <th>สถานะจัดส่ง</th>
+            <th>ยืนยันรับ</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in pending_orders %}
+        <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.seller.store_name }}</td>
+            <td>
+                <ul>
+                    {% for item in order.order_items.all %}
+                        <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.price_per_item }})</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>{{ order.shipping_address }}</td>
+            <td>{{ order.phone_number }}</td>
+            <td>฿{{ order.total_price }}</td>
+            <td>
+                {% if order.payment_status == "pending" %}
+                    ⏳ รอการชำระเงิน
+                {% elif order.payment_status == "paid" %}
+                    ✅ ชำระเงินแล้ว
+                {% else %}
+                    ❌ ถูกปฏิเสธ
+                {% endif %}
+            </td>
+            <td>
+                {% if order.payment_status == "pending" and not order.payment %}
+                    <a href="{% url 'upload_payment' order_ids=order.id %}" class="btn btn-warning btn-sm">📤 อัปโหลด</a>
+                {% elif order.payment %}
+                    <a href="{{ order.payment.slip.url }}" target="_blank" class="btn btn-info btn-sm">📜 ดูสลิป</a>
+                {% else %}
+                    ✔️ เรียบร้อย
+                {% endif %}
+            </td>
+            <td>
+                {% if order.status == "processing" %}
+                    📦 กำลังแพ็คสินค้า
+                {% elif order.status == "shipped" %}
+                    🚚 กำลังจัดส่ง
+                {% else %}
+                    ⏳ รอการยืนยัน
+                {% endif %}
+            </td>
+            <td>
+                {% if order.status == "shipped" %}
+                    <a href="{% url 'confirm_delivery' order.id %}" class="btn btn-success btn-sm">✅ ได้รับสินค้าแล้ว</a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p class="text-center text-muted">😢 ยังไม่มีออเดอร์ที่ต้องจัดส่ง</p>
+{% endif %}

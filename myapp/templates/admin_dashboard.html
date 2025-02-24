@@ -9,8 +9,11 @@
 </head>
 <body class="bg-light">
     <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center"> 
+        <div class="d-flex justify-content-between align-items-center">   
             <h2>📋 Admin Dashboard</h2>
+            <a href="{% url 'admin_withdrawals' %}" class="btn btn-danger">admin_withdrawals</a>
+            <li><a href="{% url 'admin_performance' %}">📊 รายงานประสิทธิภาพผู้ขาย</a></li>
             <a href="{% url 'admin_logout' %}" class="btn btn-danger">Logout</a>
         </div>
 

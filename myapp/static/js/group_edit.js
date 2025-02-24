@@ -1,39 +1,32 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const fileInput = document.getElementById("editPostImages");
-    const fileVideoInput = document.getElementById("editPostVideos");
-    const selectedFilesContainer = document.getElementById("selectedEditFiles");
+    console.log("✅ group_edit.js Loaded!");
 
-    fileInput.addEventListener("change", function () {
-        selectedFilesContainer.innerHTML = ""; // ล้างรายการไฟล์ที่เลือก
+    function getCSRFToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+    }
 
-        for (let i = 0; i < fileInput.files.length; i++) {
-            let file = fileInput.files[i];
-            let fileName = document.createElement("p");
-            fileName.textContent = file.name;
-            selectedFilesContainer.appendChild(fileName);
-        }
-    });
-
-    fileVideoInput.addEventListener("change", function () {
-        for (let i = 0; i < fileVideoInput.files.length; i++) {
-            let file = fileVideoInput.files[i];
-            let fileName = document.createElement("p");
-            fileName.textContent = file.name;
-            selectedFilesContainer.appendChild(fileName);
-        }
-    });
-
-    // ✅ ลบไฟล์ที่อัปโหลดแล้ว
     document.querySelectorAll(".remove-existing-file").forEach((button) => {
         button.addEventListener("click", function () {
             const mediaId = this.getAttribute("data-file-id");
-            fetch(`/delete_media/${mediaId}/`, { method: "DELETE" })
+            console.log(`📌 Trying to delete media ID: ${mediaId}`);
+
+            fetch(`/delete_media/${mediaId}/`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            })
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
+                        console.log("✅ Media deleted successfully:", mediaId);
                         this.parentElement.remove();
+                    } else {
+                        console.error("❌ Error deleting media:", data.error);
                     }
-                });
+                })
+                .catch((error) => console.error("❌ AJAX Error:", error));
         });
     });
 });

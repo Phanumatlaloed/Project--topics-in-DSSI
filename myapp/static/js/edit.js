@@ -1,22 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const fileInput = document.getElementById("editPostImages");
-    const fileVideoInput = document.getElementById("editPostVideos");
     const selectedFilesContainer = document.getElementById("selectedEditFiles");
 
-    fileInput.addEventListener("change", function () {
-        selectedFilesContainer.innerHTML = ""; // ล้างรายการไฟล์ที่เลือก
-
-        for (let i = 0; i < fileInput.files.length; i++) {
-            let file = fileInput.files[i];
+    document.getElementById("editPostImages").addEventListener("change", function () {
+        selectedFilesContainer.innerHTML = "";
+        for (let i = 0; i < this.files.length; i++) {
+            let file = this.files[i];
             let fileName = document.createElement("p");
             fileName.textContent = file.name;
             selectedFilesContainer.appendChild(fileName);
         }
     });
 
-    fileVideoInput.addEventListener("change", function () {
-        for (let i = 0; i < fileVideoInput.files.length; i++) {
-            let file = fileVideoInput.files[i];
+    document.getElementById("editPostVideos").addEventListener("change", function () {
+        for (let i = 0; i < this.files.length; i++) {
+            let file = this.files[i];
             let fileName = document.createElement("p");
             fileName.textContent = file.name;
             selectedFilesContainer.appendChild(fileName);
@@ -27,13 +24,27 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".remove-existing-file").forEach((button) => {
         button.addEventListener("click", function () {
             const mediaId = this.getAttribute("data-file-id");
-            fetch(`/delete_media/${mediaId}/`, { method: "DELETE" })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        this.parentElement.remove();
-                    }
-                });
+
+            fetch(`/delete_media/${mediaId}/`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.parentElement.remove();
+                } else {
+                    console.error("❌ Failed to delete:", data.error);
+                }
+            })
+            .catch(error => console.error("❌ AJAX Error:", error));
         });
     });
+
+    function getCSRFToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+    }
 });

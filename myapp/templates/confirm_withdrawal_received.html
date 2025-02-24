@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>✅ ยืนยันการได้รับเงิน</h2>
+
+<p><strong>ร้านค้า:</strong> {{ withdrawal.seller.store_name }}</p>
+<p><strong>จำนวนเงิน:</strong> ฿{{ withdrawal.amount }}</p>
+
+{% if withdrawal.payment_proof %}
+    <p><strong>หลักฐานการโอนเงิน:</strong></p>
+    <img src="{{ withdrawal.payment_proof.url }}" alt="Payment Proof" width="300">
+{% else %}
+    <p>❌ ยังไม่มีสลิปโอนเงิน</p>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">ยืนยันว่าได้รับเงินแล้ว</button>
+</form>
+{% endblock %}

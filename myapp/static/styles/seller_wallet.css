@@ -1,0 +1,214 @@
+/* ✅ ตั้งค่า Theme */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #FFC0CB;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* ✅ Layout */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ✅ Sidebar */
+.sidebar {
+    width: 260px;
+    background: linear-gradient(135deg, #FFC0CB, #FFC0CB);
+    color: white;
+    padding: 20px;
+    min-height: 100vh;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease-in-out;
+}
+
+.sidebar-title {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-header {
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+}
+
+.menu-item {
+    margin-top: 10px;
+}
+
+.menu-item a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.menu-item a i {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.menu-item a:hover, .menu-item.active a {
+    background: white;
+    color: #FFC0CB;
+    font-weight: bold;
+    transform: translateX(5px);
+    box-shadow: 0px 4px 10px rgba(255, 99, 132, 0.3);
+}
+
+
+/* ✅ Main Content */
+.content {
+    flex-grow: 1;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    margin: 30px auto;
+    width: 85%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ การ์ดกระเป๋าเงิน */
+.card {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ฟอร์ม */
+.form-label {
+    font-weight: bold;
+    color: #FF6384;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 2px solid #FFB6C1;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: #FF6384;
+    box-shadow: 0 0 5px #FF85A2;
+}
+
+/* ✅ ปุ่ม */
+.btn {
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.submit-btn {
+    background-color: #FF869B;
+    color: white;
+    border: none;
+}
+
+.submit-btn:hover {
+    background-color: #FF4F5E;
+}
+
+.confirm-btn {
+    background-color: #28A745;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background-color: #218838;
+}
+
+/* ✅ ตาราง */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+thead {
+    background: #FF85A2;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+/* ✅ Responsive */
+@media (max-width: 992px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .content {
+        width: 95%;
+        margin: 20px auto;
+    }
+}
+
+
+/* 📜 ตารางรายการถอนเงิน */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: #ffb6c1;
+    font-size: 16px;
+}
+
+td {
+    font-size: 14px;
+}
+
+/* 📝 สถานะ */
+.status-pending {
+    color: orange;
+}
+
+.status-approved {
+    color: green;
+}
+
+.status-rejected {
+    color: red;
+}

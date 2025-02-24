@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรวจสอบการชำระเงิน</title>
+    <link rel="stylesheet" href="{% static 'styles/payments_sellers.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2>
+            <ul class="menu">
+                <li class="menu-header">คำสั่งซื้อ</li>
+                <li class="menu-item"><a href="{% url 'seller_dashboard' %}">แดชบอร์ด</a></li>
+                <li class="menu-item"><a href="{% url 'seller_orders' %}">คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item active"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
+
+                <li class="menu-header">สินค้า</li>
+                <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
+
+                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
+                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
+
+                <li class="menu-header">การตั้งค่า</li>
+                <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
+                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
+                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <h2>ตรวจสอบการชำระเงิน</h2>
+
+            {% if orders %}
+            <div class="payment-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>หมายเลขออเดอร์</th>
+                            <th>ลูกค้า</th>
+                            <th>ยอดชำระ</th>
+                            <th>สลิปโอนเงิน</th>
+                            <th>สถานะ</th>
+                            <th>การดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.user.username }}</td>
+                            <td>฿{{ order.total_price }}</td>
+
+                            <!-- ✅ ตรวจสอบว่ามีสลิปหรือไม่ -->
+                            <td>
+                                {% if order.payment and order.payment.slip %}
+                                    <a href="{{ order.payment.slip.url }}" target="_blank" class="slip-btn">ดูสลิป</a>
+                                {% else %}
+                                    ❌ ไม่มีสลิป
+                                {% endif %}
+                            </td>
+
+                            <!-- ✅ แสดงสถานะปัจจุบัน -->
+                            <td class="status">
+                                {% if order.payment_status == "pending" %}
+                                    ⏳ รออนุมัติ
+                                {% elif order.payment_status == "paid" %}
+                                    ✅ อนุมัติแล้ว
+                                {% else %}
+                                    ❌ ถูกปฏิเสธ
+                                {% endif %}
+                            </td>
+
+                            <!-- ✅ ปุ่มอนุมัติ & ปฏิเสธ -->
+                            <td>
+                                {% if order.payment_status == "pending" %}
+                                    <a href="{% url 'approve_seller_payment' order.id %}" class="btn approve">อนุมัติ</a>
+                                    <a href="{% url 'reject_seller_payment' order.id %}" class="btn reject">ปฏิเสธ</a>
+                                {% elif order.payment_status == "paid" %}
+                                    ✅ อนุมัติแล้ว
+                                {% else %}
+                                    ❌ ถูกปฏิเสธ
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p>❌ ไม่มีคำสั่งซื้อที่รออนุมัติ</p>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

@@ -59,19 +59,24 @@
         </main>
     
         <!-- 🌟 Grid สินค้า -->
-        <aside class="product-grid">
-            <h2>🛍 แนะนำสินค้า</h2>
-            <div class="product-container">
-                {% for product in products|slice:":6" %}
-                <div class="product-card">
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                    <h3>{{ product.name }}</h3>
-                    <p>💰 ฿{{ product.price }}</p>
-                    <a href="{% url 'product_detail' product.id %}" class="btn-product">📄 รายละเอียด</a>
-                </div>
-                {% endfor %}
+        <aside class="recommendations">
+            <h5>แนะนำสินค้า</h5>
+            <div class="product-grid">
+                {% if products %}
+                    {% for product in products %}
+                        <div class="product-card">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                            <p>{{ product.name }}</p>
+                            <p class="text-primary">💰 ฿{{ product.price }}</p>
+                            <a href="{% url 'product_detail_user' product.id %}" class="btn btn-sm btn-outline-primary">ดูรายละเอียด</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">ไม่มีสินค้าแนะนำในขณะนี้</p>
+                {% endif %}
             </div>
         </aside>
+
     </div>
     
 </body>

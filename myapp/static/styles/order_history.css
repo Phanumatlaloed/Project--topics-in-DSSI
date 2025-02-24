@@ -6,23 +6,29 @@ body {
     background-color: #f9f9f9;
 }
 
-/* 🌸 Navbar */
+/* ✅ ปรับแต่ง Navbar */
 .navbar {
+    background-color: #fde5e5; /* ชมพูอ่อน */
+    padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #ff85a2;
-    padding: 15px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* ✅ ปรับขนาดโลโก้ให้เหมาะสม */
 .navbar .logo img {
-    height: 50px;
+    height: 60px; /* ลดขนาดโลโก้ */
+    width: auto;
+    border-radius: 10px;
 }
 
+/* ✅ ปรับเมนูด้านขวาให้มีระยะห่าง */
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 20px;
+    gap: 15px;
+    padding: 0;
 }
 
 .nav-links li {
@@ -31,29 +37,34 @@ body {
 
 .nav-links a {
     text-decoration: none;
-    color: white;
+    color: #e75480; /* ชมพูเข้ม */
     font-weight: bold;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 8px 12px;
+    border-radius: 8px;
     transition: 0.3s;
 }
 
-.nav-links a:hover,
-.nav-links .active {
-    background-color: white;
-    color: #ff85a2;
+.nav-links a:hover {
+    background-color: #ffb6c1;
+    color: white;
 }
 
-/* 🌸 Container */
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 30px auto;
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
+/* ✅ ปรับขนาดโลโก้ใหญ่ที่หน้าเว็บ */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.logo-container img {
+    max-width: 250px; /* จำกัดขนาดโลโก้ใหญ่ */
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
+
 
 .title {
     text-align: center;

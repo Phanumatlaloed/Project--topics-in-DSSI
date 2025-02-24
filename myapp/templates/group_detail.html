@@ -29,16 +29,15 @@
                 <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
                 <h5>My Community</h5>
             </div>
-            <nav>
-                <ul class="nav">
-                    <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
-                    <li><a href="{% url 'community_list' %}" class="nav-link active">👥 Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="nav-link">💾 Save </a></li>
-                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
-                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
-                    <li><a href="{% url 'notification_list' %}" class="nav-link">🔔 notification</a></li>
-                </ul>
-            </nav>
+            <ul class="nav">
+                <li><a href="{% url 'home' %}" class="nav-link"><i>🏠</i> Home</a></li>
+                <li><a href="{% url 'community_list' %}" class="nav-link active"><i>👥</i> Community</a></li>
+                <li><a href="{% url 'savelist' %}" class="nav-link"><i>💾</i> Save</a></li>
+                <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i>📄</i> Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="nav-link"><i>🛒</i> Product List</a></li>
+                <li><a href="{% url 'notification_list' %}" class="nav-link"><i>🔔</i> Notifications</a></li>
+            </ul>
+            
             <div class="welcome-logout">
                 <p>Welcome, <b>{{ request.user.username }}</b></p>
                 <form action="{% url 'logout' %}" method="post">
@@ -59,13 +58,30 @@
                 <div class="rules text-start mt-3">
                     <p><strong>Rules:</strong> {{ group.rules }}</p>
                 </div>
+
+                {% if request.user == group.created_by or request.user in group.admins.all %}
+                    <a href="{% url 'edit_group' group.id %}" class="btn btn-light">✏️ Edit</a>
+                    <button class="btn btn-danger delete-btn" data-group-id="{{ group.id }}">🗑 Delete</button>
+                {% endif %}
+
+                {% if request.user in group.members.all %}
+                <form action="{% url 'leave_group' group.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Leave Group</button>
+                </form>
+                {% endif %}
+
+                {% if request.user not in group.members.all %}
+                    <a href="{% url 'join_group' group.id %}" class="btn btn-success">Join Group</a>
+                {% endif %}
+
+                {% if request.user in group.admins.all %}
+                    <a href="{% url 'group_members' group.id %}" class="btn btn-primary">Members</a>
+                {% endif %}
+
+
             </div>
-            
-            {% if not is_member %}
-            <div class="text-center mb-4">
-                <a href="{% url 'join_group' group.id %}" class="btn btn-success">Join Group</a>
-            </div>
-            {% endif %}
+        
             
             {% if is_member %}
             <!-- Post Form -->

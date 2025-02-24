@@ -1,145 +1,227 @@
-/* 🌸 ตั้งค่าทั่วไป */
+/* ✅ ตั้งค่า Theme */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #fff5f7;
+    font-family: 'Poppins', sans-serif;
+    background-color: #FFC0CB;
     color: #333;
     margin: 0;
     padding: 0;
+}
+
+/* ✅ Layout */
+.dashboard-container {
     display: flex;
+    min-height: 100vh;
 }
 
-/* 🌸 Sidebar Menu */
+/* ✅ Sidebar */
 .sidebar {
-    width: 250px;
-    background-color: #ff8fab;
-    padding: 20px;
-    position: fixed;
-    height: 100vh;
+    width: 260px;
+    background: linear-gradient(135deg, #FFC0CB, #FFC0CB);
     color: white;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    min-height: 100vh;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease-in-out;
 }
 
-.sidebar .menu {
+.sidebar-title {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu {
     list-style: none;
     padding: 0;
 }
 
-.sidebar .menu-item {
-    margin: 15px 0;
+.menu-header {
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
 }
 
-.sidebar .menu-item a {
-    display: block;
+
+.menu-item {
+    margin-top: 10px;
+}
+
+.menu-item a {
     color: white;
     text-decoration: none;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
     padding: 12px;
-    border-radius: 5px;
-    transition: background 0.3s ease-in-out;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
 }
 
-.sidebar .menu-item a:hover {
-    background-color: #ff5c8a;
+.menu-item a i {
+    margin-right: 8px;
+    font-size: 18px;
 }
 
-.sidebar .menu-item.active a {
-    background-color: #ff5c8a;
+.menu-item a:hover, .menu-item.active a {
+    background: white;
+    color: #FFC0CB;
+    font-weight: bold;
+    transform: translateX(5px);
+    box-shadow: 0px 4px 10px rgba(255, 99, 132, 0.3);
 }
 
-.sidebar .menu-item.logout a {
-    background-color: #b60909;
+
+/* ✅ Main Content */
+.content {
+    flex-grow: 1;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    margin: 30px auto;
+    width: 85%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar .menu-item.logout a:hover {
-    background-color: #b12a58;
-}
-
-/* 🌸 Container */
-.order-management-container {
-    margin-left: 270px;
-    padding: 40px;
-    width: calc(100% - 270px);
-}
-
-/* 🌸 Title */
-h1 {
+h2 {
+    color: #000000;
     text-align: center;
-    font-size: 28px;
-    color: #ff5c8a;
-    margin-bottom: 20px;
 }
 
-/* 🌸 Table */
+/* ✅ ตารางคำสั่งซื้อ */
 .order-table {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+table {
     width: 100%;
     border-collapse: collapse;
     text-align: center;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.order-table th, .order-table td {
+th, td {
     padding: 12px;
-    border: 1px solid #ffbdd4;
+    border-bottom: 1px solid #ddd;
 }
 
-.order-table th {
-    background-color: #ffdde1;
-    color: #d6336c;
-}
-
-.order-table tbody tr:nth-child(even) {
-    background-color: #fff0f3;
-}
-
-.order-table tbody tr:hover {
-    background-color: #ffe5ec;
-}
-
-/* 🌸 ปุ่ม */
-.btn {
-    display: inline-block;
-    padding: 8px 12px;
-    text-decoration: none;
+thead {
+    background: #FFC0CB;
     color: white;
     font-weight: bold;
-    border-radius: 5px;
-    transition: background 0.3s ease-in-out;
 }
 
-.btn.shipped {
-    background-color: #ffb347;
+/* ✅ ปุ่มสลิป */
+.slip-btn {
+    background: #ffb347;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
-.btn.shipped:hover {
-    background-color: #e6953c;
+.slip-btn:hover {
+    background: #ff9f1a;
 }
 
-.btn.delivered {
-    background-color: #5cb85c;
-}
-
-.btn.delivered:hover {
-    background-color: #4cae4c;
-}
-
-.btn.cancel {
-    background-color: #d9534f;
-}
-
-.btn.cancel:hover {
-    background-color: #c9302c;
-}
-
-/* 🌸 Payment & Status Colors */
-.paid {
-    color: green;
+/* ✅ ปุ่มอัปเดตสถานะ */
+.btn {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    margin: 5px;
+    transition: all 0.3s ease-in-out;
 }
 
-.pending {
-    color: red;
-    font-weight: bold;
+.processing {
+    background-color: #ffa502;
+    color: white;
+}
+
+.processing:hover {
+    background-color: #ff7f00;
+}
+
+.shipped {
+    background-color: #2ed573;
+    color: white;
+}
+
+.shipped:hover {
+    background-color: #1dd1a1;
+}
+
+.cancel {
+    background-color: #ff4757;
+    color: white;
+}
+
+.cancel:hover {
+    background-color: #ff1e2d;
+}
+
+/* ✅ ข้อความไม่มีคำสั่งซื้อ */
+.no-orders {
+    text-align: center;
+    font-style: italic;
+    padding: 20px;
+    color: #666;
+}
+
+/* ✅ Responsive */
+@media (max-width: 992px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        padding: 15px;
+    }
+
+    .content {
+        width: 95%;
+        margin: 20px auto;
+    }
+
+    .menu-item a {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .order-table {
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .content {
+        width: 100%;
+        padding: 20px;
+    }
+
+    th, td {
+        font-size: 14px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
 }
