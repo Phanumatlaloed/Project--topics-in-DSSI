@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❌ ยกเลิกออเดอร์ | MyShop</title>
+
+    <!-- ✅ เชื่อมต่อ CSS -->
+    <link rel="stylesheet" href="{% static 'styles/cancel.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
+
+    <!-- ✅ Font Awesome (สำหรับไอคอน) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="nav-link {% if request.path == '/product/' %}active{% endif %}">🛍 Products</a></li>
+                <li><a href="{% url 'order_history' %}" class="nav-link {% if request.path == '/order/history/' %}active{% endif %}">📜 Order History</a></li>
+                <li><a href="{% url 'cart' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">🛒 Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 🌸 กล่องหลัก -->
+    <div class="container">
+        <h2 class="text-danger">❌ ยกเลิกออเดอร์ #{{ order.id }}</h2>
+        <p>คุณแน่ใจหรือไม่ว่าต้องการยกเลิกออเดอร์นี้?</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="reason" class="form-label">📌 เหตุผลการยกเลิก:</label>
+                <textarea name="reason" id="reason" class="input-box" required placeholder="กรุณากรอกเหตุผลในการยกเลิกออเดอร์..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa fa-times-circle"></i> ยืนยันการยกเลิก
+                </button>
+                <a href="{% url 'order_history' %}" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> กลับไปหน้าออเดอร์
+                </a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

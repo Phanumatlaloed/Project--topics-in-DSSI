@@ -204,6 +204,9 @@ class Seller(models.Model):
     email = models.EmailField(unique=True, blank=False, null=False)  # ✅ เพิ่ม email
     store_image = models.ImageField(upload_to='store_images/', blank=True, null=True)
     contact_info = models.TextField(blank=True, null=True)
+    # ✅ เพิ่มเลขบัญชีและชื่อบัญชีธนาคาร
+    bank_account_name = models.CharField(max_length=255, blank=True, null=True)  # ชื่อบัญชีธนาคาร
+    bank_account_number = models.CharField(max_length=50, blank=True, null=True)  # เลขบัญชีธนาคาร
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -269,6 +272,7 @@ class Order(models.Model):
         ('pending', 'รอดำเนินการ'),
         ('shipped', 'จัดส่งแล้ว'),
         ('delivered', 'จัดส่งสำเร็จ'),
+        ('cancelled', 'ยกเลิกแล้ว'),  # ✅ เพิ่มสถานะนี้
     ]
     
     PAYMENT_STATUS_CHOICES = [
@@ -280,6 +284,8 @@ class Order(models.Model):
     seller = models.ForeignKey('Seller', on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")  
     shipping_address = models.TextField(default="กรุณากรอกที่อยู่จัดส่ง")  # ✅ แก้ไขตรงนี้
     phone_number = models.CharField(max_length=15, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)  # ✅ เพิ่มเมือง
+    postal_code = models.CharField(max_length=10, blank=True, null=True)  # ✅ เพิ่มรหัสไปรษณีย์
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
@@ -318,10 +324,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 def get_default_seller():
     from .models import Seller
-    try:
-        return Seller.objects.first().id  # ✅ ใช้ Seller คนแรกเป็นค่า default
-    except ObjectDoesNotExist:
-        return None  # ❌ ถ้าไม่มีร้านค้าอยู่ อาจต้องสร้างก่อน
+    seller = Seller.objects.first()
+    return seller.id if seller else None  # ✅ คืนค่า None แทนการ error
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")

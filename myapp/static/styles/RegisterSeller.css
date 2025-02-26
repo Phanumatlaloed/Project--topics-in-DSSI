@@ -1,86 +1,190 @@
-/* 🌸 Pink-White Elegant Theme */
+/* 🌸 ตั้งค่าพื้นฐาน */
 body {
-    background: linear-gradient(to bottom right, #fce4ec, #f8bbd0);
     font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
-/* ✅ กล่องฟอร์มสมัคร */
+/* 🌸 กล่องลงทะเบียน */
 .register-card {
     background: white;
-    width: 400px;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    margin: auto;
-    margin-top: 5%;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
+    max-width: 450px;
+    width: 100%;
 }
 
-/* ✅ โลโก้ */
+/* 🌸 โลโก้ */
 .logo img {
-    width: 80px;
-    height: 80px;
+    width: 100px;
     border-radius: 50%;
-    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+    border: 3px solid #ff6b81;
 }
 
-/* ✅ หัวข้อ */
+/* 🌸 หัวข้อ */
 h2 {
+    color: #ff4081;
     font-size: 24px;
-    color: #e91e63;
     font-weight: bold;
+    margin-bottom: 15px;
 }
 
-/* ✅ ป้ายกำกับฟอร์ม */
-.form-label {
-    font-weight: 600;
-    color: #e91e63;
+/* 🌸 กล่องข้อความแจ้งเตือน */
+.alert-container {
+    margin-top: 10px;
+}
+
+.alert {
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: left;
     display: flex;
     align-items: center;
-    gap: 8px;
 }
 
-/* ✅ ช่องป้อนข้อมูล */
-.form-control {
-    border: 2px solid #f8bbd0;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 16px;
-    transition: all 0.3s;
+.alert i {
+    margin-right: 8px;
 }
 
-/* ✅ เมื่อคลิกที่ช่องป้อนข้อมูล */
-.form-control:focus {
-    border-color: #e91e63;
-    box-shadow: 0px 0px 5px #e91e63;
-    outline: none;
+/* 🌸 กล่องใส่ข้อมูล */
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
 }
 
-/* ✅ ปุ่มสมัคร */
-.btn-register {
-    background: #e91e63;
-    color: white;
-    padding: 12px;
-    border: none;
+/* ✅ ขนาดช่องกรอกข้อมูลให้เท่ากัน */
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
     width: 100%;
-    font-size: 16px;
+}
+
+.input-group input, 
+.input-group textarea, 
+.input-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #ffccd5;
     border-radius: 8px;
-    transition: all 0.3s;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+    box-sizing: border-box;
+}
+
+/* 🌸 เอฟเฟกต์ตอน Focus */
+.input-group input:focus, 
+.input-group textarea:focus, 
+.input-group select:focus {
+    border-color: #ff6b81;
+    outline: none;
+    box-shadow: 0px 3px 8px rgba(255, 99, 132, 0.3);
+}
+
+/* ✅ ปุ่ม Show/Hide รหัสผ่าน */
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
+    font-size: 18px;
+    color: #ff6b81;
+    background: transparent;
+    border: none;
 }
 
-/* ✅ เมื่อวางเมาส์บนปุ่ม */
-.btn-register:hover {
-    background: #d81b60;
+.toggle-password:hover {
+    color: #e05570;
 }
 
-/* ✅ ลิงก์ไปหน้าเข้าสู่ระบบ */
-.text-link {
-    color: #e91e63;
+/* ✅ ข้อความแนะนำรหัสผ่าน */
+.password-rules {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* 🌸 ปุ่ม Register */
+.btn-register {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff6b81;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
     font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    box-shadow: 0px 4px 8px rgba(255, 99, 132, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* ✅ เมื่อวางเมาส์บนลิงก์ */
+.btn-register i {
+    margin-right: 8px;
+}
+
+.btn-register:hover {
+    background-color: #e05570;
+    transform: translateY(-2px);
+}
+
+/* 🌸 ลิงก์เข้าสู่ระบบ */
+.text-link {
+    color: #ff6b81;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
 .text-link:hover {
-    text-decoration: underline;
+    color: #e05570;
+}
+
+/* 🌸 Responsive */
+@media (max-width: 768px) {
+    .register-card {
+        padding: 30px;
+        max-width: 90%;
+    }
+
+    .form-label {
+        font-size: 12px;
+    }
+
+    .input-group input,
+    .input-group textarea,
+    .input-group select {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .btn-register {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-card {
+        padding: 25px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    .btn-register {
+        font-size: 14px;
+    }
 }

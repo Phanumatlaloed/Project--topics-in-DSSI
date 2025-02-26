@@ -1,16 +1,13 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register as Seller | MyShop</title>
+    <title>ลงทะเบียนผู้ขาย | MyShop</title>
 
-    <!-- ✅ เชื่อมต่อ Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- ✅ Font Awesome -->
+    <!-- ✅ เชื่อมต่อ Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <!-- ✅ เชื่อมต่อไฟล์ CSS -->
@@ -24,11 +21,11 @@
             <img src="{% static 'media/logo.jpg' %}" alt="MyShop Logo">
         </div>
 
-        <h2 class="mt-3">Register as a Seller</h2>
+        <h2 class="mt-3">ลงทะเบียนเป็นผู้ขาย</h2>
 
         <!-- แสดงข้อความแจ้งเตือน -->
         {% if messages %}
-            <div class="mt-3">
+            <div class="alert-container">
                 {% for message in messages %}
                     <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
                         <i class="fa {% if message.tags == 'error' %}fa-times-circle{% else %}fa-check-circle{% endif %}"></i>
@@ -39,90 +36,88 @@
         {% endif %}
 
         <!-- ฟอร์มสมัครสมาชิก -->
-        <form method="post" enctype="multipart/form-data" class="mt-4">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <div class="mb-3">
-                <label class="form-label"><i class="fa fa-user"></i> Username</label>
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-user"></i> ชื่อผู้ใช้</label>
                 {{ user_form.username }}
             </div>
 
-            <div class="mb-3">
-                <label class="form-label"><i class="fa fa-envelope"></i> Email</label>
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-envelope"></i> อีเมล</label>
                 {{ user_form.email }}
             </div>
 
             <!-- ✅ ช่องรหัสผ่าน พร้อมปุ่ม Show/Hide -->
-            <div class="mb-3">
-                <label class="form-label"><i class="fa fa-lock"></i> Password</label>
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-lock"></i> รหัสผ่าน</label>
                 <div class="input-group">
                     {{ user_form.password1 }}
-                    <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password1">
+                    <button type="button" class="toggle-password" data-target="password1">
                         <i class="fa fa-eye"></i>
                     </button>
                 </div>
-                <!-- ✅ กฎการตั้งรหัส -->
-                <div class="password-rules text-muted small mt-1">
-                    <i class="fa fa-info-circle"></i> 
-                    รหัสผ่านต้องมีอย่างน้อย <b>8 ตัวอักษร</b> และต้องมี <b>ตัวเลข & ตัวอักษร</b>
-                </div>
+                <small class="password-rules">
+                    <i class="fa fa-info-circle"></i> รหัสผ่านต้องมีอย่างน้อย <b>8 ตัวอักษร</b> และต้องมี <b>ตัวเลข & ตัวอักษร</b>
+                </small>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label"><i class="fa fa-lock"></i> Confirm Password</label>
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-lock"></i> ยืนยันรหัสผ่าน</label>
                 <div class="input-group">
                     {{ user_form.password2 }}
-                    <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password2">
+                    <button type="button" class="toggle-password" data-target="password2">
                         <i class="fa fa-eye"></i>
                     </button>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label"><i class="fa fa-store"></i> Store Name</label>
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-store"></i> ชื่อร้านค้า</label>
                 {{ seller_form.store_name }}
             </div>
 
             <!-- ✅ ตรวจสอบว่าผู้ใช้อัปโหลดรูปหรือไม่ -->
-            <div class="mb-3">
-                <label class="form-label"><i class="fa fa-image"></i> Upload Store Image</label>
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-image"></i> อัปโหลดรูปภาพร้าน</label>
                 {{ seller_form.store_image }}
-                <small class="text-muted d-block">⚠️ จำเป็นต้องอัปโหลดรูปภาพ!</small>
+                <small class="text-muted">⚠️ จำเป็นต้องอัปโหลดรูปภาพ!</small>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label"><i class="fa fa-phone"></i> Contact Information</label>
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-phone"></i> ข้อมูลติดต่อ</label>
                 {{ seller_form.contact_info }}
             </div>
 
             <button type="submit" class="btn-register">
-                <i class="fa fa-user-plus"></i> Register
+                <i class="fa fa-user-plus"></i> ลงทะเบียน
             </button>
         </form>
 
         <!-- ลิงก์ไปหน้าเข้าสู่ระบบ -->
         <p class="text-muted mt-3">
-            Already a Seller? <a href="{% url 'seller_login' %}" class="text-link">Login Here</a>
+            เป็นผู้ขายอยู่แล้ว? <a href="{% url 'seller_login' %}" class="text-link">เข้าสู่ระบบที่นี่</a>
         </p>
     </div>
-
-    <!-- ✅ เชื่อมต่อ Bootstrap 5 (JS) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- ✅ JavaScript เปิด/ปิดรหัสผ่าน -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.toggle-password').forEach(button => {
                 button.addEventListener('click', function () {
-                    let targetId = this.getAttribute('data-target');
-                    let targetInput = document.querySelector(`input[name="${targetId}"]`);
-                    
+                    let targetId = this.previousElementSibling.getAttribute('id');
+                    let targetInput = document.getElementById(targetId);
+                    let toggleIcon = this.querySelector("i");
+
                     if (targetInput.type === "password") {
                         targetInput.type = "text";
-                        this.innerHTML = '<i class="fa fa-eye-slash"></i>';
+                        toggleIcon.classList.remove("fa-eye");
+                        toggleIcon.classList.add("fa-eye-slash");
                     } else {
                         targetInput.type = "password";
-                        this.innerHTML = '<i class="fa fa-eye"></i>';
+                        toggleIcon.classList.remove("fa-eye-slash");
+                        toggleIcon.classList.add("fa-eye");
                     }
                 });
             });

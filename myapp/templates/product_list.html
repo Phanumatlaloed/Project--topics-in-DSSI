@@ -8,6 +8,7 @@
 
     <!-- ✅ CSS -->
     <link rel="stylesheet" href="{% static 'styles/product_list.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
 
     <!-- ✅ Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -22,17 +23,15 @@
                 </a>
             </div>
             <ul class="nav-links">
-                <li><a href="{% url 'home' %}">🏠 Home</a></li>
-                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
-                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                <li><a href="{% url 'profile' request.user.id %}">📄 Profile</a></li>
-                <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
-                <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
-                <li><a href="{% url 'cart' %}">🛒 Cart (<span id="cart-count">{{ cart_count }}</span>)</a></li>
+                <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="nav-link {% if request.path == '/products/' %}active{% endif %}">🛍 Products</a></li>
+                <li><a href="{% url 'order_history' %}" class="nav-link {% if request.path == '/order/history/' %}active{% endif %}">📜 Order History</a></li>
+                <li><a href="{% url 'cart' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">🛒 Cart</a></li>
             </ul>
         </nav>
     </header>
-
+    
     <main>
         <h2>🛍 สินค้าทั้งหมด</h2>
 

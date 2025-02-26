@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🛒 ตะกร้าสินค้า</title>
     <link rel="stylesheet" href="{% static 'styles/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -14,17 +15,21 @@
     <header>
         <nav class="navbar">
             <div class="logo">
-                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+                </a>
             </div>
             <ul class="nav-links">
-                <li><a href="{% url 'home' %}">🏠 Home</a></li>
-                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
-                <li><a href="{% url 'cart' %}" class="active">🛒 Cart</a></li>
-                <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
+                <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="nav-link {% if request.path == '/product/' %}active{% endif %}">🛍 Products</a></li>
+                <li><a href="{% url 'order_history' %}" class="nav-link {% if request.path == '/order/history/' %}active{% endif %}">📜 Order History</a></li>
+                <li><a href="{% url 'cart' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">🛒 Cart</a></li>
             </ul>
         </nav>
     </header>
-
+    
+    
     <!-- 🌸 Content -->
     <main>
         <div class="container">

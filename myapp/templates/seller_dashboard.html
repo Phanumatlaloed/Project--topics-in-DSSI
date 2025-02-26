@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แดชบอร์ดร้านค้า</title>
     <link rel="stylesheet" href="{% static 'styles/seller_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -26,6 +27,7 @@
 
                 <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
                 <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'seller_notifications' %}"> การแจ้งเตือน</a></li>
 
                 <li class="menu-header">⚙️ การตั้งค่า</li>
                 <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
@@ -62,7 +64,6 @@
                             <th>ยอดขาย</th>
                             <th>ราคา</th>
                             <th>คลังสินค้า</th>
-                            <th>คุณภาพ</th>
                             <th>การดำเนินการ</th>
                         </tr>
                     </thead>
@@ -78,7 +79,6 @@
                                 <td>{{ product.sales_count }} รายการ</td>
                                 <td>฿{{ product.price }}</td>
                                 <td>{{ product.stock }} ชิ้น</td>
-                                <td>{{ product.quality_score }}%</td>
                                 <td>
                                     <a href="{% url 'edit_product' product.id %}" class="edit-btn">แก้ไข</a>
                                     <a href="{% url 'delete_product' product.id %}" class="delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">ลบ</a>

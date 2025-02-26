@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สินค้าของฉัน</title>
     <link rel="stylesheet" href="{% static 'styles/my_products.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
 </head>
 <body>
     <div class="dashboard-container">
@@ -23,8 +24,8 @@
                 <li class="menu-item active"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
                 <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
 
-                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
-                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
+                <li class="menu-header">รายงานประสิทธิภาพ</li>
+                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานร้านค้า</a></li>
 
                 <li class="menu-header">การตั้งค่า</li>
                 <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
@@ -36,9 +37,25 @@
 
         <!-- Main Content -->
         <main class="content">
-            <h2>สินค้าของฉัน</h2>
-            <a href="{% url 'add_product' %}" class="btn-add-product">เพิ่มสินค้าใหม่</a>
+            <!-- 🌸 การ์ดข้อมูลร้านค้า -->
+            <div class="seller-info">
+                <div class="seller-card">
+                    {% if store.store_image %}
+                        <img src="{{ store.store_image.url }}" alt="ร้านค้า" class="store-image">
+                    {% else %}
+                        <img src="{% static 'images/default-store.png' %}" alt="ร้านค้า" class="store-image">
+                    {% endif %}
+                    <h3>🛍 ร้านค้า: <strong>{{ store.store_name }}</strong></h3>
+                    <p>💰 รายได้รวม: <strong>฿{{ total_earnings }}</strong></p>
+                    <p>📦 จำนวนสินค้าทั้งหมด: <strong>{{ total_products }}</strong> รายการ</p>
+                </div>
+            </div>
 
+            <!-- 🌸 ส่วนหัว -->
+            <h2 class="title">สินค้าของฉัน</h2>
+            <a href="{% url 'add_product' %}" class="btn-add-product">➕ เพิ่มสินค้าใหม่</a>
+
+            <!-- 🌸 ตารางสินค้า -->
             {% if products %}
             <div class="product-table">
                 <table>
@@ -49,7 +66,6 @@
                             <th>หมวดหมู่</th>
                             <th>ราคา</th>
                             <th>จำนวนคงเหลือ</th>
-                            <th>รายละเอียดสินค้า</th>
                             <th>ยอดขาย</th>
                             <th>วันที่เพิ่ม</th>
                             <th>การดำเนินการ</th>
@@ -67,12 +83,11 @@
                             <td>{{ product.get_category_display }}</td>
                             <td>฿{{ product.price }}</td>
                             <td>{{ product.stock }} ชิ้น</td>
-                            <td>{{ product.description }}</td>
                             <td>{{ product.sales_count }} รายการ</td>
                             <td>{{ product.created_at|date:"d/m/Y" }}</td>
                             <td>
-                                <a href="{% url 'edit_product' product.id %}" class="btn edit-btn">แก้ไข</a>
-                                <a href="{% url 'delete_product' product.id %}" class="btn delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">ลบ</a>
+                                <a href="{% url 'edit_product' product.id %}" class="btn edit-btn">✏️ แก้ไข</a>
+                                <a href="{% url 'delete_product' product.id %}" class="btn delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">🗑 ลบ</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -80,7 +95,7 @@
                 </table>
             </div>
             {% else %}
-                <p class="text-center text-muted">ไม่มีสินค้า</p>
+                <p class="no-products">ไม่มีสินค้า</p>
             {% endif %}
         </main>
     </div>

@@ -1,110 +1,151 @@
-/* ตั้งค่าพื้นฐาน */
+/* 🌸 ตั้งค่าพื้นฐาน */
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(to right, #ff9966, #ff5e62);
+    background-color: #fff5f8;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
 }
 
-/* กล่อง Login */
+/* 🌸 คอนเทนเนอร์หลัก */
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.login-box {
-    background: #fff;
+    background: white;
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
     max-width: 400px;
-    width: 100%;
+    width: 90%;
 }
 
-/* โลโก้ */
+/* 🌸 โลโก้ */
 .logo img {
     width: 100px;
+    height: auto;
     margin-bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid #ff6b81;
 }
 
-/* หัวข้อ */
+/* 🌸 หัวข้อ */
 h2 {
+    color: #ff4081;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* 🌸 ข้อความแนะนำ */
+p {
+    font-size: 14px;
     color: #333;
-    font-weight: 600;
     margin-bottom: 20px;
 }
 
-/* กล่องข้อความ */
+/* 🌸 กล่องใส่ข้อมูล */
 .input-group {
-    margin-bottom: 15px;
+    position: relative;
+    margin-bottom: 20px;
 }
 
 .input-group input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    padding: 12px 14px; /* ✅ padding ซ้ายขวา */
+    border: 2px solid #ffccd5;
+    border-radius: 8px;
     font-size: 16px;
+    text-align: left;
+    background: #fffafc;
+    transition: all 0.3s ease-in-out;
 }
 
-/* ปุ่ม Login */
-.btn-login {
-    background: #ff5e62;
-    color: white;
-    padding: 12px;
-    width: 100%;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
+/* ✅ ปรับตำแหน่งไอคอนตา */
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
     cursor: pointer;
-    transition: background 0.3s ease;
+    color: #ff6b81;
+    font-size: 18px;
+    transition: color 0.3s ease-in-out;
+}
+
+.toggle-password:hover {
+    color: #e05570;
+}
+
+/* 🌸 ปุ่มเข้าสู่ระบบ */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff6b81;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    box-shadow: 0px 4px 8px rgba(255, 99, 132, 0.3);
 }
 
 .btn-login:hover {
-    background: #e04b50;
+    background-color: #e05570;
+    transform: translateY(-2px);
 }
 
-/* ลิงก์สมัครสมาชิก */
+/* 🌸 ลิงก์สมัครสมาชิก */
 .register-link {
+    font-size: 14px;
     margin-top: 15px;
 }
 
 .register-link a {
-    color: #ff5e62;
+    color: #ff6b81;
+    font-weight: bold;
     text-decoration: none;
-    font-weight: 600;
+    transition: color 0.3s;
 }
 
 .register-link a:hover {
-    text-decoration: underline;
+    color: #e05570;
 }
 
-/* ข้อความแจ้งเตือน */
-.messages {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 15px;
+/* 🌸 ลิงก์ผู้ขายและผู้ดูแลระบบ */
+.other-login {
+    margin-top: 15px;
 }
 
-.messages li {
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    margin-bottom: 5px;
+.other-login a {
+    color: #ff6b81;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
 }
 
-.messages .success {
-    background: #d4edda;
-    color: #155724;
+.other-login a:hover {
+    color: #e05570;
 }
 
-.messages .error {
-    background: #f8d7da;
-    color: #721c24;
+/* 🌸 Responsive */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 30px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    .btn-login {
+        font-size: 14px;
+    }
 }

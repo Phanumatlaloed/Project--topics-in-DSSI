@@ -1,0 +1,134 @@
+/* 🌸 ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* 🌸 คอนเทนเนอร์ */
+.register-container {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+/* 🌸 โลโก้ */
+.logo img {
+    width: 80px;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid #ff6b81;
+}
+
+/* 🌸 หัวข้อ */
+h2 {
+    color: #ff4081;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* 🌸 กล่องข้อความแจ้งเตือน */
+.messages {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* 🌸 กล่องใส่ข้อมูล */
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ffccd5;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fffafc;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 🌟 เพิ่มเอฟเฟกต์ Focus */
+.form-group input:focus {
+    border-color: #ff6b81;
+    outline: none;
+    background: white;
+    box-shadow: 0px 3px 8px rgba(255, 99, 132, 0.3);
+}
+
+/* ✅ ปรับสไตล์ให้ไอคอนตาอยู่ในช่องรหัสผ่าน */
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+    color: #ff6b81;
+    transition: color 0.3s ease-in-out;
+}
+
+.toggle-password:hover {
+    color: #e05570;
+}
+
+/* 🌸 ปุ่มสมัคร */
+.btn-register {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff6b81;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    box-shadow: 0px 4px 8px rgba(255, 99, 132, 0.3);
+}
+
+.btn-register:hover {
+    background-color: #e05570;
+    transform: translateY(-2px);
+}
+
+/* 🌸 ลิงก์เข้าสู่ระบบ */
+.login-link {
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.login-link a {
+    color: #ff6b81;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.login-link a:hover {
+    color: #e05570;
+}

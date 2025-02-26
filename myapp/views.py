@@ -335,6 +335,7 @@ def create_post(request):
 
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
+
 @login_required
 def delete_post(request, post_id):
     """ ฟังก์ชันลบโพสต์และไฟล์แนบที่เกี่ยวข้อง """
@@ -348,7 +349,13 @@ def delete_post(request, post_id):
         if post.user != request.user:
             return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบโพสต์นี้"}, status=403)
 
-        # ✅ ลบไฟล์แนบ
+        # ✅ เช็คว่าโพสต์นี้เป็นโพสต์ที่ถูกแชร์มาหรือไม่
+        if post.shared_from:
+            # ✅ ถ้าเป็นโพสต์ที่แชร์มา แค่ลบโพสต์นี้ ไม่ต้องลบโพสต์ต้นฉบับ
+            post.delete()
+            return JsonResponse({"success": True, "message": "โพสต์แชร์ถูกลบเรียบร้อยแล้ว แต่โพสต์ต้นฉบับยังคงอยู่"}, status=200)
+
+        # ✅ ลบไฟล์แนบถ้าเป็นโพสต์ต้นฉบับ
         for media in post.media.all():
             if media.file:
                 file_path = os.path.join(settings.MEDIA_ROOT, str(media.file))
@@ -356,10 +363,11 @@ def delete_post(request, post_id):
                     os.remove(file_path)
             media.delete()
 
-        post.delete()  # ✅ ลบโพสต์
-        return JsonResponse({"success": True, "message": "โพสต์ถูกลบเรียบร้อยแล้ว!"}, status=200)
+        post.delete()  # ✅ ลบโพสต์ต้นฉบับ
+        return JsonResponse({"success": True, "message": "โพสต์ต้นฉบับถูกลบเรียบร้อยแล้ว!"}, status=200)
     
     return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
+
 
 @login_required
 def edit_post(request, post_id):
@@ -1203,9 +1211,28 @@ def product_list(request):
 # ✅ แสดงสินค้าของร้านค้าตนเอง (เฉพาะผู้ขาย)
 @login_required
 def my_products(request):
+    # ตรวจสอบว่าผู้ใช้เป็น Seller หรือไม่
     seller = get_object_or_404(Seller, user=request.user)
-    products = seller.products.all()
-    return render(request, "my_products.html", {"products": products, "seller": seller})
+
+    # ดึงข้อมูลร้านค้าของผู้ขาย
+    store = seller  # สามารถใช้ `store` หรือ `seller` ตามที่ใช้ในเทมเพลต
+
+    # ดึงสินค้าทั้งหมดของผู้ขาย
+    products = Product.objects.filter(seller=seller)
+
+    # คำนวณจำนวนสินค้าทั้งหมด และรายได้รวม
+    total_products = products.count()
+    total_earnings = sum(p.price * p.total_sold for p in products)
+
+    context = {
+        'seller': seller,
+        'store': store,
+        'products': products,
+        'total_products': total_products,
+        'total_earnings': total_earnings,
+    }
+    return render(request, 'my_products.html', context)
+
 
 @login_required
 def edit_product(request, product_id):
@@ -1342,6 +1369,7 @@ def edit_store(request):
 
     return render(request, 'edit_store.html', {'form': form})
 
+
 # ✅ แสดงหน้าตะกร้าสินค้า
 @login_required
 def view_cart(request):
@@ -1456,21 +1484,22 @@ def update_shipping(request):
     """ อัปเดตที่อยู่จัดส่ง """
     if request.method == "POST":
         address = request.POST.get("address")
+        city = request.POST.get("city")  # ✅ ดึงค่า city
+        postal_code = request.POST.get("postal_code")  # ✅ ดึงค่า postal_code
         phone = request.POST.get("phone_number")
-        city = request.POST.get("city")
-        postal_code = request.POST.get("postal_code")
 
         shipping, created = ShippingAddress.objects.get_or_create(user=request.user)
         shipping.address = address
+        shipping.city = city  # ✅ บันทึก city
+        shipping.postal_code = postal_code  # ✅ บันทึก postal_code
         shipping.phone_number = phone
-        shipping.city = city
-        shipping.postal_code = postal_code
         shipping.save()
 
         messages.success(request, "✅ อัปเดตที่อยู่จัดส่งเรียบร้อย!")
         return redirect('checkout')
 
     return render(request, "shipping_form.html")
+
 
 @login_required
 def upload_payment(request, order_ids):
@@ -1508,6 +1537,10 @@ def upload_payment(request, order_ids):
 
     return render(request, "upload_payment.html", {"orders": orders, "total_payment": total_payment})
 
+from myapp.models import Product, Review
+from notifications.models import Notification  # ✅ แก้ไข Import
+
+
 @login_required
 def add_review(request, product_id):
     """ เพิ่มรีวิวสินค้า """
@@ -1516,12 +1549,24 @@ def add_review(request, product_id):
     if request.method == "POST":
         rating = request.POST.get("rating")
         comment = request.POST.get("comment")
-        Review.objects.create(user=request.user, product=product, rating=rating, comment=comment)
+        review = Review.objects.create(user=request.user, product=product, rating=rating, comment=comment)
+
+        # ✅ แจ้งเตือนเจ้าของร้านเมื่อมีรีวิวใหม่
+        if product.seller:  # ตรวจสอบว่าเจ้าของสินค้ามีอยู่
+            Notification.objects.create(
+                user=product.seller,  # แจ้งเตือนเจ้าของร้าน
+                sender=request.user,  # ผู้ที่ให้รีวิว
+                notification_type="new_review",
+                order=None,  # ไม่ได้เชื่อมกับออเดอร์
+                post=None,
+                group_post=None
+            )
 
         messages.success(request, "✅ รีวิวสำเร็จ!")
         return redirect('product_detail', product_id=product.id)
 
     return render(request, "add_review.html", {"product": product})
+
 
 @login_required
 def order_tracking(request):
@@ -1583,31 +1628,30 @@ def return_order(request, order_id):
 
     return render(request, "return_order.html", {"order": order})
 
-
+@login_required
+@csrf_exempt  # ✅ ปิดการตรวจสอบ CSRF ชั่วคราว (ใช้เฉพาะทดสอบ)
 @login_required
 def cancel_order(request, order_id):
-    """ ฟังก์ชันขอยกเลิกออเดอร์ """
+    """ แสดงฟอร์มให้ผู้ใช้กรอกเหตุผลก่อนยกเลิกออเดอร์ """
     order = get_object_or_404(Order, id=order_id, user=request.user)
-
-    # ตรวจสอบว่าออเดอร์ยังสามารถยกเลิกได้หรือไม่
-    if order.status not in ["Pending", "Processing"]:
-        messages.error(request, "❌ ไม่สามารถยกเลิกออเดอร์ที่กำลังจัดส่งหรือเสร็จสิ้นแล้ว!")
-        return redirect('order_tracking')
 
     if request.method == "POST":
         reason = request.POST.get("reason", "").strip()
         if not reason:
-            messages.error(request, "❌ กรุณากรอกเหตุผลการยกเลิก!")
-            return redirect('cancel_order', order_id=order.id)
+            messages.error(request, "❌ กรุณากรอกเหตุผลก่อนยกเลิกออเดอร์!")
+            return render(request, "cancel_order.html", {"order": order})  
 
-        order.status = "Cancelled"
+        # ✅ เปลี่ยนสถานะออเดอร์เป็น "ยกเลิกแล้ว"
+        order.status = "cancelled"
         order.cancel_reason = reason
         order.save()
 
-        messages.success(request, "✅ คำขอยกเลิกออเดอร์ของคุณถูกส่งแล้ว!")
-        return redirect('order_tracking')
+        messages.success(request, f"✅ ออเดอร์ #{order.id} ถูกยกเลิกเรียบร้อยแล้ว!")
+        return redirect("order_history")  # กลับไปยังหน้าประวัติคำสั่งซื้อ
 
     return render(request, "cancel_order.html", {"order": order})
+
+
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -1616,31 +1660,53 @@ from .models import Order, RefundRequest
 from .forms import RefundRequestForm, RefundProofForm
 
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from myapp.models import Order, RefundRequest
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from myapp.models import Order, RefundRequest
+
 @login_required
 def order_history(request):
     """ แสดงประวัติคำสั่งซื้อของผู้ใช้ """
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    orders = Order.objects.filter(user=request.user).prefetch_related("order_items")
     pending_orders = orders.filter(status__in=["pending", "processing", "shipped"])
     completed_orders = orders.filter(status="delivered")
+    cancelled_orders = orders.filter(status="cancelled")
+    
+
+    # ✅ ดึงรายการสินค้าที่รีวิวไปแล้ว
+     # ✅ ดึงรายการสินค้าที่รีวิวไปแล้ว
+    reviewed_products = Review.objects.filter(user=request.user).values_list("product_id", "order_id")
+    reviewed_dict = {f"{product_id}_{order_id}": True for product_id, order_id in reviewed_products}
+
+    
+    return_orders = RefundRequest.objects.filter(user=request.user)
 
     context = {
         'orders': orders,
         'pending_orders': pending_orders,
         'completed_orders': completed_orders,
+        'cancelled_orders': cancelled_orders,
+        'reviewed_products': reviewed_dict,  # ✅ ใช้ dict เพื่อให้ template เช็คได้ง่าย
+        'return_orders': return_orders,
+        'all_orders': orders,  # ✅ เพิ่มออเดอร์ทั้งหมด
     }
     return render(request, 'order_history.html', context)
 
+
+
 @login_required
 def refund_history(request):
-    """ แสดงประวัติการคืนเงินของผู้ใช้ """
-    return_orders = RefundRequest.objects.filter(
-        user=request.user, status="refunded", confirmed_by_user=False
-    ).select_related('order', 'item', 'item__product')
+    """ แสดงประวัติการคืนสินค้า """
+    return_orders = RefundRequest.objects.filter(user=request.user, status="refunded")\
+                                        .select_related("order", "order__seller", "item", "item__product")\
+                                        .prefetch_related("order__order_items", "order__order_items__product")
 
-    context = {
-        'return_orders': return_orders,
-    }
-    return render(request, 'refund_history.html', context)
+    return render(request, "refund_history.html", {"return_orders": return_orders})
 
 
 
@@ -1664,13 +1730,11 @@ def get_shipping_address(user):
 
 @login_required
 def confirm_order(request):
-    """ ยืนยันคำสั่งซื้อ แยกออเดอร์ตามร้านค้า ลดสต๊อก และแนบสลิปการชำระเงิน """
+    """ ยืนยันคำสั่งซื้อ และบันทึกข้อมูลที่อยู่จัดส่งลงฐานข้อมูล """
     if request.method == "POST":
-        # รับค่าที่อยู่จัดส่งจากฟอร์ม
         shipping_address_id = request.POST.get("shipping_address")
         shipping_address = get_object_or_404(ShippingAddress, id=shipping_address_id, user=request.user)
 
-        # ดึงข้อมูลตะกร้าสินค้า
         cart = Cart.objects.get(user=request.user)
         cart_items = CartItem.objects.filter(cart=cart)
 
@@ -1678,7 +1742,6 @@ def confirm_order(request):
             messages.error(request, "❌ ไม่มีสินค้าในตะกร้า กรุณาเลือกสินค้าก่อนทำการสั่งซื้อ!")
             return redirect("cart")
 
-        # แยกสินค้าออกเป็นออเดอร์ตามร้านค้า
         orders_by_seller = {}
         for item in cart_items:
             seller = item.product.seller
@@ -1686,24 +1749,24 @@ def confirm_order(request):
                 orders_by_seller[seller] = []
             orders_by_seller[seller].append(item)
 
-        order_ids = []  # เก็บ ID ของออเดอร์ทั้งหมดที่สร้างขึ้น
+        order_ids = []
 
-        # ✅ สร้างคำสั่งซื้อแยกตามร้านค้า
         for seller, items in orders_by_seller.items():
             total_price = sum(item.quantity * item.product.price for item in items)
 
-            # สร้างออเดอร์สำหรับร้านค้านี้
+            # ✅ ตรวจสอบให้แน่ใจว่ามีการเก็บค่าทั้งหมด
             order = Order.objects.create(
                 user=request.user,
                 seller=seller,
                 shipping_address=shipping_address.address,
+                city=shipping_address.city,  # ✅ เก็บค่าเมือง
+                postal_code=shipping_address.postal_code,  # ✅ เก็บค่ารหัสไปรษณีย์
                 phone_number=shipping_address.phone_number,
                 total_price=total_price,
                 status="pending",
                 payment_status="pending",
             )
 
-            # ✅ เพิ่มสินค้าเข้าไปใน OrderItem
             for item in items:
                 if item.product.stock < item.quantity:
                     messages.error(request, f"❌ สินค้า {item.product.name} มีไม่พอในสต๊อก! (เหลือ {item.product.stock} ชิ้น)")
@@ -1717,18 +1780,14 @@ def confirm_order(request):
                     price_per_item=item.product.price,
                 )
 
-                # ✅ ลดสต๊อกสินค้า
                 item.product.stock -= item.quantity
                 item.product.save()
 
             order_ids.append(order.id)
 
-        # ✅ ลบสินค้าออกจากตะกร้า
         cart_items.delete()
-
         messages.success(request, "✅ คำสั่งซื้อของคุณถูกยืนยันเรียบร้อยแล้ว!")
 
-        # ✅ นำผู้ใช้ไปยังหน้าชำระเงิน (ถ้ามีการอัปโหลดสลิป)
         return redirect("upload_payment", order_ids=",".join(map(str, order_ids)))
 
     return redirect("checkout")
@@ -1811,7 +1870,7 @@ def confirm_delivery(request, order_id):
 
 
 @login_required
-def cancel_order(request, order_id):
+def sellercancel_order(request, order_id):
     """ ยกเลิกคำสั่งซื้อ """
     order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
     order.status = "canceled"
@@ -2102,7 +2161,8 @@ def admin_register(request):
     return render(request, 'admin_register.html', {'form': form})
 
 # แสดงแดชบอร์ดแอดมิน
-@user_passes_test(is_admin)
+# แสดงแดชบอร์ดแอดมิน (เฉพาะแอดมินเข้าได้)
+@user_passes_test(is_admin, login_url='/login/')
 def admin_dashboard(request):
     reported_posts = Report.objects.select_related('post', 'reported_by').order_by('-created_at')
     return render(request, "admin_dashboard.html", {"reported_posts": reported_posts})
@@ -2240,6 +2300,7 @@ def add_review(request, order_id, product_id):
 
 
 
+
 def seller_wallet(request):
     """ แสดงข้อมูลกระเป๋าเงินของผู้ขาย """
     seller = request.user.seller_profile
@@ -2267,33 +2328,48 @@ from django.contrib import messages
 from .models import Order, RefundRequest
 from .forms import RefundRequestForm
 
-# ✅ 2. ขอคืนเงิน (ลูกค้า)
 @login_required
 def request_refund(request, order_id, item_id):
+    """ ฟังก์ชันให้ผู้ใช้ขอคืนเงินสำหรับสินค้ารายการเดียว """
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    item = get_object_or_404(OrderItem, id=item_id, order=order)  # ✅ ค้นหาสินค้าที่ต้องการคืน
+    item = get_object_or_404(OrderItem, id=item_id, order=order)  # ✅ ดึงสินค้าเฉพาะที่ตรงกับออเดอร์
+
+    if RefundRequest.objects.filter(order=order, item=item).exists():
+        messages.warning(request, "คุณได้ส่งคำขอคืนเงินสำหรับสินค้านี้ไปแล้ว")
+        return redirect("order_history")
 
     if request.method == "POST":
-        form = RefundRequestForm(request.POST, request.FILES)
-        if form.is_valid():
-            refund_request = form.save(commit=False)
-            refund_request.user = request.user
-            refund_request.order = order
-            refund_request.item = item  # ✅ ผูกกับสินค้าที่ต้องการคืน
-            refund_request.save()
-            return redirect("order_history")  # ✅ กลับไปหน้าประวัติคำสั่งซื้อ
-    else:
-        form = RefundRequestForm()
+        refund_request = RefundRequest.objects.create(
+            user=request.user,
+            order=order,
+            item=item,  # ✅ บันทึกสินค้าที่ขอคืนเงิน
+            account_name=request.POST.get("account_name"),
+            account_number=request.POST.get("account_number"),
+            bank_name=request.POST.get("bank_name"),
+            refund_reason=request.POST.get("refund_reason"),
+            payment_proof=request.FILES.get("payment_proof"),
+            status="pending",
+        )
 
-    return render(request, "partials/refund_request.html", {"form": form, "order": order, "item": item})
+        messages.success(request, "✅ คำขอคืนเงินถูกส่งเรียบร้อยแล้ว")
+        return redirect("order_history")
+
+    return render(request, "partials/refund_request.html", {"order": order, "item": item})
+
+
 
 
 
 @login_required
 def seller_refund_requests(request):
-    seller = request.user.seller_profile  
-    refund_requests = RefundRequest.objects.filter(order__seller=seller)  # ✅ แสดงทุกสถานะ
+    """ แสดงรายการคำขอคืนเงินของผู้ขาย """
+    seller = request.user.seller_profile  # ดึงโปรไฟล์ของผู้ขาย
+    refund_requests = RefundRequest.objects.filter(order__seller=seller)\
+                                           .select_related("order", "user", "item", "item__product")\
+                                           .prefetch_related("order__order_items", "order__order_items__product")
     return render(request, "refund_requests_seller.html", {"refund_requests": refund_requests})
+
+
 
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -2304,34 +2380,57 @@ from myapp.forms import RefundProofForm
 
 @login_required
 def upload_refund_proof(request, refund_id):
-    """ อัปโหลดสลิปคืนเงินสำหรับผู้ขาย """
-    refund_request = get_object_or_404(RefundRequest, id=refund_id)
+    """ ผู้ขายอัปโหลดหลักฐานการคืนเงิน """
+    refund_request = get_object_or_404(RefundRequest, id=refund_id, order__seller=request.user.seller_profile)
 
     if request.method == "POST":
         form = RefundProofForm(request.POST, request.FILES, instance=refund_request)
         if form.is_valid():
-            refund_request.status = "refunded"  # ✅ อัปเดตสถานะเป็น Refunded
+            refund_request.status = "refunded"  # ✅ อัปเดตสถานะเป็นคืนเงินแล้ว
             form.save()
-            messages.success(request, "✅ อัปโหลดสลิปคืนเงินเรียบร้อยแล้ว")
+
+            # ✅ แจ้งเตือนลูกค้าว่าผู้ขายได้อัปโหลดสลิปคืนเงินแล้ว
+            Notification.objects.create(
+                user=refund_request.user,
+                sender=request.user,
+                notification_type="refund_completed",
+                order=refund_request.order,
+            )
+
+            messages.success(request, "✅ อัปโหลดสลิปคืนเงินสำเร็จ! รอลูกค้ายืนยัน")
             return redirect("seller_refund_requests")
+    
     else:
         form = RefundProofForm(instance=refund_request)
 
-    return render(request, "refund_upload.html", {"form": form, "refund_request": refund_request})
+    return render(request, "refund_upload.html", {
+        "refund_request": refund_request,
+        "form": form
+    })
+
+
 
 @login_required
 def approve_refund(request, refund_id):
-    """ อนุมัติการคืนเงินของผู้ขาย """
+    """ ผู้ขายอนุมัติคำขอคืนเงิน """
     refund_request = get_object_or_404(RefundRequest, id=refund_id, order__seller=request.user.seller_profile)
 
-    # ✅ เปลี่ยนสถานะเป็น "approved"
-    refund_request.status = "approved"
-    refund_request.order.status = "refunded"  # ✅ อัปเดตสถานะออเดอร์ให้เป็น "refunded"
-    refund_request.order.save()
-    refund_request.save()
+    if refund_request.status == "pending":
+        refund_request.status = "approved"
+        refund_request.save()
 
-    messages.success(request, f"✅ อนุมัติการคืนเงินสำหรับคำขอ #{refund_request.id} สำเร็จแล้ว")
+        # ✅ สร้าง Notification ให้ลูกค้าทราบว่าได้รับการอนุมัติ
+        Notification.objects.create(
+            user=refund_request.user,
+            sender=request.user,
+            notification_type="refund_approved",
+            order=refund_request.order,
+        )
+
+        messages.success(request, "✅ อนุมัติคำขอคืนเงินสำเร็จ! กรุณาอัปโหลดสลิปการโอนคืนเงิน")
+    
     return redirect("seller_refund_requests")
+
 
 @login_required
 def reject_refund(request, refund_id):
@@ -2347,17 +2446,26 @@ def reject_refund(request, refund_id):
 
 @login_required
 def confirm_refund_received(request, refund_id):
-    """ ผู้ใช้กดยืนยันว่าได้รับเงินคืนแล้ว """
+    """ ลูกค้ายืนยันว่าได้รับเงินคืนแล้ว """
     refund_request = get_object_or_404(RefundRequest, id=refund_id, user=request.user)
 
-    if refund_request.status == "refunded":  # ✅ ตรวจสอบว่าสถานะคือ "refunded"
-        refund_request.status = "confirmed"  # ✅ อัปเดตเป็น "confirmed"
+    if refund_request.status == "refunded":
+        refund_request.status = "confirmed"
+        refund_request.confirmed_by_user = True
         refund_request.save()
-        messages.success(request, "✅ คุณได้ยืนยันการรับเงินคืนแล้ว!")
-    else:
-        messages.error(request, "❌ ไม่สามารถยืนยันได้ โปรดลองใหม่")
 
-    return redirect("order_history")  # ✅ กลับไปที่หน้าประวัติคำสั่งซื้อ
+        # ✅ แจ้งเตือนผู้ขายว่าลูกค้าได้รับเงินคืนแล้ว
+        Notification.objects.create(
+            user=refund_request.order.seller.user,  # ผู้ขาย
+            sender=request.user,
+            notification_type="refund_confirmed",
+            order=refund_request.order,
+        )
+
+        messages.success(request, "✅ คุณได้ยืนยันว่าได้รับเงินคืนแล้ว")
+    
+    return redirect("order_history")
+
 
 from .models import SellerWallet, WithdrawalRequest
 from .forms import WithdrawalForm
@@ -2531,3 +2639,33 @@ def admin_performance(request):
 
     return render(request, "admin_performance.html", context)
 
+@login_required
+def update_order_shipping(request, order_id):
+    """ อัปเดตที่อยู่จัดส่งของ Order """
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if request.method == "POST":
+        new_address = request.POST.get("address", "").strip()
+        new_city = request.POST.get("city", "").strip()
+        new_postal_code = request.POST.get("postal_code", "").strip()
+        new_phone = request.POST.get("phone_number", "").strip()
+
+        # ✅ ตรวจสอบข้อมูลก่อนอัปเดต
+        if new_address and new_city and new_postal_code and new_phone:
+            order.shipping_address = new_address
+            order.city = new_city
+            order.postal_code = new_postal_code
+            order.phone_number = new_phone
+            order.save()  # ✅ บันทึกลงฐานข้อมูล
+
+            return JsonResponse({
+                "success": True,
+                "new_address": new_address,
+                "new_city": new_city,
+                "new_postal_code": new_postal_code,
+                "new_phone": new_phone
+            })
+
+        return JsonResponse({"success": False, "error": "กรุณากรอกข้อมูลให้ครบถ้วน"})
+
+    return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)

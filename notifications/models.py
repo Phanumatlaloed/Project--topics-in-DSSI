@@ -13,11 +13,16 @@ class Notification(models.Model):
         ('like_post', 'Post Liked'),
         ('share_post', 'Post Shared'),
         ('new_follower', 'New Follower'),
-        ('new_order', 'New Order'),
-        ('new_review', 'New Review'),
         ('refund_request', 'Refund Request'),
         ('like_group_post', 'Group Post Liked'),  # ✅ เพิ่มประเภทการแจ้งเตือน
         ('comment_group_post', 'Group Post Commented'),  # ✅ เพิ่มประเภทการแจ้งเตือน
+        ('new_order', 'New Order'),
+        ('new_review', 'New Review'),
+        ('refund_request', 'Refund Request'),
+        ('refund_completed', 'Refund Completed'),
+        ('order_shipped', 'Order Shipped'),
+        ('refund_approved', 'Refund Approved'),
+        ('refund_rejected', 'Refund Rejected'),
     ])
     
     post = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True, blank=True)

@@ -16,64 +16,6 @@ body {
     align-items: flex-start;
 }
 
-/* ✅ Sidebar */
-.sidebar {
-    width: 260px;
-    background: linear-gradient(135deg, #FFC0CB, #FFC0CB);
-    color: white;
-    padding: 20px;
-    min-height: 100vh;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s ease-in-out;
-}
-
-.sidebar-title {
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.menu {
-    list-style: none;
-    padding: 0;
-}
-
-.menu-header {
-    font-weight: bold;
-    margin-top: 15px;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-}
-
-.menu-item {
-    margin-top: 10px;
-}
-
-.menu-item a {
-    color: white;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-.menu-item a i {
-    margin-right: 8px;
-    font-size: 18px;
-}
-
-.menu-item a:hover, .menu-item.active a {
-    background: white;
-    color: #FFC0CB;
-    font-weight: bold;
-    transform: translateX(5px);
-    box-shadow: 0px 4px 10px rgba(255, 99, 132, 0.3);
-}
-
 /* ✅ Main Content */
 .content {
     flex-grow: 1;

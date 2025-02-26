@@ -6,46 +6,6 @@ body {
     padding: 0;
 }
 
-/* 🌸 Navbar */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: white;
-    padding: 15px 30px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.logo img {
-    width: 80px;
-    height: auto;
-}
-
-.nav-links {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    gap: 20px;
-}
-
-.nav-links li {
-    display: inline;
-}
-
-.nav-links a {
-    text-decoration: none;
-    font-weight: bold;
-    color: #ff6b81;
-    padding: 10px 15px;
-    border-radius: 8px;
-    transition: background 0.3s;
-}
-
-.nav-links a:hover, .nav-links a.active {
-    background: #ff6b81;
-    color: white;
-}
-
 /* 🌸 ส่วนหัวของหน้าสินค้า */
 h2 {
     text-align: center;

@@ -202,9 +202,11 @@ class EditPostForm(forms.ModelForm):
 class ShippingAddressForm(forms.ModelForm):
     class Meta:
         model = ShippingAddress
-        fields = ['address', 'phone_number']
+        fields = ['address', 'city', 'postal_code', 'phone_number']  # ✅ เพิ่ม city และ postal_code
         labels = {
             'address': '📍 ที่อยู่จัดส่ง',
+            'city': '🏙 เมือง',
+            'postal_code': '📮 รหัสไปรษณีย์',
             'phone_number': '📞 เบอร์โทรศัพท์',
         }
 
@@ -311,16 +313,19 @@ class UserProfileForm(forms.ModelForm):
         }
 
 # ✅ ฟอร์มแก้ไขข้อมูลร้านค้า (สำหรับ Seller)
-class SellerProfileForm(forms.ModelForm):
+class SellerUpdateForm(forms.ModelForm):
+    """ ฟอร์มแก้ไขข้อมูลร้านค้า """
     class Meta:
-        model = Seller  # ✅ ใช้ Seller แทน SellerProfile
-        fields = ['store_name', 'email', 'store_image', 'contact_info']
+        model = Seller
+        fields = ['store_name', 'contact_info', 'store_image', 'bank_account_name', 'bank_account_number']
         widgets = {
-            'store_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ชื่อร้านค้า'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'อีเมลของร้านค้า'}),
+            'store_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_info': forms.Textarea(attrs={'class': 'form-control'}),
             'store_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'contact_info': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'ข้อมูลติดต่อ'}),
+            'bank_account_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ชื่อบัญชีธนาคาร'}),
+            'bank_account_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เลขบัญชีธนาคาร'}),
         }
+
 
 from django import forms
 from django.contrib.auth.forms import UserChangeForm

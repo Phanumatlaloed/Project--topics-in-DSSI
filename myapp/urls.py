@@ -104,11 +104,11 @@ urlpatterns = [
 
 
     # ✅ รีวิวสินค้า
-    path('review/add/<int:product_id>/', add_review, name='add_review'),
+    path('review/add/<int:order_id>/<int:product_id>/', add_review, name='add_review'),  # ✅ ต้องรับ `order_id` และ `product_id`
 
     # ✅ การคืนสินค้า/ยกเลิกออเดอร์
     path('order/return/<int:order_id>/', return_order, name='return_order'),
-    path('order/cancel/<int:order_id>/', cancel_order, name='cancel_order'),
+    path("cancel-order/<int:order_id>/", cancel_order, name="cancel_order"),
     path("checkout/confirm/", views.confirm_order, name="confirm_order"),
     path("order/<int:order_id>/", views.order_detail, name="order_detail"),
     #path('edit-address/', views.edit_shipping_address, name='edit_shipping_address'),
@@ -121,7 +121,7 @@ urlpatterns = [
     path('', views.all_posts, name='all_posts'),
     path("seller/orders/", views.seller_orders, name="seller_orders"),
     path("seller/orders/<int:order_id>/update/<str:status>/", views.update_order_status, name="update_order_status"),
-    path("seller/orders/<int:order_id>/cancel/", views.cancel_order, name="cancel_order"),
+    path("seller/orders/<int:order_id>/cancel/", views.sellercancel_order, name="sellercancel_order"),
     #path("homemain/", views.search_content, name="search_content"),
     path('search/', views.search_content, name='search'),  # ✅ เพิ่มเส้นทางค้นหา
     #path('all-posts/', views.all_posts, name='all_posts'),  # ✅ เพิ่มเส้นทางสำหรับดูโพสต์ทั้งหมด
@@ -160,7 +160,7 @@ urlpatterns = [
     path("cart/add/<int:product_id>/", add_to_cart, name="add_to_cart"),
     path('store/<slug:store_id>/', views.store_detail, name='store_detail'),
 
-    path("review/add/<int:order_id>/<int:product_id>/", add_review, name="add_review"),
+    #path("review/add/<int:order_id>/<int:product_id>/", add_review, name="add_review"),
 
     path("seller/wallet/", views.seller_wallet, name="seller_wallet"),
     #path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
@@ -174,6 +174,8 @@ urlpatterns = [
 
     # ✅ ลูกค้าขอคืนเงิน (ต้องมีทั้ง order_id และ item_id)
     path("order/request_refund/<int:order_id>/<int:item_id>/", views.request_refund, name="request_refund"),
+    #path("order/request_refund/<int:order_id>/", views.request_refund, name="request_refund"),
+
 
     # ✅ ผู้ขายดูคำขอคืนเงิน
     path("refunds/seller/", views.seller_refund_requests, name="seller_refund_requests"),
@@ -200,7 +202,9 @@ urlpatterns = [
     path("seller/performance/", views.seller_performance, name="seller_performance"),
     path("admins/performance/", views.admin_performance, name="admin_performance"),  # ✅ ต้องอยู่ที่นี่
 
+    path("update-address/<int:order_id>/", views.update_order_shipping, name="update_order_shipping"),
 ]
+
 
     
 

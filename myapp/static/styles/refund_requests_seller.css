@@ -12,63 +12,6 @@ body {
     min-height: 100vh;
 }
 
-/* ✅ Sidebar */
-.sidebar {
-    width: 260px;
-    background: linear-gradient(135deg, #FFC0CB, #f8c8dc);
-    color: white;
-    padding: 20px;
-    min-height: 100vh;
-    border-radius: 0 15px 15px 0;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* ✅ Sidebar Title */
-.sidebar-title {
-    text-align: center;
-    font-weight: bold;
-    font-size: 22px;
-    margin-bottom: 20px;
-}
-
-/* ✅ Sidebar Menu */
-.menu {
-    list-style: none;
-    padding: 0;
-}
-
-.menu-header {
-    font-weight: bold;
-    margin-top: 15px;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-}
-
-/* ✅ เพิ่มจุดนำหน้า menu-header */
-.menu-header::before {
-    content: "•";
-    margin-right: 8px;
-}
-
-.menu-item {
-    margin-top: 10px;
-}
-
-.menu-item a {
-    color: white;
-    text-decoration: none;
-    padding: 12px;
-    display: block;
-    border-radius: 10px;
-}
-
-.menu-item a:hover, .menu-item.active a {
-    background: white;
-    color: #f8c8dc;
-    font-weight: bold;
-}
-
 /* ✅ Main Content */
 .content {
     flex-grow: 1;

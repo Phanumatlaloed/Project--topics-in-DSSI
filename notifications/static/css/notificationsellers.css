@@ -1,0 +1,152 @@
+/* ✅ ตั้งค่าโครงสร้าง Layout */
+body {
+    font-family: 'Kanit', sans-serif;
+    background: #fff5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+/* ✅ Sidebar */
+.sidebar {
+    width: 260px;
+    background: #fff;
+    color: #e75480;
+    padding: 20px;
+    min-height: 100vh;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    border-right: 3px solid #ffdde1;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+/* ✅ เนื้อหาหลัก */
+.dashboard-container {
+    margin-left: 280px;
+    flex-grow: 1;
+    padding: 30px;
+    max-width: 1100px;
+}
+
+/* ✅ หัวข้อใหญ่ */
+h1 {
+    color: #e75480;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* ✅ ปุ่มย้อนกลับ */
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background: #ff6b81;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out;
+}
+
+.back-link:hover {
+    background: #d35400;
+}
+
+/* ✅ จัดเรียงรายการแจ้งเตือน */
+.notifications-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 คอลัมน์ */
+    gap: 15px;
+}
+
+/* ✅ การ์ดแจ้งเตือน */
+.notification-card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.notification-card:hover {
+    transform: translateY(-3px);
+}
+
+/* ✅ ไอคอน */
+.notification-icon {
+    font-size: 28px;
+}
+
+/* ✅ เนื้อหาข้อความ */
+.notification-content {
+    flex-grow: 1;
+}
+
+.notification-message {
+    color: #34495e;
+    font-weight: 500;
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.notification-time {
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+
+/* ✅ ลิงก์คำสั่งซื้อ */
+.order-link {
+    color: #e67e22;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* ✅ ลิงก์โปรไฟล์ */
+.profile-link {
+    color: #2ecc71;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* ✅ ถ้าไม่มีแจ้งเตือน */
+.no-notifications {
+    text-align: center;
+    padding: 40px;
+    color: #95a5a6;
+    font-size: 1.2em;
+}
+
+/* 🌸 Responsive Design */
+@media (max-width: 1024px) {
+    .dashboard-container {
+        margin-left: 240px;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .dashboard-container {
+        margin-left: 0;
+        padding: 20px;
+    }
+    .notifications-list {
+        grid-template-columns: 1fr; /* 1 คอลัมน์บนมือถือ */
+    }
+}
