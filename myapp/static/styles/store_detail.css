@@ -13,7 +13,8 @@ body {
     align-items: center;
     background-color: white;
     padding: 15px 30px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 12px rgba(255, 105, 135, 0.3);
+    border-bottom: 3px solid #ffb6c1;
 }
 
 .logo img {
@@ -28,32 +29,29 @@ body {
     gap: 20px;
 }
 
-.nav-links li {
-    display: inline;
-}
-
 .nav-links a {
     text-decoration: none;
     font-weight: bold;
     color: #ff6b81;
     padding: 10px 15px;
     border-radius: 8px;
-    transition: background 0.3s;
+    transition: all 0.3s ease-in-out;
 }
 
 .nav-links a:hover, .nav-links a.active {
-    background: #ff6b81;
+    background: linear-gradient(to right, #ff758c, #ff7eb3);
     color: white;
+    box-shadow: 0px 4px 10px rgba(255, 105, 135, 0.3);
 }
 
 /* 🌸 ส่วนของร้านค้า */
 .container {
     max-width: 1100px;
     margin: 30px auto;
-    padding: 20px;
+    padding: 30px;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(255, 105, 135, 0.2);
     text-align: center;
 }
 
@@ -64,7 +62,8 @@ body {
 
 h2 {
     color: #ff6b81;
-    font-size: 26px;
+    font-size: 28px;
+    font-weight: bold;
     margin-bottom: 10px;
 }
 
@@ -87,46 +86,93 @@ p {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    gap: 25px;
     margin: 20px auto;
     max-width: 1200px;
 }
 
 /* 🌸 การ์ดสินค้า */
 .product-item {
-    width: 260px;
+    width: 280px;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(255, 105, 135, 0.2);
     overflow: hidden;
-    transition: transform 0.3s;
+    padding: 15px;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .product-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
+    box-shadow: 0px 6px 15px rgba(255, 105, 135, 0.3);
 }
 
-.card {
-    text-align: center;
-    padding: 15px;
-}
-
+/* 🌸 รูปสินค้า */
 .card-img-top {
     width: 100%;
-    height: 220px;
-    object-fit: cover;
+    height: 250px;
+    object-fit: contain;
     border-radius: 12px;
+    background-color: #fffafc;
+    padding: 10px;
 }
 
-.card-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #ff6b81;
+/* 🌸 เนื้อหาสินค้า */
+.card-body {
+    text-align: center;
+    width: 100%;
+}
+
+/* 🌸 ปรับปุ่มให้อยู่คนละบรรทัด & ขนาดเท่ากัน */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
     margin-top: 10px;
 }
 
-.card-text {
-    font-size: 14px;
-    color: #555;
-    margin-top: 5px;
+/* 🌸 ปรับปุ่มให้สวยขึ้น */
+.btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* ปุ่มเพิ่มในตะกร้า */
+.btn-success {
+    background: linear-gradient(to right, #ff758c, #ff7eb3);
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(to right, #ff5e62, #ff99ac);
+    box-shadow: 0px 4px 10px rgba(255, 105, 135, 0.3);
+}
+
+/* ปุ่มดูรายละเอียด */
+.btn-info {
+    background: linear-gradient(to right, #ffb6c1, #ffdde1);
+    color: white;
+}
+
+.btn-info:hover {
+    background: linear-gradient(to right, #ff9aa2, #ffc3d1);
+    box-shadow: 0px 4px 10px rgba(255, 105, 135, 0.3);
+}
+
+/* 🌸 แจ้งเตือนเพิ่มสินค้าลงตะกร้า */
+.cart-message {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 20px;
 }

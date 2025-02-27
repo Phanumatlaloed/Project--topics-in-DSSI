@@ -173,8 +173,8 @@ urlpatterns = [
     path('order/history/', views.order_history, name='order_history'),
 
     # ✅ ลูกค้าขอคืนเงิน (ต้องมีทั้ง order_id และ item_id)
-    path("order/request_refund/<int:order_id>/<int:item_id>/", views.request_refund, name="request_refund"),
-    #path("order/request_refund/<int:order_id>/", views.request_refund, name="request_refund"),
+    #path("order/request_refund/<int:order_id>/<int:item_id>/", views.request_refund, name="request_refund"),
+    path("order/request_refund/<int:order_id>/", views.request_refund, name="request_refund"),
 
 
     # ✅ ผู้ขายดูคำขอคืนเงิน

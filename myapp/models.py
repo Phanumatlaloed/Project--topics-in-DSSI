@@ -272,6 +272,7 @@ class Order(models.Model):
         ('pending', 'รอดำเนินการ'),
         ('shipped', 'จัดส่งแล้ว'),
         ('delivered', 'จัดส่งสำเร็จ'),
+        ('refunded', 'ขอคืนเงิน'),
         ('cancelled', 'ยกเลิกแล้ว'),  # ✅ เพิ่มสถานะนี้
     ]
     
@@ -527,6 +528,7 @@ class RefundRequest(models.Model):
     refund_reason = models.TextField()
     payment_proof = models.ImageField(upload_to="payment_proof/", blank=True, null=True)
     refund_proof = models.ImageField(upload_to="refund_proofs/", blank=True, null=True)  # ✅ เพิ่มฟิลด์สำหรับแนบสลิปคืนเงิน
+    return_item_proof = models.ImageField(upload_to="return_item_proofs/", blank=True, null=True)  # ✅ หลักฐานสินค้าที่ส่งคืน
     created_at = models.DateTimeField(auto_now_add=True)
 
     STATUS_CHOICES = [

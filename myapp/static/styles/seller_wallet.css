@@ -154,3 +154,11 @@ td {
 .status-rejected {
     color: red;
 }
+.refund-warning {
+    color: #ff4d4d;
+    font-weight: bold;
+    background: #ffe5e5;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}

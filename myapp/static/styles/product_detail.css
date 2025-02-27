@@ -64,18 +64,20 @@ body {
     gap: 30px;
 }
 
-/* 🌸 Product Image Slider */
+/* 🔹 ปรับขนาดรูปสินค้าให้เต็มพื้นที่ */
 .product-slider {
-    width: 50%;
-    text-align: center;
+    width: 100%;
+    max-width: 600px; /* ✅ ปรับขนาดสูงสุดให้กว้างขึ้น */
+    margin: 0 auto;
 }
 
 .product-slider img {
     width: 100%;
-    height: 400px;
-    object-fit: cover;
+    height: 400px; /* ✅ ปรับความสูงให้ใหญ่ขึ้น */
+    object-fit: cover; /* ✅ ครอบคลุมพื้นที่ & ป้องกันภาพแตก */
     border-radius: 10px;
 }
+
 
 /* 🌸 Product Info */
 .product-info {
@@ -131,12 +133,12 @@ h2 {
 
 /* ❌ ปุ่มสินค้าหมด */
 .btn-secondary {
-    background-color: gray;
+    background-color: #ffa07a;
     color: white;
 }
 
 .btn-secondary:hover {
-    background-color: #555;
+    background-color: #e05570;
 }
 
 /* 🔙 ปุ่มย้อนกลับ */

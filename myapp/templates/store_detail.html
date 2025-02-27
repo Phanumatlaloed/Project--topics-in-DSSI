@@ -1,69 +1,106 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏪 ร้านค้า: {{ store.store_name }}</title>
 
-    <!-- CSS -->
+    <!-- ✅ CSS -->
     <link rel="stylesheet" href="{% static 'styles/store_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
 
-    <!-- Google Font -->
+    <!-- ✅ Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">
-                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+                </a>
             </div>
             <ul class="nav-links">
-                <li><a href="{% url 'home' %}">🏠 Home</a></li>
-                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
-                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                <li><a href="{% url 'profile' %}">📄 Profile</a></li>
-                <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
-                <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
-                <li><a href="{% url 'cart' %}">🛒 Cart (<span id="cart-count">{{ cart_count }}</span>)</a></li>
+                <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="nav-link active">🛍 Products</a></li>
+                <li><a href="{% url 'order_history' %}" class="nav-link">📜 Order History</a></li>
+                <li><a href="{% url 'cart' %}" class="nav-link">🛒 Cart</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="container">
+        <!-- 🌟 หัวข้อร้านค้า -->
         <div class="store-header">
-            <h2>🏪 ร้านค้า: {{ store.store_name }}</h2>
+            <h2>🏪 {{ store.store_name }}</h2>
             <img src="{{ store.store_image.url }}" alt="ร้านค้า" class="store-image">
             <p>📧 อีเมลร้านค้า: {{ store.email }}</p>
             <p>📞 ติดต่อ: {{ store.contact_info }}</p>
         </div>
 
+        <!-- 🛍 สินค้าของร้าน -->
         <h3>🛍 สินค้าทั้งหมดของร้าน</h3>
         <div class="product-grid">
             {% for product in store.products.all %}
             <div class="product-item">
                 <div class="card">
-                    <img src="{{ product.image.url }}" class="card-img-top">
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ product.name }}</h5>
                         <p class="text-primary">💰 ราคา: ฿{{ product.price }}</p>
-                        
-                        <!-- ปุ่มเพิ่มในตะกร้า -->
-                        <form method="POST" action="{% url 'add_to_cart' product.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success">➕ เพิ่มในตะกร้า</button>
-                        </form>
-
-                        <!-- ดูรายละเอียดสินค้า -->
-                        <a href="{% url 'product_detail' product.id %}" class="btn btn-info">📄 รายละเอียด</a>
+            
+                        <!-- ✅ ใช้ div แยกปุ่มให้ไม่ซ้อนกัน -->
+                        <div class="button-group">
+                            <button class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
+                                ➕ เพิ่มในตะกร้า
+                            </button>
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-info">📄 รายละเอียด</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div>            
             {% empty %}
             <p>⚠️ ร้านค้านี้ยังไม่มีสินค้า</p>
             {% endfor %}
         </div>
+
+        <!-- 🛍 แจ้งเตือนการเพิ่มสินค้าในตะกร้า -->
+        <p id="cart-message" class="cart-message"></p>
     </div>
+
+    <!-- ✅ JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".add-to-cart-btn").click(function(event) {
+                event.preventDefault();  // ป้องกันหน้าโหลดซ้ำ
+
+                let productId = $(this).data("product-id");
+                let cartMessage = $("#cart-message");
+
+                $.ajax({
+                    url: `/cart/add/${productId}/`,  // ✅ ตรวจสอบ URL
+                    method: "POST",
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            $("#cart-count").text(response.cart_count); // 🔄 อัปเดตจำนวนสินค้าในตะกร้า
+                            cartMessage.text("✅ เพิ่มสินค้าในตะกร้าเรียบร้อย!").css("color", "green").fadeIn().delay(2000).fadeOut();
+                        } else {
+                            cartMessage.text("❌ " + response.message).css("color", "red").fadeIn().delay(2000).fadeOut();
+                        }
+                    },
+                    error: function() {
+                        cartMessage.text("❌ เกิดข้อผิดพลาด กรุณาลองใหม่").css("color", "red").fadeIn().delay(2000).fadeOut();
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 </html>

@@ -1546,18 +1546,29 @@ def add_review(request, product_id):
     """ เพิ่มรีวิวสินค้า """
     product = get_object_or_404(Product, id=product_id)
 
+    # ✅ ตรวจสอบว่าผู้ใช้เคยรีวิวสินค้านี้ไปแล้วหรือไม่
+    if Review.objects.filter(user=request.user, product=product).exists():
+        messages.warning(request, "❌ คุณได้รีวิวสินค้านี้ไปแล้ว")
+        return redirect('product_detail', product_id=product.id)
+
     if request.method == "POST":
         rating = request.POST.get("rating")
         comment = request.POST.get("comment")
+
+        if not rating or not comment:
+            messages.error(request, "❌ กรุณาให้คะแนนและเขียนรีวิวก่อนส่ง")
+            return render(request, "add_review.html", {"product": product})
+
+        # ✅ บันทึกรีวิว
         review = Review.objects.create(user=request.user, product=product, rating=rating, comment=comment)
 
         # ✅ แจ้งเตือนเจ้าของร้านเมื่อมีรีวิวใหม่
-        if product.seller:  # ตรวจสอบว่าเจ้าของสินค้ามีอยู่
+        if product.seller:
             Notification.objects.create(
-                user=product.seller,  # แจ้งเตือนเจ้าของร้าน
-                sender=request.user,  # ผู้ที่ให้รีวิว
+                user=product.seller,
+                sender=request.user,
                 notification_type="new_review",
-                order=None,  # ไม่ได้เชื่อมกับออเดอร์
+                order=None,
                 post=None,
                 group_post=None
             )
@@ -1668,34 +1679,39 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from myapp.models import Order, RefundRequest
 
+import json
+
+import json
+
+import json
+
 @login_required
 def order_history(request):
-    """ แสดงประวัติคำสั่งซื้อของผู้ใช้ """
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    orders = Order.objects.filter(user=request.user).prefetch_related("order_items")
     pending_orders = orders.filter(status__in=["pending", "processing", "shipped"])
-    completed_orders = orders.filter(status="delivered")
+    completed_orders = orders.filter(status="delivered").exclude(status="refunded")
     cancelled_orders = orders.filter(status="cancelled")
-    
-
-    # ✅ ดึงรายการสินค้าที่รีวิวไปแล้ว
-     # ✅ ดึงรายการสินค้าที่รีวิวไปแล้ว
-    reviewed_products = Review.objects.filter(user=request.user).values_list("product_id", "order_id")
-    reviewed_dict = {f"{product_id}_{order_id}": True for product_id, order_id in reviewed_products}
-
-    
     return_orders = RefundRequest.objects.filter(user=request.user)
 
-    context = {
+    # ✅ ดึงสินค้าที่ถูกรีวิวแล้วและแปลงเป็น dict
+    reviewed_products = Review.objects.filter(user=request.user).values_list("product_id", "order_id")
+    reviewed_dict = {str(f"{product_id}_{order_id}"): True for product_id, order_id in reviewed_products}  # 🔥 แปลง key เป็น string
+
+    # ✅ Debug Log
+    print(f"🔍 DEBUG: reviewed_dict -> {reviewed_dict}")
+
+    # ✅ ถ้าไม่มีรีวิว ให้ส่ง `{}` ไปแทน
+    reviewed_json = json.dumps(reviewed_dict) if reviewed_dict else "{}"
+
+    return render(request, 'order_history.html', {
         'orders': orders,
         'pending_orders': pending_orders,
         'completed_orders': completed_orders,
         'cancelled_orders': cancelled_orders,
-        'reviewed_products': reviewed_dict,  # ✅ ใช้ dict เพื่อให้ template เช็คได้ง่าย
         'return_orders': return_orders,
-        'all_orders': orders,  # ✅ เพิ่มออเดอร์ทั้งหมด
-    }
-    return render(request, 'order_history.html', context)
+        'reviewed_products': reviewed_json,  # ✅ JSON ถูกต้อง
+    })
+
 
 
 
@@ -2301,13 +2317,41 @@ def add_review(request, order_id, product_id):
 
 
 
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import SellerWallet, WithdrawalRequest, RefundRequest
+
+@login_required
 def seller_wallet(request):
-    """ แสดงข้อมูลกระเป๋าเงินของผู้ขาย """
+    """ แสดงข้อมูลกระเป๋าเงินของผู้ขายและลดเงินเมื่อมีการคืนสินค้า """
     seller = request.user.seller_profile
     wallet, created = SellerWallet.objects.get_or_create(seller=seller)
     withdrawals = WithdrawalRequest.objects.filter(seller=seller).order_by('-created_at')
 
-    return render(request, 'seller_wallet.html', {'wallet': wallet, 'withdrawals': withdrawals})
+    # ✅ ตรวจสอบคำขอคืนเงินที่ได้รับการอนุมัติ
+    approved_refunds = RefundRequest.objects.filter(order__seller=seller, status="approved")
+
+    # ✅ คำนวณยอดคืนเงิน โดยตรวจสอบว่า `refund.item` ไม่เป็น None ก่อน
+    total_refund_amount = sum(
+        (refund.item.price_per_item * refund.item.quantity) if refund.item else 0
+        for refund in approved_refunds
+    )
+
+    # ✅ ถ้ามียอดคืนเงิน คำนวณและลดเงินออก
+    if total_refund_amount > 0:
+        if wallet.balance >= total_refund_amount:
+            wallet.balance -= total_refund_amount
+            wallet.save()
+            approved_refunds.update(status="refunded")  # อัปเดตสถานะเป็น "คืนเงินสำเร็จ"
+        else:
+            print(f"⚠️ เงินในกระเป๋าไม่พอคืนเงิน (ต้องคืน {total_refund_amount} บาท แต่มี {wallet.balance} บาท)")
+
+    return render(request, 'seller_wallet.html', {
+        'wallet': wallet,
+        'withdrawals': withdrawals,
+        'total_refund_amount': total_refund_amount,  # ✅ ส่งค่าไปแสดงในหน้าเว็บ
+    })
+
 
 
 from django.db.models.signals import post_save
@@ -2329,35 +2373,47 @@ from .models import Order, RefundRequest
 from .forms import RefundRequestForm
 
 @login_required
-def request_refund(request, order_id, item_id):
-    """ ฟังก์ชันให้ผู้ใช้ขอคืนเงินสำหรับสินค้ารายการเดียว """
+def request_refund(request, order_id):
+    """ ฟังก์ชันให้ผู้ใช้ขอคืนเงินสำหรับทั้งออเดอร์ """
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    item = get_object_or_404(OrderItem, id=item_id, order=order)  # ✅ ดึงสินค้าเฉพาะที่ตรงกับออเดอร์
+    order_items = order.order_items.all()  # ✅ ดึงสินค้าทั้งหมดในออเดอร์
 
-    if RefundRequest.objects.filter(order=order, item=item).exists():
-        messages.warning(request, "คุณได้ส่งคำขอคืนเงินสำหรับสินค้านี้ไปแล้ว")
+    # ✅ ตรวจสอบว่ามีการส่งคำขอคืนเงินไปแล้วหรือไม่
+    if RefundRequest.objects.filter(order=order).exists():
+        messages.warning(request, "⚠️ คุณได้ส่งคำขอคืนเงินสำหรับออเดอร์นี้ไปแล้ว")
         return redirect("order_history")
 
     if request.method == "POST":
+        # ✅ รับไฟล์หลักฐานสินค้าที่ส่งคืน
+        return_item_proof = request.FILES.get("return_item_proof")
+
+        # ✅ สร้างคำขอคืนเงิน
         refund_request = RefundRequest.objects.create(
             user=request.user,
             order=order,
-            item=item,  # ✅ บันทึกสินค้าที่ขอคืนเงิน
             account_name=request.POST.get("account_name"),
             account_number=request.POST.get("account_number"),
             bank_name=request.POST.get("bank_name"),
             refund_reason=request.POST.get("refund_reason"),
             payment_proof=request.FILES.get("payment_proof"),
+            return_item_proof=return_item_proof,  # ✅ บันทึกหลักฐานสินค้าที่ส่งคืน
             status="pending",
         )
 
-        messages.success(request, "✅ คำขอคืนเงินถูกส่งเรียบร้อยแล้ว")
+        # ✅ อัปเดตสถานะของออเดอร์เป็น `refunded`
+        order.status = "refunded"
+        order.save()
+
+        messages.success(request, "✅ คำขอคืนเงินถูกส่งเรียบร้อยแล้ว 🎉")
         return redirect("order_history")
 
-    return render(request, "partials/refund_request.html", {"order": order, "item": item})
+    # ✅ Debugging: ตรวจสอบสินค้าที่อยู่ในออเดอร์
+    print(f"🔍 Debug: order_items -> {order_items}")
 
-
-
+    return render(request, "partials/refund_request.html", {
+        "order": order,
+        "order_items": order_items,
+    })
 
 
 @login_required
@@ -2565,39 +2621,46 @@ from .models import Order, Product, Review, RefundRequest
 
 @login_required
 def seller_performance(request):
-    """ แสดงรายงานสถิติการขายของผู้ขาย """
-    seller = request.user.seller_profile  # สมมติว่า user มี OneToOneField กับ Seller
+    """ แสดงรายงานประสิทธิภาพของร้านค้า """
+    seller = request.user.seller_profile
 
-    # ✅ รายได้รวมจากคำสั่งซื้อที่เสร็จสมบูรณ์
-        # ✅ ตรวจสอบว่ามีคำสั่งซื้อที่เสร็จสมบูรณ์หรือไม่
-    total_sales = Order.objects.filter(seller=seller, status="delivered").aggregate(Sum("total_price"))["total_price__sum"] or 0
+    # ✅ คำนวณยอดขายทั้งหมด โดยไม่รวมคำสั่งซื้อที่มีการคืนสินค้า
+    completed_orders = Order.objects.filter(seller=seller, status="delivered").exclude(refund_requests__status="approved")
+    total_sales = completed_orders.aggregate(Sum("total_price"))["total_price__sum"] or 0
 
-
-    # ✅ สินค้าขายดี (Top 5) - แก้ไขตรงนี้
-    top_products = (
-        Product.objects.filter(seller=seller)
-        .annotate(total_sold_count=Sum("orderitem__quantity"))  # แก้จาก order_items เป็น orderitem
+    # ✅ คำนวณยอดขายของแต่ละสินค้า (ไม่นับสินค้าถูกคืน)
+    sold_products = (
+        OrderItem.objects.filter(order__seller=seller)
+        .exclude(refund_requests__status="approved")
+        .values("product__id", "product__name")
+        .annotate(total_sold_count=Sum("quantity"))
         .order_by("-total_sold_count")[:5]
     )
 
+    # ✅ ดึงสินค้าตาม `product_id` และเพิ่ม `total_sold_count` เข้าไป
+    top_products = []
+    for sold_product in sold_products:
+        product = Product.objects.get(id=sold_product["product__id"])
+        product.total_sold_count = sold_product["total_sold_count"]  # ✅ เพิ่มจำนวนที่ขายเข้าไป
+        top_products.append(product)
+
     # ✅ จำนวนการคืนสินค้า
-    refunds = RefundRequest.objects.filter(order__seller=seller).count()
+    refunds = RefundRequest.objects.filter(order__seller=seller, status="approved").count()
 
     # ✅ คะแนนรีวิวเฉลี่ย
     avg_rating = Review.objects.filter(product__seller=seller).aggregate(Avg("rating"))["rating__avg"] or 0
 
-    # ✅ รีวิวล่าสุด (5 รีวิว)
+    # ✅ รีวิวล่าสุด 5 รายการ
     recent_reviews = Review.objects.filter(product__seller=seller).order_by("-created_at")[:5]
 
-    context = {
+    return render(request, 'seller_performance.html', {
         "total_sales": total_sales,
-        "top_products": top_products,
+        "top_products": top_products,  # ✅ ตรวจสอบให้แน่ใจว่ามี `total_sold_count`
         "refunds": refunds,
         "avg_rating": avg_rating,
-        "recent_reviews": recent_reviews,
-    }
+        "recent_reviews": recent_reviews
+    })
 
-    return render(request, "seller_performance.html", context)
 
 def is_admin(user):
     return user.is_staff  # ✅ อนุญาตเฉพาะแอดมิน

@@ -1,12 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const cancelButtons = document.querySelectorAll(".cancel-order-btn");
-
-    cancelButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            const orderId = this.dataset.orderId;
-
-            // 🔄 เปลี่ยนจาก `prompt()` เป็นการนำทางไปที่หน้า `cancel_order.html`
-            window.location.href = `/cancel-order/${orderId}/`;
-        });
+    document.body.addEventListener("click", function (event) {
+        if (event.target.classList.contains("cancel-order-btn")) {
+            const orderId = event.target.dataset.orderId;
+            
+            if (confirm(`คุณต้องการยกเลิกออเดอร์ #${orderId} ใช่หรือไม่?`)) {
+                window.location.href = `/cancel-order/${orderId}/`;
+            }
+        }
     });
 });

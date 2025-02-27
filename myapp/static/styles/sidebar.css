@@ -1,15 +1,15 @@
-/* ✅ ปรับ Sidebar ให้ดูเรียบหรู ทันสมัย */
+/* ✅ ตั้งค่าพื้นฐาน Sidebar */
 .sidebar {
     width: 260px;
     background: #fff;
-    color: #e75480;
+    color: #333;  /* ฟอนต์สีดำ */
     padding: 20px;
     min-height: 100vh;
     box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
-    transition: width 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
-    border-right: 3px solid #ffdde1;
+    border-right: 3px solid #ffd3d6;
+    transition: width 0.3s ease-in-out;
 }
 
 /* ✅ ชื่อหัวข้อ Sidebar */
@@ -20,7 +20,7 @@
     margin-bottom: 20px;
     padding: 12px;
     color: #ff6b81;
-    background: linear-gradient(135deg, #ffe6eb, #ffd3d3);
+    background: linear-gradient(135deg, #ffe6eb, #ffd3d6);
     border-radius: 10px;
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
 }
@@ -36,7 +36,7 @@
     font-weight: bold;
     margin-top: 15px;
     padding: 10px 14px;
-    color: #ff6b81;
+    color: #ff3f5f;
     text-transform: uppercase;
     font-size: 14px;
     background: rgba(255, 230, 235, 0.6);
@@ -49,7 +49,7 @@
 }
 
 .menu-item a {
-    color: #ff6b81;
+    color: #333;  /* ฟอนต์สีดำ */
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -63,14 +63,15 @@
 
 /* ✅ ไอคอนเมนู */
 .menu-item a i {
-    margin-right: 10px;
-    font-size: 18px;
+    margin-right: 12px;
+    font-size: 20px;
+    color: #ff6b81;  /* ไอคอนสีชมพู */
 }
 
 /* ✅ เอฟเฟกต์ Hover & Active */
 .menu-item a:hover, .menu-item.active a {
     background: linear-gradient(135deg, #ffb6c1, #ffdde1);
-    color: white;
+    color: #fff;  /* เปลี่ยนสีฟอนต์เป็นขาว */
     font-weight: bold;
     transform: translateX(6px);
     box-shadow: 0px 4px 12px rgba(255, 99, 132, 0.3);
@@ -117,6 +118,7 @@
     }
 }
 
+/* ✅ ปรับ Sidebar ให้เป็นเมนูล่างเมื่อหน้าจอเล็ก */
 @media (max-width: 480px) {
     .sidebar {
         width: 100%;
