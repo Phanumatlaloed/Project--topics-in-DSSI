@@ -408,3 +408,51 @@ body {
 .product-card .btn:hover {
     background-color: #e654a7;
 }
+
+/* ✅ ปรับสไตล์แถบค้นหา */
+.search-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px; /* กำหนดขนาดสูงสุด */
+    margin: 10px auto;
+    background: white;
+    border-radius: 25px;
+    padding: 5px;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ช่องป้อนข้อมูล */
+.search-form input {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    background: #fff;
+}
+
+/* ✅ เพิ่มเงาเมื่อโฟกัส */
+.search-form input:focus {
+    box-shadow: 0px 0px 8px rgba(255, 99, 132, 0.3);
+}
+
+/* ✅ ปุ่มค้นหา */
+.search-form button {
+    padding: 10px 15px;
+    border: none;
+    background: #ff6b81;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+/* ✅ ปรับขนาดให้ปุ่มเท่ากับช่องป้อนข้อมูล */
+.search-form button:hover {
+    background: #ff3c64;
+}

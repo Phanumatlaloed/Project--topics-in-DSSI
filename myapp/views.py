@@ -837,38 +837,43 @@ def add_group_post_comment(request, post_id):
 
 
 #อัพเดทโปรไฟล์
-from .forms import AccountEditForm, PasswordChangeForm
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from .forms import ProfileUpdateForm, CustomPasswordChangeForm
+from .models import Member  # ✅ ใช้ Member แทน MemberProfile
+
 @login_required
 def profile_management(request):
-    """ จัดการข้อมูลโปรไฟล์ของสมาชิก """
-    profile = request.user.member_profile  # ✅ เชื่อมโยงกับ OneToOneField
+    user = request.user
+    profile, created = Member.objects.get_or_create(user=user)  # ✅ แก้ให้ถูกต้อง
 
-    # ฟอร์มสำหรับแก้ไขข้อมูลส่วนตัว
-    if request.method == 'POST' and 'update_personal_info' in request.POST:
-        personal_info_form = AccountEditForm(request.POST, request.FILES, instance=profile)
-        if personal_info_form.is_valid():
-            personal_info_form.save()
-            messages.success(request, "ข้อมูลโปรไฟล์ของคุณถูกแก้ไขเรียบร้อยแล้ว")
-            return redirect('profile_management')
+    if request.method == "POST":
+        if "update_personal_info" in request.POST:
+            form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "✅ ข้อมูลส่วนตัวของคุณถูกบันทึกเรียบร้อยแล้ว!")
+                return redirect("profile_management")
+
+        elif "change_password" in request.POST:
+            password_form = CustomPasswordChangeForm(user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)  
+                messages.success(request, "🔒 รหัสผ่านถูกเปลี่ยนเรียบร้อยแล้ว!")
+                return redirect("profile_management")
+
     else:
-        personal_info_form = AccountEditForm(instance=profile)
+        form = ProfileUpdateForm(instance=profile)
+        password_form = CustomPasswordChangeForm(user)
 
-    # ฟอร์มสำหรับเปลี่ยนรหัสผ่าน
-    if request.method == 'POST' and 'change_password' in request.POST:
-        password_form = PasswordChangeForm(user=request.user, data=request.POST)
-        if password_form.is_valid():
-            request.user.set_password(password_form.cleaned_data.get('new_password'))
-            request.user.save()
-            messages.success(request, "เปลี่ยนรหัสผ่านเรียบร้อยแล้ว")
-            return redirect('profile_management')
-    else:
-        password_form = PasswordChangeForm(user=request.user)
+    return render(request, "profile_management.html", {
+        "form": form,
+        "password_form": password_form,
+    })
 
-    context = {
-        'personal_info_form': personal_info_form,
-        'password_form': password_form,
-    }
-    return render(request, 'profile_management.html', context)
 
 
 @login_required

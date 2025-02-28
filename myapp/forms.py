@@ -388,3 +388,24 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Write a comment...'}),
         }
+
+from django import forms
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import get_user_model
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    """ ฟอร์มเปลี่ยนรหัสผ่านที่สามารถใช้เพิ่มฟีเจอร์เพิ่มเติม """
+    
+    class Meta:
+        model = get_user_model()
+        fields = ('old_password', 'new_password1', 'new_password2')
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Member  # ✅ ใช้ Member ซึ่งมี 'date_of_birth' ไม่ใช่ 'birthdate'
+        fields = ['profile_picture', 'date_of_birth', 'gender']  # ✅ แก้ชื่อให้ตรงกับ models.py
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),  # ✅ ใช้ date_of_birth
+            'gender': forms.Select(attrs={'class': 'form-control'}),
+        }
+

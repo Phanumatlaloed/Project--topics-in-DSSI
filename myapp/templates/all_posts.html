@@ -24,8 +24,9 @@
         <!-- 🌸 เนื้อหาโพสต์ -->
         <main class="content-container">
             <h1>📝 โพสต์ทั้งหมด</h1>
-            <form method="GET" action="{% url 'search' %}" class="search-form">
-                <input type="text" name="query" placeholder="🔍 ค้นหาโพสต์..." value="{{ query }}">
+            <form method="GET" action="{% url 'all_posts' %}" class="search-form">
+                <input type="text" name="query" placeholder=" ค้นหาโพสต์..." value="{{ query }}">
+
                 <button type="submit">ค้นหา</button>
             </form>
 
@@ -81,8 +82,12 @@
                 {% endif %}
             </div>
         </aside>
-
     </div>
     
 </body>
 </html>
+<script>
+    function clearSearch() {
+        document.querySelector('input[name="query"]').value = "";
+    }
+</script>

@@ -179,3 +179,78 @@ h2, h3 {
         padding: 6px 12px;
     }
 }
+
+/* 🌟 ปรับฟอร์มเปลี่ยนรหัสผ่านให้ดูทันสมัย */
+.password-change-container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: auto;
+}
+
+/* 🌟 กำหนดรูปแบบฟิลด์รหัสผ่าน */
+.password-field {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+/* 🌟 เพิ่มเอฟเฟกต์ตอนโฟกัส */
+.password-field:focus {
+    border-color: #ff6b81;
+    box-shadow: 0px 3px 8px rgba(255, 99, 132, 0.3);
+    outline: none;
+}
+
+/* 🌟 กล่องข้อความเงื่อนไขรหัสผ่าน */
+.password-requirements {
+    background: #fff5f7;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+    border-left: 4px solid #ff6b81;
+}
+
+/* 🌟 ปรับปุ่มให้สวยขึ้น */
+.btn-save-password {
+    background-color: #ff6b81;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 🌟 ปรับปุ่ม hover */
+.btn-save-password:hover {
+    background-color: #e05570;
+    transform: translateY(-2px);
+}
+
+/* 🌟 ปรับ responsive */
+@media (max-width: 600px) {
+    .password-change-container {
+        padding: 20px;
+    }
+    .password-field {
+        font-size: 14px;
+    }
+    .btn-save-password {
+        font-size: 14px;
+    }
+}
