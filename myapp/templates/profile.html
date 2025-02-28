@@ -25,7 +25,6 @@
           <aside class="sidebar">
             <div class="logo text-center">
                 <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
-                <h5>Profile</h5>
             </div>
             <nav>
                 <ul class="nav">
@@ -74,11 +73,12 @@
                     </button>    
                 {% endif %}
 
-                <a href="{% url 'profile_management' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+                <a href="{% url 'profile_management' %}" class="edit-profile-btn">Edit Profile</a>
             </header>
 
             <!-- Create Post -->
             <div class="create-post bg-light p-3 rounded mb-4">
+                
                 <h5>Create a Post</h5>
                 <form id="postForm" action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}

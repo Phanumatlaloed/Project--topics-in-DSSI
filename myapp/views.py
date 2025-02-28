@@ -86,19 +86,22 @@ def register(request):
 
     return render(request, "register.html")
 
+from django.db.models import Q
+
 def all_posts(request):
     query = request.GET.get('query', '')  # รับค่าค้นหา
     if query:
         posts = Post.objects.filter(
-            Q(content__icontains=query) |  # ค้นหาคำในเนื้อหาโพสต์
-            Q(user__username__icontains=query)  # ค้นหาจากชื่อผู้ใช้
+            Q(content__icontains=query) |  # ✅ ค้นหาคำในเนื้อหาโพสต์
+            Q(user__username__icontains=query)  # ✅ ค้นหาจากชื่อผู้ใช้
         ).order_by('-created_at')
     else:
         posts = Post.objects.all().order_by('-created_at')  # แสดงโพสต์ทั้งหมด
-        
+
     products = Product.objects.all()[:6]  # ✅ ดึงสินค้าสูงสุด 6 รายการ
 
     return render(request, "all_posts.html", {"posts": posts, "products": products, "query": query})
+
 
 def search_content(request):
     query = request.GET.get('query', '')
@@ -2572,3 +2575,22 @@ def admin_performance(request):
 
     return render(request, "admin_performance.html", context)
 
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Post, Comment
+
+def get_comments(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    comments = post.comments.all().order_by("-created_at")  # เรียงตามเวลาล่าสุด
+
+    comment_list = [
+        {
+            "id": comment.id,
+            "username": comment.user.username,
+            "content": comment.content,
+            "is_owner": comment.user == request.user,  # เช็คว่าเป็นเจ้าของคอมเมนต์หรือไม่
+        }
+        for comment in comments
+    ]
+
+    return JsonResponse({"comments": comment_list}, safe=False)

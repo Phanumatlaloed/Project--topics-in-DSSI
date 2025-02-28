@@ -206,6 +206,8 @@ urlpatterns = [
     path("seller/performance/", views.seller_performance, name="seller_performance"),
     path("admins/performance/", views.admin_performance, name="admin_performance"),  # ✅ ต้องอยู่ที่นี่
 
+    path("comments/<int:post_id>/", views.get_comments, name="get_comments"),
+
 ]
 
     

@@ -194,3 +194,6 @@ EMAIL_USE_SSL = False
 
 # กำหนด SSL Context (เฉพาะสำหรับการพัฒนา)
 EMAIL_SSL_CONTEXT = ssl._create_unverified_context()
+
+TIME_ZONE = 'Asia/Bangkok'
+USE_TZ = True  # เปิดใช้งาน Time Zone

@@ -1,42 +1,236 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}My Website{% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <title>{% block title %}My Community{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
+<style>
+    /* 📌 Reset ค่า Bootstrap ที่มายุ่งกับ Sidebar */
+    .sidebar * {
+        all: unset; /* ล้างค่า CSS ที่ Bootstrap ใส่มา */
+    }
+
+    /* 📌 Sidebar */
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        background-color: #fde5e5;
+        padding: 12px 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        border-right: 3px solid #f7c2c2;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* ทำให้ตัวอักษรชิดซ้าย */
+    }
+
+    /* 🖼 ปรับขนาดและการจัดวางโลโก้ */
+    .sidebar .logo {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .sidebar .logo img {
+        width: 90px;
+        height: 90px;
+        display: block;
+        margin: 0 auto;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+        /*padding-left: 20px; */
+    }
+
+    .sidebar .logo img:hover {
+        transform: scale(1.05);
+        padding-left: 20;
+    }
+
+    /* 👤 Welcome Message */
+    /* จัดให้อักษรอยู่ตรงกลาง */
+    .sidebar h5 {
+        color: #333;
+        font-weight: bold;
+        text-align: center;
+        font-size: 1.4rem; /* ขยายขนาดให้เด่นขึ้น */
+        margin-top: 10px;
+    }
+
+    /* 📌 เมนูใน Sidebar */
+    .nav {
+        list-style: none;
+        padding: 0;
+        width: 100%;
+    }
+
+    .nav-link {
+        text-decoration: none;
+        padding: 12px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; /* ชิดซ้าย */
+        text-align: left;
+        padding-left: 25px; /* เพิ่มระยะชิดซ้าย */
+        color: #666;
+        font-size: 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        margin-bottom: 10px;
+        width: 80%; /* ทำให้กว้างเต็ม sidebar */
+    }
+
+    /* ปรับให้ icon กับ text ห่างกันเล็กน้อย */
+    .nav-link i {
+        margin-right: 8px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        background-color: #ff9aa2;
+        color: white;
+        font-weight: bold;
+    }
+
+    /* 🎀 Welcome Section */
+    .welcome-logout {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* จัดให้อยู่ตรงกลาง */
+        justify-content: center;
+        text-align: center;
+        padding: 20px; /* ลด padding ให้ไม่ดูห่างเกิน */
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        margin-bottom: 10px; /* เพิ่มระยะห่างก่อนปุ่ม Logout */
+        width: 100%;
+    }
+
+    /* 🔴 ปุ่ม Logout */
+    .logout-btn {
+        width: 80%; /* ลดขนาดจาก 100% เป็น 80% เพื่อบาลานซ์ */
+        max-width: 180px; /* จำกัดไม่ให้ใหญ่เกินไป */
+        background-color: #dc3545;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .logout-btn:hover {
+        background-color: #c82333;
+    }
+
+
+    /* ทำให้ Sidebar เป็น Flexbox เพื่อให้จัดตำแหน่งปุ่ม Logout ได้ */
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* ดันปุ่ม Logout ไปอยู่ด้านล่าง */
+        height: 100vh;
+    }
+
+    /* 📌 ปุ่ม Toggle Sidebar */
+    .toggle-btn {
+        width: 40px;
+        height: 40px;
+        background-color: #f7c2c2;
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        position: absolute;
+        right: -15px;
+        top: 20px;
+        transition: 0.3s;
+    }
+
+    .toggle-btn:hover {
+        background-color: #ff8b94;
+    }
+
+    /* 📱 Responsive */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 60px;
+        }
+
+        .sidebar h5 {
+            display: none;
+        }
+
+        .content {
+            margin-left: 70px;
+        }
+    }
+
+    .content {
+        margin-left: 230px;
+        padding: 20px;
+        transition: margin-left 0.3s ease-in-out;
+    }
+
+    .content.expanded {
+        margin-left: 70px;
+    }
+</style>
+
 <body>
 
-    <!-- ✅ Navbar -->
-    <nav class="navbar">
-        <div class="logo">
-            <a href="/">MyShop</a>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo text-center">
+            <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
+            <h5>My Community</h5>
         </div>
-        <ul class="nav-links">
-            <li><a href="/">🏠 หน้าแรก</a></li>
-            <li><a href="/products/">🛒 สินค้า</a></li>
-            <li><a href="/cart/">🛍 ตะกร้า</a></li>
-            {% if user.is_authenticated %}
-                <li><a href="/profile/">👤 โปรไฟล์</a></li>
-                <li><a href="/logout/">🚪 ออกจากระบบ</a></li>
-            {% else %}
-                <li><a href="/login/">🔑 เข้าสู่ระบบ</a></li>
-            {% endif %}
+
+        <ul class="nav">
+            <li><a href="{% url 'home' %}" class="nav-link"><span class="icon">🏠</span> <span class="text">Home</span></a></li>
+            <li><a href="{% url 'community_list' %}" class="nav-link "><span class="icon">👥</span> <span class="text">Community</span></a></li>
+            <li><a href="{% url 'savelist' %}" class="nav-link active"><span class="icon">💾</span> <span class="text">Save</span></a></li>
+            <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><span class="icon">📄</span> <span class="text">Profile</span></a></li>
+            <li><a href="{% url 'product_list' %}" class="nav-link"><span class="icon">🛍</span> <span class="text">Product List</span></a></li>
+            <li><a href="{% url 'notification_list' %}" class="nav-link"><span class="icon">🔔</span> <span class="text">Notifications</span></a></li>
         </ul>
-    </nav>
+        
 
-    <!-- ✅ Container สำหรับแสดงเนื้อหา -->
-    <div class="container">
-        {% block content %}
-        {% endblock %}
-    </div>
+        <div class="welcome-logout">
+            <p>Welcome, <b>{{ request.user.username }}</b></p>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </aside>
 
-    <!-- ✅ Footer -->
-    <footer>
-        <p>© 2025 MyShop | ออกแบบโดย Developer</p>
-    </footer>
+    <script>
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("collapsed");
+            document.getElementById("content").classList.toggle("expanded");
+            localStorage.setItem("sidebarState", document.getElementById("sidebar").classList.contains("collapsed"));
+        }
+
+        // โหลดค่าจาก LocalStorage
+        window.onload = function() {
+            if (localStorage.getItem("sidebarState") === "true") {
+                document.getElementById("sidebar").classList.add("collapsed");
+                document.getElementById("content").classList.add("expanded");
+            }
+        };
+    </script>
 
 </body>
 </html>

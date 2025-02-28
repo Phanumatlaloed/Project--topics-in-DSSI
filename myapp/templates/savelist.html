@@ -22,13 +22,13 @@
          <aside class="sidebar">
             <div class="logo text-center">
                 <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
-                <h5>Saved Posts</h5>
+
             </div>
             <nav>
                 <ul class="nav">
                     <li><a href="{% url 'home' %}" class="nav-link"><i>🏠</i> Home</a></li>
-                    <li><a href="{% url 'community_list' %}" class="nav-link active"><i>👥</i> Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="nav-link"><i>💾</i> Save</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link "><i>👥</i> Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link active"><i>💾</i> Save</a></li>
                     <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i>📄</i> Profile</a></li>
                     <li><a href="{% url 'product_list' %}" class="nav-link"><i>🛒</i> Product List</a></li>
                     <li><a href="{% url 'notification_list' %}" class="nav-link"><i>🔔</i> Notifications</a></li>

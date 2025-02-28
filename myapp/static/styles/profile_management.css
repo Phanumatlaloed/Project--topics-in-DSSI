@@ -106,6 +106,32 @@ h2, h3 {
     margin: 20px 0;
 }
 
+/* 🌟 จัดให้ label และ input อยู่ข้างกัน */
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+/* 🎨 ปรับให้ input และ select ดูโค้งมน */
+.input-rounded {
+    border-radius: 25px;
+    border: 2px solid black;
+    padding: 10px 15px;
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 🎨 ทำให้ input เปลี่ยนสีเมื่อโฟกัส */
+.input-rounded:focus {
+    border-color: #ff6b81;
+    outline: none;
+}
+
+
 /* Form Sections */
 .row {
     margin-top: 20px;
@@ -116,4 +142,40 @@ h2, h3 {
 .text-highlight {
     color: #f06262;
     font-weight: bold;
+}
+
+/* 🔙 ปรับปุ่มให้อยู่ในกรอบของหัวข้อหลัก */
+.back-btn {
+    position: absolute;
+    top: 50%;  /* จัดกึ่งกลางแนวตั้งของ header */
+    left: 30px;
+    transform: translateY(-50%);  /* ทำให้กึ่งกลางพอดีกับ header */
+    background: none;
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    font-size: 16px;
+    padding: 8px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+}
+
+/* Hover Effect */
+.back-btn:hover {
+    background: #6c757d;
+    color: white;
+    transform: translateY(-50%) translateX(-3px);
+}
+
+/* ปรับตำแหน่งเมื่อหน้าจอเล็ก */
+@media (max-width: 768px) {
+    .back-btn {
+        left: 15px;
+        font-size: 14px;
+        padding: 6px 12px;
+    }
 }
