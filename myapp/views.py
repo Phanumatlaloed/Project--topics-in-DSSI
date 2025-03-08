@@ -239,6 +239,7 @@ def home(request):
     return render(request, 'home.html', {
         'username': request.user.username,
         'posts': posts,
+        'following_users': list(following_users),  # ✅ ส่งค่าผู้ใช้ที่ติดตามไปยังเทมเพลต
         'following_users': following_users,
         'followed_users': followed_users,
         'products': products,  # ✅ ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
@@ -651,7 +652,6 @@ def delete_group(request, group_id, post_id):
         return JsonResponse({"success": True, "message": "โพสต์ถูกลบแล้ว!"})
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
-    return redirect('community_list')
 
 #รายละเอียดในกลุ่ม
 from django.http import JsonResponse
@@ -876,47 +876,21 @@ def profile_management(request):
 
 
 
-@login_required
-def profile_view(request, user_id):  # ✅ เพิ่ม user_id
-    """ ดูโปรไฟล์ของสมาชิก """
-    profile_user = get_object_or_404(User, id=user_id)  # ✅ ดึง User ตาม ID
-
-    if profile_user.role != 'member':  # ✅ ใช้ profile_user แทน request.user
-        messages.error(request, "❌ เฉพาะสมาชิก (Member) เท่านั้นที่สามารถเข้าถึงหน้านี้!")
-        return redirect('login')
-
-    # ถ้ากำลังดูโปรไฟล์ตัวเองให้ใช้ request.user
-    user = request.user if request.user.id == user_id else profile_user
-
-    try:
-        member = Member.objects.get(user=profile_user)  # ✅ ดึงข้อมูลสมาชิกของ user ที่ดูโปรไฟล์
-    except Member.DoesNotExist:
-        member = None
-
-    # ดึงโพสต์ของ user ที่กำลังดูโปรไฟล์
-    posts = Post.objects.filter(
-        user=profile_user,  # ✅ ต้องใช้ profile_user ไม่ใช่ request.user
-        is_reported=False
-    ).prefetch_related(
-        'media',
-        'comments',
-        'likes'
-    ).order_by('-created_at')
-
-    # Debug information
-    print(f"Debug - Viewing profile of User ID: {profile_user.id}")
-    print(f"Debug - Total posts found: {posts.count()}")
-
-    # คำนวณ following users
-    following_users = [follow.following.id for follow in request.user.following.all()]
-
-    return render(request, 'profile.html', {
+def profile_view(request, user_id):
+    user = get_object_or_404(CustomUser, pk=user_id)
+    posts = Post.objects.filter(user=user)
+    
+    # ตรวจสอบว่าเป็นโปรไฟล์ของผู้ที่ล็อกอินหรือไม่
+    is_own_profile = request.user == user
+    is_following = user.followers.filter(id=request.user.id).exists()
+    
+    context = {
+        'user': user,
         'posts': posts,
-        'member': member,
-        'user': profile_user,  # ✅ ส่ง user ที่กำลังดูโปรไฟล์ไปให้ template
-        'following_users': following_users,
-        'request_user': request.user  # ใช้เช็คปุ่ม follow
-    })
+        'is_own_profile': is_own_profile,
+        'is_following': is_following,
+    }
+    return render(request, 'profile.html', context)
 
 # แชร์โพสต์หน้าหลัก
 @login_required
@@ -1920,43 +1894,39 @@ def reject_seller_payment(request, order_id):
     messages.error(request, f"❌ ออเดอร์ #{order.id} ถูกปฏิเสธ")
     return JsonResponse({"success": True, "message": f"ออเดอร์ #{order.id} ถูกปฏิเสธแล้ว!"})
 
-from .models import Follow, CustomUser
-# ✅ สร้างฟังก์ชันสำหรับการติดตามผู้ใช้
-from .models import Follow, CustomUser
-# ✅ สร้างฟังก์ชันสำหรับการติดตามผู้ใช้
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-from .models import Follow, CustomUser  # ใช้ CustomUser แทน User
+# ฟังก์ชันสำหรับการติดตาม/ยกเลิกติดตาม
 
 @login_required
 def follow_user(request, user_id):
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
+    """ ติดตาม/เลิกติดตามผู้ใช้ """
+    try:
+        user_to_follow = get_object_or_404(CustomUser, id=user_id)
+        current_user = request.user
 
-    target_user = get_object_or_404(CustomUser, id=user_id)
+        if current_user == user_to_follow:
+            return JsonResponse({'success': False, 'message': 'You cannot follow yourself.'}, status=400)
 
-    if request.user == target_user:
-        return JsonResponse({"success": False, "message": "คุณไม่สามารถติดตามตัวเองได้"}, status=400)
+        follow_relation, created = Follow.objects.get_or_create(follower=current_user, following=user_to_follow)
 
-    follow_instance, created = Follow.objects.get_or_create(follower=request.user, following=target_user)
+        if not created:
+            follow_relation.delete()  # ถ้าติดตามอยู่แล้ว ให้ลบออก (Unfollow)
+            return JsonResponse({'success': True, 'message': 'Unfollowed successfully.', 'is_following': False}, status=200)
 
-    if not created:
-        follow_instance.delete()
-        is_following = False
-    else:
-        is_following = True
+        return JsonResponse({'success': True, 'message': 'Followed successfully.', 'is_following': True}, status=200)
 
-    # ✅ ดึงค่าล่าสุดจาก Database
-    followers_count = Follow.objects.filter(following=target_user).count()
-    following_count = Follow.objects.filter(follower=request.user).count()
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
-    return JsonResponse({
-        "success": True,
-        "is_following": is_following,
-        "followers_count": followers_count,
-        "following_count": following_count
-    })
+    
+@login_required
+def check_follow_status(request, user_id):
+    """ เช็คว่าผู้ใช้ปัจจุบันติดตาม user_id หรือไม่ """
+    user_to_check = get_object_or_404(CustomUser, id=user_id)
+    is_following = Follow.objects.filter(follower=request.user, following=user_to_check).exists()
+    
+    return JsonResponse({"is_following": is_following})
+
+
 
 @login_required
 def delete_uploaded_file(request, file_id):

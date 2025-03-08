@@ -6,4 +6,5 @@ django-allauth
 cryptography
 Pillow
 django-crispy-forms
-pip install python-dotenv
+python-dotenv
+django-cors-headers

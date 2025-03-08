@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,6 +78,7 @@
                                 {% else %}
                                     <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
                                 {% endif %}
+
                                 <b>{{ post.user.username }}</b>
                                 <small class="text-muted">{{ post.created_at|date:"F j, Y, g:i a" }}</small>
 
@@ -85,17 +87,22 @@
                                     <div class="badge bg-primary text-white ms-2">🌍 Community Post</div>
                                 {% endif %}
 
-                                {# ✅ แสดงปุ่ม Follow แค่ครั้งเดียวต่อผู้ใช้แต่ละคน #}
-                                {% if post.user.id not in followed_users and post.user != request.user %}
+                                {% if post.user.id in following_users %}
                                     <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn"
-                                            data-user-id="{{ post.user.id }}">
-                                            {% if post.user.id in following_users %}Unfollow{% else %}Follow{% endif %}
+                                        <button type="submit" class="btn btn-sm btn-danger follow-btn" data-user-id="{{ post.user.id }}">
+                                            Unfollow
                                         </button>
                                     </form>
-                                    {% with followed_users|add:post.user.id as followed_users %} {% endwith %}
+                                {% else %}
+                                    <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-primary follow-btn" data-user-id="{{ post.user.id }}">
+                                            Follow
+                                        </button>
+                                    </form>
                                 {% endif %}
+                            
 
                                 <!-- Follow Button >
                                 {% if post_user != request.user %}

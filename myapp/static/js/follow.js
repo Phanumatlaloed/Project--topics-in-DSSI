@@ -1,51 +1,63 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const followButton = document.getElementById("follow-button");
+    document.querySelectorAll(".follow-form").forEach(form => {
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            let button = this.querySelector(".follow-btn");
+            let userId = button.dataset.userId;
+            let formData = new FormData(this);
 
-    if (followButton) {
-        followButton.addEventListener("click", function () {
-            const userId = this.dataset.userId;
-            const followersCountSpan = document.getElementById("followers-count");
-            const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
+            if (!userId) {
+                console.error("❌ userId is undefined or null");
+                return;
+            }
 
-            // ✅ แสดงสถานะกำลังดำเนินการ
-            followButton.textContent = "Processing...";
-            followButton.disabled = true;
-
-            fetch(`/follow/${userId}/`, {
+            fetch(this.action, {
                 method: "POST",
-                headers: {
-                    "X-CSRFToken": csrfToken,
-                    "Content-Type": "application/json"
-                }
+                body: formData,
+                headers: { "X-CSRFToken": formData.get("csrfmiddlewaretoken") }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // ✅ อัปเดตปุ่ม Follow/Unfollow
                     if (data.is_following) {
-                        followButton.textContent = "Unfollow";
-                        followButton.classList.remove("btn-outline-primary");
-                        followButton.classList.add("btn-danger");
+                        button.classList.remove("btn-outline-primary");
+                        button.classList.add("btn-danger");
+                        button.textContent = "Unfollow";
                     } else {
-                        followButton.textContent = "Follow";
-                        followButton.classList.remove("btn-danger");
-                        followButton.classList.add("btn-outline-primary");
+                        button.classList.remove("btn-danger");
+                        button.classList.add("btn-outline-primary");
+                        button.textContent = "Follow";
                     }
-
-                    // ✅ อัปเดตจำนวน Followers
-                    followersCountSpan.textContent = data.followers_count;
                 } else {
-                    alert(data.message);
+                    console.error("❌ Follow API error:", data.message);
                 }
             })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง!");
-            })
-            .finally(() => {
-                // ✅ เปิดปุ่มให้กดใหม่
-                followButton.disabled = false;
-            });
+            .catch(error => console.error("❌ Error fetching follow status:", error));
         });
-    }
+    });
+
+    // ✅ โหลดสถานะติดตามหลังจากรีเฟรชหน้าเว็บ
+    document.querySelectorAll(".follow-btn").forEach(button => {
+        let userId = button.dataset.userId;
+
+        if (!userId) {
+            console.error("❌ userId is undefined in follow status check.");
+            return;
+        }
+
+        fetch(`/follow_status/${userId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_following) {
+                    button.classList.remove("btn-outline-primary");
+                    button.classList.add("btn-danger");
+                    button.textContent = "Unfollow";
+                } else {
+                    button.classList.remove("btn-danger");
+                    button.classList.add("btn-outline-primary");
+                    button.textContent = "Follow";
+                }
+            })
+            .catch(error => console.error("❌ Error fetching follow status:", error));
+    });
 });

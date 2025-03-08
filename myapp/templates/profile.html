@@ -18,6 +18,8 @@
     <script src="{% static 'js/delete.js' %}" defer></script>
     <script src="{% static 'js/comment.js' %}" defer></script>
     <script src="{% static 'js/savelist.js' %}" defer></script>
+    <script src="{% static 'js/follow.js' %}" defer></script>
+
 </head>
 <body>
     <div class="wrapper d-flex">
@@ -57,23 +59,26 @@
                     {% endif %}
                 </div>
                 <h2 class="mb-1">{{ user.username }}</h2>
-
+            
                 <!-- จำนวนผู้ติดตาม -->
                 <div class="d-flex justify-content-center gap-4 my-2">
                     <span><strong id="followers-count">{{ user.followers.count }}</strong> Followers</span>
                     <span><strong id="following-count">{{ user.following.count }}</strong> Following</span>
                 </div>
-
+            
                 <!-- ปุ่มติดตาม -->
-                {% if user != request_user %}
+                {% if user != request.user %}
                     <button id="follow-button"
-                        data-user-id="{{ user.id }}"
-                        class="btn {% if request_user in user.followers.all %}btn-danger{% else %}btn-outline-primary{% endif %}">
-                        {% if request_user in user.followers.all %}Unfollow{% else %}Follow{% endif %}
+                            data-user-id="{{ user.id }}"
+                            class="btn {% if request.user in user.followers.all %}btn-danger{% else %}btn-outline-primary{% endif %}">
+                        {% if request.user in user.followers.all %}Unfollow{% else %}Follow{% endif %}
                     </button>    
                 {% endif %}
-
-                <a href="{% url 'profile_management' %}" class="edit-profile-btn">Edit Profile</a>
+            
+                <!-- ปุ่มแก้ไขโปรไฟล์ -->
+                {% if is_own_profile %}
+                    <a href="{% url 'profile_management' %}" class="edit-profile-btn">Edit Profile</a>
+                {% endif %}
             </header>
 
             <!-- Create Post -->
