@@ -11,18 +11,16 @@
 </head>
 <body>
     <div class="container">
-        <!-- Section Header -->
-        <h2 class="text-center mb-4">จัดการโปรไฟล์</h2>
-        
-        <!-- Back Button -->
-        <div class="text-end">
-            <a href="{% url 'profile' request.user.id %}" class="btn btn-secondary mb-3">⬅ กลับไปยังหน้า Profile</a>
-        </div>
-
-        <!-- Welcome Section -->
-        <div class="text-center mb-4">
-            <p>👋 สวัสดี, <span class="text-highlight">{{ user.username }}</span></p>
-            <p class="text-muted">อัปเดตข้อมูลส่วนตัวของคุณเพื่อให้ชุมชนรู้จักคุณดีขึ้น!</p>
+        <div class="profile-header">
+            <!-- ปุ่มย้อนกลับ -->
+            <div class="back-btn-container">
+                <a href="{% url 'profile' request.user.id %}" class="btn btn-secondary">
+                    ⬅ ย้อนกลับ
+                </a>   
+            </div>
+            <h2 class="text-center">จัดการโปรไฟล์</h2>
+            <p class="text-muted text-center">👋 สวัสดี, <span class="text-highlight">{{ user.username }}</span></p>
+            <p class="text-center">อัปเดตข้อมูลส่วนตัวของคุณเพื่อให้ชุมชนรู้จักคุณดีขึ้น!</p>
         </div>
 
         <div class="divider"></div>
@@ -34,23 +32,22 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
-                    <!-- Profile Picture -->
                     <div class="text-center">
-                            {% if user.member_profile.profile_picture %}
+                        {% if user.member_profile.profile_picture %}
                             <img src="{{ user.member_profile.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail">
-                            {% else %}
+                        {% else %}
                             <img src="{% static 'images/default-profile.png' %}" alt="Profile Picture" class="img-thumbnail">
-                            {% endif %}
-                        <input type="file" name="profile_picture" id="profile_picture" class="form-control mt-3">
+                        {% endif %}
+                        <input type="file" name="profile_picture" class="form-control mt-3">
                     </div>
 
-                    <!-- User Information -->
-                    <div class="mt-4">
-                        {{ personal_info_form.as_p }}
-                    </div>
+                    {{ form.as_p }}  <!-- ใช้ Django Forms -->
 
+                    <!-- ปุ่มบันทึก -->
                     <div class="text-center">
-                        <button type="submit" name="update_personal_info" class="btn btn-primary mt-3">💾 บันทึกข้อมูลส่วนตัว</button>
+                        <button type="submit" name="update_personal_info" class="btn btn-primary mt-3">
+                            💾 บันทึกข้อมูลส่วนตัว
+                        </button>
                     </div>
                 </form>
             </div>
@@ -60,9 +57,7 @@
                 <h3>เปลี่ยนรหัสผ่าน</h3>
                 <form method="post">
                     {% csrf_token %}
-                    <div>
-                        {{ password_form.as_p }}
-                    </div>
+                    {{ password_form.as_p }}
                     <div class="text-center">
                         <button type="submit" name="change_password" class="btn btn-warning mt-3">🔒 เปลี่ยนรหัสผ่าน</button>
                     </div>

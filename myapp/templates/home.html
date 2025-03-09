@@ -1,10 +1,12 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    
 
     <!-- ✅ Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -20,22 +22,20 @@
     <script src="{% static 'js/savelist.js' %}" defer></script>
     <script src="{% static 'js/follow.js' %}" defer></script>
 </head>
-<body class="bg-light">
-    <div class="container-fluid d-flex">
+<body>
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo text-center">
                 <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
-                <h5>Save Post</h5>
             </div>
             <nav>
                 <ul class="nav">
-                    <li><a href="{% url 'home' %}" class="nav-link active">🏠 Home</a></li>
-                    <li><a href="{% url 'community_list' %}" class="nav-link">👥 Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="nav-link ">💾 Save </a></li>
-                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
-                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
-                    <li><a href="{% url 'notification_list' %}" class="nav-link">🔔 notification</a></li>
+                    <li><a href="{% url 'home' %}" class="nav-link active"><i>🏠</i> Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link "><i>👥</i> Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link"><i>💾</i> Save</a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i>📄</i> Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link"><i>🛒</i> Product List</a></li>
+                    <li><a href="{% url 'notification_list' %}" class="nav-link"><i>🔔</i> Notifications</a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">
@@ -51,22 +51,21 @@
         <main class="content flex-grow-1 p-4">
             <!-- ✅ Create Post Form -->
             <div class="create-post card p-3 shadow-sm">
+            <!-- Create Post -->
+            <div class="create-post bg-light p-3 rounded mb-4">
+                <h5>Create a Post</h5>
                 <form id="postForm" action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <textarea name="content" id="postContent" class="form-control mb-2" placeholder="What's on your mind?" required></textarea>
-                
+                    <textarea name="content" class="form-control mb-2" placeholder="What's on your mind?" required></textarea>
                     <div class="d-flex gap-2">
                         <label for="postImages" class="btn btn-light">🖼️ เพิ่มรูปภาพ</label>
                         <input type="file" name="images" id="postImages" accept="image/*" multiple hidden>
-                    
                         <label for="postVideos" class="btn btn-light">🎥 เพิ่มวิดีโอ</label>
                         <input type="file" name="videos" id="postVideos" accept="video/*" multiple hidden>
                     </div>
-
-                    <button type="submit" id="postButton" class="btn btn-primary w-100 mt-3">Post</button>
+                    <button type="submit" class="btn btn-primary mt-2">Post</button>
                 </form>
             </div>
-
             <!-- ✅ Posts Section -->
             <div class="posts mt-4">
                 {% for post in posts %}
@@ -79,6 +78,7 @@
                                 {% else %}
                                     <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
                                 {% endif %}
+
                                 <b>{{ post.user.username }}</b>
                                 <small class="text-muted">{{ post.created_at|date:"F j, Y, g:i a" }}</small>
 
@@ -87,17 +87,22 @@
                                     <div class="badge bg-primary text-white ms-2">🌍 Community Post</div>
                                 {% endif %}
 
-                                {# ✅ แสดงปุ่ม Follow แค่ครั้งเดียวต่อผู้ใช้แต่ละคน #}
-                                {% if post.user.id not in followed_users and post.user != request.user %}
+                                {% if post.user.id in following_users %}
                                     <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn"
-                                            data-user-id="{{ post.user.id }}">
-                                            {% if post.user.id in following_users %}Unfollow{% else %}Follow{% endif %}
+                                        <button type="submit" class="btn btn-sm btn-danger follow-btn" data-user-id="{{ post.user.id }}">
+                                            Unfollow
                                         </button>
                                     </form>
-                                    {% with followed_users|add:post.user.id as followed_users %} {% endwith %}
+                                {% else %}
+                                    <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-primary follow-btn" data-user-id="{{ post.user.id }}">
+                                            Follow
+                                        </button>
+                                    </form>
                                 {% endif %}
+                            
 
                                 <!-- Follow Button >
                                 {% if post_user != request.user %}
@@ -128,6 +133,21 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
+
+                            <!-- ✅ ป๊อปอัพแสดงรูปภาพ -->
+                            <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">📸 รูปภาพในโพสต์</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img id="modalImage" class="img-fluid rounded">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Actions -->
                             <div class="actions mt-2 d-flex gap-2">
@@ -189,6 +209,51 @@
                 {% endfor %}
             </div>
         </main>
+        
+        {% if recommended_products %}
+            <h3>ผลิตภัณฑ์ที่แนะนำ:</h3>
+            <ul>
+                {% for product in recommended_products %}
+                    <li>{{ product.name }} - ฿{{ product.price }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        {% if sentiment %}
+            <p>ความคิดเห็นของคุณถูกวิเคราะห์ว่า: {{ sentiment }}</p>
+        {% endif %}
+        
+
+        <!-- Recommended Products -->
+        <aside class="recommendations">
+            <h5>แนะนำสินค้า</h5>
+            <div class="product-grid">
+                {% if products %}
+                    {% for product in products %}
+                        <div class="product-card">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                            <p>{{ product.name }}</p>
+                            <p class="text-primary">💰 ฿{{ product.price }}</p>
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-primary">ดูรายละเอียด</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">ไม่มีสินค้าแนะนำในขณะนี้</p>
+                {% endif %}
+            </div>
+        </aside>
+
     </div>
+    <!-- <script>
+        // ✅ ฟังก์ชันเปิดรูปในป๊อปอัพ
+        function openModal(postId) {
+            // โหลดรูปทั้งหมดของโพสต์นั้น
+            let images = document.querySelectorAll(`#post-${postId} .media-item img`);
+            
+            if (images.length > 0) {
+                document.getElementById('modalImage').src = images[0].src; // แสดงรูปแรก
+            }
+        }
+    </script> -->
 </body>
 </html>

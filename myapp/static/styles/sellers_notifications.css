@@ -1,0 +1,158 @@
+/* ✅ ปรับแต่งกล่องแจ้งเตือนให้เข้ากับ Sidebar อย่างลงตัว */
+.seller-notifications-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+    max-width: 750px;
+    margin: 20px 0 20px 280px; /* ปรับ margin-left ให้ตรงกับ Sidebar */
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid #ffd3d6;
+    position: absolute;
+    left: 280px; /* ทำให้แนบชิด Sidebar */
+    top: 20px;
+}
+
+/* ✅ ปรับแต่งหัวข้อให้โดดเด่น */
+.seller-notifications-container h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff3f5f;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffe6eb, #ffd3d6);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.seller-notifications-container h2::before {
+    content: "🔔";
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+/* ✅ รายการแจ้งเตือน */
+.seller-notifications-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ✅ ปรับแต่งรายการแจ้งเตือนให้เข้ากับธีม */
+.seller-notification-item {
+    background: #fff;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid #ff6b81;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 14px;
+}
+
+.seller-notification-item.unread {
+    background: #fffae6;
+    border-left: 4px solid #ffa500;
+    font-weight: bold;
+}
+
+.seller-notification-item:hover {
+    background: #ffebf0;
+    transform: translateX(5px);
+    box-shadow: 0px 4px 10px rgba(255, 99, 132, 0.2);
+}
+
+/* ✅ ข้อความแจ้งเตือน */
+.notif-content {
+    flex: 1;
+    color: #333;
+    font-weight: 500;
+    word-break: break-word;
+    display: flex;
+    align-items: center;
+}
+
+/* ✅ หมวดหมู่ของแจ้งเตือน */
+.notif-category {
+    font-size: 0.9em;
+    color: #ff3f5f;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+/* ✅ เวลาแจ้งเตือน */
+.notif-time {
+    font-size: 0.85em;
+    color: #777;
+    white-space: nowrap;
+}
+
+/* ✅ ปุ่ม "ทำเครื่องหมายว่าอ่านแล้ว" */
+.mark-all-read-btn {
+    background: linear-gradient(135deg, #ff6b81, #ff3f5f);
+    color: white;
+    padding: 12px;
+    border: none;
+    cursor: pointer;
+    margin-top: 15px;
+    display: block;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.3s ease-in-out;
+}
+
+.mark-all-read-btn:hover {
+    background: #ff3f5f;
+    box-shadow: 0px 4px 10px rgba(255, 0, 0, 0.2);
+}
+
+/* ✅ Responsive Design */
+@media (max-width: 1024px) {
+    .seller-notifications-container {
+        max-width: 90%;
+        margin-left: 220px; /* ปรับระยะตาม Sidebar */
+        position: relative;
+    }
+}
+
+@media (max-width: 768px) {
+    .seller-notifications-container {
+        max-width: 100%;
+        padding: 15px;
+        margin-left: 0;
+    }
+    .seller-notification-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .notif-time {
+        margin-top: 5px;
+        align-self: flex-end;
+    }
+}
+
+.notif-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #ff6b81;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 5px;
+    transition: background 0.3s;
+}
+
+.notif-btn:hover {
+    background: #ff3f5f;
+}

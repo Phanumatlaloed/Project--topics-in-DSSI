@@ -44,39 +44,15 @@ body {
     font-size: 16px;
 }
 
-/* 🌸 ทำให้ตารางแสดงผลได้ดีในมือถือ */
-@media (max-width: 768px) {
-    .cart-table, .cart-table thead, .cart-table tbody, .cart-table th, .cart-table td, .cart-table tr {
-        display: block;
-        width: 100%;
-    }
+/* 🌸 ปรับข้อมูลสินค้าให้ชิดซ้าย */
+.cart-table td.product-info {
+    text-align: left; /* ทำให้ข้อมูลชิดซ้าย */
+    display: flex;
+    align-items: center;
+}
 
-    .cart-table tr {
-        margin-bottom: 10px;
-        display: flex;
-        flex-direction: column;
-        background: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .cart-table th {
-        display: none;
-    }
-
-    .cart-table td {
-        text-align: left;
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .cart-table td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        display: block;
-        color: #ff6b81;
-    }
+.cart-table td.product-info img {
+    margin-right: 15px; /* เพิ่มระยะห่างระหว่างรูปและข้อความ */
 }
 
 /* 🌸 ปรับขนาดรูปภาพสินค้า */
@@ -85,6 +61,7 @@ body {
     height: 80px;
     object-fit: cover;
     border-radius: 12px;
+    margin-right: 15px; /* ให้มีระยะห่างจากชื่อสินค้า */
 }
 
 /* 🌸 ปุ่มเพิ่ม-ลดสินค้า */

@@ -1,0 +1,148 @@
+/* 🌸 พื้นหลังโทนชมพูอ่อน */
+body {
+    background: linear-gradient(to right, #fff9fb, #ffe6f2);
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+/* 💖 กล่องหลัก */
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 🎀 หัวข้อ */
+h2 {
+    color: #d63384;
+    font-weight: bold;
+    text-align: center;
+    font-size: 2rem;
+}
+
+/* 📝 การ์ดรีวิว */
+.review-card {
+    background: #fff;
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.review-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* ⭐ แสดงเรตติ้ง */
+.rating {
+    background-color: #ffcc00;
+    color: white;
+    font-size: 1rem;
+    padding: 6px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    display: inline-block;
+    margin: 5px 0;
+}
+
+/* 📝 ข้อความรีวิว */
+.review-text {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+/* 🌸 กล่องข้อความรีวิว */
+.review-content {
+    border-left: 5px solid #d63384;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 1.1rem;
+}
+
+/* 🎀 รูปภาพและวิดีโอแนบ */
+.media-section {
+    margin-top: 15px;
+}
+
+.media-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.img-thumbnail, video {
+    border: 3px solid #d63384;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+    max-width: 120px;
+}
+
+.img-thumbnail:hover, video:hover {
+    transform: scale(1.1);
+}
+
+/* 💌 Seller Response */
+.response-box {
+    background: rgba(255, 182, 193, 0.2);
+    border-left: 5px solid #d63384;
+    color: #d63384;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+/* 📝 ฟอร์มตอบกลับ */
+.response-form {
+    margin-top: 15px;
+}
+
+.response-form textarea {
+    border-radius: 8px;
+    border: 2px solid #d63384;
+    padding: 10px;
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* 💖 ปุ่มส่งคำตอบ */
+.btn-submit {
+    background-color: #ff4081;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 10px 20px;
+    transition: all 0.3s ease-in-out;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background-color: #d63384;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 12px rgba(255, 64, 129, 0.3);
+}
+
+/* 💬 ข้อความเมื่อไม่มีรีวิว */
+.alert {
+    background-color: rgba(255, 182, 193, 0.2);
+    color: #d63384;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    text-align: center;
+    padding: 15px;
+    font-weight: bold;
+}

@@ -118,22 +118,14 @@ from .models import Notification
 def seller_notifications_list(request):
     """ ดึงแจ้งเตือนทั้งหมดของผู้ขาย """
     notifications = Notification.objects.filter(
-        user=request.user, 
-        notification_type__in=['new_order', 'new_review', 'refund_request']
-    ).order_by('-created_at')
-
-    return render(request, 'notificationsellers.html', {'notifications': notifications})
-
-@login_required
-def seller_notifications_list(request):
-    """ ดึงแจ้งเตือนทั้งหมดของผู้ขาย """
-    notifications = Notification.objects.filter(
         user=request.user,
         notification_type__in=[
             'new_order', 'new_review', 'refund_request',
             'refund_completed', 'order_shipped', 'refund_approved', 'refund_rejected'
         ]
     ).order_by('-created_at')
+
+    print(f"📢 แจ้งเตือนทั้งหมดของ {request.user.username}: {notifications.count()} รายการ")  # ✅ Debugging
 
     return render(request, 'notificationsellers.html', {'notifications': notifications})
 

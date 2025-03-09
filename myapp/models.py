@@ -235,6 +235,7 @@ class Product(models.Model):
     total_sold = models.PositiveIntegerField(default=0)  # ✅ เพิ่มฟิลด์จำนวนที่ขายได้
     image = models.ImageField(upload_to='products/')
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='makeup')  # ✅ หมวดหมู่สินค้า
+    summary = models.TextField(blank=True, null=True)  # ✅ เพิ่มฟิลด์สรุปรีวิว
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -419,6 +420,12 @@ class Review(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="reviews", null=True, blank=True)  # ✅ รองรับค่า NULL ชั่วคราว
     rating = models.IntegerField(choices=[(i, f"⭐ {i}") for i in range(1, 6)])  
     comment = models.TextField()
+    sentiment = models.CharField(max_length=10, choices=[
+        ('positive', 'Positive'),
+        ('neutral', 'Neutral'),
+        ('negative', 'Negative')
+    ], default='neutral')  # ✅ เพิ่ม sentiment
+    analysis_done = models.BooleanField(default=False)  # ✅ ต้องเพิ่ม field นี้
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -444,6 +451,14 @@ class ReviewMedia(models.Model):
     def __str__(self):
         return f"({self.media_type.upper()}) {os.path.basename(self.file.name)}"
     
+class ReviewResponse(models.Model):
+    review = models.OneToOneField(Review, on_delete=models.CASCADE, related_name="response")  # One review gets one response
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)  # Ensure only the product's seller can respond
+    response_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Response by {self.seller.store_name} to Review {self.review.id}"
 
 
 from django.db import models
@@ -542,3 +557,16 @@ class RefundRequest(models.Model):
 
     def __str__(self):
         return f"Refund Request for {self.item.product.name if self.item else 'Unknown Item'} in Order #{self.order.id}"
+
+from django.db import models
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+class SellerNotification(models.Model):
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller_notifications")
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"📢 {self.seller.username} - {self.message[:50]}"

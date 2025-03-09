@@ -1,33 +1,25 @@
-/* ✅ ปรับ Navbar ให้ขนาดเท่ากัน */
+/* 🌸 Navbar */
 .navbar {
-    background-color: #fde5e5; /* สีชมพูอ่อน */
-    padding: 15px 40px; /* ปรับ padding ให้เท่ากันทุกหน้า */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 80px; /* ล็อกความสูงให้เท่ากัน */
+    background-color: white;
+    padding: 15px 30px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    position: relative;
 }
 
-/* ✅ ปรับขนาดโลโก้ให้เหมือนกันทุกหน้า */
-.navbar .logo img {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
+.logo img {
+    width: 80px;
+    height: auto;
 }
 
-/* ✅ ปรับเมนูให้เท่ากัน */
 .nav-links {
     list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 20px; /* ทำให้ระยะห่างเท่ากัน */
     padding: 0;
-    margin: 0;
+    display: flex;
+    gap: 20px;
 }
 
-/* ✅ ปรับขนาดและระยะห่างของเมนู */
 .nav-links li {
     display: inline;
 }
@@ -35,18 +27,17 @@
 .nav-links a {
     text-decoration: none;
     font-weight: bold;
-    font-size: 16px; /* ล็อกขนาดตัวอักษร */
-    color: #e75480;
-    padding: 12px 20px; /* ทำให้ขนาดปุ่มเมนูเท่ากัน */
+    color: #ff6b81;
+    padding: 10px 15px;
     border-radius: 8px;
     transition: background 0.3s;
 }
 
-/* ✅ Active และ Hover */
 .nav-links a:hover, .nav-links a.active {
     background: #ff6b81;
     color: white;
 }
+
 
 /* 🌸 ปรับ Navbar ให้เป็นแบบ Mobile เมื่อจอเล็ก */
 @media (max-width: 1024px) {

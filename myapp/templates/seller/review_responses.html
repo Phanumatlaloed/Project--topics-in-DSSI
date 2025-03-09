@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Customer Reviews 💖</title>
+    <link rel="stylesheet" href="{% static 'styles/sellreviews.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h2>💖 Manage Customer Reviews 💖</h2>
+
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="review-card">
+                <div class="card-body">
+                    <h3 class="card-title">{{ review.product.name }}</h3>
+                    <p class="review-meta">
+                        By <strong>{{ review.user.username }}</strong> on {{ review.created_at|date:"F j, Y" }}
+                    </p>
+                    
+                    <div class="rating">⭐ {{ review.rating }}</div>
+
+                    <p class="review-text">💬 Customer Review:</p>
+                    <p class="review-content">{{ review.comment }}</p>
+
+                    {% if review.media.all %}
+                        <div class="media-section">
+                            <strong>📸 Attached Media:</strong>
+                            <div class="media-container">
+                                {% for media in review.media.all %}
+                                    {% if media.media_type == "image" %}
+                                        <img src="{{ media.file.url }}" alt="Review Image" class="img-thumbnail">
+                                    {% elif media.media_type == "video" %}
+                                        <video controls>
+                                            <source src="{{ media.file.url }}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if review.response %}
+                        <div class="response-box">
+                            <strong>📝 Your Response:</strong> {{ review.response.response_text }}
+                        </div>
+                    {% else %}
+                        <form method="POST" action="{% url 'review_response' review.id %}" class="response-form">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="response_text">🖊️ Your Response:</label>
+                                <textarea name="response_text" class="form-control" rows="3" placeholder="Write your response here..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn-submit">💬 Submit Response</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert">No customer reviews found for your products. 💬💖</div>
+    {% endif %}
+</div>
+
+</body>
+</html>

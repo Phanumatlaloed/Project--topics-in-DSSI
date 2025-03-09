@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from myapp.models import Post, GroupPost, Order, GroupPost
+from myapp.models import Post, GroupPost, Order, GroupPost, Product
 
 User = get_user_model()
 
@@ -28,6 +28,7 @@ class Notification(models.Model):
     post = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True, blank=True)
     group_post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, null=True, blank=True, related_name='notifications')  # ✅ เพิ่ม GroupPost
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)  # ✅ สินค้าที่ถูกรีวิว
 
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)

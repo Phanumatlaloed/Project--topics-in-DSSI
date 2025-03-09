@@ -129,6 +129,7 @@ urlpatterns = [
     path("seller/payments/", views.seller_payment_verification, name="seller_payment_verification"),
     path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
     path("seller/payments/reject/<int:order_id>/", views.reject_seller_payment, name="reject_seller_payment"),
+    path("products/user/<int:product_id>/", views.product_detail_user, name="product_detail_user"),
 
 
     # ✅ เส้นทางสำหรับรีเซ็ตรหัสผ่าน
@@ -203,6 +204,14 @@ urlpatterns = [
     path("admins/performance/", views.admin_performance, name="admin_performance"),  # ✅ ต้องอยู่ที่นี่
 
     path("update-address/<int:order_id>/", views.update_order_shipping, name="update_order_shipping"),
+    #path('seller/', views.seller_notifications_list, name='seller_notifications'),
+
+    path("seller/notifications/", views.get_seller_notifications, name="get_seller_notifications"),
+    path("seller/notifications/read/", views.mark_notifications_read, name="mark_notifications_read"),
+    path("notifications/", views.seller_notifications_list, name="seller_notifications_lists"),
+    path("seller/reviews/", views.seller_review_responses, name="seller_reviews"),
+    path("seller/review/<int:review_id>/respond/", views.seller_respond_review, name="review_response"),
+
 ]
 
 

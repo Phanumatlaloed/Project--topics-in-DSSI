@@ -52,6 +52,7 @@
                             <th>ยอดรวม</th>
                             <th>สถานะ</th>
                             <th>หลักฐานการชำระเงิน</th>
+                            <th>หลักฐานสินค้าที่ส่งคืน</th> <!-- 🔹 เพิ่มคอลัมน์นี้ -->
                             <th>อัปโหลดสลิปคืนเงิน</th>
                             <th>ลูกค้ายืนยัน</th>
                             <th>จัดการ</th>
@@ -94,6 +95,13 @@
                                 {% else %}
                                     ❌ ไม่มีหลักฐาน
                                 {% endif %}
+                            </td>
+                            <td>
+                                {% if refund.return_item_proof %}
+                                    <a href="{{ refund.return_item_proof.url }}" target="_blank" class="slip-btn">ดูหลักฐานสินค้า</a>
+                                {% else %}
+                                    ❌ ไม่มีหลักฐาน
+                                {% endif %}
                             </td>                    
                             <td>
                                 {% if refund.status == "approved" and not refund.refund_proof %}
@@ -114,12 +122,14 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if refund.status == "pending" %}
-                                    <a href="{% url 'approve_refund' refund.id %}" class="btn approve">อนุมัติ</a>
-                                    <a href="{% url 'reject_refund' refund.id %}" class="btn reject">ปฏิเสธ</a>
-                                {% else %}
-                                    ✅ ดำเนินการแล้ว
-                                {% endif %}
+                                <div class="btn-group">
+                                    {% if refund.status == "pending" %}
+                                        <a href="{% url 'approve_refund' refund.id %}" class="btn btn-success">อนุมัติ</a>
+                                        <a href="{% url 'reject_refund' refund.id %}" class="btn btn-danger">ปฏิเสธ</a>
+                                    {% else %}
+                                        ✅ ดำเนินการแล้ว
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}

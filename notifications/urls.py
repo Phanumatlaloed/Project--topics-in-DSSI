@@ -9,5 +9,4 @@ urlpatterns = [
     path('read/<int:notification_id>/', mark_notification_as_read, name='mark_notification_as_read'),
     path("notifications/", all_notifications, name="notifications"),
     path('seller/', seller_notifications_list, name='seller_notifications'),
-
 ]

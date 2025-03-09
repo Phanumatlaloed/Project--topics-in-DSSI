@@ -99,3 +99,24 @@ input:focus {
     color: #777;
     margin-top: 1.2rem; /* เพิ่มจาก 1rem เป็น 1.2rem */
 }
+
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px; /* เว้นช่องให้ไอคอน */
+    height: 40px; /* ปรับให้พอดีกับไอคอน */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    color: gray;
+}

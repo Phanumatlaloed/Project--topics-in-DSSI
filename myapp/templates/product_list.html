@@ -73,16 +73,23 @@
                         <p class="text-primary">💰 ราคา: ฿{{ product.price }}</p>
 
                         <!-- 🛒 ปุ่มเพิ่มในตะกร้า (ถ้าสินค้าเหลือ) -->
-                        {% if product.stock > 0 %}
-                            <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
-                                ➕ เพิ่มในตะกร้า
-                            </button>
-                        {% else %}
-                            <button type="button" class="btn btn-secondary" disabled>❌ สินค้าหมด</button>
-                        {% endif %}
-
-                        <!-- 🔍 ดูรายละเอียดสินค้า -->
-                        <a href="{% url 'product_detail' product.id %}" class="btn btn-info">📄 รายละเอียด</a>
+                        <div class="btn-container">
+                            <!-- เพิ่มในตะกร้า ปุ่มสำหรับสินค้าที่มีสต็อก -->
+                            {% if product.stock > 0 %}
+                                <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
+                                    ➕ เพิ่มในตะกร้า
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-secondary" disabled>
+                                    ❌ สินค้าหมด
+                                </button>
+                            {% endif %}
+                        
+                            <!-- รายละเอียด ปุ่ม -->
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-info">
+                                📄 รายละเอียด
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

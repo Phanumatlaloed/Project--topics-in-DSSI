@@ -285,16 +285,14 @@
                     {% endfor %}
                 </td>                                                                              
                 <td>
-                    {% for item in order.order_items.all %}
-                        {% if item.id %}
+                    {% if order.order_items.exists %}  {# Check if there are any order items #}
                         <a href="{% url 'request_refund' order.id %}" class="btn btn-danger btn-sm refund-btn" data-order-id="{{ order.id }}">
                             🔄 ขอคืนเงิน
                         </a>
-                        {% else %}
+                    {% else %}
                         <span class="text-muted">❌ ไม่มีสินค้า</span>
-                        {% endif %}
-                    {% endfor %}
-                </td>
+                    {% endif %}
+                </td>                
             </tr>
             {% endfor %}
         </tbody>

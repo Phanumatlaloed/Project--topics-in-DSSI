@@ -7,6 +7,7 @@
     <title>แดชบอร์ดร้านค้า</title>
     <link rel="stylesheet" href="{% static 'styles/seller_dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/notifications.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -25,9 +26,11 @@
                 <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
                 <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
 
-                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
+                <li class="menu-header">📊 รายงานประสิทธิภาพร้านค้า</li>
                 <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
-                <li class="menu-item"><a href="{% url 'seller_notifications' %}"> การแจ้งเตือน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_notifications_lists' %}"> การแจ้งเตือน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_reviews' %}"> ตรวจสอบการรีวิว</a></li>
+            
 
                 <li class="menu-header">⚙️ การตั้งค่า</li>
                 <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
@@ -46,13 +49,6 @@
                 </button>                
             </header>
 
-            <!-- Tab Menu -->
-            <nav class="tab-menu">
-                <button class="active">ขายอยู่ ({{ products|length }})</button>
-                <button>การละเมิด (0)</button>
-                <button>อยู่ระหว่างตรวจสอบ (0)</button>
-                <button>ยังไม่ลงขาย (3)</button>
-            </nav>
 
             <!-- ตารางสินค้า -->
             <div class="product-table">
@@ -95,18 +91,40 @@
             </div>
         </main>
     </div>
+                <!-- UI การแจ้งเตือน -->
+             <!-- Toast Notification UI -->
+             <div class="notification-container" id="notification-container"></div>
 
-    <!-- JavaScript for Active Tab -->
+    <!-- JavaScript for Notifications -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const tabs = document.querySelectorAll(".tab-menu button");
-            tabs.forEach(tab => {
-                tab.addEventListener("click", function() {
-                    tabs.forEach(t => t.classList.remove("active"));
-                    this.classList.add("active");
+        function showNotification(message) {
+            const container = document.getElementById("notification-container");
+            const notification = document.createElement("div");
+            notification.classList.add("notification");
+            notification.innerHTML = `<i>🔔</i> ${message} <button class='close-btn' onclick='this.parentElement.remove()'>✖</button>`;
+            container.appendChild(notification);
+            container.style.display = "flex";
+            setTimeout(() => {
+                notification.remove();
+                if (container.children.length === 0) {
+                    container.style.display = "none";
+                }
+            }, 5000);
+        }
+    
+        function fetchNotifications() {
+            fetch("/seller/notifications/")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.notifications.length > 0) {
+                        data.notifications.forEach(n => showNotification(n.message));
+                    }
                 });
-            });
-        });
-    </script>
+        }
+    
+        setInterval(fetchNotifications, 10000); // โหลดแจ้งเตือนใหม่ทุก 10 วินาที
+        fetchNotifications(); // โหลดแจ้งเตือนทันที
+        </script>
+
 </body>
 </html>

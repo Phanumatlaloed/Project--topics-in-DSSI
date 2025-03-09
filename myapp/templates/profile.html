@@ -8,6 +8,7 @@
     <title>Profile Page</title>
     <link rel="stylesheet" href="{% static 'styles/profile.css' %}">
     <script src="{% static 'js/profile.js' %}" defer></script>
+    
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 
@@ -17,6 +18,8 @@
     <script src="{% static 'js/delete.js' %}" defer></script>
     <script src="{% static 'js/comment.js' %}" defer></script>
     <script src="{% static 'js/savelist.js' %}" defer></script>
+    <script src="{% static 'js/follow.js' %}" defer></script>
+
 </head>
 <body>
     <div class="wrapper d-flex">
@@ -24,16 +27,15 @@
           <aside class="sidebar">
             <div class="logo text-center">
                 <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
-                <h5>Profile</h5>
             </div>
             <nav>
                 <ul class="nav">
-                    <li><a href="{% url 'home' %}" class="nav-link ">🏠 Home</a></li>
-                    <li><a href="{% url 'community_list' %}" class="nav-link">👥 Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="nav-link ">💾 Save </a></li>
-                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link active">📄 Profile</a></li>
-                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
-                    <li><a href="{% url 'notification_list' %}" class="nav-link">notification</a></li>
+                    <li><a href="{% url 'home' %}" class="nav-link"><i>🏠</i> Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link "><i>👥</i> Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link"><i>💾</i> Save</a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link active"><i>📄</i> Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link"><i>🛒</i> Product List</a></li>
+                    <li><a href="{% url 'notification_list' %}" class="nav-link"><i>🔔</i> Notifications</a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">
@@ -57,27 +59,31 @@
                     {% endif %}
                 </div>
                 <h2 class="mb-1">{{ user.username }}</h2>
-
+            
                 <!-- จำนวนผู้ติดตาม -->
                 <div class="d-flex justify-content-center gap-4 my-2">
                     <span><strong id="followers-count">{{ user.followers.count }}</strong> Followers</span>
                     <span><strong id="following-count">{{ user.following.count }}</strong> Following</span>
                 </div>
-
+            
                 <!-- ปุ่มติดตาม -->
-                {% if user != request_user %}
+                {% if user != request.user %}
                     <button id="follow-button"
-                        data-user-id="{{ user.id }}"
-                        class="btn {% if request_user in user.followers.all %}btn-danger{% else %}btn-outline-primary{% endif %}">
-                        {% if request_user in user.followers.all %}Unfollow{% else %}Follow{% endif %}
+                            data-user-id="{{ user.id }}"
+                            class="btn {% if request.user in user.followers.all %}btn-danger{% else %}btn-outline-primary{% endif %}">
+                        {% if request.user in user.followers.all %}Unfollow{% else %}Follow{% endif %}
                     </button>    
                 {% endif %}
-
-                <a href="{% url 'profile_management' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+            
+                <!-- ปุ่มแก้ไขโปรไฟล์ -->
+                {% if is_own_profile %}
+                    <a href="{% url 'profile_management' %}" class="edit-profile-btn">Edit Profile</a>
+                {% endif %}
             </header>
 
             <!-- Create Post -->
             <div class="create-post bg-light p-3 rounded mb-4">
+                
                 <h5>Create a Post</h5>
                 <form id="postForm" action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -134,7 +140,7 @@
 
                     <!-- Actions -->
                     <div class="actions mt-2 d-flex gap-2">
-                        <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">👍 Like</button>
+                        <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">🤍 Like</button>
                         <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
                         <button class="btn btn-light share-btn" data-post-id="{{ post.id }}">🔗 Share</button>
                         <button class="btn btn-light save-btn" data-post-id="{{ post.id }}">

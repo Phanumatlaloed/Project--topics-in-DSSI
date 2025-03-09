@@ -89,15 +89,16 @@ def all_posts(request):
     query = request.GET.get('query', '')  # รับค่าค้นหา
     if query:
         posts = Post.objects.filter(
-            Q(content__icontains=query) |  # ค้นหาคำในเนื้อหาโพสต์
-            Q(user__username__icontains=query)  # ค้นหาจากชื่อผู้ใช้
+            Q(content__icontains=query) |  # ✅ ค้นหาคำในเนื้อหาโพสต์
+            Q(user__username__icontains=query)  # ✅ ค้นหาจากชื่อผู้ใช้
         ).order_by('-created_at')
     else:
         posts = Post.objects.all().order_by('-created_at')  # แสดงโพสต์ทั้งหมด
-        
+
     products = Product.objects.all()[:6]  # ✅ ดึงสินค้าสูงสุด 6 รายการ
 
     return render(request, "all_posts.html", {"posts": posts, "products": products, "query": query})
+
 
 def search_content(request):
     query = request.GET.get('query', '')
@@ -569,12 +570,14 @@ def add_comment(request, post_id):
                 'success': True,
                 'message': 'Comment added successfully!',
                 'username': request.user.username,  # ✅ ส่งชื่อผู้ใช้กลับไป
-                'content': comment.content
+                'content': comment.content,
+                "is_owner": True,  # ส่งค่ากลับไปว่าเป็นเจ้าของคอมเมนต์
             }, status=201)
 
         return JsonResponse({'success': False, 'message': 'Comment cannot be empty!'}, status=400)
 
     return JsonResponse({'success': False, 'message': 'Invalid request!'}, status=400)
+
 
 
 @login_required
@@ -637,14 +640,15 @@ def delete_group(request, group_id, post_id):
         return JsonResponse({"success": True, "message": "โพสต์ถูกลบแล้ว!"})
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
-    return redirect('community_list')
 
 from django.http import JsonResponse
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(CommunityGroup, id=group_id)
-    posts = GroupPost.objects.filter(group=group).order_by('-created_at')
+    
     is_member = request.user in group.members.all()
+    # ✅ ป้องกันไม่ให้เห็นโพสต์ ถ้าไม่ได้เป็นสมาชิก
+    posts = GroupPost.objects.filter(group=group).order_by('-created_at') if is_member else None
 
     if request.method == "POST":
         content = request.POST.get('content', '').strip()
@@ -678,7 +682,6 @@ def group_detail(request, group_id):
         'posts': posts,
         'is_member': is_member
     })
-
 #โพสต์ในกลุ่ม
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib import messages
@@ -730,6 +733,26 @@ def join_group(request, group_id):
     else:
         messages.info(request, "You are already a member of this group.")
     return redirect('group_detail', group_id=group.id)
+
+#ออกจากกลุ่ม
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import CommunityGroup
+
+@login_required
+def leave_group(request, group_id):
+    """ ให้สมาชิกออกจากกลุ่ม """
+    group = get_object_or_404(CommunityGroup, id=group_id)
+
+    if request.user in group.members.all():
+        group.members.remove(request.user)  # ลบสมาชิกออกจากกลุ่ม
+        messages.success(request, "คุณได้ออกจากกลุ่มเรียบร้อยแล้ว!")
+    else:
+        messages.error(request, "คุณไม่ได้เป็นสมาชิกของกลุ่มนี้!")
+
+    return redirect('community_list')  # หรือจะ redirect ไปหน้า 'group_detail' ก็ได้
+
 
 # ไลค์โพสในกลุ่ม
 from notifications.utils import create_notification  # ✅ นำเข้า Notification
@@ -1046,12 +1069,40 @@ def delete_group_post(request, group_id, post_id):
 
     return HttpResponseForbidden("Method not allowed")
 
-# ✅ ฟังก์ชันแดชบอร์ดผู้ขาย
+from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Order, OrderItem
+
 @login_required
 def seller_dashboard(request):
     seller = request.user.seller_profile
+
+    # ✅ ดึงสินค้าของผู้ขาย
     products = seller.products.all()
-    return render(request, "seller_dashboard.html", {"products": products, "seller": seller})
+
+    # ✅ คำนวณยอดขายของแต่ละสินค้า (ไม่นับสินค้าถูกคืน)
+    product_sales = OrderItem.objects.filter(
+        order__seller=seller
+    ).exclude(
+        refund_requests__status="approved"
+    ).values(
+        "product__id"
+    ).annotate(
+        total_sold_count=Sum("quantity")
+    )
+
+    # ✅ สร้าง Dictionary สำหรับการเชื่อมยอดขายแต่ละสินค้า
+    sales_dict = {item["product__id"]: item["total_sold_count"] for item in product_sales}
+
+    # ✅ เพิ่มยอดขายเข้าไปใน products
+    for product in products:
+        product.sales_count = sales_dict.get(product.id, 0)  # ถ้าไม่มียอดขาย ให้เป็น 0
+
+    return render(request, "seller_dashboard.html", {
+        "products": products,
+        "seller": seller,
+    })
 
 
 @login_required
@@ -1264,15 +1315,70 @@ def edit_product(request, product_id):
     return render(request, 'edit_product.html', {'form': form, 'product': product})
 
 # ✅ แสดงรายละเอียดสินค้า
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from .models import Product, Review
+from .services import analyze_text, summarize_reviews_with_ollama, translate_to_thai
+
 def product_detail(request, product_id):
+    """แสดงรายละเอียดสินค้า พร้อมการวิเคราะห์รีวิวโดย AI"""
     product = get_object_or_404(Product, id=product_id)
-    reviews = Review.objects.filter(product=product)  # ดึงรีวิวของสินค้า
+    reviews = Review.objects.filter(product=product)
+    summary = None
+    translated_summary = None
+
+    # ✅ แปลงคะแนนรีวิวเป็นดาว ⭐⭐⭐⭐⭐
+    for review in reviews:
+        review.stars = ['⭐' for _ in range(review.rating)]
+
+    # ✅ เช็คหากผู้ใช้กดปุ่มวิเคราะห์รีวิว
+    if request.method == "POST":
+        reviews_to_analyze = reviews.filter(analysis_done=False)
+        count = 0
+        updates = []
+
+        for review in reviews_to_analyze:
+            sentiment = analyze_text(review.comment)
+            if sentiment:  # ✅ เช็คว่าผลลัพธ์ถูกต้อง
+                review.sentiment = sentiment
+                review.analysis_done = True
+                updates.append(review)
+                count += 1
+
+        # ✅ ใช้ bulk update ลดจำนวน query
+        if updates:
+            Review.objects.bulk_update(updates, ["sentiment", "analysis_done"])
+            messages.success(request, f'✅ วิเคราะห์รีวิว {count} รายการสำเร็จ')
+        else:
+            messages.warning(request, '⚠️ ไม่มีรีวิวใหม่ที่ต้องวิเคราะห์')
+
+
+        # ✅ เรียกใช้ฟังก์ชันสรุปรีวิว
+        summary = summarize_reviews_with_ollama(reviews)
+
+    # ✅ คำนวณสัดส่วนรีวิวแต่ละประเภท
+    total_reviews = reviews.count()
+    positive_count = reviews.filter(sentiment="positive").count()
+    neutral_count = reviews.filter(sentiment="neutral").count()
+    negative_count = reviews.filter(sentiment="negative").count()
+
+    if total_reviews > 0:
+        positive_ratio = (positive_count / total_reviews) * 100
+        neutral_ratio = (neutral_count / total_reviews) * 100
+        negative_ratio = (negative_count / total_reviews) * 100
+    else:
+        positive_ratio = neutral_ratio = negative_ratio = 0
+
 
     return render(request, 'product_detail.html', {
         'product': product,
-        'reviews': reviews
+        'reviews': reviews,
+        'positive_ratio': positive_ratio,
+        'neutral_ratio': neutral_ratio,
+        'negative_ratio': negative_ratio,
+        'summary': summary,
+        'translated_summary': translated_summary
     })
-
 
 @login_required
 def delete_product(request, product_id):
@@ -1380,6 +1486,20 @@ def view_cart(request):
     return render(request, 'cart.html', {
         'cart_items': cart_items,
         'total_price': total_price
+    })
+@login_required
+def product_detail_user(request, product_id):
+    # ดึงข้อมูลสินค้าที่มีรีวิว
+    product = Product.objects.get(id=product_id)
+    reviews = Review.objects.filter(product=product)
+
+    product = get_object_or_404(Product, id=product_id)
+    reviews = Review.objects.filter(product=product)  # ดึงรีวิวของสินค้า
+
+    return render(request, 'product_detail_user.html', {
+        'product': product,
+        'reviews': reviews,
+        'recommendations': recommendations,
     })
 
 # ✅ แสดงรายละเอียดร้านค้า
@@ -1540,43 +1660,62 @@ def upload_payment(request, order_ids):
 from myapp.models import Product, Review
 from notifications.models import Notification  # ✅ แก้ไข Import
 
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from notifications.utils import create_seller_notification
+from .models import Product, Review, ReviewMedia
 
 @login_required
-def add_review(request, product_id):
-    """ เพิ่มรีวิวสินค้า """
+def add_review(request, order_id, product_id):
+    """ ✅ ให้รีวิวสินค้าได้เฉพาะเมื่อออเดอร์จัดส่งสำเร็จ และไม่สามารถรีวิวซ้ำได้ """
+    order = get_object_or_404(Order, id=order_id, user=request.user, status="delivered")
     product = get_object_or_404(Product, id=product_id)
 
     # ✅ ตรวจสอบว่าผู้ใช้เคยรีวิวสินค้านี้ไปแล้วหรือไม่
-    if Review.objects.filter(user=request.user, product=product).exists():
+    if Review.objects.filter(user=request.user, product=product, order=order).exists():
         messages.warning(request, "❌ คุณได้รีวิวสินค้านี้ไปแล้ว")
-        return redirect('product_detail', product_id=product.id)
+        return redirect("product_detail", product_id=product.id)
 
     if request.method == "POST":
         rating = request.POST.get("rating")
         comment = request.POST.get("comment")
+        media_files = request.FILES.getlist("media")
 
         if not rating or not comment:
             messages.error(request, "❌ กรุณาให้คะแนนและเขียนรีวิวก่อนส่ง")
             return render(request, "add_review.html", {"product": product})
 
         # ✅ บันทึกรีวิว
-        review = Review.objects.create(user=request.user, product=product, rating=rating, comment=comment)
+        review = Review.objects.create(
+            user=request.user, 
+            product=product, 
+            order=order,  
+            rating=int(rating), 
+            comment=comment
+        )
 
-        # ✅ แจ้งเตือนเจ้าของร้านเมื่อมีรีวิวใหม่
+        # ✅ บันทึกไฟล์แนบ (ภาพ/วิดีโอ)
+        for file in media_files:
+            media_type = "image" if file.content_type.startswith("image") else "video"
+            ReviewMedia.objects.create(review=review, file=file, media_type=media_type)
+
+        # ✅ ตรวจสอบว่าเจ้าของร้านมีอยู่จริงก่อนแจ้งเตือน
         if product.seller:
-            Notification.objects.create(
-                user=product.seller,
-                sender=request.user,
-                notification_type="new_review",
-                order=None,
-                post=None,
-                group_post=None
+            print(f"🛎 กำลังสร้างแจ้งเตือนให้ {product.seller.user.username} ...")  # ✅ Debugging
+
+            create_seller_notification(
+                user=product.seller.user,  # ✅ ส่งแจ้งเตือนให้เจ้าของร้าน
+                sender=request.user,  # ✅ คนที่รีวิว
+                notification_type="new_review",  # ✅ ประเภทการแจ้งเตือน
+                order=order
             )
 
-        messages.success(request, "✅ รีวิวสำเร็จ!")
-        return redirect('product_detail', product_id=product.id)
+        messages.success(request, "✅ รีวิวของคุณถูกบันทึกเรียบร้อย!")
+        return redirect("product_detail", product_id=product.id)
 
     return render(request, "add_review.html", {"product": product})
+
 
 
 @login_required
@@ -1919,16 +2058,17 @@ def seller_payment_verification(request):
 
    # return JsonResponse({'success': True, 'message': f'ออเดอร์ #{order.id} อนุมัติเรียบร้อย'})
 
-@login_required
 def reject_seller_payment(request, order_id):
-    """ ❌ ปฏิเสธการชำระเงิน """
-    order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
+    order = get_object_or_404(Order, id=order_id)
+    
+    if order.payment_status == "pending":
+        order.payment_status = "rejected"
+        order.save()
 
-    order.payment_status = "rejected"
-    order.save()
-
-    messages.error(request, f"❌ ออเดอร์ #{order.id} ถูกปฏิเสธ")
-    return JsonResponse({"success": True, "message": f"ออเดอร์ #{order.id} ถูกปฏิเสธแล้ว!"})
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({"success": True, "message": f"ออเดอร์ #{order.id} ถูกปฏิเสธแล้ว!"})
+        
+        return redirect('seller_payment_verification')  # ✅ Redirect กลับไปยังหน้าเดิม
 
 from .models import Follow, CustomUser
 # ✅ สร้างฟังก์ชันสำหรับการติดตามผู้ใช้
@@ -2092,7 +2232,7 @@ def approve_seller_payment(request, order_id):
 
     messages.success(request, f"✅ ออเดอร์ #{order.id} อนุมัติแล้ว และเครดิตเงินเข้ากระเป๋า!")
     
-    return redirect('seller_orders')  # 🔄 เปลี่ยนเส้นทางกลับไปที่หน้า seller_orders
+    return redirect('seller_payment_verification')  # 🔄 เปลี่ยนเส้นทางกลับไปที่หน้า seller_orders
 
 
 from .models import Report
@@ -2732,3 +2872,70 @@ def update_order_shipping(request, order_id):
         return JsonResponse({"success": False, "error": "กรุณากรอกข้อมูลให้ครบถ้วน"})
 
     return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import SellerNotification
+
+@login_required
+def get_seller_notifications(request):
+    """ ดึงการแจ้งเตือนของผู้ขาย """
+    notifications = SellerNotification.objects.filter(seller=request.user, is_read=False).order_by('-created_at')
+    data = [
+        {"id": n.id, "message": n.message, "created_at": n.created_at.strftime("%Y-%m-%d %H:%M"), "is_read": n.is_read}
+        for n in notifications
+    ]
+    return JsonResponse({"notifications": data})
+
+@csrf_exempt
+@login_required
+def mark_notifications_read(request):
+    """ ทำเครื่องหมายแจ้งเตือนทั้งหมดว่าอ่านแล้ว (AJAX) """
+    if request.method == "POST":
+        SellerNotification.objects.filter(seller=request.user, is_read=False).update(is_read=True)
+        return JsonResponse({"success": True})
+    return JsonResponse({"error": "Invalid request method"}, status=400)
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from .models import SellerNotification
+
+@login_required
+def seller_notifications_list(request):
+    """ แสดงหน้าแจ้งเตือนทั้งหมดของผู้ขาย """
+    notifications = SellerNotification.objects.filter(seller=request.user).order_by('-created_at')
+    return render(request, "sellers_notifications.html", {"notifications": notifications})
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Review, ReviewResponse, Seller
+from django.contrib import messages
+
+@login_required
+def seller_review_responses(request):
+    """ แสดงรายการรีวิวที่ลูกค้าทิ้งไว้ให้สินค้าของผู้ขาย """
+    seller = request.user.seller_profile  # ดึงข้อมูลผู้ขายจากโปรไฟล์
+    reviews = Review.objects.filter(product__seller=seller)  # รีวิวที่เกี่ยวข้องกับสินค้าของผู้ขาย
+    return render(request, "seller/review_responses.html", {"reviews": reviews})
+
+@login_required
+def seller_respond_review(request, review_id):
+    """ ให้ผู้ขายตอบกลับรีวิวของลูกค้า """
+    review = get_object_or_404(Review, id=review_id)
+
+    if request.user.seller_profile != review.product.seller:
+        messages.error(request, "You can only respond to reviews of your own products.")
+        return redirect("seller_reviews")
+
+    if request.method == "POST":
+        response_text = request.POST.get("response_text")
+        
+        if ReviewResponse.objects.filter(review=review).exists():
+            messages.error(request, "This review already has a response.")
+        else:
+            ReviewResponse.objects.create(review=review, seller=request.user.seller_profile, response_text=response_text)
+            messages.success(request, "Response submitted successfully.")
+
+    return redirect("seller_reviews")

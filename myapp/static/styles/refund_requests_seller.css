@@ -60,53 +60,102 @@ th, td {
     background-color: #ffe4e1;
 }
 
-/* ✅ ปุ่ม */
+/* ✅ ปรับปรุงปุ่ม */
 .btn {
-    padding: 8px 12px;
+    padding: 8px 15px;
     font-size: 14px;
+    font-weight: bold;  /* ✅ ทำให้ตัวหนังสือดูชัดขึ้น */
+    color: white;  /* ✅ ตั้งค่าสีตัวอักษรเป็นสีขาว */
     border-radius: 5px;
+    margin: 5px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+    text-align: center;
+    display: inline-block;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+/* ✅ สีของปุ่มหลัก */
 .btn-primary {
-    background-color: #ff869b;
+    background-color: #ff869b; /* สีชมพู */
     border: none;
+    color: white;
 }
 
 .btn-primary:hover {
-    background-color: #ff4f5e;
+    background-color: #ff4f5e; /* เปลี่ยนเป็นสีเข้มเมื่อ hover */
+    transform: scale(1.05); /* ขยายขนาดเล็กน้อยเมื่อ hover */
+    color: white;
 }
 
+/* ✅ สีเขียว */
 .btn-success {
     background-color: #28a745;
     border: none;
+    color: white;
 }
 
 .btn-success:hover {
-    background-color: #218838;
+    background-color: #2dc54e;
+    transform: scale(1.05);
+    color: white;
 }
 
+/* ✅ สีแดง */
 .btn-danger {
     background-color: #dc3545;
     border: none;
+    color: white;
 }
 
 .btn-danger:hover {
-    background-color: #c82333;
+    background-color: #ff1e2d;
+    transform: scale(1.05);
+    color: white;
 }
 
+/* ✅ สีเหลือง */
 .btn-info {
-    background-color: #6c757d;
+    background-color: #ffc107;
     border: none;
+    color: white;
 }
 
 .btn-info:hover {
-    background-color: #495057;
+    background-color: #e0a800;
+    transform: scale(1.05);
+    color: white;
 }
 
-/* ✅ ปรับขนาดของปุ่มในตาราง */
+
+/* ✅ ปรับขนาดปุ่มในตาราง */
 .table .btn {
     font-size: 12px;
-    padding: 5px 10px;
+    padding: 6px 12px;
+}
+
+/* ✅ เพิ่มระยะห่างระหว่างปุ่ม */
+.btn-group {
+    display: flex;
+    gap: 10px; /* ระยะห่างระหว่างปุ่ม */
+    justify-content: center;
+    align-items: center;
+}
+
+/* ✅ ปรับระยะห่างของปุ่มในแถวเดียวกัน */
+.btn-group .btn {
+    margin: 0 5px; /* ระยะห่างทางซ้ายและขวาของปุ่ม */
+}
+
+/* ✅ ปรับระยะห่างของปุ่มในมือถือ */
+@media (max-width: 768px) {
+    .btn {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .btn-group {
+        flex-direction: column; /* เปลี่ยนการจัดเรียงปุ่มเป็นแนวตั้ง */
+        align-items: stretch;
+    }
 }
 
 /* ✅ Responsive */
@@ -155,4 +204,64 @@ th, td {
         font-size: 12px;
         padding: 6px 10px;
     }
+}
+
+/* ✅ ปรับแต่งปุ่มดูสลิป */
+.slip-btn {
+    display: inline-block;
+    padding: 8px 14px;
+    background-color: #ff69b4;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+/* ปรับแต่งปุ่มทั้งหมด */
+.btn {
+    display: inline-block;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    border: none;
+    cursor: pointer;
+}
+
+/* ปุ่ม "อัปโหลด" (สีฟ้า) */
+.btn.upload {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.btn.upload:hover {
+    background-color: #0056b3;
+}
+
+/* ปุ่ม "ดูสลิป" (สีเขียว) */
+.btn.success {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+}
+
+.btn.success:hover {
+    background-color: #1e7e34;
+}
+
+/* กรณีไม่มีการอนุมัติ */
+.status-error {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* ปรับแต่งเซลล์ของตาราง */
+td {
+    text-align: center;
+    padding: 10px;
 }
