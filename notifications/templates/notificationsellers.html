@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔔 การแจ้งเตือนผู้ขาย</title>
+    <link rel="stylesheet" href="{% static 'css/notificationsellers.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+</head>
+<body>
+
+<div class="dashboard-container">
+    <!-- 🌸 Sidebar -->
+    <aside class="sidebar">
+        <h2 class="sidebar-title">📢 การแจ้งเตือน</h2>
+        <ul class="menu">
+            <li class="menu-header">📦 คำสั่งซื้อ</li>
+            <li class="menu-item"><a href="{% url 'seller_orders' %}">📜 คำสั่งซื้อของฉัน</a></li>
+            <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">💳 ตรวจสอบการชำระเงิน</a></li>
+            <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">🔄 ขอคืนสินค้า</a></li>
+
+            <li class="menu-header">🛍 สินค้า</li>
+            <li class="menu-item"><a href="{% url 'my_products' %}">📦 สินค้าของฉัน</a></li>
+            <li class="menu-item"><a href="{% url 'add_product' %}">➕ เพิ่มสินค้าใหม่</a></li>
+
+            <li class="menu-header">📊 รายงาน</li>
+            <li class="menu-item"><a href="{% url 'seller_performance' %}">📈 รายงานร้านค้า</a></li>
+
+            <li class="menu-header">⚙️ การตั้งค่า</li>
+            <li class="menu-item"><a href="{% url 'edit_store' %}">🏪 แก้ไขร้านค้า</a></li>
+            <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">👤 แก้ไขโปรไฟล์</a></li>
+            <li class="menu-item"><a href="{% url 'seller_wallet' %}">💰 กระเป๋าเงิน</a></li>
+            <li class="menu-item active"><a href="{% url 'seller_notifications_list' %}">🔔 การแจ้งเตือน</a></li>
+            <li class="menu-item logout"><a href="{% url 'seller_logout' %}">🚪 ออกจากระบบ</a></li>
+        </ul>
+    </aside>
+
+    <!-- 🌟 Main Content -->
+    <div class="container">
+        <h1>🔔 การแจ้งเตือนผู้ขาย</h1>
+        <a href="{% url 'seller_dashboard' %}" class="back-link">← กลับไปแดชบอร์ด</a>
+
+        {% if notifications %}
+        <div class="notifications-list">
+            {% for notification in notifications %}
+            <div class="notification-card">
+                <div class="notification-icon">
+                    {% if notification.notification_type == "new_order" %}
+                        🛒 คำสั่งซื้อใหม่จาก <strong>{{ notification.sender.username }}</strong>!
+                        <p>📅 {{ notification.created_at|date:"d/m/Y H:i" }} ({{ notification.created_at|timesince }} ที่ผ่านมา)</p>
+                        <a href="{% url 'seller_orders' %}" class="btn btn-primary">📜 ดูคำสั่งซื้อ</a>
+
+                    {% elif notification.notification_type == "new_review" %}
+                        ⭐ รีวิวใหม่จาก <strong>{{ notification.sender.username }}</strong>!
+                        <p>📦 รีวิวสินค้า: <strong>{{ notification.order.order_items.first.product.name }}</strong></p>
+                        <p>💬 "{{ notification.order.order_items.first.review_set.first.comment }}"</p>
+                        <a href="{% url 'product_detail' notification.order.order_items.first.product.id %}" class="btn btn-info">🔍 ดูสินค้า</a>
+
+                    {% elif notification.notification_type == "refund_request" %}
+                        🔄 มีคำขอคืนเงินจาก <strong>{{ notification.sender.username }}</strong>!
+                        <p>📅 {{ notification.created_at|date:"d/m/Y H:i" }} ({{ notification.created_at|timesince }} ที่ผ่านมา)</p>
+                        <a href="{% url 'seller_refund_requests' %}" class="btn btn-warning">📄 ดูคำขอคืนเงิน</a>
+
+                    {% elif notification.notification_type == "refund_approved" %}
+                        ✅ คำขอคืนเงินของคุณได้รับการอนุมัติ!
+                        <a href="{% url 'seller_refund_requests' %}" class="btn btn-success">🔍 ตรวจสอบ</a>
+
+                    {% elif notification.notification_type == "refund_rejected" %}
+                        ❌ คำขอคืนเงินถูกปฏิเสธ!
+                        <a href="{% url 'seller_refund_requests' %}" class="btn btn-danger">📄 รายละเอียด</a>
+
+                    {% elif notification.notification_type == "order_shipped" %}
+                        📦 คำสั่งซื้อถูกจัดส่งแล้ว!
+                        <a href="{% url 'seller_orders' %}" class="btn btn-secondary">🚚 ติดตามออเดอร์</a>
+
+                    {% else %}
+                        🔔 การแจ้งเตือนใหม่!
+                    {% endif %}
+                </div>
+                <div class="notification-time">
+                    {{ notification.created_at|timesince }} ที่ผ่านมา
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <div class="no-notifications">
+                📭 ยังไม่มีการแจ้งเตือนใหม่
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

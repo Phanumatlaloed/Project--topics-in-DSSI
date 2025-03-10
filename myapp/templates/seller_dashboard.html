@@ -4,13 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>แดชบอร์ดร้านค้า</title>
     <link rel="stylesheet" href="{% static 'styles/seller_dashboard.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+=======
+    <title>แดชบอร์ดร้านค้า | My Shop</title>
+    <link rel="stylesheet" href="{% static 'styles/seller_dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- เพิ่ม Font Awesome สำหรับ Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+>>>>>>> janetwo
 </head>
 <body>
+    <!-- Mobile Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburger-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </div>
+
     <div class="dashboard-container">
         <!-- Sidebar -->
+<<<<<<< HEAD
         <aside class="sidebar">
             <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2> 
             <ul class="menu">
@@ -33,26 +49,81 @@
                 <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
                 <li class="menu-item"><a href="{% url 'notification_list' %}" class="nav-link"> Notifications</a></li>
                 <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
+=======
+        <aside class="sidebar" id="sidebar">
+            <h2 class="sidebar-title">
+                <i class="fas fa-store"></i> My Shop
+            </h2> 
+            <ul class="menu">
+                <li class="menu-header"><i class="fas fa-shopping-cart"></i> คำสั่งซื้อ</li>
+                <li class="menu-item active"><a href="{% url 'seller_dashboard' %}"><i class="fas fa-chart-line"></i> แดชบอร์ด</a></li>
+                <li class="menu-item"><a href="{% url 'seller_orders' %}"><i class="fas fa-box"></i> คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}"><i class="fas fa-credit-card"></i> ตรวจสอบการชำระเงิน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}"><i class="fas fa-undo"></i> ขอคืนสินค้า</a></li>
+
+                <li class="menu-header"><i class="fas fa-tags"></i> สินค้า</li>
+                <li class="menu-item"><a href="{% url 'my_products' %}"><i class="fas fa-cubes"></i> สินค้าของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'add_product' %}"><i class="fas fa-plus-circle"></i> เพิ่มสินค้าใหม่</a></li>
+
+                <li class="menu-header"><i class="fas fa-chart-bar"></i> รายงาน</li>
+                <li class="menu-item"><a href="{% url 'seller_performance' %}"><i class="fas fa-award"></i> ประสิทธิภาพร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'seller_notifications_lists' %}"><i class="fas fa-bell"></i> การแจ้งเตือน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_reviews' %}"><i class="fas fa-star"></i> ตรวจสอบการรีวิว</a></li>
+            
+                <li class="menu-header"><i class="fas fa-cog"></i> การตั้งค่า</li>
+                <li class="menu-item"><a href="{% url 'edit_store' %}"><i class="fas fa-store-alt"></i> แก้ไขร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}"><i class="fas fa-user-edit"></i> แก้ไขโปรไฟล์</a></li>
+                <li class="menu-item"><a href="{% url 'seller_wallet' %}"><i class="fas fa-wallet"></i> กระเป๋าเงิน</a></li>
+                <li class="menu-item logout"><a href="{% url 'seller_logout' %}"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
+>>>>>>> janetwo
             </ul>
         </aside>
 
         <!-- Main Content -->
         <main class="content">
             <header class="content-header">
-                <h1>สินค้าของฉัน</h1>
+                <h1><i class="fas fa-cubes"></i> สินค้าของฉัน</h1>
                 <button class="btn-add-product" onclick="window.location.href='{% url 'add_product' %}';">
                     เพิ่มสินค้าใหม่
                 </button>                
             </header>
 
-            <!-- Tab Menu -->
-            <nav class="tab-menu">
-                <button class="active">ขายอยู่ ({{ products|length }})</button>
-                <button>การละเมิด (0)</button>
-                <button>อยู่ระหว่างตรวจสอบ (0)</button>
-                <button>ยังไม่ลงขาย (3)</button>
-            </nav>
+            <!-- Stats Summary Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-box"></i></div>
+                    <div class="stat-content">
+                        <h3>สินค้าทั้งหมด</h3>
+                        <p class="stat-number">{{ products.count }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="stat-content">
+                        <h3>ยอดขายทั้งหมด</h3>
+                        <p class="stat-number">{{ total_sales_count }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="stat-content">
+                        <h3>รายได้ทั้งหมด</h3>
+                        <p class="stat-number">฿{{ total_revenue }}</p>
+                    </div>
+                </div>
+            </div>
 
+<<<<<<< HEAD
+=======
+            <!-- Search & Filter -->
+            <div class="filter-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="ค้นหาสินค้า..." id="product-search">
+                </div>
+            </div>
+
+>>>>>>> janetwo
             <!-- ตารางสินค้า -->
             <div class="product-table">
                 <table>
@@ -63,7 +134,10 @@
                             <th>ยอดขาย</th>
                             <th>ราคา</th>
                             <th>คลังสินค้า</th>
+<<<<<<< HEAD
                             <th>คุณภาพ</th>
+=======
+>>>>>>> janetwo
                             <th>การดำเนินการ</th>
                         </tr>
                     </thead>
@@ -75,6 +149,7 @@
                                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
                                     <span>{{ product.name }}</span>
                                 </td>
+<<<<<<< HEAD
                                 <td>{{ product.get_category_display }}</td>
                                 <td>{{ product.sales_count }} รายการ</td>
                                 <td>฿{{ product.price }}</td>
@@ -83,20 +158,69 @@
                                 <td>
                                     <a href="{% url 'edit_product' product.id %}" class="edit-btn">แก้ไข</a>
                                     <a href="{% url 'delete_product' product.id %}" class="delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">ลบ</a>
+=======
+                                <td><span class="category-badge">{{ product.get_category_display }}</span></td>
+                                <td>
+                                    <div class="sales-info">
+                                        <span class="sales-count">{{ product.sales_count }}</span>
+                                        <span class="sales-label">รายการ</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="price-tag">฿{{ product.price }}</div>
+                                </td>
+                                <td>
+                                    <div class="stock-indicator {% if product.stock < 10 %}low-stock{% elif product.stock < 30 %}medium-stock{% else %}high-stock{% endif %}">
+                                        {{ product.stock }} ชิ้น
+                                    </div>
+                                </td>
+
+                                <td class="actions-cell">
+                                    <a href="{% url 'edit_product' product.id %}" class="edit-btn"><i class="fas fa-edit"></i> แก้ไข</a>
+                                    <a href="{% url 'delete_product' product.id %}" class="delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่ที่จะลบสินค้านี้?')"><i class="fas fa-trash-alt"></i> ลบ</a>
+>>>>>>> janetwo
                                 </td>
                             </tr>
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="7" class="no-product">ไม่มีสินค้า</td>
+                                <td colspan="7" class="no-product">
+                                    <div class="empty-state">
+                                        <i class="fas fa-box-open empty-icon"></i>
+                                        <p>ไม่มีสินค้าในระบบ</p>
+                                        <a href="{% url 'add_product' %}" class="empty-action-btn">เพิ่มสินค้าใหม่เลย</a>
+                                    </div>
+                                </td>
                             </tr>
                         {% endif %}
                     </tbody>                    
                 </table>
             </div>
+            
+            <!-- Pagination -->
+            {% if products.has_other_pages %}
+            <div class="pagination">
+                {% if products.has_previous %}
+                <a href="?page={{ products.previous_page_number }}" class="pagination-arrow"><i class="fas fa-chevron-left"></i></a>
+                {% endif %}
+                
+                {% for i in products.paginator.page_range %}
+                    {% if products.number == i %}
+                    <span class="pagination-number active">{{ i }}</span>
+                    {% else %}
+                    <a href="?page={{ i }}" class="pagination-number">{{ i }}</a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if products.has_next %}
+                <a href="?page={{ products.next_page_number }}" class="pagination-arrow"><i class="fas fa-chevron-right"></i></a>
+                {% endif %}
+            </div>
+            {% endif %}
         </main>
     </div>
 
+<<<<<<< HEAD
     <!-- JavaScript for Active Tab -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -108,6 +232,66 @@
                 });
             });
         });
+=======
+    <!-- Toast Notification UI -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <!-- JavaScript for Interactions -->
+    <script>
+        // Toggle Sidebar for Mobile
+        document.getElementById('hamburger-menu').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Show Notifications
+        function showNotification(message) {
+            const container = document.getElementById("notification-container");
+            const notification = document.createElement("div");
+            notification.classList.add("notification");
+            notification.innerHTML = `<i class="fas fa-bell"></i><div class="notification-content">${message}</div><button class='close-btn' onclick='this.parentElement.remove()'><i class="fas fa-times"></i></button>`;
+            container.appendChild(notification);
+            container.style.display = "flex";
+            
+            // Auto-remove after delay
+            setTimeout(() => {
+                notification.remove();
+                if (container.children.length === 0) {
+                    container.style.display = "none";
+                }
+            }, 5000);
+        }
+    
+        // Fetch Notifications from API
+        function fetchNotifications() {
+            fetch("/seller/notifications/")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.notifications && data.notifications.length > 0) {
+                        data.notifications.forEach(n => showNotification(n.message));
+                    }
+                })
+                .catch(error => console.error('Error fetching notifications:', error));
+        }
+    
+        // Filter Products
+        document.getElementById('product-search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const tableRows = document.querySelectorAll('tbody tr');
+            
+            tableRows.forEach(row => {
+                const productName = row.querySelector('.product-info span').textContent.toLowerCase();
+                if (productName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Initialize
+        fetchNotifications(); // โหลดแจ้งเตือนทันที
+        setInterval(fetchNotifications, 30000); // โหลดแจ้งเตือนใหม่ทุก 30 วินาที
+>>>>>>> janetwo
     </script>
 </body>
 </html>

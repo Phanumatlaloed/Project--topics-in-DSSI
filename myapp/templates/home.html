@@ -209,6 +209,23 @@
                 {% endfor %}
             </div>
         </main>
+<<<<<<< HEAD
+=======
+        
+        {% if recommended_products %}
+            <h3>ผลิตภัณฑ์ที่แนะนำ:</h3>
+            <ul>
+                {% for product in recommended_products %}
+                    <li>{{ product.name }} - ฿{{ product.price }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        {% if sentiment %}
+            <p>ความคิดเห็นของคุณถูกวิเคราะห์ว่า: {{ sentiment }}</p>
+        {% endif %}
+        
+>>>>>>> janetwo
 
         <!-- Recommended Products -->
         <aside class="recommendations">

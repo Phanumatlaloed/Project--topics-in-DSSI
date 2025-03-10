@@ -80,9 +80,22 @@
 
             <!-- ✅ ตรวจสอบว่าผู้ใช้อัปโหลดรูปหรือไม่ -->
             <div class="form-group">
+<<<<<<< HEAD
                 <label class="form-label"><i class="fa fa-image"></i> อัปโหลดรูปภาพร้าน</label>
                 {{ seller_form.store_image }}
                 <small class="text-muted">⚠️ จำเป็นต้องอัปโหลดรูปภาพ!</small>
+=======
+                <label class="form-label"><i class="fa fa-image"></i> อัพโหลดรูปภาพร้าน</label>
+                <div class="file-upload-container">
+                    {{ seller_form.store_image }}
+                    <label for="{{ seller_form.store_image.id_for_label }}" class="custom-file-upload">
+                        <i class="fa fa-cloud-upload-alt"></i> เลือกรูปภาพร้านค้า
+                    </label>
+                    <div class="file-name" id="fileName"></div>
+                    <div class="file-preview" id="imagePreview"></div>
+                </div>
+                <small class="text-muted"><i class="fa fa-exclamation-triangle"></i> จำเป็นต้องอัพโหลดรูปภาพ!</small>
+>>>>>>> janetwo
             </div>
 
             <div class="form-group">
@@ -121,6 +134,39 @@
                     }
                 });
             });
+        });
+
+        // File Upload Handling
+        const fileInput = document.querySelector('input[type="file"]');
+        const fileName = document.getElementById('fileName');
+        const imagePreview = document.getElementById('imagePreview');
+
+        fileInput.addEventListener('change', function(e) {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileName.textContent = file.name;
+                fileName.classList.add('show');
+                
+                // ตรวจสอบว่าเป็นไฟล์รูปภาพหรือไม่
+                if (file.type.match('image.*')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Image Preview">`;
+                        imagePreview.classList.add('show');
+                    }
+                    
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('กรุณาอัพโหลดไฟล์รูปภาพเท่านั้น');
+                    fileInput.value = '';
+                    fileName.classList.remove('show');
+                    imagePreview.classList.remove('show');
+                }
+            } else {
+                fileName.classList.remove('show');
+                imagePreview.classList.remove('show');
+            }
         });
     </script>
 

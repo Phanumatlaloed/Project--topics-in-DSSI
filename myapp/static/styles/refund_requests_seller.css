@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* ✅ ตั้งค่าพื้นฐานของ Body */
 body {
     background-color: #FFC0CB; /* พื้นหลังชมพูอ่อน */
@@ -10,10 +11,56 @@ body {
 .dashboard-container {
     display: flex;
     min-height: 100vh;
+=======
+/* ✅ ตั้งค่า Theme */
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+
+:root {
+  --primary: #FF6584;
+  --primary-light: #FFC0CB;
+  --primary-dark: #E5446D;
+  --secondary: #6C63FF;
+  --white: #FFFFFF;
+  --light-gray: #F8F9FA;
+  --gray: #E9ECEF;
+  --dark-gray: #6C757D;
+  --black: #343A40;
+  --success: #20C997;
+  --warning: #FFC107;
+  --danger: #DC3545;
+  --info: #17A2B8;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background-color: var(--light-gray);
+  color: var(--black);
+  line-height: 1.6;
+}
+
+/* ✅ Layout Dashboard */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+>>>>>>> janetwo
 }
 
 /* ✅ Sidebar */
 .sidebar {
+<<<<<<< HEAD
     width: 260px;
     background: linear-gradient(135deg, #FFC0CB, #f8c8dc);
     color: white;
@@ -67,10 +114,102 @@ body {
     background: white;
     color: #f8c8dc;
     font-weight: bold;
+=======
+  width: 280px;
+  background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+  color: var(--white);
+  padding: 30px 20px;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  transition: var(--transition);
+  z-index: 100;
+}
+
+.sidebar-title {
+  font-size: 22px;
+  margin-bottom: 30px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-title i {
+  margin-right: 10px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu-header {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 20px 0 10px;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+}
+
+.menu-header i {
+  margin-right: 8px;
+}
+
+.menu-item {
+  margin-bottom: 5px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.menu-item a {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  text-decoration: none;
+  color: var(--white);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.menu-item a i {
+  margin-right: 12px;
+  width: 20px;
+  text-align: center;
+}
+
+.menu-item a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+.menu-item.active a {
+  background-color: var(--white);
+  color: var(--primary);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+.menu-item.logout a {
+  margin-top: 20px;
+  background-color: rgba(220, 53, 69, 0.2);
+  color: var(--white);
+}
+
+.menu-item.logout a:hover {
+  background-color: var(--danger);
+>>>>>>> janetwo
 }
 
 /* ✅ Main Content */
 .content {
+<<<<<<< HEAD
     flex-grow: 1;
     padding: 30px;
     background: white;
@@ -213,3 +352,297 @@ th, td {
         padding: 6px 10px;
     }
 }
+=======
+  flex-grow: 1;
+  margin-left: 280px;
+  padding: 40px;
+  transition: var(--transition);
+}
+
+.content h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--dark-gray);
+  margin-bottom: 25px;
+  font-size: 16px;
+}
+
+/* ✅ Refund Table Styles */
+.refund-table {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 25px;
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+  margin-bottom: 30px;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 1200px;
+}
+
+thead {
+  background: var(--gray);
+}
+
+th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--dark-gray);
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--primary-light);
+  white-space: nowrap;
+}
+
+td {
+  padding: 16px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray);
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+tbody tr {
+  transition: var(--transition);
+}
+
+tbody tr:hover {
+  background-color: var(--light-gray);
+}
+
+/* ✅ Button Styles */
+.btn {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition);
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-success, .btn-success:visited, .success {
+  background-color: var(--success);
+  color: var(--white);
+}
+
+.btn-danger, .btn-danger:visited {
+  background-color: var(--danger);
+  color: var(--white);
+}
+
+.upload {
+  background-color: var(--info);
+  color: var(--white);
+}
+
+.confirm {
+  background-color: var(--secondary);
+  color: var(--white);
+}
+
+.slip-btn {
+  background-color: var(--warning);
+  color: var(--black);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.btn:hover, .slip-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active, .slip-btn:active {
+  transform: translateY(0);
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ✅ List Styles */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+li:last-child {
+  border-bottom: none;
+}
+
+/* ✅ Status Badge Styles */
+td:nth-child(6) {
+  font-weight: 500;
+}
+
+/* Pending Badge */
+td:nth-child(6):contains("⏳") {
+  color: var(--warning);
+}
+
+/* Approved Badge */
+td:nth-child(6):contains("✅") {
+  color: var(--success);
+}
+
+/* Confirmed Badge */
+td:nth-child(6):contains("✔") {
+  color: var(--secondary);
+}
+
+/* Rejected Badge */
+td:nth-child(6):contains("❌") {
+  color: var(--danger);
+}
+
+/* ✅ Responsive */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 240px;
+  }
+  
+  .content {
+    margin-left: 240px;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .sidebar.active {
+    width: 240px;
+    padding: 30px 20px;
+  }
+  
+  .content {
+    margin-left: 0;
+  }
+  
+  /* Hamburger Menu for Mobile */
+  .hamburger-menu {
+    display: block !important;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 200;
+    background: var(--primary);
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px 0;
+    background: var(--white);
+    border-radius: 3px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 20px;
+  }
+  
+  .content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .text-muted {
+    font-size: 14px;
+  }
+  
+  .refund-table {
+    padding: 15px;
+  }
+}
+
+/* ✅ Enhances Hover Effects & Animations */
+.btn:hover, .slip-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.menu-item a:hover i {
+  transform: scale(1.2);
+}
+
+.content h2 {
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.content h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(to right, var(--primary), var(--primary-light));
+  border-radius: 3px;
+}
+
+/* ✅ Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+>>>>>>> janetwo

@@ -1,12 +1,20 @@
+<<<<<<< HEAD
 /* ✅ ตั้งค่าแบบอักษรและโครงสร้างพื้นฐาน */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #fde5e5; /* ชมพูอ่อน */
     color: #333;
+=======
+/* 🌸 ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8; /* ใช้สีชมพูอ่อน */
+>>>>>>> janetwo
     margin: 0;
     padding: 0;
 }
 
+<<<<<<< HEAD
 /* ✅ Navbar */
 .navbar {
     background-color: #ffdde1; /* สีชมพูอ่อน */
@@ -38,10 +46,65 @@ body {
 }
 
 .navbar-nav .nav-link:hover {
+=======
+/* 🌸 ปรับ Container ให้ดูสมดุล */
+/* 🌟 ปรับ Container */
+.container {
+    max-width: 95%;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow-x: auto; /* ✅ ทำให้เลื่อนได้ถ้าเกิน */
+}
+
+/* 🌟 ปรับตาราง */
+.table {
+    width: 100%;
+    table-layout: auto; /* ✅ ปรับให้ตารางขยายอัตโนมัติ */
+    border-collapse: collapse;
+    text-align: center;
+}
+
+
+/* 🌸 ปรับแต่ง Nav Tab */
+.nav-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* ให้รองรับหลายบรรทัดเมื่อจอเล็ก */
+    gap: 15px;
+    border-bottom: none;
+    margin-top: 20px;
+}
+
+/* 🌸 ปรับแต่งปุ่มเมนู */
+.nav-tabs .nav-item {
+    list-style: none;
+}
+
+.nav-tabs .nav-link {
+    background-color: #ffe6eb;
+    color: #e75480;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 🌸 ทำให้ปุ่ม Hover เปลี่ยนสี */
+.nav-tabs .nav-link:hover {
+>>>>>>> janetwo
     background-color: #ffb6c1;
     color: white;
 }
 
+<<<<<<< HEAD
 /* ✅ ปรับขนาดโลโก้ใหญ่ */
 .logo-container {
     display: flex;
@@ -66,10 +129,25 @@ body {
     background-color: white;
     border-radius: 15px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+=======
+/* 🌸 ทำให้ปุ่ม Active มีสีเด่นขึ้น */
+.nav-tabs .nav-link.active {
+    background-color: #ff6b81;
+    color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ เปลี่ยนสีของหัวข้อ "ประวัติคำสั่งซื้อของฉัน" */
+.title {
+    color: #ff6b81;
+    font-size: 30px;
+    font-weight: bold;
+>>>>>>> janetwo
     text-align: center;
 }
 
 /* ✅ ตารางคำสั่งซื้อ */
+<<<<<<< HEAD
 table {
     width: 100%;
     border-collapse: collapse;
@@ -177,4 +255,178 @@ footer {
     color: #e75480;
     margin-top: 20px;
     font-weight: bold;
+=======
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ หัวข้อของตาราง */
+.order-table thead {
+    background-color: #ff6b81;
+    color: white;
+    font-size: 18px;
+}
+
+.order-table th, .order-table td {
+    padding: 16px;
+    text-align: center;
+    border-bottom: 1px solid #f3c3d3;
+    font-size: 16px;
+}
+
+/* ✅ ทำให้แถวสลับสีดูง่ายขึ้น */
+.order-table tbody tr:nth-child(even) {
+    background-color: #fff0f5;
+}
+
+/* ✅ เพิ่มเอฟเฟกต์เมื่อ Hover */
+.order-table tbody tr:hover {
+    background-color: #ffe4e9;
+    transition: 0.3s;
+}
+
+/* ✅ ปรับสถานะคำสั่งซื้อให้ดูสวยขึ้น */
+.status {
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    color: white;
+    display: inline-block;
+    font-size: 14px;
+    min-width: 100px;
+}
+
+.status.pending { background-color: #ffa500; }
+.status.processing { background-color: #007bff; }
+.status.shipped { background-color: #28a745; }
+.status.delivered { background-color: #6f42c1; }
+.status.rejected { background-color: #dc3545; }
+
+/* ✅ ปรับสถานะการชำระเงิน */
+.payment-status {
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    color: white;
+    display: inline-block;
+    font-size: 14px;
+    min-width: 100px;
+}
+
+.payment-status.pending { background-color: gray; }
+.payment-status.paid { background-color: green; }
+.payment-status.rejected { background-color: red; }
+
+/* ✅ ปุ่มยกเลิกคำสั่งซื้อ */
+.btn-cancel {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.btn-cancel:hover {
+    background-color: #b02a37;
+}
+
+/* ✅ ปุ่มรีวิว */
+.btn-review {
+    background: #ff6b81;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-review:hover {
+    background: #e05570;
+}
+
+/* ✅ ปรับ Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background-color: #ff6b81;
+    color: white;
+    font-weight: bold;
+    border-radius: 0 0 12px 12px;
+}
+
+/* ✅ Responsive Design */
+@media (max-width: 1024px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .nav-tabs {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .order-table, .order-table thead, .order-table tbody, .order-table th, .order-table td, .order-table tr {
+        display: block;
+        width: 100%;
+    }
+
+    .order-table tr {
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-table th {
+        display: none;
+    }
+
+    .order-table td {
+        text-align: left;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .order-table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        color: #ff6b81;
+    }
+
+    .status, .payment-status {
+        font-size: 12px;
+        min-width: 80px;
+    }
+
+    .btn-cancel, .btn-review {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn-cancel, .btn-review {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+>>>>>>> janetwo
 }

@@ -27,9 +27,17 @@
                 </a>
             </div>
             <ul class="nav-links">
+<<<<<<< HEAD
                 <li><a href="{% url 'home' %}" class="nav-link"><i>🏠</i> Home</a></li>
                 <li><a href="{% url 'product_list' %}" class="nav-link active"><i>🛒</i> Product List</a></li>
                 <li><a href="{% url 'cart' %}" class="nav-link"><i>🛍</i> Cart <span id="cart-count">{{ cart_count }}</span></a></li>
+=======
+                <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="nav-link {% if request.path == '/products/' %}active{% endif %}">🛍 Products</a></li>
+                <li><a href="{% url 'order_history' %}" class="nav-link {% if request.path == '/order/history/' %}active{% endif %}">📜 Order History</a></li>
+                <li><a href="{% url 'cart' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">🛒 Cart</a></li>
+>>>>>>> janetwo
             </ul>
         </nav>
     </header>
@@ -77,14 +85,31 @@
                         <button class="btn btn-secondary" disabled>❌ สินค้าหมด</button>
                     {% endif %}
                 </div>
+<<<<<<< HEAD
+=======
+                <!-- 📤 Share Button -->
+                <div class="share-section">
+                    <button class="btn btn-info share-btn" onclick="shareProduct()">
+                        📤 แชร์สินค้า
+                    </button>
+                </div>
+>>>>>>> janetwo
 
                 <!-- 🛍 แจ้งเตือนเพิ่มตะกร้า -->
                 <p id="cart-message" style="display: none; text-align: center; font-weight: bold;"></p>
 
                 <!-- 🔙 กลับไปหน้าสินค้า -->
+<<<<<<< HEAD
                 <a href="{% url 'product_list' %}" class="btn btn-secondary back-btn">
                     🔙 กลับไปที่สินค้าทั้งหมด
                 </a>
+=======
+                <div class="cart-section">
+                    <a href="{% url 'product_list' %}" class="btn btn-secondary back-btn">
+                        🔙 กลับไปที่สินค้าทั้งหมด
+                    </a>
+                </div>
+>>>>>>> janetwo
             </div>
         </div>
     </div>
@@ -117,6 +142,63 @@
             <p>⚠️ ยังไม่มีรีวิว</p>
         {% endfor %}
     </div>
+<<<<<<< HEAD
+=======
+    <form action="{% url 'product_detail' product.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">📊 วิเคราะห์รีวิว</button>
+    </form>
+    
+    <!-- ✅ แสดงผลลัพธ์รีวิว -->
+    <h3>🌟 รีวิวสินค้า</h3>
+    
+    {% for review in reviews %}
+        <div class="review-box">
+            <p><strong>{{ review.user.username }}</strong>: ⭐ {{ review.rating }}/5</p>
+            <p>{{ review.comment }}</p>
+    
+            <!-- ✅ แสดงผล sentiment -->
+            {% if review.analysis_done %}
+                <p>🔍 ผลวิเคราะห์: 
+                    {% if review.sentiment == "positive" %}
+                        😊 บวก
+                    {% elif review.sentiment == "negative" %}
+                        😡 ลบ
+                    {% else %}
+                        😐 กลาง
+                    {% endif %}
+                </p>
+            {% else %}
+                <p>🟡 ยังไม่ได้วิเคราะห์</p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>⚠️ ยังไม่มีรีวิว</p>
+    {% endfor %}
+    <div class="review-summary">
+        <h3>🔍 สรุปรีวิวโดย AI</h3>
+        <p>{{ summary }}</p>
+        <p>😊 รีวิวเชิงบวก: {{ positive_ratio|floatformat:2 }}%</p>
+        <p>😐 รีวิวกลางๆ: {{ neutral_ratio|floatformat:2 }}%</p>
+        <p>😡 รีวิวเชิงลบ: {{ negative_ratio|floatformat:2 }}%</p>
+    </div>
+
+ <!-- ✅ ปุ่มวิเคราะห์ & สรุปรีวิว -->
+ <form method="POST">
+    {% csrf_token %}
+    <button type="submit" name="summarize_reviews" class="btn summarize">📖 สรุปรีวิว</button>
+</form>
+
+<!-- ✅ แสดงผลการสรุป -->
+{% if summary %}
+<div class="review-summary">
+    <h2>📌 สรุปรีวิวสินค้า</h2>
+    <p>{{ summary }}</p>
+</div>
+{% endif %}
+    
+    
+>>>>>>> janetwo
 
 <!-- ✅ JavaScript -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -157,7 +239,29 @@
             });
         });
     });
+<<<<<<< HEAD
 </script>
 
+=======
+
+    // 📤 ฟังก์ชันแชร์สินค้า
+    function shareProduct() {
+        let productUrl = window.location.href;
+        if (navigator.share) {
+            navigator.share({
+                title: "{{ product.name }}",
+                text: "เช็คสินค้าสุดฮิตจากร้าน {{ product.seller.store_name }}",
+                url: productUrl
+            }).then(() => console.log("Shared successfully!"))
+            .catch(error => console.error("Error sharing:", error));
+        } else {
+            navigator.clipboard.writeText(productUrl);
+            alert("📋 ลิงก์สินค้าถูกคัดลอกแล้ว!");
+        }
+    }
+
+</script>
+
+>>>>>>> janetwo
 </body>
 </html>

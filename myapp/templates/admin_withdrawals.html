@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>💼 จัดการคำขอถอนเงิน</title>
+=======
+    <title>💼 คำขอถอนเงินร้านค้า</title>
+>>>>>>> janetwo
     <link rel="stylesheet" href="{% static 'styles/admin_withdrawals.css' %}">
 </head>
 <body>
@@ -17,6 +21,11 @@
             <thead>
                 <tr>
                     <th>ร้านค้า</th>
+<<<<<<< HEAD
+=======
+                    <th>ชื่อบัญชีธนาคาร</th>
+                    <th>เลขบัญชีธนาคาร</th>
+>>>>>>> janetwo
                     <th>จำนวนเงิน</th>
                     <th>สถานะ</th>
                     <th>สลิปการโอน</th>
@@ -27,6 +36,11 @@
                 {% for withdrawal in withdrawals %}
                 <tr>
                     <td>{{ withdrawal.seller.store_name }}</td>
+<<<<<<< HEAD
+=======
+                    <td>{{ withdrawal.seller.bank_account_name|default:"-" }}</td>
+                    <td>{{ withdrawal.seller.bank_account_number|default:"-" }}</td>
+>>>>>>> janetwo
                     <td>฿{{ withdrawal.amount }}</td>
                     <td>
                         {% if withdrawal.status == "pending" %}
@@ -56,10 +70,21 @@
                                 <button type="submit" class="btn-reject">❌ ปฏิเสธ</button>
                             </form>
                         {% elif withdrawal.status == "approved" and withdrawal.confirmed_by_seller == False %}
+<<<<<<< HEAD
                             <form method="post" action="{% url 'confirm_withdrawal' withdrawal.id %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn-confirm">✅ ยืนยันการรับเงิน</button>
                             </form>
+=======
+                            {% if request.user.is_seller %}  <!-- ✅ เช็คว่าเป็นผู้ขาย ไม่ใช่แอดมิน -->
+                                <form method="post" action="{% url 'confirm_withdrawal' withdrawal.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-confirm">✅ ยืนยันการรับเงิน</button>
+                                </form>
+                            {% else %}
+                                <span class="disabled">✅ อนุมัติแล้ว รอผู้ขายยืนยัน</span>
+                            {% endif %}
+>>>>>>> janetwo
                         {% else %}
                             <span class="disabled">✅ ดำเนินการแล้ว</span>
                         {% endif %}

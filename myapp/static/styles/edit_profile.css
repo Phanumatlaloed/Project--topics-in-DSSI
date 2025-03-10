@@ -13,6 +13,7 @@ body {
     min-height: 100vh;
 }
 
+<<<<<<< HEAD
 /* ✅ Sidebar */
 .sidebar {
     width: 260px;
@@ -92,6 +93,30 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+=======
+
+/* ✅ Main Content */
+.content {
+    flex-grow: 1;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    margin: 30px auto;
+    width: 85%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ฟอร์มแก้ไขโปรไฟล์ */
+.card {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+>>>>>>> janetwo
 /* ✅ ฟอร์ม */
 fieldset {
     border: 2px solid #FF85A2;

@@ -1,0 +1,135 @@
+/* 🌸 ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ffdde1, #fff5f8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* 🌸 กล่องเข้าสู่ระบบ */
+.login-container {
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    transition: transform 0.3s ease-in-out;
+}
+
+.login-container:hover {
+    transform: scale(1.02);
+}
+
+/* 🌸 โลโก้ */
+.logo-container img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 10px;
+    object-fit: contain;
+}
+
+/* 🌸 หัวข้อ */
+h2 {
+    color: #ff4081;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* 🌸 ข้อความแนะนำ */
+p {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* 🌸 ฟอร์มอินพุต */
+.input-group {
+    position: relative;
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #444;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #ffccd5;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fffafc;
+    transition: all 0.3s ease-in-out;
+}
+
+.input-group input:focus {
+    border-color: #ff6b81;
+    box-shadow: 0px 3px 10px rgba(255, 99, 132, 0.3);
+    transform: scale(1.02);
+}
+
+/* 🌟 ปรับช่องรหัสผ่านให้ดีขึ้น */
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 65%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #ff6b81;
+    transition: color 0.3s ease-in-out;
+}
+
+.toggle-password:hover {
+    color: #e05570;
+}
+
+/* 🌸 ปุ่มเข้าสู่ระบบ */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background: #ff6b81;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    border-radius: 8px;
+    margin-top: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-login:hover {
+    background: #e05570;
+    transform: scale(1.05);
+}
+
+/* 🌸 ลิงก์ */
+.register-link, .other-login {
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.register-link a, .other-login a {
+    color: #ff6b81;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.register-link a:hover, .other-login a:hover {
+    color: #e05570;
+}

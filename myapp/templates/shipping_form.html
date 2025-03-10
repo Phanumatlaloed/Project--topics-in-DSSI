@@ -1,0 +1,23 @@
+<form id="updateShippingForm" method="post" action="{% url 'update_shipping' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="address" class="form-label">ที่อยู่</label>
+        <textarea name="address" id="address" class="form-control">{{ shipping.address }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="city" class="form-label">เมือง</label>
+        <input type="text" name="city" id="city" class="form-control" value="{{ shipping.city }}">
+    </div>
+    <div class="mb-3">
+        <label for="postal_code" class="form-label">รหัสไปรษณีย์</label>
+        <input type="text" name="postal_code" id="postal_code" class="form-control" value="{{ shipping.postal_code }}">
+    </div>
+    <div class="mb-3">
+        <label for="phone_number" class="form-label">เบอร์โทรศัพท์</label>
+        <input type="text" name="phone_number" id="phone_number" class="form-control" value="{{ shipping.phone_number }}">
+    </div>
+    <button type="submit" class="btn btn-primary w-100">💾 บันทึกที่อยู่</button>
+</form>
+
+
+

@@ -204,6 +204,9 @@ class Seller(models.Model):
     email = models.EmailField(unique=True, blank=False, null=False)  # ✅ เพิ่ม email
     store_image = models.ImageField(upload_to='store_images/', blank=True, null=True)
     contact_info = models.TextField(blank=True, null=True)
+    # ✅ เพิ่มเลขบัญชีและชื่อบัญชีธนาคาร
+    bank_account_name = models.CharField(max_length=255, blank=True, null=True)  # ชื่อบัญชีธนาคาร
+    bank_account_number = models.CharField(max_length=50, blank=True, null=True)  # เลขบัญชีธนาคาร
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -232,6 +235,7 @@ class Product(models.Model):
     total_sold = models.PositiveIntegerField(default=0)  # ✅ เพิ่มฟิลด์จำนวนที่ขายได้
     image = models.ImageField(upload_to='products/')
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='makeup')  # ✅ หมวดหมู่สินค้า
+    summary = models.TextField(blank=True, null=True)  # ✅ เพิ่มฟิลด์สรุปรีวิว
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -269,6 +273,8 @@ class Order(models.Model):
         ('pending', 'รอดำเนินการ'),
         ('shipped', 'จัดส่งแล้ว'),
         ('delivered', 'จัดส่งสำเร็จ'),
+        ('refunded', 'ขอคืนเงิน'),
+        ('cancelled', 'ยกเลิกแล้ว'),  # ✅ เพิ่มสถานะนี้
     ]
     
     PAYMENT_STATUS_CHOICES = [
@@ -280,6 +286,8 @@ class Order(models.Model):
     seller = models.ForeignKey('Seller', on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")  
     shipping_address = models.TextField(default="กรุณากรอกที่อยู่จัดส่ง")  # ✅ แก้ไขตรงนี้
     phone_number = models.CharField(max_length=15, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)  # ✅ เพิ่มเมือง
+    postal_code = models.CharField(max_length=10, blank=True, null=True)  # ✅ เพิ่มรหัสไปรษณีย์
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
@@ -320,9 +328,14 @@ from django.core.exceptions import ObjectDoesNotExist
 
 def get_default_seller():
     from .models import Seller
+<<<<<<< HEAD
     first_seller = Seller.objects.first()
     return first_seller.id if first_seller else None  # ✅ ป้องกัน NoneType Error
 
+=======
+    seller = Seller.objects.first()
+    return seller.id if seller else None  # ✅ คืนค่า None แทนการ error
+>>>>>>> janetwo
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")
@@ -415,6 +428,15 @@ class Review(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="reviews", null=True, blank=True)  # ✅ รองรับค่า NULL ชั่วคราว
     rating = models.IntegerField(choices=[(i, f"⭐ {i}") for i in range(1, 6)])  
     comment = models.TextField()
+<<<<<<< HEAD
+=======
+    sentiment = models.CharField(max_length=10, choices=[
+        ('positive', 'Positive'),
+        ('neutral', 'Neutral'),
+        ('negative', 'Negative')
+    ], default='neutral')  # ✅ เพิ่ม sentiment
+    analysis_done = models.BooleanField(default=False)  # ✅ ต้องเพิ่ม field นี้
+>>>>>>> janetwo
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -440,6 +462,17 @@ class ReviewMedia(models.Model):
     def __str__(self):
         return f"({self.media_type.upper()}) {os.path.basename(self.file.name)}"
     
+<<<<<<< HEAD
+=======
+class ReviewResponse(models.Model):
+    review = models.OneToOneField(Review, on_delete=models.CASCADE, related_name="response")  # One review gets one response
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)  # Ensure only the product's seller can respond
+    response_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Response by {self.seller.store_name} to Review {self.review.id}"
+>>>>>>> janetwo
 
 
 from django.db import models
@@ -524,6 +557,10 @@ class RefundRequest(models.Model):
     refund_reason = models.TextField()
     payment_proof = models.ImageField(upload_to="payment_proof/", blank=True, null=True)
     refund_proof = models.ImageField(upload_to="refund_proofs/", blank=True, null=True)  # ✅ เพิ่มฟิลด์สำหรับแนบสลิปคืนเงิน
+<<<<<<< HEAD
+=======
+    return_item_proof = models.ImageField(upload_to="return_item_proofs/", blank=True, null=True)  # ✅ หลักฐานสินค้าที่ส่งคืน
+>>>>>>> janetwo
     created_at = models.DateTimeField(auto_now_add=True)
 
     STATUS_CHOICES = [
@@ -537,3 +574,19 @@ class RefundRequest(models.Model):
 
     def __str__(self):
         return f"Refund Request for {self.item.product.name if self.item else 'Unknown Item'} in Order #{self.order.id}"
+<<<<<<< HEAD
+=======
+
+from django.db import models
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+class SellerNotification(models.Model):
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller_notifications")
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"📢 {self.seller.username} - {self.message[:50]}"
+>>>>>>> janetwo

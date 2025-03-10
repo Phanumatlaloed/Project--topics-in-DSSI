@@ -20,6 +20,7 @@
                 <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
                 <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
 
+<<<<<<< HEAD
                 <li class="menu-header">🛍 สินค้า</li>
                 <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
                 <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
@@ -40,6 +41,90 @@
             <h2>📦 จัดการคำสั่งซื้อ</h2>
 
             {% if orders %}
+=======
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 จัดการคำสั่งซื้อ</title>
+    <link rel="stylesheet" href="{% static 'styles/seller_orders.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- เพิ่ม Font Awesome สำหรับ Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Mobile Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburger-menu" style="display: none;">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h2 class="sidebar-title">
+                <i class="fas fa-store"></i> My Shop
+            </h2> 
+            <ul class="menu">
+                <li class="menu-header"><i class="fas fa-shopping-cart"></i> คำสั่งซื้อ</li>
+                <li class="menu-item"><a href="{% url 'seller_dashboard' %}"><i class="fas fa-chart-line"></i> แดชบอร์ด</a></li>
+                <li class="menu-item active"><a href="{% url 'seller_orders' %}"><i class="fas fa-box"></i> คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}"><i class="fas fa-credit-card"></i> ตรวจสอบการชำระเงิน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}"><i class="fas fa-undo"></i> ขอคืนสินค้า</a></li>
+
+                <li class="menu-header"><i class="fas fa-tags"></i> สินค้า</li>
+                <li class="menu-item"><a href="{% url 'my_products' %}"><i class="fas fa-cubes"></i> สินค้าของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'add_product' %}"><i class="fas fa-plus-circle"></i> เพิ่มสินค้าใหม่</a></li>
+
+                <li class="menu-header"><i class="fas fa-chart-bar"></i> รายงาน</li>
+                <li class="menu-item"><a href="{% url 'seller_performance' %}"><i class="fas fa-award"></i> ประสิทธิภาพร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'seller_notifications_lists' %}"><i class="fas fa-bell"></i> การแจ้งเตือน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_reviews' %}"><i class="fas fa-star"></i> ตรวจสอบการรีวิว</a></li>
+            
+                <li class="menu-header"><i class="fas fa-cog"></i> การตั้งค่า</li>
+                <li class="menu-item"><a href="{% url 'edit_store' %}"><i class="fas fa-store-alt"></i> แก้ไขร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}"><i class="fas fa-user-edit"></i> แก้ไขโปรไฟล์</a></li>
+                <li class="menu-item"><a href="{% url 'seller_wallet' %}"><i class="fas fa-wallet"></i> กระเป๋าเงิน</a></li>
+                <li class="menu-item logout"><a href="{% url 'seller_logout' %}"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
+            </ul>
+        </aside>
+
+        <!-- 🌸 Main Content -->
+        <main class="content">
+            <header class="content-header">
+                <h2><i class="fas fa-box"></i> จัดการคำสั่งซื้อ</h2>
+
+            </header>
+
+            {% if orders %}
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="stat-content">
+                        <h3>คำสั่งซื้อทั้งหมด</h3>
+                        <p class="stat-number">{{ orders|length }}</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="stat-content">
+                        <h3>รอดำเนินการ</h3>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-truck"></i></div>
+                    <div class="stat-content">
+                        <h3>กำลังจัดส่ง</h3>
+                    </div>
+                </div>
+            </div>
+
+>>>>>>> janetwo
             <div class="order-table">
                 <table>
                     <thead>
@@ -55,14 +140,20 @@
                     </thead>
                     <tbody>
                         {% for order in orders %}
+<<<<<<< HEAD
                         <tr>
                             <td>#{{ order.id }}</td>
+=======
+                        <tr data-status="{{ order.status }}">
+                            <td><span class="order-id">#{{ order.id }}</span></td>
+>>>>>>> janetwo
                             <td>{{ order.user.username }}</td>
                             <td>฿{{ order.total_price }}</td>
 
                             <td>
                                 {% if order.payment_status == "pending" %}
                                     {% if order.payment %}
+<<<<<<< HEAD
                                         ⏳ รออนุมัติการชำระเงิน
                                     {% else %}
                                         ⏳ รอการชำระเงิน
@@ -71,19 +162,36 @@
                                     ✅ ชำระเงินแล้ว
                                 {% else %}
                                     ❌ ถูกปฏิเสธ
+=======
+                                        <span class="status-badge pending-payment">⏳ รออนุมัติการชำระเงิน</span>
+                                    {% else %}
+                                        <span class="status-badge pending-payment">⏳ รอการชำระเงิน</span>
+                                    {% endif %}
+                                {% elif order.payment_status == "paid" %}
+                                    <span class="status-badge paid">✅ ชำระเงินแล้ว</span>
+                                {% else %}
+                                    <span class="status-badge rejected">❌ ถูกปฏิเสธ</span>
+>>>>>>> janetwo
                                 {% endif %}
                             </td>
 
                             <td>
                                 {% if order.payment %}
+<<<<<<< HEAD
                                     <a href="{{ order.payment.slip.url }}" target="_blank" class="slip-btn">📜 ดูสลิป</a>
                                 {% else %}
                                     ❌ ไม่มีสลิป
+=======
+                                    <a href="{{ order.payment.slip.url }}" target="_blank" class="slip-btn"><i class="fas fa-receipt"></i> ดูสลิป</a>
+                                {% else %}
+                                    <span class="no-slip">❌ ไม่มีสลิป</span>
+>>>>>>> janetwo
                                 {% endif %}
                             </td>
 
                             <td>
                                 {% if order.status == "pending" %}
+<<<<<<< HEAD
                                     ⏳ รอการยืนยันจากผู้ขาย
                                 {% elif order.status == "processing" %}
                                     📦 กำลังแพ็คสินค้า
@@ -109,6 +217,33 @@
                                 
                                 {% if order.status != "cancelled" and order.status != "delivered" %}
                                     <a href="{% url 'update_order_status' order.id 'cancelled' %}" class="btn cancel">❌ ยกเลิกออเดอร์</a>
+=======
+                                    <span class="status-badge pending">⏳ รอการยืนยันจากผู้ขาย</span>
+                                {% elif order.status == "processing" %}
+                                    <span class="status-badge processing">📦 กำลังแพ็คสินค้า</span>
+                                {% elif order.status == "shipped" %}
+                                    <span class="status-badge shipped">🚚 กำลังจัดส่ง</span>
+                                {% elif order.status == "delivered" %}
+                                    <span class="status-badge delivered">✅ จัดส่งสำเร็จ</span>
+                                {% elif order.status == "cancelled" %}
+                                    <span class="status-badge cancelled">❌ ยกเลิกแล้ว</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="action-buttons">
+                                {% if order.status == "pending" %}
+                                    <a href="{% url 'update_order_status' order.id 'processing' %}" class="btn processing"><i class="fas fa-box"></i> แพ็คสินค้า</a>
+                                {% elif order.status == "processing" %}
+                                    <a href="{% url 'update_order_status' order.id 'shipped' %}" class="btn shipped"><i class="fas fa-truck"></i> จัดส่งสินค้า</a>
+                                {% elif order.status == "shipped" %}
+                                    <span class="awaiting-confirmation">⏳ รอการยืนยันจากลูกค้า</span>
+                                {% elif order.status == "delivered" %}
+                                    <span class="delivery-success">✅ จัดส่งสำเร็จ</span>
+                                {% endif %}
+                                
+                                {% if order.status != "cancelled" and order.status != "delivered" %}
+                                    <a href="{% url 'update_order_status' order.id 'cancelled' %}" class="btn cancel"><i class="fas fa-times-circle"></i> ยกเลิกออเดอร์</a>
+>>>>>>> janetwo
                                 {% endif %}
                             </td>
                         </tr>
@@ -117,9 +252,61 @@
                 </table>
             </div>
             {% else %}
+<<<<<<< HEAD
                 <p class="no-orders">❌ ยังไม่มีคำสั่งซื้อ</p>
             {% endif %}
         </main>
     </div>
 </body>
 </html>
+=======
+                <div class="no-orders">
+                    <i class="fas fa-box-open fa-4x"></i>
+                    <p>ยังไม่มีคำสั่งซื้อในขณะนี้</p>
+                    <p class="sub-text">เมื่อมีคำสั่งซื้อเข้ามา ข้อมูลจะแสดงที่นี่</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <!-- JavaScript for Interactions -->
+    <script>
+        // Toggle Sidebar for Mobile
+        document.getElementById('hamburger-menu')?.addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+        
+        // Filter by Status
+        document.getElementById('status-filter')?.addEventListener('change', function() {
+            const status = this.value;
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                if (status === 'all' || row.dataset.status === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Search Functionality
+        document.getElementById('order-search')?.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const orderId = row.querySelector('.order-id').textContent.toLowerCase();
+                const customer = row.cells[1].textContent.toLowerCase();
+                
+                if (orderId.includes(searchTerm) || customer.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+>>>>>>> janetwo

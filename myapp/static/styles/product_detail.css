@@ -64,19 +64,36 @@ body {
     gap: 30px;
 }
 
+<<<<<<< HEAD
 /* 🌸 Product Image Slider */
 .product-slider {
     width: 50%;
     text-align: center;
+=======
+/* 🔹 ปรับขนาดรูปสินค้าให้เต็มพื้นที่ */
+.product-slider {
+    width: 100%;
+    max-width: 600px; /* ✅ ปรับขนาดสูงสุดให้กว้างขึ้น */
+    margin: 0 auto;
+>>>>>>> janetwo
 }
 
 .product-slider img {
     width: 100%;
+<<<<<<< HEAD
     height: 400px;
     object-fit: cover;
     border-radius: 10px;
 }
 
+=======
+    height: 400px; /* ✅ ปรับความสูงให้ใหญ่ขึ้น */
+    object-fit: cover; /* ✅ ครอบคลุมพื้นที่ & ป้องกันภาพแตก */
+    border-radius: 10px;
+}
+
+
+>>>>>>> janetwo
 /* 🌸 Product Info */
 .product-info {
     width: 50%;
@@ -104,6 +121,7 @@ h2 {
     text-decoration: underline;
 }
 
+<<<<<<< HEAD
 /* ✅ ปรับแต่งปุ่ม */
 .btn {
     display: block;
@@ -116,9 +134,66 @@ h2 {
     cursor: pointer;
     text-align: center;
     margin-top: 10px;
+=======
+/* 🔹 ตั้งค่าพื้นฐานของปุ่มให้ขนาดเท่ากัน */
+.btn {
+    width: 100%;
+    max-width: 250px; /* ปรับขนาดปุ่มให้เท่ากัน */
+    padding: 12px 16px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+>>>>>>> janetwo
     transition: background 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* 🔹 ปรับระยะห่างของปุ่ม */
+.cart-section {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+    margin-top: 15px;
+}
+
+/* 🛒 ปุ่มเพิ่มลงตะกร้า */
+.btn-primary {
+    background-color: #ff6b81;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #e05570;
+}
+
+/* ❌ ปุ่มสินค้าหมด */
+.btn-secondary {
+    background-color: #ffa07a;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #ff7f50;
+}
+
+/* ❌ ปุ่มสินค้าหมด (Disabled) */
+.disabled-btn {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 🔙 ปุ่มย้อนกลับ */
+.back-btn {
+    background-color: #ffa07a;
+    color: white;
+}
+
+<<<<<<< HEAD
 /* 🛒 ปุ่มเพิ่มสินค้าในตะกร้า */
 .btn-success {
     background-color: #ff6b81;
@@ -156,6 +231,31 @@ h2 {
     background-color: #ff7f50;
 }
 
+=======
+.back-btn:hover {
+    background-color: #ff7f50;
+}
+
+/* 🏷 ปรับข้อความแจ้งเตือน */
+#cart-message {
+    text-align: center;
+    font-weight: bold;
+    color: green;
+    margin-top: 10px;
+    display: none;
+}
+
+/* 📱 Responsive สำหรับมือถือ */
+@media (max-width: 768px) {
+    .cart-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+
+>>>>>>> janetwo
 /* ✅ แจ้งเตือนตะกร้า */
 .cart-message {
     text-align: center;
@@ -167,7 +267,11 @@ h2 {
 
 /* 🌟 ส่วนรีวิว */
 .reviews-section {
+<<<<<<< HEAD
     max-width: 1050px;
+=======
+    max-width: 800px;
+>>>>>>> janetwo
     margin: 40px auto;
     background: white;
     padding: 20px;
@@ -314,3 +418,92 @@ h2 {
         height: 250px;
     }
 }
+<<<<<<< HEAD
+=======
+/* 🌸 ตั้งค่าสีธีมหลัก */
+:root {
+    --primary-color: #ffb6c1;  /* สีชมพูอ่อน */
+    --secondary-color: #fff;  /* สีขาว */
+    --text-color: #444;  /* สีเทาเข้ม */
+    --border-color: #ffccd5; /* สีชมพูอ่อนแบบพาสเทล */
+    --shadow-color: rgba(255, 182, 193, 0.3); /* เงาสีชมพู */
+}
+
+/* 🌸 ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+/* 🌸 ปรับแต่งปุ่ม */
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px var(--shadow-color);
+}
+
+.btn:hover {
+    background-color: #ff94a5;
+    box-shadow: 0px 6px 15px var(--shadow-color);
+}
+
+/* 🌸 กล่องรีวิว */
+.review-box {
+    background-color: var(--secondary-color);
+    border: 2px solid var(--border-color);
+    border-radius: 15px;
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: 0px 4px 10px var(--shadow-color);
+    transition: transform 0.3s ease-in-out;
+}
+
+.review-box:hover {
+    transform: translateY(-5px);
+}
+
+/* 🌸 ข้อความผู้ใช้ */
+.review-box p {
+    margin: 8px 0;
+}
+
+/* 🌸 อิโมจิของผลวิเคราะห์ */
+p strong {
+    color: var(--primary-color);
+}
+
+p:has(😊) { color: green; font-weight: bold; }
+p:has(😡) { color: red; font-weight: bold; }
+p:has(😐) { color: #888; font-weight: bold; }
+
+/* 🌸 หัวข้อ */
+h3 {
+    color: var(--primary-color);
+    font-size: 22px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* 🌸 สไตล์สำหรับป้ายสถานะ */
+p:has(🟡) {
+    color: orange;
+    font-weight: bold;
+}
+
+/* 🌸 สไตล์ของกล่องที่ยังไม่มีรีวิว */
+p:has(⚠️) {
+    text-align: center;
+    font-style: italic;
+    color: gray;
+}
+
+>>>>>>> janetwo

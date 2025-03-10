@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>เพิ่มสินค้าใหม่</title>
     <link rel="stylesheet" href="{% static 'styles/add_product.css' %}">
 </head>
@@ -70,6 +71,239 @@
 
             <a href="{% url 'seller_dashboard' %}" class="btn back-btn">กลับไปที่แดชบอร์ด</a>
         </main>
+=======
+    <title>เพิ่มสินค้าใหม่ | My Shop</title>
+    <link rel="stylesheet" href="{% static 'styles/add_product.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- เพิ่ม Font Awesome สำหรับ Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Mobile Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburger-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+>>>>>>> janetwo
     </div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h2 class="sidebar-title"><i class="fas fa-store"></i> My Shop</h2>
+            <ul class="menu">
+                <li class="menu-header"><i class="fas fa-shopping-cart"></i> คำสั่งซื้อ</li>
+                <li class="menu-item"><a href="{% url 'seller_dashboard' %}"><i class="fas fa-chart-line"></i> แดชบอร์ด</a></li>
+                <li class="menu-item"><a href="{% url 'seller_orders' %}"><i class="fas fa-box"></i> คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}"><i class="fas fa-credit-card"></i> ตรวจสอบการชำระเงิน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}"><i class="fas fa-undo"></i> ขอคืนสินค้า</a></li>
+
+                <li class="menu-header"><i class="fas fa-tags"></i> สินค้า</li>
+                <li class="menu-item"><a href="{% url 'my_products' %}"><i class="fas fa-cubes"></i> สินค้าของฉัน</a></li>
+                <li class="menu-item active"><a href="{% url 'add_product' %}"><i class="fas fa-plus-circle"></i> เพิ่มสินค้าใหม่</a></li>
+
+                <li class="menu-header"><i class="fas fa-chart-bar"></i> รายงาน</li>
+                <li class="menu-item"><a href="{% url 'seller_performance' %}"><i class="fas fa-award"></i> รายงานประสิทธิภาพร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'seller_notifications_lists' %}"><i class="fas fa-bell"></i> การแจ้งเตือน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_reviews' %}"><i class="fas fa-star"></i> ตรวจสอบการรีวิว</a></li>
+
+                <li class="menu-header"><i class="fas fa-cog"></i> การตั้งค่า</li>
+                <li class="menu-item"><a href="{% url 'edit_store' %}"><i class="fas fa-store-alt"></i> แก้ไขร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}"><i class="fas fa-user-edit"></i> แก้ไขโปรไฟล์</a></li>
+                <li class="menu-item"><a href="{% url 'seller_wallet' %}"><i class="fas fa-wallet"></i> กระเป๋าเงิน</a></li>
+                <li class="menu-item logout"><a href="{% url 'seller_logout' %}"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <h2><i class="fas fa-plus-circle"></i> เพิ่มสินค้าใหม่</h2>
+
+            <form method="post" enctype="multipart/form-data" class="product-form">
+                {% csrf_token %}
+                
+                <div class="form-section">
+                    <h3 class="form-section-title"><i class="fas fa-info-circle"></i> ข้อมูลพื้นฐาน</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ชื่อสินค้า <span class="required-star">*</span></label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.name.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <div class="form-tip">
+                            <i class="fas fa-lightbulb"></i> <strong>คำแนะนำ:</strong> ตั้งชื่อสินค้าให้กระชับและตรงประเด็น เพื่อให้ลูกค้าค้นหาเจอได้ง่าย
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">รายละเอียด <span class="required-star">*</span></label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.description.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="form-section-title"><i class="fas fa-tags"></i> หมวดหมู่และราคา</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">หมวดหมู่ <span class="required-star">*</span></label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.category.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ราคา (บาท) <span class="required-star">*</span></label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.price.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="form-section-title"><i class="fas fa-warehouse"></i> คลังสินค้าและรูปภาพ</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">จำนวนคงเหลือ <span class="required-star">*</span></label>
+                        {{ form.stock }}
+                        {% if form.stock.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.stock.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group file-upload-group">
+                        <label class="form-label">รูปภาพสินค้า <span class="required-star">*</span></label>
+                        <div class="file-upload-container">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            {{ form.image }}
+                            <div class="upload-text">คลิกเพื่อเลือกไฟล์ หรือลากไฟล์มาวางที่นี่</div>
+                        </div>
+                        {% if form.image.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.image.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <div class="form-tip">
+                            <i class="fas fa-lightbulb"></i> <strong>คำแนะนำ:</strong> อัพโหลดรูปภาพที่ชัดเจน คุณภาพดี และแสดงรายละเอียดสินค้าครบถ้วน
+                        </div>
+                    </div>
+                </div>
+
+                <div id="image-preview-container" style="display: none;">
+                    <h3 class="form-section-title"><i class="fas fa-image"></i> ตัวอย่างรูปภาพ</h3>
+                    <div class="preview-wrapper">
+                        <img id="image-preview" src="#" alt="ตัวอย่างรูปภาพ">
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn submit-btn"><i class="fas fa-plus-circle"></i> เพิ่มสินค้า</button>
+                    <a href="{% url 'seller_dashboard' %}" class="btn back-btn"><i class="fas fa-arrow-left"></i> กลับไปที่แดชบอร์ด</a>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- JavaScript สำหรับ Preview รูปภาพและMobile Menu -->
+    <script>
+        // รับ Element จาก DOM
+        const imageInput = document.querySelector('input[type="file"]');
+        const imagePreview = document.getElementById('image-preview');
+        const previewContainer = document.getElementById('image-preview-container');
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        const sidebar = document.getElementById('sidebar');
+        
+        // เมื่อมีการเลือกไฟล์
+        imageInput.addEventListener('change', function() {
+            // ตรวจสอบว่ามีไฟล์ที่เลือกหรือไม่
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                // เมื่ออ่านไฟล์เสร็จ
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                
+                // อ่านไฟล์เป็น URL
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+        
+        // Toggle Sidebar สำหรับมือถือ
+        if (hamburgerMenu) {
+            hamburgerMenu.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+        
+        // Drag and Drop สำหรับอัพโหลดรูปภาพ
+        const uploadContainer = document.querySelector('.file-upload-container');
+        if (uploadContainer) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadContainer.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadContainer.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadContainer.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                uploadContainer.classList.add('highlight');
+            }
+            
+            function unhighlight() {
+                uploadContainer.classList.remove('highlight');
+            }
+            
+            uploadContainer.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                imageInput.files = files;
+                
+                // ทริกเกอร์ event change เพื่อให้ preview ทำงาน
+                const event = new Event('change');
+                imageInput.dispatchEvent(event);
+            }
+        }
+    </script>
 </body>
 </html>

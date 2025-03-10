@@ -4,7 +4,19 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 from . import views
 from .views import logout_view, login_view, seller_login, seller_logout, register_seller, product_list, add_product, my_products, product_detail, delete_product
+<<<<<<< HEAD
 from .views import *
+=======
+from .views import (
+    logout_view, login_view, seller_login, seller_logout, register_seller, product_list, 
+    add_product, my_products, product_detail, edit_post, 
+    edit_store, edit_group_post, delete_group_post, save_group_post, share_group_post,
+    add_to_cart, view_cart, update_cart, remove_from_cart, checkout, update_shipping,
+    add_review, order_tracking, return_order, cancel_order, report_post, remove_saved_group_post,
+    admin_login, admin_dashboard, delete_reported_post, admin_register, block_user,create_group_post, edit_group,
+)
+
+>>>>>>> janetwo
 
 urlpatterns = [
     # ✅ เส้นทางหน้าแรก
@@ -82,7 +94,10 @@ urlpatterns = [
     path("products/<int:product_id>/", product_detail, name="product_detail"),
     path('seller/edit/', edit_store, name='edit_store'),
     path('edit-seller-profile/', views.edit_seller_profile, name='edit_seller_profile'),
+<<<<<<< HEAD
     path("products/user/<int:product_id>/", product_detail_user, name="product_detail_user"),
+=======
+>>>>>>> janetwo
 
     # ✅ ตะกร้าสินค้า (Shopping Cart)
     path('cart/', view_cart, name='cart'),
@@ -101,11 +116,11 @@ urlpatterns = [
 
 
     # ✅ รีวิวสินค้า
-    path('review/add/<int:product_id>/', add_review, name='add_review'),
+    path('review/add/<int:order_id>/<int:product_id>/', add_review, name='add_review'),  # ✅ ต้องรับ `order_id` และ `product_id`
 
     # ✅ การคืนสินค้า/ยกเลิกออเดอร์
     path('order/return/<int:order_id>/', return_order, name='return_order'),
-    path('order/cancel/<int:order_id>/', cancel_order, name='cancel_order'),
+    path("cancel-order/<int:order_id>/", cancel_order, name="cancel_order"),
     path("checkout/confirm/", views.confirm_order, name="confirm_order"),
     path("order/<int:order_id>/", views.order_detail, name="order_detail"),
     #path('edit-address/', views.edit_shipping_address, name='edit_shipping_address'),
@@ -118,7 +133,7 @@ urlpatterns = [
     path('', views.all_posts, name='all_posts'),
     path("seller/orders/", views.seller_orders, name="seller_orders"),
     path("seller/orders/<int:order_id>/update/<str:status>/", views.update_order_status, name="update_order_status"),
-    path("seller/orders/<int:order_id>/cancel/", views.cancel_order, name="cancel_order"),
+    path("seller/orders/<int:order_id>/cancel/", views.sellercancel_order, name="sellercancel_order"),
     #path("homemain/", views.search_content, name="search_content"),
     path('search/', views.search_content, name='search'),  # ✅ เพิ่มเส้นทางค้นหา
     #path('all-posts/', views.all_posts, name='all_posts'),  # ✅ เพิ่มเส้นทางสำหรับดูโพสต์ทั้งหมด
@@ -126,6 +141,7 @@ urlpatterns = [
     path("seller/payments/", views.seller_payment_verification, name="seller_payment_verification"),
     path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
     path("seller/payments/reject/<int:order_id>/", views.reject_seller_payment, name="reject_seller_payment"),
+    path("products/user/<int:product_id>/", views.product_detail_user, name="product_detail_user"),
 
 
     # ✅ เส้นทางสำหรับรีเซ็ตรหัสผ่าน
@@ -158,7 +174,56 @@ urlpatterns = [
     path('store/<slug:store_id>/', views.store_detail, name='store_detail'),
     
 
-    path("review/add/<int:order_id>/<int:product_id>/", add_review, name="add_review"),
+    #path("review/add/<int:order_id>/<int:product_id>/", add_review, name="add_review"),
+
+    path("seller/wallet/", views.seller_wallet, name="seller_wallet"),
+    #path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
+
+    path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
+    #path("order/<int:order_id>/update/<str:status>/", views.update_order_status, name="update_order_status"),
+    path("order/<int:order_id>/confirm_delivery/", views.confirm_delivery, name="confirm_delivery"),
+
+    # ✅ ประวัติคำสั่งซื้อ
+    path('order/history/', views.order_history, name='order_history'),
+
+    # ✅ ลูกค้าขอคืนเงิน (ต้องมีทั้ง order_id และ item_id)
+    #path("order/request_refund/<int:order_id>/<int:item_id>/", views.request_refund, name="request_refund"),
+    path("order/request_refund/<int:order_id>/", views.request_refund, name="request_refund"),
+
+
+    # ✅ ผู้ขายดูคำขอคืนเงิน
+    path("refunds/seller/", views.seller_refund_requests, name="seller_refund_requests"),
+
+    # ✅ อนุมัติ / ปฏิเสธ การคืนเงิน
+    path("refunds/approve/<int:refund_id>/", views.approve_refund, name="approve_refund"),
+    path("refunds/reject/<int:refund_id>/", views.reject_refund, name="reject_refund"),
+
+    # ✅ อัปโหลดสลิปคืนเงิน
+    path("refunds/upload/<int:refund_id>/", views.upload_refund_proof, name="upload_refund_proof"),
+
+    # ✅ ลูกค้ายืนยันการได้รับเงินคืน
+    path("refunds/confirm/<int:refund_id>/", views.confirm_refund_received, name="confirm_refund_received"),
+
+    path('refunds/', views.refund_history, name='refund_history'),  # ✅ แสดงคำขอคืนเงิน
+    path("wallet/withdraw/", views.request_withdrawal, name="request_withdrawal"),
+
+    path("admins/withdrawals/", views.admin_withdrawals, name="admin_withdrawals"),
+    #path("admins/withdrawals/approve/<int:withdrawal_id>/", views.approve_withdrawal, name="approve_withdrawal"),
+    path("admins/withdrawals/reject/<int:withdrawal_id>/", views.reject_withdrawal, name="reject_withdrawal"),
+    path("withdrawals/approve/<int:withdrawal_id>/", views.approve_withdrawal, name="approve_withdrawal"),
+    path("withdrawals/confirm/<int:withdrawal_id>/", views.confirm_withdrawal, name="confirm_withdrawal"),
+
+    path("seller/performance/", views.seller_performance, name="seller_performance"),
+    path("admins/performance/", views.admin_performance, name="admin_performance"),  # ✅ ต้องอยู่ที่นี่
+
+    path("update-address/<int:order_id>/", views.update_order_shipping, name="update_order_shipping"),
+    #path('seller/', views.seller_notifications_list, name='seller_notifications'),
+
+    path("seller/notifications/", views.get_seller_notifications, name="get_seller_notifications"),
+    path("seller/notifications/read/", views.mark_notifications_read, name="mark_notifications_read"),
+    path("notifications/", views.seller_notifications_list, name="seller_notifications_lists"),
+    path("seller/reviews/", views.seller_review_responses, name="seller_reviews"),
+    path("seller/review/<int:review_id>/respond/", views.seller_respond_review, name="review_response"),
 
     path("seller/wallet/", views.seller_wallet, name="seller_wallet"),
     #path("seller/payments/approve/<int:order_id>/", views.approve_seller_payment, name="approve_seller_payment"),
@@ -202,5 +267,9 @@ urlpatterns = [
 
 ]
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> janetwo
     
 

@@ -1,11 +1,19 @@
+<<<<<<< HEAD
 body {
     font-family: "Poppins", sans-serif;
     background-color: #fff5f7;
+=======
+/* 🌟 ตั้งค่าพื้นฐาน */
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #fffbfc;
+>>>>>>> janetwo
     margin: 0;
     padding: 20px;
     text-align: center;
 }
 
+<<<<<<< HEAD
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -19,6 +27,28 @@ h2 {
     color: #ff4f5e;
 }
 
+=======
+/* ✅ กล่องหลัก */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ หัวข้อหลัก */
+h2 {
+    color: #d63384;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* ✅ ตาราง */
+>>>>>>> janetwo
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -26,6 +56,7 @@ h2 {
 }
 
 .table th, .table td {
+<<<<<<< HEAD
     border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
@@ -43,15 +74,60 @@ h2 {
 
 .status.pending {
     background: #ffcc00;
+=======
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #f3c1d1;
+}
+
+/* ✅ หัวตาราง */
+.table th {
+    background: #ff7fa3;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* ✅ ข้อมูลในตาราง */
+.table td {
+    background: #fffdfd;
+    color: #333;
+    font-size: 14px;
+}
+
+/* 🔥 ปรับช่องข้อมูลให้อ่านง่ายขึ้น */
+.table td:first-child {
+    font-weight: bold;
+    color: #d63384;
+}
+
+/* ✅ ปรับแต่ง "สถานะ" */
+.status {
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* 🚀 สีสถานะ */
+.status.pending {
+    background: #ffc107;
+>>>>>>> janetwo
     color: #000;
 }
 
 .status.approved {
+<<<<<<< HEAD
     background: #4caf50;
+=======
+    background: #28a745;
+>>>>>>> janetwo
     color: white;
 }
 
 .status.rejected {
+<<<<<<< HEAD
     background: #f44336;
     color: white;
 }
@@ -76,4 +152,96 @@ h2 {
     color: #999;
     font-size: 18px;
     margin-top: 20px;
+=======
+    background: #dc3545;
+    color: white;
+}
+
+/* ✅ ปุ่ม */
+button, .btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* ✅ ปุ่ม "อนุมัติ" */
+.btn-approve {
+    background: #28a745;
+    color: white;
+}
+
+.btn-approve:hover {
+    background: #218838;
+}
+
+/* ❌ ปุ่ม "ปฏิเสธ" */
+.btn-reject {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-reject:hover {
+    background: #c82333;
+}
+
+/* 📄 ปุ่ม "ดูสลิป" */
+.btn-view {
+    background: #007bff;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #0056b3;
+}
+
+/* ✅ ปุ่ม "ยืนยันการรับเงิน" */
+.btn-confirm {
+    background: #ff7fa3;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background: #e03e6b;
+}
+
+/* 🚫 ปุ่มที่ไม่สามารถกดได้ */
+.disabled {
+    background: #e3e3e3;
+    color: #777;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* ✅ ปรับช่องว่างให้พอดี */
+.table td input[type="file"] {
+    display: block;
+    margin: 5px auto;
+    font-size: 12px;
+}
+
+/* ✅ ปรับแต่งข้อความแจ้งเตือน */
+.no-requests {
+    color: #777;
+    font-size: 18px;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+/* ✅ Responsive */
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+    
+    .btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+>>>>>>> janetwo
 }

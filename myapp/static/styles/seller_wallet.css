@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* ✅ ตั้งค่า Theme */
 body {
     font-family: 'Poppins', sans-serif;
@@ -11,10 +12,55 @@ body {
 .dashboard-container {
     display: flex;
     min-height: 100vh;
+=======
+/* ✅ ตั้งค่า Theme และ Typography */
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+
+:root {
+  --primary: #FF6B8B;
+  --primary-light: #FFC0CB;
+  --primary-dark: #E5446D;
+  --secondary: #6C63FF;
+  --white: #FFFFFF;
+  --light-gray: #F8F9FA;
+  --gray: #E9ECEF;
+  --dark-gray: #6C757D;
+  --black: #343A40;
+  --success: #20C997;
+  --warning: #FFC107;
+  --danger: #DC3545;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background-color: var(--light-gray);
+  color: var(--black);
+  line-height: 1.6;
+}
+
+/* ✅ Layout Dashboard */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+>>>>>>> janetwo
 }
 
 /* ✅ Sidebar */
 .sidebar {
+<<<<<<< HEAD
     width: 260px;
     background: linear-gradient(135deg, #FFC0CB, #FFC0CB);
     color: white;
@@ -69,12 +115,85 @@ body {
     font-weight: bold;
     transform: translateX(5px);
     box-shadow: 0px 4px 10px rgba(255, 99, 132, 0.3);
+=======
+  width: 280px;
+  background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+  color: var(--white);
+  padding: 30px 20px;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  transition: var(--transition);
+  z-index: 100;
+}
+
+.sidebar-title {
+  font-size: 22px;
+  margin-bottom: 30px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu-header {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 20px 0 10px;
+  opacity: 0.8;
+}
+
+.menu-item {
+  margin-bottom: 5px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.menu-item a {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  text-decoration: none;
+  color: var(--white);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.menu-item a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+.menu-item.active a {
+  background-color: var(--white);
+  color: var(--primary);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+.menu-item.logout a {
+  margin-top: 20px;
+  background-color: rgba(220, 53, 69, 0.2);
+  color: var(--white);
+}
+
+.menu-item.logout a:hover {
+  background-color: var(--danger);
+>>>>>>> janetwo
 }
 
 
 /* ✅ Main Content */
 .content {
     flex-grow: 1;
+<<<<<<< HEAD
     padding: 40px;
     background: white;
     border-radius: 15px;
@@ -162,10 +281,248 @@ th, td {
 }
 
 /* ✅ Responsive */
+=======
+    margin-left: 280px;
+    padding: 40px;
+    transition: var(--transition);
+  }
+  
+  /* ✅ Header */
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--white);
+    padding: 25px 30px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .content-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+  }
+  
+  .content-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--black);
+  }
+
+/* การ์ด */
+.card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* หัวข้อ */
+h2, h3 {
+    margin-top: 0;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+h2.text-pink {
+    color: var(--primary-color);
+    font-size: 28px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+h2.text-pink::before {
+    content: "\f555"; /* Wallet icon from Font Awesome */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+h3 {
+    font-size: 20px;
+    margin-top: 30px;
+    color: var(--dark-color);
+    display: flex;
+    align-items: center;
+}
+
+h3:nth-of-type(1)::before {
+    content: "\f0d6"; /* Money icon */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+h3:nth-of-type(2)::before {
+    content: "\f1da"; /* History icon */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+/* ยอดเงิน */
+.balance {
+    font-size: 18px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--secondary-color);
+    margin: 20px 0;
+}
+
+.money {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 22px;
+}
+
+/* แจ้งเตือนการคืนเงิน */
+.refund-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 12px 15px;
+    border-radius: var(--border-radius);
+    border-left: 4px solid #ffc107;
+    margin: 15px 0;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+/* ปุ่ม */
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-family: 'Prompt', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.submit-btn {
+    background-color: #000000;
+    width: 100%;
+    max-width: 300px;
+    margin: 15px 0;
+    color: #ffffff;
+    border-radius: var(--radius-sm);
+}
+
+.submit-btn:hover {
+    background-color: #ffffff;
+    transform: translateY(-2px);
+    color: #000000;
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+}
+
+.submit-btn::before {
+    content: "\f0d6"; /* Money icon */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+.confirm-btn {
+    background-color: var(--success-color);
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+.confirm-btn:hover {
+    background-color: #27ae60;
+}
+
+.confirm-btn::before {
+    content: "\f00c"; /* Check icon */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+/* ตาราง */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+thead {
+    background-color: #f8f9fa;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    font-weight: 500;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ลิงก์ */
+a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #3db1a8;
+    text-decoration: underline;
+}
+
+/* สถานะ */
+td:nth-child(3) {
+    font-weight: 500;
+}
+
+/* Responsive */
+>>>>>>> janetwo
 @media (max-width: 992px) {
     .dashboard-container {
         flex-direction: column;
     }
+<<<<<<< HEAD
 
     .sidebar {
         width: 100%;
@@ -212,3 +569,102 @@ td {
 .status-rejected {
     color: red;
 }
+=======
+    
+    .content {
+        padding: 15px;
+    }
+    
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 15px;
+    }
+    
+    .balance {
+        font-size: 16px;
+    }
+    
+    .money {
+        font-size: 20px;
+    }
+    
+    h2.text-pink {
+        font-size: 24px;
+    }
+    
+    h3 {
+        font-size: 18px;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* สไตล์สำหรับ Hamburger Menu บนมือถือ */
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.bar {
+    height: 3px;
+    width: 100%;
+    background-color: var(--dark-color);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 992px) {
+    .hamburger-menu {
+        display: flex;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 999;
+        height: 100vh;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .content {
+        margin-left: 0;
+        padding-top: 60px;
+    }
+}
+
+/* JavaScript for Hamburger Menu */
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.getElementById('hamburger-menu');
+    const sidebar = document.getElementById('sidebar');
+    
+    hamburger.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+        hamburger.classList.toggle('active');
+    });
+});
+>>>>>>> janetwo

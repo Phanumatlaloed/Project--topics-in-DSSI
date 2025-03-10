@@ -7,22 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📜 สรุปรายการสินค้าที่ต้องชำระ</title>
     <link rel="stylesheet" href="{% static 'styles/checkout.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
 </head>
 <body>
 
     <!-- 🌸 Navbar -->
-    <header class="navbar">
-        <div class="logo">
-            <a href="{% url 'home' %}">
-                <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
-            </a>
-        </div>
-        <ul class="nav-links">
-            <li><a href="{% url 'home' %}">🏠 Home</a></li>
-            <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
-            <li><a href="{% url 'cart' %}">🛒 Cart</a></li>
-            <li><a href="{% url 'order_history' %}" class="active">📜 Order History</a></li>
-        </ul>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'media/logo.jpg' %}" alt="Shop Logo">
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="nav-link {% if request.path == '/product/' %}active{% endif %}">🛍 Products</a></li>
+                <li><a href="{% url 'order_history' %}" class="nav-link {% if request.path == '/order/history/' %}active{% endif %}">📜 Order History</a></li>
+                <li><a href="{% url 'cart' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">🛒 Cart</a></li>
+            </ul>
+        </nav>
     </header>
 
     <!-- 🌸 Checkout Summary -->
@@ -67,10 +71,5 @@
             <button type="submit" class="btn btn-success">✅ ยืนยันคำสั่งซื้อ</button>
         </form>
     </div>
-
-    <footer>
-        <p>&copy; 2025 Your Shop. All rights reserved.</p>
-    </footer>
-
 </body>
 </html>

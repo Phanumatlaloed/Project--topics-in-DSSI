@@ -8,6 +8,7 @@
 
     <!-- ✅ CSS -->
     <link rel="stylesheet" href="{% static 'styles/product_list.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
 
     <!-- ✅ Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -22,14 +23,22 @@
                 </a>
             </div>
             <ul class="nav-links">
+<<<<<<< HEAD
                 <li><a href="{% url 'home' %}">🏠 Home</a></li>
                 <li><a href="{% url 'product_list' %}" class="active">🛍 Products</a></li>
                 <li><a href="{% url 'order_history' %}">📜 Order History</a></li>
                 <li><a href="{% url 'cart' %}">🛒 Cart (<span id="cart-count">{{ cart_count }}</span>)</a></li>
+=======
+                <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                <li><a href="{% url 'product_list' %}" class="nav-link {% if request.path == '/products/' %}active{% endif %}">🛍 Products</a></li>
+                <li><a href="{% url 'order_history' %}" class="nav-link {% if request.path == '/order/history/' %}active{% endif %}">📜 Order History</a></li>
+                <li><a href="{% url 'cart' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">🛒 Cart</a></li>
+>>>>>>> janetwo
             </ul>
         </nav>
     </header>
-
+    
     <main>
         <h2>🛍 สินค้าทั้งหมด</h2>
 
@@ -71,6 +80,7 @@
                         <p class="text-primary">💰 ราคา: ฿{{ product.price }}</p>
 
                         <!-- 🛒 ปุ่มเพิ่มในตะกร้า (ถ้าสินค้าเหลือ) -->
+<<<<<<< HEAD
                         {% if product.stock > 0 %}
                             <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
                                 ➕ เพิ่มในตะกร้า
@@ -81,6 +91,25 @@
 
                         <!-- 🔍 ดูรายละเอียดสินค้า -->
                         <a href="{% url 'product_detail' product.id %}" class="btn btn-info">📄 รายละเอียด</a>
+=======
+                        <div class="btn-container">
+                            <!-- เพิ่มในตะกร้า ปุ่มสำหรับสินค้าที่มีสต็อก -->
+                            {% if product.stock > 0 %}
+                                <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
+                                    ➕ เพิ่มในตะกร้า
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-secondary" disabled>
+                                    ❌ สินค้าหมด
+                                </button>
+                            {% endif %}
+                        
+                            <!-- รายละเอียด ปุ่ม -->
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-info">
+                                📄 รายละเอียด
+                            </a>
+                        </div>
+>>>>>>> janetwo
                     </div>
                 </div>
             </div>
