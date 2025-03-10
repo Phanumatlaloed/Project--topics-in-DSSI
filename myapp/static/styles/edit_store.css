@@ -1,109 +1,463 @@
-/* ✅ ตั้งค่า Theme */
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #FFC0CB;
-    color: #333;
-    margin: 0;
-    padding: 0;
+/* ===== SIDEBAR STYLES ===== */
+:root {
+    --primary-color: #ff5f87;
+    --primary-light: #ff7c9c;
+    --primary-dark: #f04d77;
+    --text-color: #ffffff;
+    --hover-bg: rgba(255, 255, 255, 0.15);
+    --active-bg: rgba(255, 255, 255, 0.25);
+    --border-color: rgba(255, 255, 255, 0.2);
+    --transition: all 0.3s ease;
 }
 
-/* ✅ Layout */
+/* ===== SIDEBAR LAYOUT ===== */
+.sidebar {
+    width: 280px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+    padding: 0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+/* ===== SIDEBAR TITLE ===== */
+.sidebar-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 1.5rem 1rem;
+    margin: 0;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-title::before {
+    content: '\f54e';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+/* ===== MENU STYLES ===== */
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-header {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    padding: 1.2rem 1.5rem 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.menu-item {
+    margin: 2px 0;
+}
+
+.menu-item a {
+    color: var(--text-color);
+    text-decoration: none;
+    display: block;
+    padding: 0.8rem 1.5rem;
+    transition: var(--transition);
+    border-radius: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menu-item:hover a {
+    background-color: var(--hover-bg);
+}
+
+.menu-item.active a {
+    background-color: var(--active-bg);
+    font-weight: 500;
+}
+
+
+
+/* ===== RESPONSIVE SIDEBAR ===== */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .dashboard-container {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar-title {
+        font-size: 1.2rem;
+        padding: 1rem;
+    }
+    
+    .menu-item a {
+        padding: 0.7rem 1rem;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.sidebar {
+    animation: fadeIn 0.4s ease;
+}
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+    display: none;
+    background: var(--primary-dark);
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.mobile-menu-toggle i {
+    margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .menu {
+        display: none;
+    }
+    
+    .menu.open {
+        display: block;
+    }
+}
+
+/* ===== CONTENT ADJUSTMENTS ===== */
+.content {
+    flex: 1;
+    padding: 2rem;
+    margin-left: 280px;
+}
+
+@media (max-width: 1024px) {
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+/* ===== GLOBAL STYLES ===== */
+:root {
+    --primary-color: #ff5f87;
+    --primary-light: #ff7c9c;
+    --primary-dark: #f04d77;
+    --secondary-color: #f8f9fa;
+    --text-color: #333;
+    --text-light: #6c757d;
+    --border-color: #dee2e6;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Prompt', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* ===== DASHBOARD LAYOUT ===== */
 .dashboard-container {
     display: flex;
     min-height: 100vh;
 }
 
-
-/* ✅ Main Content */
+/* ===== MAIN CONTENT ===== */
 .content {
-    flex-grow: 1;
-    padding: 40px;
-    background: white;
-    border-radius: 15px;
-    margin: 30px auto;
-    width: 85%;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    padding: 2rem;
+    margin-left: 280px;
+    width: calc(100% - 280px);
 }
 
-/* ✅ ฟอร์มแก้ไขร้านค้า */
 .card {
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.5s ease;
+    transition: var(--transition);
 }
 
-/* ✅ ฟอร์ม */
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.text-pink {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.text-muted {
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+/* ===== FORM STYLING ===== */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 1.5rem;
 }
 
 .form-label {
-    font-weight: bold;
-    color: #ff4f5e;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
 }
 
-input, select, textarea {
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+textarea,
+select {
     width: 100%;
-    padding: 12px;
-    margin-top: 8px;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    border: 2px solid #ffb6c1;
+    font-size: 1rem;
+    transition: var(--transition);
+    background-color: #fdfdfd;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
     outline: none;
-    transition: 0.3s;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 95, 135, 0.2);
 }
 
-input:focus, select:focus, textarea:focus {
-    border-color: #ff6384;
-    box-shadow: 0 0 5px #ff85a2;
+textarea {
+    min-height: 120px;
+    resize: vertical;
 }
 
-/* ✅ ปุ่ม */
-.btn {
-    padding: 10px 15px;
-    font-size: 14px;
+/* File upload styling */
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px dashed var(--primary-color);
     border-radius: 8px;
+    background-color: rgba(255, 95, 135, 0.05);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+input[type="file"]:hover {
+    background-color: rgba(255, 95, 135, 0.1);
+}
+
+.preview-container {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.img-preview {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--primary-light);
+    transition: var(--transition);
+}
+
+.img-preview:hover {
+    transform: scale(1.05);
+}
+
+small.text-muted {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
     text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s ease-in-out;
+    margin-top: 1rem;
 }
 
 .submit-btn {
-    background-color: #ff869b;
+    background-color: var(--primary-color);
     color: white;
-    border: none;
+    margin-right: 1rem;
 }
 
 .submit-btn:hover {
-    background-color: #ff4f5e;
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .back-btn {
-    background-color: #ccc;
-    color: black;
-    display: block;
-    text-align: center;
-    margin-top: 20px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 
 .back-btn:hover {
-    background-color: #aaa;
+    background-color: var(--border-color);
+    transform: translateY(-2px);
 }
 
-/* ✅ Responsive */
-@media (max-width: 992px) {
+/* ===== ALERTS ===== */
+.alert-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-left: 4px solid var(--success-color);
+    color: var(--success-color);
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 4px solid var(--error-color);
+    color: var(--error-color);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
     .dashboard-container {
         flex-direction: column;
     }
-
-    .sidebar {
-        width: 100%;
-    }
-
+    
     .content {
-        width: 95%;
-        margin: 20px auto;
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
     }
+    
+    .card {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 1.2rem;
+    }
+    
+    .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.8rem;
+    }
+    
+    .text-pink {
+        font-size: 1.5rem;
+    }
+}
+
+/* ===== ANIMATION EFFECTS ===== */
+.form-group {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.form-group:hover {
+    transform: translateX(5px);
+}
+
+/* ===== FOCUS ACCESSIBILITY ===== */
+*:focus {
+    outline: 3px solid rgba(255, 95, 135, 0.3);
+    outline-offset: 2px;
+}
+
+/* Bank info section styling */
+.form-group:has(input[name*="bank"]) {
+    background-color: rgba(255, 248, 252, 0.5);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-light);
 }

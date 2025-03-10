@@ -1,161 +1,117 @@
-/* ✅ ตั้งค่าพื้นฐาน Sidebar */
+/* ✅ Sidebar */
 .sidebar {
-    width: 260px;
-    background: #fff;
-    color: #333;  /* ฟอนต์สีดำ */
-    padding: 20px;
-    min-height: 100vh;
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    border-right: 3px solid #ffd3d6;
-    transition: width 0.3s ease-in-out;
-}
-
-/* ✅ ชื่อหัวข้อ Sidebar */
-.sidebar-title {
+    width: 280px;
+    background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+    color: var(--white);
+    padding: 30px 20px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    transition: var(--transition);
+    z-index: 100;
+  }
+  
+  .sidebar-title {
     font-size: 22px;
-    font-weight: bold;
+    margin-bottom: 30px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
     text-align: center;
-    margin-bottom: 20px;
-    padding: 12px;
-    color: #ff6b81;
-    background: linear-gradient(135deg, #ffe6eb, #ffd3d6);
-    border-radius: 10px;
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* ✅ เมนูภายใน Sidebar */
-.menu {
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .menu {
     list-style: none;
     padding: 0;
-}
-
-/* ✅ หัวข้อหมวดหมู่ */
-.menu-header {
-    font-weight: bold;
-    margin-top: 15px;
-    padding: 10px 14px;
-    color: #030303;
-    text-transform: uppercase;
+  }
+  
+  .menu-header {
     font-size: 14px;
-    background: rgba(251, 248, 249, 0.6);
-    border-radius: 8px;
-}
-
-/* ✅ รายการเมนู */
-.menu-item {
-    margin-top: 8px;
-}
-
-.menu-item a {
-    color: #333;  /* ฟอนต์สีดำ */
-    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 20px 0 10px;
+    opacity: 0.8;
+  }
+  
+  .menu-item {
+    margin-bottom: 5px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+  }
+  
+  .menu-item a {
     display: flex;
     align-items: center;
-    padding: 12px 18px;
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-    font-size: 16px;
-    font-weight: 500;
-    background: rgba(255, 230, 235, 0.3);
-}
-
-/* ✅ ปรับปรุงเมนูด้านข้างให้มีกรอบสีขาว */
-.menu-item a {
-    color: #333;  /* ฟอนต์สีดำ */
+    padding: 12px 15px;
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    padding: 12px 18px;
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-    font-size: 16px;
+    color: var(--white);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+  }
+  
+  .menu-item a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+  }
+  
+  .menu-item.active a {
+    background-color: var(--white);
+    color: var(--primary);
     font-weight: 500;
-    background: #fff;
-    border: 1px solid #fff;
-}
-
-.menu-item a:hover, .menu-item.active a {
-    background: linear-gradient(135deg, #ffb6c1, #ffdde1);
-    color: #fff;  /* เปลี่ยนสีฟอนต์เป็นขาว */
-    font-weight: bold;
-    transform: translateX(6px);
-    box-shadow: 0px 4px 12px rgba(255, 99, 132, 0.3);
-}
-
-/* ✅ ปุ่ม Logout */
-.menu-item.logout a {
-    background: rgba(255, 200, 210, 0.5);
-    font-weight: bold;
-    color: #ff3f5f;
-    transition: all 0.3s;
-}
-
-.menu-item.logout a:hover {
-    background: #ff6b81;
-    color: white;
-    box-shadow: 0px 4px 10px rgba(255, 0, 0, 0.3);
-}
-
-/* 🌸 Responsive Design */
-@media (max-width: 1024px) {
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .menu-item.logout a {
+    margin-top: 20px;
+    background-color: rgba(220, 53, 69, 0.2);
+    color: var(--white);
+  }
+  
+  .menu-item.logout a:hover {
+    background-color: var(--danger);
+  }
+  
+  /* ✅ Responsive Sidebar */
+  @media (max-width: 992px) {
     .sidebar {
-        width: 220px;
+      width: 0;
+      padding: 0;
+      overflow: hidden;
     }
-
-    .menu-item a {
-        font-size: 14px;
-        padding: 10px 14px;
+  
+    .sidebar.active {
+      width: 240px;
+      padding: 30px 20px;
     }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        width: 200px;
-        padding: 15px;
+  }
+  
+  /* ✅ Hamburger Menu (Mobile) */
+  .hamburger-menu {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 200;
+    background: var(--primary);
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px 0;
+    background: var(--white);
+    border-radius: 3px;
+  }
+  
+  @media (max-width: 992px) {
+    .hamburger-menu {
+      display: block;
     }
-
-    .menu-header {
-        font-size: 12px;
-    }
-
-    .menu-item a {
-        font-size: 14px;
-    }
-}
-
-/* ✅ ปรับ Sidebar ให้เป็นเมนูล่างเมื่อหน้าจอเล็ก */
-@media (max-width: 480px) {
-    .sidebar {
-        width: 100%;
-        position: fixed;
-        height: auto;
-        bottom: 0;
-        left: 0;
-        padding: 12px;
-        box-shadow: 0px -2px 12px rgba(0, 0, 0, 0.1);
-        background: linear-gradient(135deg, #ffdde1, #ffe6eb);
-    }
-
-    .menu {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .menu-item {
-        flex: 1 1 45%;
-        text-align: center;
-        margin-top: 5px;
-    }
-
-    .menu-item a {
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .menu-item.logout a {
-        flex: 1 1 100%;
-    }
-}
+  }
+  

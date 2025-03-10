@@ -8,33 +8,47 @@
     
     <!-- ✅ Custom CSS -->
     <link rel="stylesheet" href="{% static 'styles/edit_store.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}"> -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- เพิ่ม Font Awesome สำหรับ Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Mobile Hamburger Menu -->
+    <!-- <div class="hamburger-menu" id="hamburger-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </div> -->
 
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2>
+        <aside class="sidebar" id="sidebar">
+            <h2 class="sidebar-title">
+                <i class="fas fa-store"></i> My Shop
+            </h2> 
             <ul class="menu">
-                <li class="menu-header">คำสั่งซื้อ</li>
-                <li class="menu-item"><a href="{% url 'seller_dashboard' %}">แดชบอร์ด</a></li>
-                <li class="menu-item"><a href="{% url 'seller_orders' %}">คำสั่งซื้อของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
+                <li class="menu-header"><i class="fas fa-shopping-cart"></i> คำสั่งซื้อ</li>
+                <li class="menu-item"><a href="{% url 'seller_dashboard' %}"><i class="fas fa-chart-line"></i> แดชบอร์ด</a></li>
+                <li class="menu-item"><a href="{% url 'seller_orders' %}"><i class="fas fa-box"></i> คำสั่งซื้อของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}"><i class="fas fa-credit-card"></i> ตรวจสอบการชำระเงิน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}"><i class="fas fa-undo"></i> ขอคืนสินค้า</a></li>
 
-                <li class="menu-header">สินค้า</li>
-                <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
+                <li class="menu-header"><i class="fas fa-tags"></i> สินค้า</li>
+                <li class="menu-item"><a href="{% url 'my_products' %}"><i class="fas fa-cubes"></i> สินค้าของฉัน</a></li>
+                <li class="menu-item"><a href="{% url 'add_product' %}"><i class="fas fa-plus-circle"></i> เพิ่มสินค้าใหม่</a></li>
 
-                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
-                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
-
-                <li class="menu-header">การตั้งค่า</li>
-                <li class="menu-item active"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
-                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
-                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
-                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
+                <li class="menu-header"><i class="fas fa-chart-bar"></i> รายงาน</li>
+                <li class="menu-item"><a href="{% url 'seller_performance' %}"><i class="fas fa-award"></i> ประสิทธิภาพร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'seller_notifications_lists' %}"><i class="fas fa-bell"></i> การแจ้งเตือน</a></li>
+                <li class="menu-item"><a href="{% url 'seller_reviews' %}"><i class="fas fa-star"></i> ตรวจสอบการรีวิว</a></li>
+            
+                <li class="menu-header"><i class="fas fa-cog"></i> การตั้งค่า</li>
+                <li class="menu-item active"><a href="{% url 'edit_store' %}"><i class="fas fa-store-alt"></i> แก้ไขร้านค้า</a></li>
+                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}"><i class="fas fa-user-edit"></i> แก้ไขโปรไฟล์</a></li>
+                <li class="menu-item"><a href="{% url 'seller_wallet' %}"><i class="fas fa-wallet"></i> กระเป๋าเงิน</a></li>
+                <li class="menu-item logout"><a href="{% url 'seller_logout' %}"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
             </ul>
         </aside>
 

@@ -1,167 +1,420 @@
 /* ✅ ตั้งค่า Theme */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #FFC0CB;
-    color: #333;
-    margin: 0;
-    padding: 0;
+:root {
+  --primary: #FF6584;
+  --primary-light: #FFC0CB;
+  --primary-dark: #E5446D;
+  --secondary: #6C63FF;
+  --white: #FFFFFF;
+  --light-gray: #F8F9FA;
+  --gray: #E9ECEF;
+  --dark-gray: #6C757D;
+  --black: #343A40;
+  --success: #20C997;
+  --warning: #FFC107;
+  --danger: #DC3545;
+  --info: #17A2B8;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;
 }
 
-/* ✅ Layout */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background-color: var(--light-gray);
+  color: var(--black);
+  line-height: 1.6;
+}
+
+/* ✅ Layout Dashboard */
 .dashboard-container {
-    display: flex;
-    min-height: 100vh;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ✅ Sidebar */
+.sidebar {
+  width: 280px;
+  background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+  color: var(--white);
+  padding: 30px 20px;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  transition: var(--transition);
+  z-index: 100;
+}
+
+.sidebar-title {
+  font-size: 22px;
+  margin-bottom: 30px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-title i {
+  margin-right: 10px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu-header {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 20px 0 10px;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+}
+
+.menu-header i {
+  margin-right: 8px;
+}
+
+.menu-item {
+  margin-bottom: 5px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.menu-item a {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  text-decoration: none;
+  color: var(--white);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.menu-item a i {
+  margin-right: 12px;
+  width: 20px;
+  text-align: center;
+}
+
+.menu-item a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+.menu-item.active a {
+  background-color: var(--white);
+  color: var(--primary);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+.menu-item.logout a {
+  margin-top: 20px;
+  background-color: rgba(220, 53, 69, 0.2);
+  color: var(--white);
+}
+
+.menu-item.logout a:hover {
+  background-color: var(--danger);
 }
 
 /* ✅ Main Content */
 .content {
-    flex-grow: 1;
-    padding: 30px;
-    background: white;
-    border-radius: 15px;
-    margin: 30px auto;
-    width: 85%;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+  margin-left: 280px;
+  padding: 40px;
+  transition: var(--transition);
 }
 
-h2 {
-    color: #000000;
-    text-align: center;
+.content h2 {
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* ✅ ตารางคำสั่งซื้อ */
+/* ✅ Order Table Styles */
 .order-table {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 25px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 30px;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: center;
-}
-
-th, td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 thead {
-    background: #FFC0CB;
-    color: white;
-    font-weight: bold;
+  background: var(--gray);
 }
 
-/* ✅ ปุ่มสลิป */
-.slip-btn {
-    background: #ffb347;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: 0.3s;
+th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--dark-gray);
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--primary-light);
 }
 
-.slip-btn:hover {
-    background: #ff9f1a;
+td {
+  padding: 16px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray);
+  vertical-align: middle;
+  font-size: 14px;
 }
 
-/* ✅ ปุ่มอัปเดตสถานะ */
+tbody tr {
+  transition: var(--transition);
+}
+
+tbody tr:hover {
+  background-color: var(--light-gray);
+}
+
+/* Status Styles */
+td:nth-child(4), td:nth-child(6) {
+  font-weight: 500;
+}
+
+/* ✅ Button Styles */
 .btn {
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    text-decoration: none;
-    display: inline-block;
-    margin: 5px;
-    transition: all 0.3s ease-in-out;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition);
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: none;
+  cursor: pointer;
 }
 
 .processing {
-    background-color: #ffa502;
-    color: white;
-}
-
-.processing:hover {
-    background-color: #ff7f00;
+  background-color: var(--info);
+  color: var(--white);
 }
 
 .shipped {
-    background-color: #2ed573;
-    color: white;
-}
-
-.shipped:hover {
-    background-color: #1dd1a1;
+  background-color: var(--warning);
+  color: var(--black);
 }
 
 .cancel {
-    background-color: #ff4757;
-    color: white;
+  background-color: var(--danger);
+  color: var(--white);
 }
 
-.cancel:hover {
-    background-color: #ff1e2d;
+.slip-btn {
+  background-color: var(--secondary);
+  color: var(--white);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
 }
 
-/* ✅ ข้อความไม่มีคำสั่งซื้อ */
+.btn:hover, .slip-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active, .slip-btn:active {
+  transform: translateY(0);
+}
+
+/* ✅ Status Badge Styles */
+td:nth-child(4), td:nth-child(6) {
+  position: relative;
+}
+
+/* Pending Payment Badge */
+td:nth-child(4):contains("⏳") {
+  color: var(--warning);
+}
+
+/* Paid Badge */
+td:nth-child(4):contains("✅") {
+  color: var(--success);
+}
+
+/* Rejected Badge */
+td:nth-child(4):contains("❌") {
+  color: var(--danger);
+}
+
+/* Pending Order Badge */
+td:nth-child(6):contains("⏳") {
+  color: var(--warning);
+}
+
+/* Processing Badge */
+td:nth-child(6):contains("📦") {
+  color: var(--info);
+}
+
+/* Shipped Badge */
+td:nth-child(6):contains("🚚") {
+  color: var(--secondary);
+}
+
+/* Delivered Badge */
+td:nth-child(6):contains("✅") {
+  color: var(--success);
+}
+
+/* Cancelled Badge */
+td:nth-child(6):contains("❌") {
+  color: var(--danger);
+}
+
+/* ✅ No Orders Message */
 .no-orders {
-    text-align: center;
-    font-style: italic;
-    padding: 20px;
-    color: #666;
+  background-color: var(--white);
+  padding: 30px;
+  text-align: center;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  font-size: 18px;
+  color: var(--dark-gray);
 }
 
 /* ✅ Responsive */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 240px;
+  }
+  
+  .content {
+    margin-left: 240px;
+    padding: 30px;
+  }
+  
+  th, td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+  
+  .btn, .slip-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
 @media (max-width: 992px) {
-    .dashboard-container {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        min-height: auto;
-        padding: 15px;
-    }
-
-    .content {
-        width: 95%;
-        margin: 20px auto;
-    }
-
-    .menu-item a {
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    .order-table {
-        overflow-x: auto;
-    }
+  .sidebar {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .sidebar.active {
+    width: 240px;
+    padding: 30px 20px;
+  }
+  
+  .content {
+    margin-left: 0;
+  }
+  
+  .order-table {
+    overflow-x: auto;
+    padding: 15px;
+  }
+  
+  /* Hamburger Menu for Mobile */
+  .hamburger-menu {
+    display: block;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 200;
+    background: var(--primary);
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px 0;
+    background: var(--white);
+    border-radius: 3px;
+  }
+  
+  table {
+    min-width: 900px;
+  }
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        padding: 10px;
-    }
+  .content {
+    padding: 20px;
+  }
+  
+  .content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+}
 
-    .content {
-        width: 100%;
-        padding: 20px;
-    }
+/* Order Status Section Styling */
+td:nth-child(7) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-    th, td {
-        font-size: 14px;
-    }
+td:nth-child(7) a.btn {
+  margin-bottom: 8px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .btn {
-        font-size: 12px;
-        padding: 6px 10px;
-    }
+/* Fancy Animation for Hover States */
+.btn:hover, .slip-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
