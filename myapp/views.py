@@ -1352,7 +1352,7 @@ def edit_seller_profile(request):
             else:
                 messages.error(request, "❌ โปรดตรวจสอบข้อมูลที่ป้อน")
 
-    return render(request, "seller/edit_profile.html", {
+    return render(request, "edit_seller_profile.html", {
         "user_form": user_form,
         "seller_form": seller_form,
         "password_form": password_form

@@ -4,17 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 from . import views
 from .views import logout_view, login_view, seller_login, seller_logout, register_seller, product_list, add_product, my_products, product_detail, delete_product
-from .views import (
-    logout_view, login_view, seller_login, seller_logout, register_seller, product_list, 
-    add_product, my_products, product_detail, edit_post, 
-    edit_store, edit_group_post, delete_group_post, save_group_post, share_group_post,
-    add_to_cart, view_cart, update_cart, remove_from_cart, checkout, update_shipping,
-    add_review, order_tracking, return_order, cancel_order, report_post, remove_saved_group_post,
-    admin_login, admin_dashboard, delete_reported_post, admin_register, block_user,create_group_post, edit_group,
-    product_detail_user,
-)
 from .views import *
-
 
 urlpatterns = [
     # ✅ เส้นทางหน้าแรก
