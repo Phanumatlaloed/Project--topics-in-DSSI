@@ -7,41 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สินค้าของฉัน</title>
     <link rel="stylesheet" href="{% static 'styles/my_products.css' %}">
-<<<<<<< HEAD
-=======
     <!-- <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}"> -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- เพิ่ม Font Awesome สำหรับ Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
->>>>>>> janetwo
 </head>
 
 <body>
-<<<<<<< HEAD
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2>
-            <ul class="menu">
-                <li class="menu-header">คำสั่งซื้อ</li>
-                <li class="menu-item"><a href="{% url 'seller_dashboard' %}">แดชบอร์ด</a></li>
-                <li class="menu-item"><a href="{% url 'seller_orders' %}">คำสั่งซื้อของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
-
-                <li class="menu-header">สินค้า</li>
-                <li class="menu-item active"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
-
-                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
-                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
-
-                <li class="menu-header">การตั้งค่า</li>
-                <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
-                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
-                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
-                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
-=======
     <!-- Mobile Hamburger Menu -->
     <div class="hamburger-menu" id="hamburger-menu">
         <span class="bar"></span>
@@ -76,17 +48,11 @@
                 <li class="menu-item"><a href="{% url 'edit_seller_profile' %}"><i class="fas fa-user-edit"></i> แก้ไขโปรไฟล์</a></li>
                 <li class="menu-item"><a href="{% url 'seller_wallet' %}"><i class="fas fa-wallet"></i> กระเป๋าเงิน</a></li>
                 <li class="menu-item logout"><a href="{% url 'seller_logout' %}"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
->>>>>>> janetwo
             </ul>
         </aside>
 
         <!-- Main Content -->
         <main class="content">
-<<<<<<< HEAD
-            <h2>สินค้าของฉัน</h2>
-            <a href="{% url 'add_product' %}" class="btn-add-product">เพิ่มสินค้าใหม่</a>
-
-=======
             <!-- 🌸 การ์ดข้อมูลร้านค้า -->
             <div class="seller-info">
                 <div class="seller-card">
@@ -106,7 +72,6 @@
             <a href="{% url 'add_product' %}" class="btn-add-product">➕ เพิ่มสินค้าใหม่</a>
 
             <!-- 🌸 ตารางสินค้า -->
->>>>>>> janetwo
             {% if products %}
             <div class="product-table">
                 <table>
@@ -117,10 +82,6 @@
                             <th>หมวดหมู่</th>
                             <th>ราคา</th>
                             <th>จำนวนคงเหลือ</th>
-<<<<<<< HEAD
-                            <th>รายละเอียดสินค้า</th>
-=======
->>>>>>> janetwo
                             <th>ยอดขาย</th>
                             <th>วันที่เพิ่ม</th>
                             <th>การดำเนินการ</th>
@@ -138,20 +99,11 @@
                             <td>{{ product.get_category_display }}</td>
                             <td>฿{{ product.price }}</td>
                             <td>{{ product.stock }} ชิ้น</td>
-<<<<<<< HEAD
-                            <td>{{ product.description }}</td>
-                            <td>{{ product.sales_count }} รายการ</td>
-                            <td>{{ product.created_at|date:"d/m/Y" }}</td>
-                            <td>
-                                <a href="{% url 'edit_product' product.id %}" class="btn edit-btn">แก้ไข</a>
-                                <a href="{% url 'delete_product' product.id %}" class="btn delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">ลบ</a>
-=======
                             <td>{{ product.sales_count }} รายการ</td>
                             <td>{{ product.created_at|date:"d/m/Y" }}</td>
                             <td>
                                 <a href="{% url 'edit_product' product.id %}" class="btn edit-btn">✏️ แก้ไข</a>
                                 <a href="{% url 'delete_product' product.id %}" class="btn delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">🗑 ลบ</a>
->>>>>>> janetwo
                             </td>
                         </tr>
                         {% endfor %}
@@ -159,11 +111,7 @@
                 </table>
             </div>
             {% else %}
-<<<<<<< HEAD
-                <p class="text-center text-muted">ไม่มีสินค้า</p>
-=======
                 <p class="no-products">ไม่มีสินค้า</p>
->>>>>>> janetwo
             {% endif %}
         </main>
     </div>

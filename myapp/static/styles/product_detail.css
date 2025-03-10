@@ -64,36 +64,21 @@ body {
     gap: 30px;
 }
 
-<<<<<<< HEAD
-/* 🌸 Product Image Slider */
-.product-slider {
-    width: 50%;
-    text-align: center;
-=======
 /* 🔹 ปรับขนาดรูปสินค้าให้เต็มพื้นที่ */
 .product-slider {
     width: 100%;
     max-width: 600px; /* ✅ ปรับขนาดสูงสุดให้กว้างขึ้น */
     margin: 0 auto;
->>>>>>> janetwo
 }
 
 .product-slider img {
     width: 100%;
-<<<<<<< HEAD
-    height: 400px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-=======
     height: 400px; /* ✅ ปรับความสูงให้ใหญ่ขึ้น */
     object-fit: cover; /* ✅ ครอบคลุมพื้นที่ & ป้องกันภาพแตก */
     border-radius: 10px;
 }
 
 
->>>>>>> janetwo
 /* 🌸 Product Info */
 .product-info {
     width: 50%;
@@ -121,20 +106,6 @@ h2 {
     text-decoration: underline;
 }
 
-<<<<<<< HEAD
-/* ✅ ปรับแต่งปุ่ม */
-.btn {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    margin-top: 10px;
-=======
 /* 🔹 ตั้งค่าพื้นฐานของปุ่มให้ขนาดเท่ากัน */
 .btn {
     width: 100%;
@@ -146,7 +117,6 @@ h2 {
     border: none;
     cursor: pointer;
     text-align: center;
->>>>>>> janetwo
     transition: background 0.3s;
     display: flex;
     justify-content: center;
@@ -193,45 +163,6 @@ h2 {
     color: white;
 }
 
-<<<<<<< HEAD
-/* 🛒 ปุ่มเพิ่มสินค้าในตะกร้า */
-.btn-success {
-    background-color: #ff6b81;
-    color: white;
-}
-
-.btn-success:hover {
-    background-color: #e05570;
-}
-
-/* ❌ ปุ่มสินค้าหมด */
-.btn-secondary {
-    background-color: gray;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: #555;
-}
-
-/* 🔙 ปุ่มย้อนกลับ */
-.btn-back {
-    display: inline-block;
-    text-align: center;
-    background-color: #ffa07a;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 14px;
-    transition: background 0.3s;
-}
-
-.btn-back:hover {
-    background-color: #ff7f50;
-}
-
-=======
 .back-btn:hover {
     background-color: #ff7f50;
 }
@@ -255,7 +186,6 @@ h2 {
 }
 
 
->>>>>>> janetwo
 /* ✅ แจ้งเตือนตะกร้า */
 .cart-message {
     text-align: center;
@@ -267,11 +197,7 @@ h2 {
 
 /* 🌟 ส่วนรีวิว */
 .reviews-section {
-<<<<<<< HEAD
     max-width: 1050px;
-=======
-    max-width: 800px;
->>>>>>> janetwo
     margin: 40px auto;
     background: white;
     padding: 20px;
@@ -418,8 +344,6 @@ h2 {
         height: 250px;
     }
 }
-<<<<<<< HEAD
-=======
 /* 🌸 ตั้งค่าสีธีมหลัก */
 :root {
     --primary-color: #ffb6c1;  /* สีชมพูอ่อน */
@@ -506,4 +430,3 @@ p:has(⚠️) {
     color: gray;
 }
 
->>>>>>> janetwo

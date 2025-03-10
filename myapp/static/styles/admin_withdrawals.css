@@ -1,33 +1,12 @@
-<<<<<<< HEAD
-body {
-    font-family: "Poppins", sans-serif;
-    background-color: #fff5f7;
-=======
 /* 🌟 ตั้งค่าพื้นฐาน */
 body {
     font-family: "Poppins", sans-serif;
     background-color: #fffbfc;
->>>>>>> janetwo
     margin: 0;
     padding: 20px;
     text-align: center;
 }
 
-<<<<<<< HEAD
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    color: #ff4f5e;
-}
-
-=======
 /* ✅ กล่องหลัก */
 .container {
     max-width: 1100px;
@@ -48,7 +27,6 @@ h2 {
 }
 
 /* ✅ ตาราง */
->>>>>>> janetwo
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -56,25 +34,6 @@ h2 {
 }
 
 .table th, .table td {
-<<<<<<< HEAD
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-}
-
-.table th {
-    background: #ffb6c1;
-    color: white;
-}
-
-.status {
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.status.pending {
-    background: #ffcc00;
-=======
     padding: 12px;
     text-align: center;
     border: 1px solid #f3c1d1;
@@ -113,46 +72,15 @@ h2 {
 /* 🚀 สีสถานะ */
 .status.pending {
     background: #ffc107;
->>>>>>> janetwo
     color: #000;
 }
 
 .status.approved {
-<<<<<<< HEAD
-    background: #4caf50;
-=======
     background: #28a745;
->>>>>>> janetwo
     color: white;
 }
 
 .status.rejected {
-<<<<<<< HEAD
-    background: #f44336;
-    color: white;
-}
-
-.btn-approve {
-    background: #4caf50;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-.btn-reject {
-    background: #f44336;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-.no-requests {
-    color: #999;
-    font-size: 18px;
-    margin-top: 20px;
-=======
     background: #dc3545;
     color: white;
 }
@@ -243,5 +171,4 @@ button, .btn {
         font-size: 12px;
         padding: 6px 10px;
     }
->>>>>>> janetwo
 }

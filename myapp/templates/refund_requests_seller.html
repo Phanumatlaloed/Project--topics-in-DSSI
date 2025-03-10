@@ -1,8 +1,4 @@
 {% load static %}
-<<<<<<< HEAD
-=======
-
->>>>>>> janetwo
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -10,33 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>คำขอคืนเงิน - ผู้ขาย</title>
     <link rel="stylesheet" href="{% static 'styles/refund_requests_seller.css' %}">
-<<<<<<< HEAD
-</head>
-<body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2>
-            <ul class="menu">
-                <li class="menu-header">คำสั่งซื้อ</li>
-                <li class="menu-item"><a href="{% url 'seller_dashboard' %}">แดชบอร์ด</a></li>
-                <li class="menu-item"><a href="{% url 'seller_orders' %}">คำสั่งซื้อของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
-                <li class="menu-item active"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
-
-                <li class="menu-header">สินค้า</li>
-                <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
-
-                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
-                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
-
-                <li class="menu-header">การตั้งค่า</li>
-                <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
-                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
-                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
-                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
-=======
     <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
 
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -80,7 +49,6 @@
                 <li class="menu-item"><a href="{% url 'edit_seller_profile' %}"><i class="fas fa-user-edit"></i> แก้ไขโปรไฟล์</a></li>
                 <li class="menu-item"><a href="{% url 'seller_wallet' %}"><i class="fas fa-wallet"></i> กระเป๋าเงิน</a></li>
                 <li class="menu-item logout"><a href="{% url 'seller_logout' %}"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
->>>>>>> janetwo
             </ul>
         </aside>
 
@@ -101,10 +69,7 @@
                             <th>ยอดรวม</th>
                             <th>สถานะ</th>
                             <th>หลักฐานการชำระเงิน</th>
-<<<<<<< HEAD
-=======
                             <th>หลักฐานสินค้าที่ส่งคืน</th> <!-- 🔹 เพิ่มคอลัมน์นี้ -->
->>>>>>> janetwo
                             <th>อัปโหลดสลิปคืนเงิน</th>
                             <th>ลูกค้ายืนยัน</th>
                             <th>จัดการ</th>
@@ -119,11 +84,6 @@
                                 {% if refund.item %}
                                     {{ refund.item.product.name }} x {{ refund.item.quantity }} (฿{{ refund.item.price_per_item }})
                                 {% else %}
-<<<<<<< HEAD
-                                    ❌ ไม่พบสินค้า
-                                {% endif %}
-                            </td>
-=======
                                     <ul>
                                         {% for item in refund.order.order_items.all %}
                                             <li>{{ item.product.name }} x {{ item.quantity }} (฿{{ item.price_per_item }})</li>
@@ -133,7 +93,6 @@
                                     </ul>
                                 {% endif %}
                             </td>                                                                                                       
->>>>>>> janetwo
                             <td>{{ refund.refund_reason }}</td>
                             <td>฿{{ refund.order.total_price }}</td>
                             <td>
@@ -153,8 +112,6 @@
                                 {% else %}
                                     ❌ ไม่มีหลักฐาน
                                 {% endif %}
-<<<<<<< HEAD
-=======
                             </td>
                             <td>
                                 {% if refund.return_item_proof %}
@@ -162,7 +119,6 @@
                                 {% else %}
                                     ❌ ไม่มีหลักฐาน
                                 {% endif %}
->>>>>>> janetwo
                             </td>                    
                             <td>
                                 {% if refund.status == "approved" and not refund.refund_proof %}
@@ -183,14 +139,6 @@
                                 {% endif %}
                             </td>
                             <td>
-<<<<<<< HEAD
-                                {% if refund.status == "pending" %}
-                                    <a href="{% url 'approve_refund' refund.id %}" class="btn approve">อนุมัติ</a>
-                                    <a href="{% url 'reject_refund' refund.id %}" class="btn reject">ปฏิเสธ</a>
-                                {% else %}
-                                    ✅ ดำเนินการแล้ว
-                                {% endif %}
-=======
                                 <div class="btn-group">
                                     {% if refund.status == "pending" %}
                                         <a href="{% url 'approve_refund' refund.id %}" class="btn btn-success">อนุมัติ</a>
@@ -199,7 +147,6 @@
                                         ✅ ดำเนินการแล้ว
                                     {% endif %}
                                 </div>
->>>>>>> janetwo
                             </td>
                         </tr>
                         {% endfor %}

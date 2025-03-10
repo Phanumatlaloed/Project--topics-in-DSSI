@@ -1,47 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📦 จัดการคำสั่งซื้อ</title>
-    <link rel="stylesheet" href="{% static 'styles/seller_orders.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="dashboard-container">
-        <!-- 🌸 Sidebar -->
-        <aside class="sidebar">
-            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2> 
-            <ul class="menu">
-                <li class="menu-header">📦คำสั่งซื้อ</li>
-                <li class="menu-item"><a href="{% url 'seller_dashboard' %}">แดชบอร์ด</a></li>
-                <li class="menu-item active"><a href="{% url 'seller_orders' %}">คำสั่งซื้อ</a></li>
-                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
 
-<<<<<<< HEAD
-                <li class="menu-header">🛍 สินค้า</li>
-                <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
-
-                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
-                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
-
-                <li class="menu-header">⚙️ การตั้งค่า</li>
-                <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
-                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
-                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
-                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
-            </ul>
-        </aside>
-
-        <!-- 🌸 Main Content -->
-        <main class="content">
-            <h2>📦 จัดการคำสั่งซื้อ</h2>
-
-            {% if orders %}
-=======
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -124,7 +82,6 @@
                 </div>
             </div>
 
->>>>>>> janetwo
             <div class="order-table">
                 <table>
                     <thead>
@@ -140,29 +97,14 @@
                     </thead>
                     <tbody>
                         {% for order in orders %}
-<<<<<<< HEAD
-                        <tr>
-                            <td>#{{ order.id }}</td>
-=======
                         <tr data-status="{{ order.status }}">
                             <td><span class="order-id">#{{ order.id }}</span></td>
->>>>>>> janetwo
                             <td>{{ order.user.username }}</td>
                             <td>฿{{ order.total_price }}</td>
 
                             <td>
                                 {% if order.payment_status == "pending" %}
                                     {% if order.payment %}
-<<<<<<< HEAD
-                                        ⏳ รออนุมัติการชำระเงิน
-                                    {% else %}
-                                        ⏳ รอการชำระเงิน
-                                    {% endif %}
-                                {% elif order.payment_status == "paid" %}
-                                    ✅ ชำระเงินแล้ว
-                                {% else %}
-                                    ❌ ถูกปฏิเสธ
-=======
                                         <span class="status-badge pending-payment">⏳ รออนุมัติการชำระเงิน</span>
                                     {% else %}
                                         <span class="status-badge pending-payment">⏳ รอการชำระเงิน</span>
@@ -171,53 +113,19 @@
                                     <span class="status-badge paid">✅ ชำระเงินแล้ว</span>
                                 {% else %}
                                     <span class="status-badge rejected">❌ ถูกปฏิเสธ</span>
->>>>>>> janetwo
                                 {% endif %}
                             </td>
 
                             <td>
                                 {% if order.payment %}
-<<<<<<< HEAD
-                                    <a href="{{ order.payment.slip.url }}" target="_blank" class="slip-btn">📜 ดูสลิป</a>
-                                {% else %}
-                                    ❌ ไม่มีสลิป
-=======
                                     <a href="{{ order.payment.slip.url }}" target="_blank" class="slip-btn"><i class="fas fa-receipt"></i> ดูสลิป</a>
                                 {% else %}
                                     <span class="no-slip">❌ ไม่มีสลิป</span>
->>>>>>> janetwo
                                 {% endif %}
                             </td>
 
                             <td>
                                 {% if order.status == "pending" %}
-<<<<<<< HEAD
-                                    ⏳ รอการยืนยันจากผู้ขาย
-                                {% elif order.status == "processing" %}
-                                    📦 กำลังแพ็คสินค้า
-                                {% elif order.status == "shipped" %}
-                                    🚚 กำลังจัดส่ง
-                                {% elif order.status == "delivered" %}
-                                    ✅ จัดส่งสำเร็จ
-                                {% elif order.status == "cancelled" %}
-                                    ❌ ยกเลิกแล้ว
-                                {% endif %}
-                            </td>
-
-                            <td>
-                                {% if order.status == "pending" %}
-                                    <a href="{% url 'update_order_status' order.id 'processing' %}" class="btn processing">📦 แพ็คสินค้า</a>
-                                {% elif order.status == "processing" %}
-                                    <a href="{% url 'update_order_status' order.id 'shipped' %}" class="btn shipped">🚚 กำลังจัดส่ง</a>
-                                {% elif order.status == "shipped" %}
-                                    ⏳ รอการยืนยันจากลูกค้า
-                                {% elif order.status == "delivered" %}
-                                    ✅ จัดส่งสำเร็จ
-                                {% endif %}
-                                
-                                {% if order.status != "cancelled" and order.status != "delivered" %}
-                                    <a href="{% url 'update_order_status' order.id 'cancelled' %}" class="btn cancel">❌ ยกเลิกออเดอร์</a>
-=======
                                     <span class="status-badge pending">⏳ รอการยืนยันจากผู้ขาย</span>
                                 {% elif order.status == "processing" %}
                                     <span class="status-badge processing">📦 กำลังแพ็คสินค้า</span>
@@ -243,7 +151,6 @@
                                 
                                 {% if order.status != "cancelled" and order.status != "delivered" %}
                                     <a href="{% url 'update_order_status' order.id 'cancelled' %}" class="btn cancel"><i class="fas fa-times-circle"></i> ยกเลิกออเดอร์</a>
->>>>>>> janetwo
                                 {% endif %}
                             </td>
                         </tr>
@@ -252,14 +159,6 @@
                 </table>
             </div>
             {% else %}
-<<<<<<< HEAD
-                <p class="no-orders">❌ ยังไม่มีคำสั่งซื้อ</p>
-            {% endif %}
-        </main>
-    </div>
-</body>
-</html>
-=======
                 <div class="no-orders">
                     <i class="fas fa-box-open fa-4x"></i>
                     <p>ยังไม่มีคำสั่งซื้อในขณะนี้</p>
@@ -309,4 +208,3 @@
     </script>
 </body>
 </html>
->>>>>>> janetwo

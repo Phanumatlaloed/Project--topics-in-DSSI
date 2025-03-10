@@ -3,20 +3,8 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from . import views
-from .views import logout_view, login_view, seller_login, seller_logout, register_seller, product_list, add_product, my_products, product_detail, delete_product
-<<<<<<< HEAD
-from .views import *
-=======
-from .views import (
-    logout_view, login_view, seller_login, seller_logout, register_seller, product_list, 
-    add_product, my_products, product_detail, edit_post, 
-    edit_store, edit_group_post, delete_group_post, save_group_post, share_group_post,
-    add_to_cart, view_cart, update_cart, remove_from_cart, checkout, update_shipping,
-    add_review, order_tracking, return_order, cancel_order, report_post, remove_saved_group_post,
-    admin_login, admin_dashboard, delete_reported_post, admin_register, block_user,create_group_post, edit_group,
-)
 
->>>>>>> janetwo
+from .views import *
 
 urlpatterns = [
     # ✅ เส้นทางหน้าแรก
@@ -30,7 +18,7 @@ urlpatterns = [
     path('remove_saved_post/<int:post_id>/', views.remove_saved_post, name='remove_saved_post'),
     path('profile_management/', views.profile_management, name='profile_management'),
     path('follow/<int:user_id>/', views.follow_user, name='follow_user'),
-    path('follow_status/<int:user_id>/', check_follow_status, name='check_follow_status'),  # ✅ API ตรวจสอบสถานะติดตาม
+    #path('follow_status/<int:user_id>/', check_follow_status, name='check_follow_status'),  # ✅ API ตรวจสอบสถานะติดตาม
     path('report/<int:post_id>/', report_post, name='report_post'),  # ✅ เพิ่ม URL pattern สำหรับการรายงานโพสต์
     
     # ✅ เส้นทางสำหรับการจัดการกลุ่ม
@@ -94,10 +82,7 @@ urlpatterns = [
     path("products/<int:product_id>/", product_detail, name="product_detail"),
     path('seller/edit/', edit_store, name='edit_store'),
     path('edit-seller-profile/', views.edit_seller_profile, name='edit_seller_profile'),
-<<<<<<< HEAD
     path("products/user/<int:product_id>/", product_detail_user, name="product_detail_user"),
-=======
->>>>>>> janetwo
 
     # ✅ ตะกร้าสินค้า (Shopping Cart)
     path('cart/', view_cart, name='cart'),
@@ -267,9 +252,5 @@ urlpatterns = [
 
 ]
 
-<<<<<<< HEAD
-=======
-
->>>>>>> janetwo
     
 

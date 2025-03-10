@@ -4,17 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>แดชบอร์ดร้านค้า</title>
-    <link rel="stylesheet" href="{% static 'styles/seller_dashboard.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-=======
     <title>แดชบอร์ดร้านค้า | My Shop</title>
     <link rel="stylesheet" href="{% static 'styles/seller_dashboard.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- เพิ่ม Font Awesome สำหรับ Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
->>>>>>> janetwo
 </head>
 <body>
     <!-- Mobile Hamburger Menu -->
@@ -26,30 +20,6 @@
 
     <div class="dashboard-container">
         <!-- Sidebar -->
-<<<<<<< HEAD
-        <aside class="sidebar">
-            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2> 
-            <ul class="menu">
-                <li class="menu-header">📦 คำสั่งซื้อ</li>
-                <li class="menu-item active"><a href="{% url 'seller_dashboard' %}">แดชบอร์ด</a></li>
-                <li class="menu-item"><a href="{% url 'seller_orders' %}">คำสั่งซื้อของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
-
-                <li class="menu-header">🛍 สินค้า</li>
-                <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
-
-                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
-                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
-
-                <li class="menu-header">⚙️ การตั้งค่า</li>
-                <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
-                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
-                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
-                <li class="menu-item"><a href="{% url 'notification_list' %}" class="nav-link"> Notifications</a></li>
-                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
-=======
         <aside class="sidebar" id="sidebar">
             <h2 class="sidebar-title">
                 <i class="fas fa-store"></i> My Shop
@@ -75,7 +45,6 @@
                 <li class="menu-item"><a href="{% url 'edit_seller_profile' %}"><i class="fas fa-user-edit"></i> แก้ไขโปรไฟล์</a></li>
                 <li class="menu-item"><a href="{% url 'seller_wallet' %}"><i class="fas fa-wallet"></i> กระเป๋าเงิน</a></li>
                 <li class="menu-item logout"><a href="{% url 'seller_logout' %}"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
->>>>>>> janetwo
             </ul>
         </aside>
 
@@ -113,8 +82,6 @@
                 </div>
             </div>
 
-<<<<<<< HEAD
-=======
             <!-- Search & Filter -->
             <div class="filter-container">
                 <div class="search-box">
@@ -123,7 +90,6 @@
                 </div>
             </div>
 
->>>>>>> janetwo
             <!-- ตารางสินค้า -->
             <div class="product-table">
                 <table>
@@ -134,10 +100,6 @@
                             <th>ยอดขาย</th>
                             <th>ราคา</th>
                             <th>คลังสินค้า</th>
-<<<<<<< HEAD
-                            <th>คุณภาพ</th>
-=======
->>>>>>> janetwo
                             <th>การดำเนินการ</th>
                         </tr>
                     </thead>
@@ -149,16 +111,6 @@
                                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
                                     <span>{{ product.name }}</span>
                                 </td>
-<<<<<<< HEAD
-                                <td>{{ product.get_category_display }}</td>
-                                <td>{{ product.sales_count }} รายการ</td>
-                                <td>฿{{ product.price }}</td>
-                                <td>{{ product.stock }} ชิ้น</td>
-                                <td>{{ product.quality_score }}%</td>
-                                <td>
-                                    <a href="{% url 'edit_product' product.id %}" class="edit-btn">แก้ไข</a>
-                                    <a href="{% url 'delete_product' product.id %}" class="delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่?')">ลบ</a>
-=======
                                 <td><span class="category-badge">{{ product.get_category_display }}</span></td>
                                 <td>
                                     <div class="sales-info">
@@ -178,7 +130,6 @@
                                 <td class="actions-cell">
                                     <a href="{% url 'edit_product' product.id %}" class="edit-btn"><i class="fas fa-edit"></i> แก้ไข</a>
                                     <a href="{% url 'delete_product' product.id %}" class="delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่ที่จะลบสินค้านี้?')"><i class="fas fa-trash-alt"></i> ลบ</a>
->>>>>>> janetwo
                                 </td>
                             </tr>
                             {% endfor %}
@@ -220,19 +171,6 @@
         </main>
     </div>
 
-<<<<<<< HEAD
-    <!-- JavaScript for Active Tab -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const tabs = document.querySelectorAll(".tab-menu button");
-            tabs.forEach(tab => {
-                tab.addEventListener("click", function() {
-                    tabs.forEach(t => t.classList.remove("active"));
-                    this.classList.add("active");
-                });
-            });
-        });
-=======
     <!-- Toast Notification UI -->
     <div class="notification-container" id="notification-container"></div>
 
@@ -291,7 +229,6 @@
         // Initialize
         fetchNotifications(); // โหลดแจ้งเตือนทันที
         setInterval(fetchNotifications, 30000); // โหลดแจ้งเตือนใหม่ทุก 30 วินาที
->>>>>>> janetwo
     </script>
 </body>
 </html>

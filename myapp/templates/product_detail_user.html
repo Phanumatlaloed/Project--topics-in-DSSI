@@ -71,10 +71,6 @@
                 <div class="cart-section">
                     {% if product.stock > 0 %}
                         <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
-<<<<<<< HEAD
-                            <a href="{% url 'login' %}" class="btn btn-secondary back-btn"></a>
-=======
->>>>>>> janetwo
                             ➕ เพิ่มในตะกร้า
                         </button>
                     {% else %}
@@ -82,8 +78,6 @@
                     {% endif %}
                 </div>
 
-<<<<<<< HEAD
-=======
                 <!-- 📤 Share Button -->
                 <div class="share-section">
                     <button class="btn btn-info share-btn" onclick="shareProduct()">
@@ -91,7 +85,6 @@
                     </button>
                 </div>
 
->>>>>>> janetwo
                 <!-- 🛍 แจ้งเตือนเพิ่มตะกร้า -->
                 <p id="cart-message" style="display: none; text-align: center; font-weight: bold;"></p>
 
@@ -147,31 +140,19 @@
 
         // 🛒 เพิ่มสินค้าไปยังตะกร้าแบบ AJAX
         $(".add-to-cart-btn").click(function(event) {
-<<<<<<< HEAD
-            event.preventDefault();  // ป้องกันหน้าโหลดซ้ำ
-=======
             event.preventDefault();
->>>>>>> janetwo
 
             let productId = $(this).data("product-id");
             let cartMessage = $("#cart-message");
 
             $.ajax({
-<<<<<<< HEAD
-                url: `/cart/add/${productId}/`,  // ✅ ตรวจสอบ URL
-=======
                 url: `/cart/add/${productId}/`,
->>>>>>> janetwo
                 method: "POST",
                 headers: { "X-CSRFToken": "{{ csrf_token }}" },
                 dataType: "json",
                 success: function(response) {
                     if (response.success) {
-<<<<<<< HEAD
-                        $("#cart-count").text(response.cart_count); // 🔄 อัปเดตตะกร้า
-=======
                         $("#cart-count").text(response.cart_count);
->>>>>>> janetwo
                         cartMessage.text("✅ เพิ่มสินค้าในตะกร้าเรียบร้อย!").css("color", "green").fadeIn().delay(2000).fadeOut();
                     } else {
                         cartMessage.text("❌ " + response.message).css("color", "red").fadeIn().delay(2000).fadeOut();
@@ -183,8 +164,6 @@
             });
         });
     });
-<<<<<<< HEAD
-=======
 
     // 📤 ฟังก์ชันแชร์สินค้า
     function shareProduct() {
@@ -201,7 +180,6 @@
             alert("📋 ลิงก์สินค้าถูกคัดลอกแล้ว!");
         }
     }
->>>>>>> janetwo
 </script>
 
 </body>

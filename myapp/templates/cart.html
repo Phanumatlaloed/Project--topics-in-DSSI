@@ -20,18 +20,11 @@
                 </a>
             </div>
             <ul class="nav-links">
-<<<<<<< HEAD
-                <li><a href="{% url 'home' %}">🏠 Home</a></li>
-                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
-                <li><a href="{% url 'order_history' %}" >📜 Order History</a></li>
-                <li><a href="{% url 'cart' %}" class="nav-links active">🛒 Cart</a></li>
-=======
                 <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
                 <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
                 <li><a href="{% url 'product_list' %}" class="nav-link {% if request.path == '/product/' %}active{% endif %}">🛍 Products</a></li>
                 <li><a href="{% url 'order_history' %}" class="nav-link {% if request.path == '/order/history/' %}active{% endif %}">📜 Order History</a></li>
                 <li><a href="{% url 'cart' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">🛒 Cart</a></li>
->>>>>>> janetwo
             </ul>
         </nav>
     </header>

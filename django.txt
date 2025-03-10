@@ -6,9 +6,5 @@ django-allauth
 cryptography
 Pillow
 django-crispy-forms
-<<<<<<< HEAD
 python-dotenv
 django-cors-headers
-=======
-ollama
->>>>>>> janetwo

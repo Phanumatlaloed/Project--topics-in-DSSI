@@ -82,9 +82,8 @@ def create_member_profile(sender, instance, created, **kwargs):
         # ✅ ตรวจสอบก่อนว่าสร้าง `Member` ซ้ำหรือไม่
         if not Member.objects.filter(user=instance).exists():
             Member.objects.create(user=instance)
-<<<<<<< HEAD
-=======
 from django.db.models.signals import post_save
+
 from django.dispatch import receiver
 from .models import Order, RefundRequest, SellerNotification, Review, WithdrawalRequest
 
@@ -164,4 +163,3 @@ def notify_seller_withdrawal_rejected(sender, instance, **kwargs):
             seller=instance.seller.user,
             message=f"❌ คำขอถอนเงิน {instance.amount} บาท ถูกปฏิเสธ"
         )
->>>>>>> janetwo

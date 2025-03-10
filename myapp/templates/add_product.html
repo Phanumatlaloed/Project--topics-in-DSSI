@@ -4,74 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>เพิ่มสินค้าใหม่</title>
-    <link rel="stylesheet" href="{% static 'styles/add_product.css' %}">
-</head>
-<body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <h2 class="sidebar-title">แดชบอร์ดร้านค้า</h2>
-            <ul class="menu">
-                <li class="menu-header">คำสั่งซื้อ</li>
-                <li class="menu-item"><a href="{% url 'seller_dashboard' %}">แดชบอร์ด</a></li>
-                <li class="menu-item"><a href="{% url 'seller_orders' %}">คำสั่งซื้อของฉัน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_payment_verification' %}">ตรวจสอบการชำระเงิน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_refund_requests' %}">ขอคืนสินค้า</a></li>
-
-                <li class="menu-header">สินค้า</li>
-                <li class="menu-item"><a href="{% url 'my_products' %}">สินค้าของฉัน</a></li>
-                <li class="menu-item active"><a href="{% url 'add_product' %}">เพิ่มสินค้าใหม่</a></li>
-
-                <li class="menu-header"> รายงานประสิทธิภาพร้านค้า</li>
-                <li class="menu-item"><a href="{% url 'seller_performance' %}">รายงานประสิทธิภาพร้านค้า</a></li>
-
-                <li class="menu-header">การตั้งค่า</li>
-                <li class="menu-item"><a href="{% url 'edit_store' %}">แก้ไขร้านค้า</a></li>
-                <li class="menu-item"><a href="{% url 'edit_seller_profile' %}">แก้ไขโปรไฟล์</a></li>
-                <li class="menu-item"><a href="{% url 'seller_wallet' %}">กระเป๋าเงิน</a></li>
-                <li class="menu-item logout"><a href="{% url 'seller_logout' %}">ออกจากระบบ</a></li>
-            </ul>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="content">
-            <h2>เพิ่มสินค้าใหม่</h2>
-
-            <form method="post" enctype="multipart/form-data" class="product-form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label class="form-label">ชื่อสินค้า</label>
-                    {{ form.name }}
-                </div>
-                <div class="form-group">
-                    <label class="form-label">รายละเอียด</label>
-                    {{ form.description }}
-                </div>
-                <div class="form-group">
-                    <label class="form-label">ราคา</label>
-                    {{ form.price }}
-                </div>
-                <div class="form-group">
-                    <label class="form-label">จำนวนคงเหลือ</label>
-                    {{ form.stock }}
-                </div>
-                <div class="form-group">
-                    <label class="form-label">รูปภาพสินค้า</label>
-                    {{ form.image }}
-                </div>
-                <div class="form-group">
-                    <label class="form-label">หมวดหมู่</label>
-                    {{ form.category }}
-                </div>
-
-                <button type="submit" class="btn submit-btn">เพิ่มสินค้า</button>
-            </form>
-
-            <a href="{% url 'seller_dashboard' %}" class="btn back-btn">กลับไปที่แดชบอร์ด</a>
-        </main>
-=======
     <title>เพิ่มสินค้าใหม่ | My Shop</title>
     <link rel="stylesheet" href="{% static 'styles/add_product.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -84,7 +16,6 @@
         <span class="bar"></span>
         <span class="bar"></span>
         <span class="bar"></span>
->>>>>>> janetwo
     </div>
 
     <div class="dashboard-container">

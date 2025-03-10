@@ -17,15 +17,6 @@
         <div class="card shadow-sm p-4 mb-4">
             <h5 class="card-title">📋 รายละเอียดคำขอคืนเงิน</h5>
             <p><strong>📦 ออเดอร์:</strong> #{{ refund_request.order.id }}</p>
-<<<<<<< HEAD
-            <p><strong>🛍 สินค้า:</strong> 
-                {% if refund_request.item %}
-                    {{ refund_request.item.product.name }} x {{ refund_request.item.quantity }} (฿{{ refund_request.item.price_per_item }})
-                {% else %}
-                    ❌ ไม่มีสินค้าแนบมา
-                {% endif %}
-            </p>
-=======
             
             <!-- ✅ แสดงรายการสินค้าทั้งหมดในออเดอร์ -->
             <p><strong>🛍 รายการสินค้าที่ขอคืนเงิน:</strong></p>
@@ -37,20 +28,15 @@
                 {% endfor %}
             </ul>
 
->>>>>>> janetwo
             <p><strong>🏦 ธนาคาร:</strong> {{ refund_request.bank_name }}</p>
             <p><strong>💳 หมายเลขบัญชี:</strong> {{ refund_request.account_number }}</p>
             <p><strong>👤 ชื่อบัญชี:</strong> {{ refund_request.account_name }}</p>
             <p><strong>📝 เหตุผล:</strong> {{ refund_request.refund_reason }}</p>
 
             {% if refund_request.payment_proof %}
-<<<<<<< HEAD
-                <p><strong>📜 หลักฐานการชำระเงิน:</strong> <a href="{{ refund_request.payment_proof.url }}" target="_blank" class="btn btn-info btn-sm">ดูหลักฐาน</a></p>
-=======
                 <p><strong>📜 หลักฐานการชำระเงิน:</strong> 
                     <a href="{{ refund_request.payment_proof.url }}" target="_blank" class="btn btn-info btn-sm">ดูหลักฐาน</a>
                 </p>
->>>>>>> janetwo
             {% else %}
                 <p><strong>📜 หลักฐานการชำระเงิน:</strong> ❌ ไม่มี</p>
             {% endif %}

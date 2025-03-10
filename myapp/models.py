@@ -321,21 +321,12 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment for Order {self.order.id} - {self.user.username}"
 
-
-from django.core.exceptions import ObjectDoesNotExist
-
 from django.core.exceptions import ObjectDoesNotExist
 
 def get_default_seller():
     from .models import Seller
-<<<<<<< HEAD
-    first_seller = Seller.objects.first()
-    return first_seller.id if first_seller else None  # ✅ ป้องกัน NoneType Error
-
-=======
     seller = Seller.objects.first()
     return seller.id if seller else None  # ✅ คืนค่า None แทนการ error
->>>>>>> janetwo
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")
@@ -428,15 +419,6 @@ class Review(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="reviews", null=True, blank=True)  # ✅ รองรับค่า NULL ชั่วคราว
     rating = models.IntegerField(choices=[(i, f"⭐ {i}") for i in range(1, 6)])  
     comment = models.TextField()
-<<<<<<< HEAD
-=======
-    sentiment = models.CharField(max_length=10, choices=[
-        ('positive', 'Positive'),
-        ('neutral', 'Neutral'),
-        ('negative', 'Negative')
-    ], default='neutral')  # ✅ เพิ่ม sentiment
-    analysis_done = models.BooleanField(default=False)  # ✅ ต้องเพิ่ม field นี้
->>>>>>> janetwo
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -462,8 +444,6 @@ class ReviewMedia(models.Model):
     def __str__(self):
         return f"({self.media_type.upper()}) {os.path.basename(self.file.name)}"
     
-<<<<<<< HEAD
-=======
 class ReviewResponse(models.Model):
     review = models.OneToOneField(Review, on_delete=models.CASCADE, related_name="response")  # One review gets one response
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)  # Ensure only the product's seller can respond
@@ -472,7 +452,6 @@ class ReviewResponse(models.Model):
 
     def __str__(self):
         return f"Response by {self.seller.store_name} to Review {self.review.id}"
->>>>>>> janetwo
 
 
 from django.db import models
@@ -557,10 +536,7 @@ class RefundRequest(models.Model):
     refund_reason = models.TextField()
     payment_proof = models.ImageField(upload_to="payment_proof/", blank=True, null=True)
     refund_proof = models.ImageField(upload_to="refund_proofs/", blank=True, null=True)  # ✅ เพิ่มฟิลด์สำหรับแนบสลิปคืนเงิน
-<<<<<<< HEAD
-=======
     return_item_proof = models.ImageField(upload_to="return_item_proofs/", blank=True, null=True)  # ✅ หลักฐานสินค้าที่ส่งคืน
->>>>>>> janetwo
     created_at = models.DateTimeField(auto_now_add=True)
 
     STATUS_CHOICES = [
@@ -574,8 +550,6 @@ class RefundRequest(models.Model):
 
     def __str__(self):
         return f"Refund Request for {self.item.product.name if self.item else 'Unknown Item'} in Order #{self.order.id}"
-<<<<<<< HEAD
-=======
 
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -589,4 +563,3 @@ class SellerNotification(models.Model):
 
     def __str__(self):
         return f"📢 {self.seller.username} - {self.message[:50]}"
->>>>>>> janetwo

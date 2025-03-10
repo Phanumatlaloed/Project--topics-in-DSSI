@@ -394,7 +394,6 @@ class CommentForm(forms.ModelForm):
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Write a comment...'}),
         }
 
-<<<<<<< HEAD
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import get_user_model
@@ -415,5 +414,3 @@ class ProfileUpdateForm(forms.ModelForm):
             'gender': forms.Select(attrs={'class': 'form-control'}),
         }
 
-=======
->>>>>>> janetwo

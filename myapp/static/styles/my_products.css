@@ -1,18 +1,4 @@
 /* ✅ ตั้งค่า Theme */
-<<<<<<< HEAD
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #FFC0CB;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
-
-/* ✅ Layout */
-.dashboard-container {
-    display: flex;
-    min-height: 100vh;
-=======
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
 
 :root {
@@ -55,158 +41,10 @@ body {
 .dashboard-container {
   display: flex;
   min-height: 100vh;
->>>>>>> janetwo
 }
 
 /* ✅ Sidebar */
 .sidebar {
-<<<<<<< HEAD
-    width: 260px;
-    background: linear-gradient(135deg, #FFC0CB, #FFC0CB);
-    color: white;
-    padding: 20px;
-    min-height: 100vh;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s ease-in-out;
-}
-
-.sidebar-title {
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.menu {
-    list-style: none;
-    padding: 0;
-}
-
-.menu-header {
-    font-weight: bold;
-    margin-top: 15px;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-}
-
-.menu-item {
-    margin-top: 10px;
-}
-
-.menu-item a {
-    color: white;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-.menu-item a i {
-    margin-right: 8px;
-    font-size: 18px;
-}
-
-.menu-item a:hover, .menu-item.active a {
-    background: white;
-    color: #FFC0CB;
-    font-weight: bold;
-    transform: translateX(5px);
-    box-shadow: 0px 4px 10px rgba(255, 99, 132, 0.3);
-}
-
-
-/* ✅ Main Content */
-.content {
-    flex-grow: 1;
-    padding: 30px;
-    background: white;
-    border-radius: 15px;
-    margin: 30px auto;
-    width: 85%;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* ✅ Header */
-h2 {
-    color: #ff4f5e;
-    font-weight: bold;
-    text-align: center;
-}
-
-/* ✅ ตารางสินค้า */
-.product-table {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-thead {
-    background: #FFC0CB;
-    color: white;
-    font-weight: bold;
-}
-
-th, td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-}
-
-.product-img {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-}
-
-/* ✅ ปุ่ม */
-.btn {
-    padding: 8px 12px;
-    font-size: 14px;
-    border-radius: 5px;
-}
-
-.btn-add-product {
-    display: block;
-    text-align: center;
-    background-color: #ff869b;
-    color: white;
-    padding: 12px;
-    border-radius: 8px;
-    text-decoration: none;
-    margin-bottom: 20px;
-}
-
-.btn-add-product:hover {
-    background-color: #ff4f5e;
-}
-
-.edit-btn {
-    background-color: #ffa502;
-    color: white;
-}
-
-.edit-btn:hover {
-    background-color: #ff7f00;
-}
-
-.delete-btn {
-    background-color: #ff4757;
-    color: white;
-}
-
-.delete-btn:hover {
-    background-color: #ff1e2d;
-=======
   width: 280px;
   background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
   color: var(--white);
@@ -549,7 +387,6 @@ tbody tr:hover {
     padding: 30px 20px;
   }
   */
->>>>>>> janetwo
 }
 
 /* ✅ Responsive */

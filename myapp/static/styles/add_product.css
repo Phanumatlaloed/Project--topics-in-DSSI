@@ -1,39 +1,4 @@
 /* ✅ ตั้งค่า Theme */
-<<<<<<< HEAD
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #FFC0CB;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
-
-/* ✅ Layout */
-.dashboard-container {
-    display: flex;
-    min-height: 100vh;
-    align-items: flex-start;
-}
-
-/* ✅ Sidebar */
-.sidebar {
-    width: 260px;
-    background: linear-gradient(135deg, #FFC0CB, #FFC0CB);
-    color: white;
-    padding: 20px;
-    min-height: 100vh;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s ease-in-out;
-}
-
-.sidebar-title {
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-=======
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
 
 :root {
@@ -229,7 +194,6 @@ body {
 
 .form-section-title i {
   color: var(--primary);
->>>>>>> janetwo
 }
 
 .menu {
