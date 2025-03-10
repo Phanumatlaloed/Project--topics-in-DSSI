@@ -418,3 +418,130 @@ td:nth-child(7) a.btn {
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+  .content {
+    margin-left: 0;
+    padding: 25px;
+  }
+  
+  .product-form {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content h2 {
+    font-size: 24px;
+  }
+  
+  .form-section-title {
+    font-size: 18px;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+
+/* ===== RESPONSIVE SIDEBAR ===== */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 250px;
+  }
+  
+  .content {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .sidebar.active {
+    width: 250px;
+    padding: 0;
+  }
+  
+  .content {
+    margin-left: 0;
+  }
+  
+  /* Hamburger Menu for Mobile */
+  .hamburger-menu {
+    display: block;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 200;
+    background: var(--primary);
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px 0;
+    background: var(--white);
+    border-radius: 3px;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.sidebar {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ===== ADDITIONAL FORM STYLING ===== */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%236c757d' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--gray);
+}
+
+/* Fancy input focus effect */
+.form-group {
+  position: relative;
+}
+
+.form-group::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.form-group:focus-within::after {
+  width: 100%;
+}
+
+/* Better hover state for image preview */
+#image-preview-container:hover #image-preview {
+  box-shadow: var(--shadow-md);
+}

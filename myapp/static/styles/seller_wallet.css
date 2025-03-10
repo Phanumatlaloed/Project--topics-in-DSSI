@@ -261,23 +261,18 @@ h3:nth-of-type(2)::before {
 }
 
 .submit-btn {
-    display: inline-flex !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-
-.submit-btn {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: #000000;
     width: 100%;
     max-width: 300px;
     margin: 15px 0;
+    color: #ffffff;
+    border-radius: var(--radius-sm);
 }
 
 .submit-btn:hover {
-    background-color: #ff5252;
+    background-color: #ffffff;
     transform: translateY(-2px);
+    color: #000000;
     box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
 }
 
