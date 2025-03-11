@@ -1,256 +1,384 @@
-/* General Styling */
+/* Main Variables */
+:root {
+    --primary: #FF6B8B;
+    --primary-light: #FFC0CB;
+    --primary-dark: #E5446D;
+    --secondary: #6C63FF;
+    --white: #FFFFFF;
+    --light-gray: #F8F9FA;
+    --gray: #E9ECEF;
+    --dark-gray: #6C757D;
+    --black: #343A40;
+    --success: #20C997;
+    --warning: #FFC107;
+    --danger: #DC3545;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+    --transition: all 0.3s ease;
+  }
+/* Base Styles */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f7f9fc;
-    margin: 0;
-    padding: 0;
-    color: #333;
+    font-family: 'Prompt', sans-serif;
+    background-color: #f1f5fe;
+    color: #444;
+    line-height: 1.6;
+    padding: 2rem 0;
 }
 
-/* Container Styling */
 .container {
-    background: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    padding: 40px;
-    margin-top: 50px;
-    max-width: 900px;
+    max-width: 1100px;
 }
 
-/* Headings */
-h2, h3 {
-    color: #2d2d2d;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-transform: capitalize;
+/* Profile Card */
+.profile-card {
+    background-color: var(--white-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    padding: 2rem;
+    margin-bottom: 2rem;
 }
 
-/* Back Button */
-.btn-secondary {
-    background-color: #ffb6c1;
+/* Profile Header */
+.profile-header {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.back-btn-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.btn-back {
+    background-color: transparent;
+    color: var(--secondary-color);
     border: none;
-    color: #fff;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    padding: 10px 20px;
-    border-radius: 10px;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    transition: var(--transition);
 }
 
-.btn-secondary:hover {
-    background-color: #ff8691;
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.btn-back:hover {
+    color: var(--dark-color);
+    transform: translateX(-3px);
 }
 
-/* Profile Save Button */
-.btn-primary {
-    background-color: #4caf50;
-    border: none;
-    font-weight: bold;
-    padding: 10px 20px;
-    transition: all 0.3s ease;
-    border-radius: 10px;
-    color: white;
+.profile-header h2 {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
 }
 
-.btn-primary:hover {
-    background-color: #45a049;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.welcome-message {
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-/* Change Password Button */
-.btn-warning {
-    background-color: #f06262;
-    border: none;
-    padding: 10px 20px;
-    font-weight: bold;
-    color: white;
-    border-radius: 10px;
-    transition: all 0.3s ease;
+.text-highlight {
+    color: var(--primary-color);
+    font-weight: 600;
 }
 
-.btn-warning:hover {
-    background-color: #e53935;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Profile Section */
-.img-thumbnail {
-    border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease;
-    max-width: 150px;
-    margin-bottom: 15px;
-}
-
-.img-thumbnail:hover {
-    transform: scale(1.05);
-}
-
-/* Input Fields */
-.form-control {
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    transition: border-color 0.3s ease;
-}
-
-.form-control:focus {
-    border-color: #4caf50;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.subtitle {
+    color: var(--secondary-color);
+    font-size: 0.95rem;
 }
 
 /* Divider */
 .divider {
-    height: 1px;
-    background: #ddd;
-    margin: 20px 0;
-}
-
-/* 🌟 จัดให้ label และ input อยู่ข้างกัน */
-.row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
-
-/* 🎨 ปรับให้ input และ select ดูโค้งมน */
-.input-rounded {
-    border-radius: 25px;
-    border: 2px solid black;
-    padding: 10px 15px;
-    font-size: 16px;
-    width: 100%;
+    position: relative;
     text-align: center;
-    transition: all 0.3s ease-in-out;
+    margin: 2rem 0;
+    height: 1px;
+    background-color: #e9ecef;
 }
 
-/* 🎨 ทำให้ input เปลี่ยนสีเมื่อโฟกัส */
-.input-rounded:focus {
-    border-color: #ff6b81;
-    outline: none;
+.divider span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--white-color);
+    padding: 0 1rem;
 }
 
+.divider i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
 
 /* Form Sections */
-.row {
-    margin-top: 20px;
-    gap: 20px;
+.form-section {
+    background-color: #f8f9fc;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    height: 100%;
+    border-top: 4px solid var(--primary-color);
+    box-shadow: var(--shadow-sm);
 }
 
-/* Highlight */
-.text-highlight {
-    color: #f06262;
-    font-weight: bold;
+.form-section h3 {
+    font-size: 1.25rem;
+    color: var(--dark-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e3e6f0;
 }
 
-/* 🔙 ปรับปุ่มให้อยู่ในกรอบของหัวข้อหลัก */
-.back-btn {
+.form-section h3 i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+/* Profile Picture */
+.profile-picture-container {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.profile-picture-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #fff;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.picture-overlay {
     position: absolute;
-    top: 50%;  /* จัดกึ่งกลางแนวตั้งของ header */
-    left: 30px;
-    transform: translateY(-50%);  /* ทำให้กึ่งกลางพอดีกับ header */
-    background: none;
-    border: 2px solid #6c757d;
-    color: #6c757d;
-    font-size: 16px;
-    padding: 8px 15px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: bold;
-}
-
-/* Hover Effect */
-.back-btn:hover {
-    background: #6c757d;
-    color: white;
-    transform: translateY(-50%) translateX(-3px);
-}
-
-/* ปรับตำแหน่งเมื่อหน้าจอเล็ก */
-@media (max-width: 768px) {
-    .back-btn {
-        left: 15px;
-        font-size: 14px;
-        padding: 6px 12px;
-    }
-}
-
-/* 🌟 ปรับฟอร์มเปลี่ยนรหัสผ่านให้ดูทันสมัย */
-.password-change-container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    margin: auto;
-}
-
-/* 🌟 กำหนดรูปแบบฟิลด์รหัสผ่าน */
-.password-field {
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    margin-bottom: 10px;
-    transition: all 0.3s ease;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: var(--transition);
 }
 
-/* 🌟 เพิ่มเอฟเฟกต์ตอนโฟกัส */
-.password-field:focus {
-    border-color: #ff6b81;
-    box-shadow: 0px 3px 8px rgba(255, 99, 132, 0.3);
+.picture-overlay i {
+    color: #fff;
+    font-size: 2rem;
+}
+
+.profile-picture-wrapper:hover .profile-picture {
+    transform: scale(1.05);
+}
+
+/* Form Fields */
+.form-fields {
+    margin-bottom: 1.5rem;
+}
+
+.form-fields p {
+    margin-bottom: 1rem;
+}
+
+.form-fields label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.form-fields input, 
+.form-fields select, 
+.form-fields textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+    transition: var(--transition);
+}
+
+.form-fields input:focus, 
+.form-fields select:focus, 
+.form-fields textarea:focus {
+    border-color: #bac8f3;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
     outline: none;
 }
 
-/* 🌟 กล่องข้อความเงื่อนไขรหัสผ่าน */
-.password-requirements {
-    background: #fff5f7;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #666;
-    margin-top: 10px;
-    border-left: 4px solid #ff6b81;
+.form-fields textarea {
+    min-height: 120px;
 }
 
-/* 🌟 ปรับปุ่มให้สวยขึ้น */
-.btn-save-password {
-    background-color: #ff6b81;
-    color: white;
-    padding: 12px;
-    width: 100%;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Password Section */
+.password-fields {
+    margin-bottom: 1.5rem;
 }
 
-/* 🌟 ปรับปุ่ม hover */
-.btn-save-password:hover {
-    background-color: #e05570;
+.password-tips {
+    background-color: #f1f8e9;
+    padding: 1rem;
+    border-radius: 0.35rem;
+    margin-top: 1.5rem;
+    border-left: 4px solid var(--success-color);
+}
+
+.password-tips h4 {
+    font-size: 1rem;
+    color: #558b2f;
+    margin-bottom: 0.75rem;
+}
+
+.password-tips ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+}
+
+.password-tips li {
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    color: #558b2f;
+}
+
+/* Buttons */
+.btn {
+    font-weight: 500;
+    padding: 0.6rem 1.5rem;
+    border-radius: 0.35rem;
+    transition: var(--transition);
+}
+
+.btn i {
+    margin-right: 0.5rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
-/* 🌟 ปรับ responsive */
-@media (max-width: 600px) {
-    .password-change-container {
-        padding: 20px;
+.btn-warning {
+    background-color: var(--warning-color);
+    border-color: var(--warning-color);
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background-color: #e0af35;
+    border-color: #e0af35;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+}
+
+/* Error messages (for Django) */
+.errorlist {
+    color: var(--danger-color);
+    list-style: none;
+    padding-left: 0;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+}
+
+.errorlist li:before {
+    content: "⚠️ ";
+}
+
+/* Responsiveness */
+@media (max-width: 767.98px) {
+    .profile-card {
+        padding: 1.5rem;
     }
-    .password-field {
-        font-size: 14px;
+    
+    .col-md-6:first-child {
+        margin-bottom: 2rem;
     }
-    .btn-save-password {
-        font-size: 14px;
+    
+    .form-section {
+        padding: 1rem;
     }
+    
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.profile-card {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.form-section {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Success & Error messages for form submission */
+.alert {
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Helper classes */
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.d-none {
+    display: none;
 }

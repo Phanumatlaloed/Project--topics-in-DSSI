@@ -4,21 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.name }}</title>
+    <title>{{ product.name }} | Shop</title>
 
-    <!-- ✅ CSS -->
+    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'styles/product_detail.css' %}">
 
-    <!-- ✅ Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sriracha&display=swap" rel="stylesheet">
 
-    <!-- ✅ Slick Slider -->
+    <!-- Slick Slider -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 </head>
 <body>
 
-    <!-- 🌸 Navbar -->
+    <!-- Navbar -->
     <header>
         <nav class="navbar">
             <div class="logo">
@@ -27,19 +27,19 @@
                 </a>
             </div>
             <ul class="nav-links">
-                <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
-                <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
-                <li><a href="{% url 'product_list' %}" class="nav-link {% if request.path == '/products/' %}active{% endif %}">🛍 Products</a></li>
-                <li><a href="{% url 'order_history' %}" class="nav-link {% if request.path == '/order/history/' %}active{% endif %}">📜 Order History</a></li>
-                <li><a href="{% url 'cart' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">🛒 Cart</a></li>
+                <li><a href="{% url 'home' %}" class="nav-link">🏠 หน้าหลัก</a></li>
+                <li><a href="{% url 'profile' request.user.id %}" class="nav-link">👤 โปรไฟล์</a></li>
+                <li><a href="{% url 'product_list' %}" class="nav-link {% if request.path == '/products/' %}active{% endif %}">🛍️ สินค้า</a></li>
+                <li><a href="{% url 'order_history' %}" class="nav-link {% if request.path == '/order/history/' %}active{% endif %}">📜 ประวัติการสั่งซื้อ</a></li>
+                <li><a href="{% url 'cart' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">🛒 ตะกร้า</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- 📦 Product Detail Section -->
+    <!-- Product Detail Section -->
     <div class="product-container">
         <div class="product-box">
-            <!-- 🔹 Product Image Slider -->
+            <!-- Product Image Slider -->
             <div class="product-slider">
                 {% if product.image %}
                     <div><img src="{{ product.image.url }}" alt="{{ product.name }}"></div>
@@ -49,68 +49,100 @@
                 {% endfor %}
             </div>
 
-            <!-- ℹ️ Product Details -->
+            <!-- Product Details -->
             <div class="product-info">
                 <h2>{{ product.name }}</h2>
-                <p class="price">💰 ราคา: ฿{{ product.price }}</p>
-                <p class="stock">📦 คงเหลือ: 
+                <p class="price">💰 ราคา: ฿{{ product.price|floatformat:2 }}</p>
+                <p class="stock">
                     {% if product.stock > 0 %}
-                        {{ product.stock }}
+                        <span class="in-stock">
+                            ✅ สินค้าพร้อมส่ง: {{ product.stock }} ชิ้น
+                        </span>
                     {% else %}
-                        <span class="out-of-stock">❌ สินค้าหมด</span>
+                        <span class="out-of-stock">
+                            ❌ สินค้าหมด
+                        </span>
                     {% endif %}
                 </p>
-                <p class="sold">🔥 ขายแล้ว: {{ product.total_sold }} ชิ้น</p>
-                <p class="description">📜 รายละเอียด: {{ product.description }}</p>
-                <p class="category">📌 หมวดหมู่: {{ product.get_category_display }}</p>
+                <p class="sold">🔥 ขายแล้ว: <span class="sold-count">{{ product.total_sold }}</span> ชิ้น</p>
+                <p class="description">📝 รายละเอียด: {{ product.description }}</p>
+                <p class="category">📌 หมวดหมู่: <span class="category-badge">{{ product.get_category_display }}</span></p>
                 <p class="seller">🏪 ร้านค้า: 
                     <a href="{% url 'store_detail' product.seller.id %}" class="store-link">
                         <strong>{{ product.seller.store_name }}</strong>
                     </a>
                 </p>
 
-                <!-- 🛒 Add to Cart -->
+                <!-- Add to Cart -->
                 <div class="cart-section">
                     {% if product.stock > 0 %}
                         <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
-                            ➕ เพิ่มในตะกร้า
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            เพิ่มในตะกร้า
                         </button>
                     {% else %}
                         <button class="btn btn-secondary" disabled>❌ สินค้าหมด</button>
                     {% endif %}
                 </div>
-                <!-- 📤 Share Button -->
+                
+                <!-- Cart Message -->
+                <div id="cart-message" style="display: none;"></div>
+                
+                <!-- Share Button -->
                 <div class="share-section">
                     <button class="btn btn-info share-btn" onclick="shareProduct()">
-                        📤 แชร์สินค้า
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                        แชร์สินค้า
                     </button>
                 </div>
 
-                <!-- 🛍 แจ้งเตือนเพิ่มตะกร้า -->
-                <p id="cart-message" style="display: none; text-align: center; font-weight: bold;"></p>
-
-                <!-- 🔙 กลับไปหน้าสินค้า -->
+                <!-- Back Button -->
                 <div class="cart-section">
                     <a href="{% url 'product_list' %}" class="btn btn-secondary back-btn">
-                        🔙 กลับไปที่สินค้าทั้งหมด
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        กลับไปที่สินค้าทั้งหมด
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 🌟 รีวิวสินค้า -->
+    <!-- Reviews Section -->
     <div class="reviews-section">
-        <h3>🌟 รีวิวสินค้า</h3>
+        <h3>🌟 รีวิวจากลูกค้า</h3>
 
         {% for review in product.reviews.all %}
             <div class="review-box">
-                <p><strong>{{ review.user.username }}</strong>: ⭐ {{ review.rating }}/5</p>
-                <p>🛒 รีวิวจากร้าน <strong>{{ review.order.seller.store_name }}</strong></p>
-                <p>🛍 สินค้า: <strong>{{ review.product.name }}</strong></p>
-                <p>{{ review.comment }}</p>
+                <div class="review-header">
+                    <p class="review-username"><strong>{{ review.user.username }}</strong></p>
+                    <p class="rating rating-{% if review.rating >= 4 %}high{% elif review.rating >= 3 %}medium{% else %}low{% endif %}">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}
+                                ⭐
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                        {{ review.rating }}/5
+                    </p>
+                </div>
+                <p class="review-meta">🛒 รีวิวจากร้าน <strong>{{ review.order.seller.store_name }}</strong> • {{ review.created_at|date:"d M Y" }}</p>
+                <p class="review-comment">{{ review.comment }}</p>
 
-                <!-- 🎥 แสดงรูปภาพ & วิดีโอในรีวิว -->
+                <!-- Review Media -->
                 <div class="review-media">
                     {% for media in review.media.all %}
                         {% if media.media_type == "image" %}
@@ -124,121 +156,179 @@
                 </div>
             </div>
         {% empty %}
-            <p>⚠️ ยังไม่มีรีวิว</p>
+            <div class="empty-reviews">
+                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="#9e9e9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <p class="empty-title">ยังไม่มีรีวิวสำหรับสินค้านี้</p>
+                <p class="empty-subtitle">เป็นคนแรกที่รีวิวสินค้านี้หลังจากสั่งซื้อ</p>
+            </div>
         {% endfor %}
     </div>
-    <form action="{% url 'product_detail' product.id %}" method="post">
+
+    <!-- Analyze Reviews Button -->
+    <form action="{% url 'product_detail' product.id %}" method="post" class="center-form">
         {% csrf_token %}
-        <button type="submit" class="btn btn-primary">📊 วิเคราะห์รีวิว</button>
+        <button type="submit" class="btn btn-primary">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+                <line x1="2" y1="10" x2="6" y2="14"></line>
+            </svg>
+            วิเคราะห์รีวิว
+        </button>
     </form>
     
-    <!-- ✅ แสดงผลลัพธ์รีวิว -->
-    <h3>🌟 รีวิวสินค้า</h3>
-    
-    {% for review in reviews %}
-        <div class="review-box">
-            <p><strong>{{ review.user.username }}</strong>: ⭐ {{ review.rating }}/5</p>
-            <p>{{ review.comment }}</p>
-    
-            <!-- ✅ แสดงผล sentiment -->
-            {% if review.analysis_done %}
-                <p>🔍 ผลวิเคราะห์: 
-                    {% if review.sentiment == "positive" %}
-                        😊 บวก
-                    {% elif review.sentiment == "negative" %}
-                        😡 ลบ
+    <!-- Review Analysis Results -->
+    {% if reviews %}
+        <div class="reviews-section">
+            <h3>📊 ผลการวิเคราะห์รีวิว</h3>
+            
+            {% for review in reviews %}
+                <div class="review-box">
+                    <div class="review-header">
+                        <p><strong>{{ review.user.username }}</strong></p>
+                        <p class="rating rating-{% if review.rating >= 4 %}high{% elif review.rating >= 3 %}medium{% else %}low{% endif %}">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    ⭐
+                                {% else %}
+                                    ☆
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <p class="review-comment">{{ review.comment }}</p>
+            
+                    <!-- Review Sentiment -->
+                    {% if review.analysis_done %}
+                        <p class="sentiment sentiment-{{ review.sentiment }}">
+                            {% if review.sentiment == "positive" %}
+                                😊 ความรู้สึกเชิงบวก
+                            {% elif review.sentiment == "negative" %}
+                                😡 ความรู้สึกเชิงลบ
+                            {% else %}
+                                😐 ความรู้สึกกลาง
+                            {% endif %}
+                        </p>
                     {% else %}
-                        😐 กลาง
+                        <p class="sentiment sentiment-pending">
+                            🟡 ยังไม่ได้วิเคราะห์
+                        </p>
                     {% endif %}
-                </p>
-            {% else %}
-                <p>🟡 ยังไม่ได้วิเคราะห์</p>
+                </div>
+            {% endfor %}
+            
+            <!-- Review Summary -->
+            {% if summary %}
+                <div class="review-stats">
+                    <h3>🔍 สรุปรีวิวโดย AI</h3>
+                    <p class="summary-text">{{ summary }}</p>
+                    
+                    <div class="stats-container">
+                        <div class="stat-box stat-positive">
+                            <p class="stat-label">😊 รีวิวเชิงบวก</p>
+                            <p class="stat-value">{{ positive_ratio|floatformat:1 }}%</p>
+                        </div>
+                        
+                        <div class="stat-box stat-neutral">
+                            <p class="stat-label">😐 รีวิวกลางๆ</p>
+                            <p class="stat-value">{{ neutral_ratio|floatformat:1 }}%</p>
+                        </div>
+                        
+                        <div class="stat-box stat-negative">
+                            <p class="stat-label">😡 รีวิวเชิงลบ</p>
+                            <p class="stat-value">{{ negative_ratio|floatformat:1 }}%</p>
+                        </div>
+                    </div>
+                </div>
             {% endif %}
         </div>
-    {% empty %}
-        <p>⚠️ ยังไม่มีรีวิว</p>
-    {% endfor %}
-    <div class="review-summary">
-        <h3>🔍 สรุปรีวิวโดย AI</h3>
-        <p>{{ summary }}</p>
-        <p>😊 รีวิวเชิงบวก: {{ positive_ratio|floatformat:2 }}%</p>
-        <p>😐 รีวิวกลางๆ: {{ neutral_ratio|floatformat:2 }}%</p>
-        <p>😡 รีวิวเชิงลบ: {{ negative_ratio|floatformat:2 }}%</p>
-    </div>
+    {% endif %}
 
- <!-- ✅ ปุ่มวิเคราะห์ & สรุปรีวิว -->
- <form method="POST">
-    {% csrf_token %}
-    <button type="submit" name="summarize_reviews" class="btn summarize">📖 สรุปรีวิว</button>
-</form>
+    <!-- Review Summary Button -->
+    <form method="POST" class="center-form">
+        {% csrf_token %}
+        <button type="submit" name="summarize_reviews" class="btn summarize">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            สรุปรีวิวทั้งหมด
+        </button>
+    </form>
 
-<!-- ✅ แสดงผลการสรุป -->
-{% if summary %}
-<div class="review-summary">
-    <h2>📌 สรุปรีวิวสินค้า</h2>
-    <p>{{ summary }}</p>
-</div>
-{% endif %}
+    <!-- Summary Results -->
+    {% if summary and not reviews %}
+        <div class="review-summary">
+            <h2>📌 สรุปรีวิวสินค้า</h2>
+            <p class="summary-text">{{ summary }}</p>
+        </div>
+    {% endif %}
     
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <script src="{% static 'scripts/product_detail.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.product-slider').slick({
+                dots: true,
+                infinite: true,
+                speed: 300,
+                slidesToShow: 1,
+                adaptiveHeight: true
+            });
     
-
-<!-- ✅ JavaScript -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-<script>
-    $(document).ready(function(){
-        $('.product-slider').slick({
-            dots: true,
-            infinite: true,
-            speed: 300,
-            slidesToShow: 1,
-            adaptiveHeight: true
-        });
-
-        // 🛒 เพิ่มสินค้าไปยังตะกร้าแบบ AJAX
-        $(".add-to-cart-btn").click(function(event) {
-            event.preventDefault();  // ป้องกันหน้าโหลดซ้ำ
-
-            let productId = $(this).data("product-id");
-            let cartMessage = $("#cart-message");
-
-            $.ajax({
-                url: `/cart/add/${productId}/`,  // ✅ ตรวจสอบ URL
-                method: "POST",
-                headers: { "X-CSRFToken": "{{ csrf_token }}" },
-                dataType: "json",
-                success: function(response) {
-                    if (response.success) {
-                        $("#cart-count").text(response.cart_count); // 🔄 อัปเดตตะกร้า
-                        cartMessage.text("✅ เพิ่มสินค้าในตะกร้าเรียบร้อย!").css("color", "green").fadeIn().delay(2000).fadeOut();
-                    } else {
-                        cartMessage.text("❌ " + response.message).css("color", "red").fadeIn().delay(2000).fadeOut();
+            // 🛒 เพิ่มสินค้าไปยังตะกร้าแบบ AJAX
+            $(".add-to-cart-btn").click(function(event) {
+                event.preventDefault();  // ป้องกันหน้าโหลดซ้ำ
+    
+                let productId = $(this).data("product-id");
+                let cartMessage = $("#cart-message");
+    
+                $.ajax({
+                    url: `/cart/add/${productId}/`,  // ✅ ตรวจสอบ URL
+                    method: "POST",
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            $("#cart-count").text(response.cart_count); // 🔄 อัปเดตตะกร้า
+                            cartMessage.text("✅ เพิ่มสินค้าในตะกร้าเรียบร้อย!").css("color", "green").fadeIn().delay(2000).fadeOut();
+                        } else {
+                            cartMessage.text("❌ " + response.message).css("color", "red").fadeIn().delay(2000).fadeOut();
+                        }
+                    },
+                    error: function() {
+                        cartMessage.text("❌ เกิดข้อผิดพลาด กรุณาลองใหม่").css("color", "red").fadeIn().delay(2000).fadeOut();
                     }
-                },
-                error: function() {
-                    cartMessage.text("❌ เกิดข้อผิดพลาด กรุณาลองใหม่").css("color", "red").fadeIn().delay(2000).fadeOut();
-                }
+                });
             });
         });
-    });
-
-    // 📤 ฟังก์ชันแชร์สินค้า
-    function shareProduct() {
-        let productUrl = window.location.href;
-        if (navigator.share) {
-            navigator.share({
-                title: "{{ product.name }}",
-                text: "เช็คสินค้าสุดฮิตจากร้าน {{ product.seller.store_name }}",
-                url: productUrl
-            }).then(() => console.log("Shared successfully!"))
-            .catch(error => console.error("Error sharing:", error));
-        } else {
-            navigator.clipboard.writeText(productUrl);
-            alert("📋 ลิงก์สินค้าถูกคัดลอกแล้ว!");
+    
+        // 📤 ฟังก์ชันแชร์สินค้า
+        function shareProduct() {
+            let productUrl = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: "{{ product.name }}",
+                    text: "เช็คสินค้าสุดฮิตจากร้าน {{ product.seller.store_name }}",
+                    url: productUrl
+                }).then(() => console.log("Shared successfully!"))
+                .catch(error => console.error("Error sharing:", error));
+            } else {
+                navigator.clipboard.writeText(productUrl);
+                alert("📋 ลิงก์สินค้าถูกคัดลอกแล้ว!");
+            }
         }
-    }
-
-</script>
-
+    
+    </script>
 </body>
 </html>

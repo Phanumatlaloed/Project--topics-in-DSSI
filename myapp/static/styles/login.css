@@ -1,122 +1,207 @@
-/* General Reset */
+/* login.css */
+
+/* Global Styles & Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: 'Prompt', 'Kanit', sans-serif;
 }
 
 body {
-    background-color: #fdfbee; /* Background สีครีมอ่อน */
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    padding: 20px;
 }
 
+/* Login Container */
 .login-container {
-    background-color: #fff; /* สีขาวสำหรับกล่อง */
-    width: 420px; /* เพิ่มจาก 350px เป็น 420px */
-    padding: 2.4rem; /* เพิ่มจาก 2rem เป็น 2.4rem */
-    border-radius: 14px; /* เพิ่มขนาดมุมโค้ง */
-    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+    padding: 35px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
 /* Logo */
-.logo-container img {
-    width: 72px; /* เพิ่มจาก 60px เป็น 72px */
-    height: 72px; /* เพิ่มจาก 60px เป็น 72px */
-    margin-bottom: 1.2rem; /* เพิ่มจาก 1rem เป็น 1.2rem */
-    border-radius: 50%;
-    object-fit: cover;
+.logo-container {
+    margin-bottom: 20px;
 }
 
-/* Title and Subtitle */
+.logo-container img {
+    max-width: 120px;
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    background-color: white;
+}
+
+/* Headings */
 h2 {
-    font-size: 1.8rem; /* เพิ่มจาก 1.5rem เป็น 1.8rem */
-    margin-bottom: 0.6rem; /* เพิ่มจาก 0.5rem เป็น 0.6rem */
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 24px;
 }
 
 p {
-    font-size: 1.08rem; /* เพิ่มจาก 0.9rem เป็น 1.08rem */
-    color: #555;
-    margin-bottom: 1.8rem; /* เพิ่มจาก 1.5rem เป็น 1.8rem */
+    color: #666;
+    margin-bottom: 25px;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
-/* Input Fields */
-input {
+/* Form Elements */
+form {
+    margin-bottom: 20px;
+}
+
+input[type="username"],
+input[type="password"] {
     width: 100%;
-    padding: 12px; /* เพิ่มจาก 10px เป็น 12px */
-    margin: 0.6rem 0; /* เพิ่มจาก 0.5rem เป็น 0.6rem */
+    padding: 14px;
+    margin-bottom: 15px;
     border: 1px solid #ddd;
-    border-radius: 6px; /* เพิ่มจาก 5px เป็น 6px */
-    font-size: 1.08rem; /* เพิ่มจาก 0.9rem เป็น 1.08rem */
-}
-
-input:focus {
-    border-color: #aaa;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.3s;
     outline: none;
 }
 
-/* Buttons */
+input[type="username"]:focus,
+input[type="password"]:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Password Field with Eye Icon */
+.password-container {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    transition: color 0.3s;
+}
+
+.toggle-password:hover {
+    color: #4a90e2;
+}
+
+/* Login Button */
 .btn-login {
     width: 100%;
-    background-color: #000;
-    color: #fff;
-    padding: 12px; /* เพิ่มจาก 10px เป็น 12px */
-    font-size: 1.08rem; /* เพิ่มจาก 0.9rem เป็น 1.08rem */
+    padding: 14px;
+    background-color: #4a90e2;
+    color: white;
     border: none;
-    border-radius: 6px; /* เพิ่มจาก 5px เป็น 6px */
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .btn-login:hover {
-    background-color: #333;
+    background-color: #3a7bc8;
+    transform: translateY(-2px);
+}
+
+.btn-login:active {
+    transform: translateY(0);
 }
 
 /* Links */
 .links {
     display: flex;
     justify-content: space-between;
-    margin: 1.2rem 0; /* เพิ่มจาก 1rem เป็น 1.2rem */
+    margin-bottom: 20px;
+    font-size: 14px;
 }
 
 .links a {
-    color: #007bff;
-    font-size: 0.96rem; /* เพิ่มจาก 0.8rem เป็น 0.96rem */
+    color: #4a90e2;
     text-decoration: none;
+    transition: color 0.3s;
 }
 
 .links a:hover {
+    color: #3a7bc8;
     text-decoration: underline;
 }
 
-/* Admin Login */
-.admin-login {
-    font-size: 0.96rem; /* เพิ่มจาก 0.8rem เป็น 0.96rem */
-    color: #777;
-    margin-top: 1.2rem; /* เพิ่มจาก 1rem เป็น 1.2rem */
+/* Admin and Seller Links */
+.admin-login, .seller {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
 }
 
-.password-container {
-    position: relative;
-    width: 100%;
+.admin-login a, .seller a {
+    display: inline-block;
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 
-.password-container input {
-    width: 100%;
-    padding-right: 40px; /* เว้นช่องให้ไอคอน */
-    height: 40px; /* ปรับให้พอดีกับไอคอน */
+.admin-login a:hover, .seller a:hover {
+    color: #4a90e2;
+    background-color: #f5f7fa;
 }
 
-.toggle-password {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 20px;
-    color: gray;
+/* Error Messages */
+ul {
+    list-style-type: none;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: rgba(255, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+ul li {
+    color: #e74c3c;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 25px 20px;
+    }
+    
+    h2 {
+        font-size: 22px;
+    }
+    
+    .links {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-container {
+    animation: fadeIn 0.5s ease-out;
 }

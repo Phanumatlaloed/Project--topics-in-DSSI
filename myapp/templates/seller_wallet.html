@@ -9,13 +9,14 @@
     <!-- ✅ Custom CSS -->
     <link rel="stylesheet" href="{% static 'styles/seller_wallet.css' %}">
 
-
+    <!-- ✅ Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- เพิ่ม Font Awesome สำหรับ Icons -->
+    
+    <!-- ✅ Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 </head>
 <body>
+
     <!-- Mobile Hamburger Menu -->
     <div class="hamburger-menu" id="hamburger-menu">
         <span class="bar"></span>
@@ -53,22 +54,20 @@
             </ul>
         </aside>
 
-
         <!-- Main Content -->
         <main class="content">
             <div class="card">
                 <h2 class="text-pink">กระเป๋าเงินร้านค้า</h2>
-                <p class="balance">ยอดเงินคงเหลือ: <span class="money">฿{{ wallet.balance }}</span></p>
+                <p class="balance">💰 ยอดเงินคงเหลือ: <span class="money">฿{{ wallet.balance }}</span></p>
 
-<<<<<<< HEAD
-=======
+                <!-- 🔥 แสดงยอดขาย -->
+                <p class="sales-summary">📈 ยอดขายรวม (ไม่รวมสินค้าคืนและคำสั่งซื้อที่ถูกยกเลิก): <strong>฿{{ total_sales }}</strong></p>
+                <p class="net-sales">💵 ยอดขายสุทธิ (หลังหักคืน): <strong>฿{{ net_sales }}</strong></p>
+
                 {% if total_refund_amount > 0 %}
-                <p class="refund-warning">⚠️ มีการคืนเงิน ฿{{ total_refund_amount }} หักจากยอดคงเหลือแล้ว</p>
+                    <p class="refund-warning">⚠️ มียอดคืนสินค้า: ฿{{ total_refund_amount }}</p>
                 {% endif %}
-                
 
-
->>>>>>> janetwo
                 <!-- 🔥 ฟอร์มขอถอนเงิน -->
                 <h3>ขอถอนเงิน</h3>
                 <form method="post" action="{% url 'request_withdrawal' %}">
@@ -99,6 +98,8 @@
                                     ⏳ รอดำเนินการ
                                 {% elif withdrawal.status == "approved" %}
                                     ✅ อนุมัติแล้ว
+                                {% elif withdrawal.status == "paid" %}
+                                    💰 โอนเงินแล้ว
                                 {% else %}
                                     ❌ ถูกปฏิเสธ
                                 {% endif %}
@@ -111,7 +112,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if withdrawal.status == "approved" and withdrawal.confirmed_by_seller == False %}
+                                {% if withdrawal.status == "paid" and not withdrawal.confirmed_by_seller %}
                                     <form method="post" action="{% url 'confirm_withdrawal' withdrawal.id %}">
                                         {% csrf_token %}
                                         <button type="submit" class="btn confirm-btn">ยืนยันการรับเงิน</button>
@@ -129,8 +130,7 @@
             </div>
         </main>
     </div>
-<<<<<<< HEAD
-=======
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger-menu');
@@ -141,18 +141,7 @@
                 hamburger.classList.toggle('active');
             });
         });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const hamburger = document.getElementById('hamburger-menu');
-            const sidebar = document.getElementById('sidebar');
-            
-            hamburger.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-                hamburger.classList.toggle('active');
-            });
-        });
     </script>
->>>>>>> janetwo
 
 </body>
 </html>

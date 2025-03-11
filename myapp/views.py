@@ -13,10 +13,9 @@ from django.middleware.csrf import get_token
 from requests import post
 from myapp.models import *
 from .models import *
-
-from views import *
-
 from myapp.forms import *
+from django.contrib.auth.decorators import user_passes_test
+
 
 User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
 
@@ -1075,6 +1074,9 @@ def seller_dashboard(request):
         total_sold_count=Sum("quantity")
     )
 
+    total_products = products.count()
+    total_earnings = sum(p.price * p.total_sold for p in products)
+
     # ✅ สร้าง Dictionary สำหรับการเชื่อมยอดขายแต่ละสินค้า
     sales_dict = {item["product__id"]: item["total_sold_count"] for item in product_sales}
 
@@ -1085,6 +1087,8 @@ def seller_dashboard(request):
     return render(request, "seller_dashboard.html", {
         "products": products,
         "seller": seller,
+        'total_products': total_products,
+        'total_earnings': total_earnings,
     })
 
 
@@ -1165,22 +1169,17 @@ def register_seller(request):
         user_form = CustomUserCreationForm(request.POST)
         seller_form = SellerForm(request.POST, request.FILES)
 
-        # ✅ ตรวจสอบความถูกต้องของฟอร์ม
         if user_form.is_valid() and seller_form.is_valid():
-            # ✅ ตรวจสอบว่าชื่อผู้ใช้ซ้ำหรือไม่
             username = user_form.cleaned_data.get("username")
             if User.objects.filter(username=username).exists():
                 messages.error(request, "⚠️ ชื่อผู้ใช้นี้ถูกใช้แล้ว กรุณาเลือกชื่ออื่น!")
             else:
-                # ✅ สร้าง User
                 user = user_form.save(commit=False)
                 user.role = 'seller'
                 user.save()
 
-                # ✅ ระบุ Authentication Backend
-                user.backend = settings.AUTHENTICATION_BACKENDS[0]  
+                user.backend = settings.AUTHENTICATION_BACKENDS[0]
 
-                # ✅ ตรวจสอบว่าผู้ใช้ได้อัปโหลดรูปภาพร้านค้าหรือไม่
                 if not seller_form.cleaned_data.get("store_image"):
                     messages.error(request, "⚠️ กรุณาอัปโหลดรูปภาพร้านค้าก่อนสมัคร!")
                     return render(request, "register_seller.html", {
@@ -1188,19 +1187,16 @@ def register_seller(request):
                         "seller_form": seller_form
                     })
 
-                # ✅ สร้าง Seller Profile
                 seller = seller_form.save(commit=False)
                 seller.user = user
                 seller.email = user.email
                 seller.save()
 
-                # ✅ ล็อกอินอัตโนมัติ
-                login(request, user)
-                messages.success(request, "🎉 สมัครเป็นผู้ขายสำเร็จ! ยินดีต้อนรับสู่แพลตฟอร์มของเรา!")
-                return redirect("seller_dashboard")
+                # ✅ เปลี่ยนเส้นทางไปหน้า login แทน
+                messages.success(request, "🎉 สมัครเป็นผู้ขายสำเร็จ! กรุณาเข้าสู่ระบบเพื่อต่อไป!")
+                return redirect("seller_login")
 
         else:
-            # ✅ ตรวจสอบว่ารหัสผ่านเป็นไปตามเงื่อนไขหรือไม่
             password1 = request.POST.get("password1")
             if len(password1) < 8:
                 messages.error(request, "⚠️ รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร!")
@@ -1296,15 +1292,68 @@ def edit_product(request, product_id):
         form = ProductForm(instance=product)
 
     return render(request, 'edit_product.html', {'form': form, 'product': product})
+# ✅ แสดงรายละเอียดสินค้า
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from .models import Product, Review
+from .services import analyze_text
 
 # ✅ แสดงรายละเอียดสินค้า
 def product_detail(request, product_id):
+    """แสดงรายละเอียดสินค้า พร้อมการวิเคราะห์รีวิวโดย AI"""
     product = get_object_or_404(Product, id=product_id)
-    reviews = Review.objects.filter(product=product)  # ดึงรีวิวของสินค้า
+    reviews = Review.objects.filter(product=product)
+    summary = None
+    translated_summary = None
+
+    # ✅ แปลงคะแนนรีวิวเป็นดาว ⭐⭐⭐⭐⭐
+    for review in reviews:
+        review.stars = ['⭐' for _ in range(review.rating)]
+
+    # ✅ เช็คหากผู้ใช้กดปุ่มวิเคราะห์รีวิว
+    if request.method == "POST":
+        reviews_to_analyze = reviews.filter(analysis_done=False)
+        count = 0
+        updates = []
+
+        for review in reviews_to_analyze:
+            sentiment = analyze_text(review.comment)
+            if sentiment:  # ✅ เช็คว่าผลลัพธ์ถูกต้อง
+                review.sentiment = sentiment
+                review.analysis_done = True
+                updates.append(review)
+                count += 1
+
+        # ✅ ใช้ bulk update ลดจำนวน query
+        if updates:
+            Review.objects.bulk_update(updates, ["sentiment", "analysis_done"])
+            messages.success(request, f'✅ วิเคราะห์รีวิว {count} รายการสำเร็จ')
+        else:
+            messages.warning(request, '⚠️ ไม่มีรีวิวใหม่ที่ต้องวิเคราะห์')
+
+
+    # ✅ คำนวณสัดส่วนรีวิวแต่ละประเภท
+    total_reviews = reviews.count()
+    positive_count = reviews.filter(sentiment="positive").count()
+    neutral_count = reviews.filter(sentiment="neutral").count()
+    negative_count = reviews.filter(sentiment="negative").count()
+
+    if total_reviews > 0:
+        positive_ratio = (positive_count / total_reviews) * 100
+        neutral_ratio = (neutral_count / total_reviews) * 100
+        negative_ratio = (negative_count / total_reviews) * 100
+    else:
+        positive_ratio = neutral_ratio = negative_ratio = 0
+
 
     return render(request, 'product_detail.html', {
         'product': product,
-        'reviews': reviews
+        'reviews': reviews,
+        'positive_ratio': positive_ratio,
+        'neutral_ratio': neutral_ratio,
+        'negative_ratio': negative_ratio,
+        'summary': summary,
+        'translated_summary': translated_summary
     })
 @login_required
 def product_detail_user(request, product_id):
@@ -2040,32 +2089,32 @@ def group_post_detail(request, post_id):
     post = get_object_or_404(GroupPost, id=post_id)
     return render(request, 'group_post_detail.html', {'post': post})
 
+#รายละเอียดกลุ่มใน noti
+# @login_required
+# def edit_group_post(request, post_id):
+#     post = get_object_or_404(GroupPost, id=post_id, user=request.user)
 
-@login_required
-def edit_group_post(request, post_id):
-    post = get_object_or_404(GroupPost, id=post_id, user=request.user)
+#     if request.method == "POST":
+#         content = request.POST.get("content", "").strip()
+#         images = request.FILES.getlist("images")
+#         videos = request.FILES.getlist("videos")
 
-    if request.method == "POST":
-        content = request.POST.get("content", "").strip()
-        images = request.FILES.getlist("images")
-        videos = request.FILES.getlist("videos")
+#         # ✅ อัปเดตเนื้อหาโพสต์
+#         post.content = content
+#         post.save()
 
-        # ✅ อัปเดตเนื้อหาโพสต์
-        post.content = content
-        post.save()
+#         # ✅ ลบไฟล์ที่ผู้ใช้เลือก
+#         delete_media_ids = request.POST.getlist("delete_media")
+#         GroupPostMedia.objects.filter(id__in=delete_media_ids, post=post).delete()
 
-        # ✅ ลบไฟล์ที่ผู้ใช้เลือก
-        delete_media_ids = request.POST.getlist("delete_media")
-        GroupPostMedia.objects.filter(id__in=delete_media_ids, post=post).delete()
+#         # ✅ เพิ่มไฟล์ใหม่
+#         for image in images:
+#             GroupPostMedia.objects.create(post=post, file=image, media_type="image")
 
-        # ✅ เพิ่มไฟล์ใหม่
-        for image in images:
-            GroupPostMedia.objects.create(post=post, file=image, media_type="image")
+#         for video in videos:
+#             GroupPostMedia.objects.create(post=post, file=video, media_type="video")
 
-        for video in videos:
-            GroupPostMedia.objects.create(post=post, file=video, media_type="video")
-
-        return redirect('group_post_detail', post_id=post.id)
+#         return redirect('group_post_detail', post_id=post.id)
 
 
 
@@ -2271,6 +2320,9 @@ def admin_register(request):
 
     return render(request, 'admin_register.html', {'form': form})
 
+def is_admin(user):
+    return user.is_superuser
+
 # แสดงแดชบอร์ดแอดมิน
 # แสดงแดชบอร์ดแอดมิน (เฉพาะแอดมินเข้าได้)
 @user_passes_test(is_admin, login_url='/login/')
@@ -2296,25 +2348,25 @@ class CustomPasswordResetView(PasswordResetView):
     subject_template_name = 'password_reset_subject.txt'  # หัวข้ออีเมล
     success_url = reverse_lazy('password_reset_done')  # หลังส่งอีเมลเสร็จให้ไปหน้านี้
 
-@login_required
-def get_group_posts(request, group_id):
-    group = get_object_or_404(CommunityGroup, id=group_id)
-    posts = GroupPost.objects.filter(group=group).order_by('-created_at')
+# @login_required
+# def get_group_posts(request, group_id):
+#     group = get_object_or_404(CommunityGroup, id=group_id)
+#     posts = GroupPost.objects.filter(group=group).order_by('-created_at')
 
-    post_list = []
-    for post in posts:
-        post_list.append({
-            'id': post.id,
-            'username': post.user.username,
-            'profile_picture': post.user.member_profile.profile_picture.url if post.user.member_profile.profile_picture else None,
-            'content': post.content,
-            'created_at': post.created_at.strftime('%b %d, %Y %H:%M'),
-            'image_url': post.image.url if post.image else None,
-            'video_url': post.video.url if post.video else None,
-            'is_owner': request.user == post.user  # ✅ ตรวจสอบว่าผู้ใช้เป็นเจ้าของโพสต์หรือไม่
-        })
+#     post_list = []
+#     for post in posts:
+#         post_list.append({
+#             'id': post.id,
+#             'username': post.user.username,
+#             'profile_picture': post.user.member_profile.profile_picture.url if post.user.member_profile.profile_picture else None,
+#             'content': post.content,
+#             'created_at': post.created_at.strftime('%b %d, %Y %H:%M'),
+#             'image_url': post.image.url if post.image else None,
+#             'video_url': post.video.url if post.video else None,
+#             'is_owner': request.user == post.user  # ✅ ตรวจสอบว่าผู้ใช้เป็นเจ้าของโพสต์หรือไม่
+#         })
 
-    return JsonResponse({'posts': post_list}, status=200)
+#     return JsonResponse({'posts': post_list}, status=200)
 
 
 @login_required
@@ -2364,88 +2416,48 @@ def delete_address(request, address_id):
     messages.success(request, "🗑 ลบที่อยู่สำเร็จ!")
     return redirect('manage_addresses')
 
-from django.shortcuts import render, get_object_or_404, redirect
-from myapp.models import Product, Review, ReviewMedia
-
-@login_required
-def add_review(request, order_id, product_id):
-    """ ✅ ให้รีวิวสินค้าได้เฉพาะเมื่อออเดอร์จัดส่งสำเร็จ และไม่สามารถรีวิวซ้ำได้ """
-    order = get_object_or_404(Order, id=order_id, user=request.user, status="delivered")
-    product = get_object_or_404(Product, id=product_id)
-
-    # ✅ เช็คว่ารีวิวสินค้านี้ไปแล้วหรือยัง
-    existing_review = Review.objects.filter(user=request.user, product=product, order=order).exists()
-    if existing_review:
-        messages.error(request, "⚠️ คุณได้รีวิวสินค้านี้ไปแล้ว!")
-        return redirect("order_history")
-
-    if request.method == "GET":
-        return render(request, "add_review.html", {"product": product, "order": order})
-
-    if request.method == "POST":
-        rating = request.POST.get("rating")
-        comment = request.POST.get("comment")
-        media_files = request.FILES.getlist("media")
-
-        if not rating or not comment:
-            messages.error(request, "⚠️ กรุณากรอกคะแนนและรีวิว")
-            return redirect("add_review", order_id=order.id, product_id=product.id)
-
-        # ✅ บันทึกรีวิว และเชื่อมโยงกับออเดอร์
-        review = Review.objects.create(
-            user=request.user, 
-            product=product, 
-            order=order,  # ✅ เพิ่ม `order` เข้าไป
-            rating=int(rating), 
-            comment=comment
-        )
-
-        for file in media_files:
-            media_type = "image" if file.content_type.startswith("image") else "video"
-            ReviewMedia.objects.create(review=review, file=file, media_type=media_type)
-
-        messages.success(request, "✅ รีวิวของคุณถูกบันทึกเรียบร้อย!")
-        return redirect("product_detail", product_id=product.id)
-
-    return JsonResponse({"success": False, "message": "❌ Method Not Allowed"}, status=405)
-
 
 
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import SellerWallet, WithdrawalRequest, RefundRequest
+from django.db.models import Sum, F
+from .models import SellerWallet, WithdrawalRequest, RefundRequest, OrderItem, Order
 
 @login_required
 def seller_wallet(request):
-    """ แสดงข้อมูลกระเป๋าเงินของผู้ขายและลดเงินเมื่อมีการคืนสินค้า """
+    """แสดงข้อมูลกระเป๋าเงินของผู้ขาย โดยคำนวณยอดขายเฉพาะคำสั่งซื้อที่จัดส่งสำเร็จ และไม่รวมสินค้าคืนหรือคำสั่งซื้อที่ถูกยกเลิก"""
     seller = request.user.seller_profile
     wallet, created = SellerWallet.objects.get_or_create(seller=seller)
     withdrawals = WithdrawalRequest.objects.filter(seller=seller).order_by('-created_at')
 
-    # ✅ ตรวจสอบคำขอคืนเงินที่ได้รับการอนุมัติ
+    # ✅ ตรวจสอบคำขอคืนเงินที่ได้รับการอนุมัติ (ไม่หักจากกระเป๋า แต่แสดงแยก)
     approved_refunds = RefundRequest.objects.filter(order__seller=seller, status="approved")
 
-    # ✅ คำนวณยอดคืนเงิน โดยตรวจสอบว่า `refund.item` ไม่เป็น None ก่อน
-    total_refund_amount = sum(
-        (refund.item.price_per_item * refund.item.quantity) if refund.item else 0
-        for refund in approved_refunds
-    )
+    # ✅ คำนวณยอดที่ต้องคืนเงิน (แสดงแยกจากยอดเงินในกระเป๋า)
+    total_refund_amount = approved_refunds.aggregate(
+        total_refund=Sum(F('item__price_per_item') * F('item__quantity'))
+    )['total_refund'] or 0
 
-    # ✅ ถ้ามียอดคืนเงิน คำนวณและลดเงินออก
-    if total_refund_amount > 0:
-        if wallet.balance >= total_refund_amount:
-            wallet.balance -= total_refund_amount
-            wallet.save()
-            approved_refunds.update(status="refunded")  # อัปเดตสถานะเป็น "คืนเงินสำเร็จ"
-        else:
-            print(f"⚠️ เงินในกระเป๋าไม่พอคืนเงิน (ต้องคืน {total_refund_amount} บาท แต่มี {wallet.balance} บาท)")
+    # ✅ คำนวณยอดขายทั้งหมด (เฉพาะคำสั่งซื้อที่ `delivered` และไม่รวม `refunded` หรือ `cancelled`)
+    total_sales = OrderItem.objects.filter(
+        order__seller=seller,
+        order__status='delivered'  # ✅ นับเฉพาะคำสั่งซื้อที่ส่งสำเร็จ
+    ).aggregate(
+        total_revenue=Sum(F('price_per_item') * F('quantity'))
+    )['total_revenue'] or 0
+
+    # ✅ คำนวณยอดขายสุทธิหลังหักคืนสินค้า
+    net_sales = total_sales - total_refund_amount
 
     return render(request, 'seller_wallet.html', {
         'wallet': wallet,
         'withdrawals': withdrawals,
-        'total_refund_amount': total_refund_amount,  # ✅ ส่งค่าไปแสดงในหน้าเว็บ
+        'total_refund_amount': total_refund_amount,  # ✅ แสดงยอดคืน
+        'total_sales': total_sales,  # ✅ แสดงยอดขายทั้งหมดก่อนหักคืน
+        'net_sales': net_sales,  # ✅ แสดงยอดขายสุทธิหลังหักคืน
     })
+
 
 
 
@@ -2621,31 +2633,54 @@ def confirm_refund_received(request, refund_id):
 from .models import SellerWallet, WithdrawalRequest
 from .forms import WithdrawalForm
 
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db.models import Sum, F
+from .models import SellerWallet, WithdrawalRequest, OrderItem, RefundRequest
+
 @login_required
 def request_withdrawal(request):
+    """ ดำเนินการขอถอนเงินโดยนับเฉพาะยอดขายที่ถอนจริงได้ """
     if request.method == "POST":
         seller = request.user.seller_profile  # ดึงข้อมูลผู้ขาย
         wallet = seller.wallet
-        
-        if wallet.balance <= 0:
-            messages.error(request, "❌ ยอดเงินไม่พอสำหรับการถอน")
+
+        # ✅ คำนวณยอดที่สามารถถอนได้ (เฉพาะคำสั่งซื้อที่ `delivered` และไม่นับคืนสินค้า)
+        total_earnings = OrderItem.objects.filter(
+            order__seller=seller,
+            order__status="delivered"  # ✅ นับเฉพาะออเดอร์ที่จัดส่งสำเร็จ
+        ).aggregate(
+            total_revenue=Sum(F('price_per_item') * F('quantity'))
+        )['total_revenue'] or 0
+
+        # ✅ คำนวณยอดคืนเงิน (ไม่ให้ผู้ขายถอนส่วนนี้ไป)
+        total_refund_amount = RefundRequest.objects.filter(
+            order__seller=seller,
+            status="approved"  # ✅ เฉพาะการคืนเงินที่อนุมัติแล้ว
+        ).aggregate(
+            total_refund=Sum(F('item__price_per_item') * F('item__quantity'))
+        )['total_refund'] or 0
+
+        # ✅ คำนวณยอดเงินที่สามารถถอนได้จริง
+        withdrawable_balance = total_earnings - total_refund_amount
+
+        if withdrawable_balance <= 0:
+            messages.error(request, "❌ ไม่มีเงินที่สามารถถอนได้")
             return redirect("seller_wallet")
 
-        # บันทึกคำขอถอนเงิน
+        # ✅ บันทึกคำขอถอนเงิน (ใช้ยอดที่ถอนได้จริง)
         WithdrawalRequest.objects.create(
             seller=seller,
-            amount=wallet.balance,
+            amount=withdrawable_balance,  # ✅ ใช้ยอดที่ถอนได้
             status="pending"
         )
 
-        # รีเซ็ตยอดเงินให้เป็น 0
-        wallet.balance = 0
-        wallet.save()
-
-        messages.success(request, "✅ คำขอถอนเงินถูกส่งไปยังแอดมินแล้ว")
+        messages.success(request, f"✅ คำขอถอนเงิน ฿{withdrawable_balance} ถูกส่งไปยังแอดมินแล้ว")
         return redirect("seller_wallet")
-    
+
     return redirect("seller_wallet")
+
 
 
 

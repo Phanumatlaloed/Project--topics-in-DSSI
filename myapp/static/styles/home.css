@@ -1,330 +1,231 @@
-/* 🌸 ใช้ฟอนต์ Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+/* ================= General Styles ================= */
+:root {
+    --primary: #FF6B8B;
+    --primary-light: #FFC0CB;
+    --primary-dark: #E5446D;
+    --secondary: #6C63FF;
+    --white: #FFFFFF;
+    --light-gray: #F8F9FA;
+    --gray: #E9ECEF;
+    --dark-gray: #6C757D;
+    --black: #343A40;
+    --success: #20C997;
+    --warning: #FFC107;
+    --danger: #DC3545;
 
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+    
+    --transition: all 0.3s ease;
+}
+
+/* ================= Global Styles ================= */
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f8f9fa;
+    font-family: 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    display: grid;
+    grid-template-columns: 280px 1fr 300px;
+    min-height: 100vh;
     margin: 0;
-    padding: 0;
+    background: var(--light-gray);
+    color: var(--black);
 }
 
-/* 📌 Reset ค่า Bootstrap ที่มายุ่งกับ Sidebar */
-.sidebar * {
-    all: unset; /* ล้างค่า CSS ที่ Bootstrap ใส่มา */
-}
-
-/* 🎀 Sidebar */
+/* ================= Sidebar Styles ================= */
 .sidebar {
-    width: 260px;
+    background: var(--white);
+    padding: 1.5rem;
     height: 100vh;
-    position: fixed;
-    background: #fde5e5;
-    padding: 15px 20px;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-    border-right: 3px solid #ffb6c1;
+    position: sticky;
+    top: 0;
+    box-shadow: var(--shadow-md);
+    z-index: 100;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: flex-start;
 }
 
-/* 🎯 ปรับโลโก้ให้อยู่ตรงกลาง */
-.sidebar .logo {
-    width: 100%;
-    display: flex;
-    justify-content: center; /* ✅ จัดให้อยู่ตรงกลาง */
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-/* 🖼 ปรับขนาดและสไตล์ของโลโก้ */
-.sidebar .logo img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
+.logo img {
+    width: 80px;
+    height: 80px;
     object-fit: cover;
-    border: 3px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
+    border: 3px solid var(--primary);
+    padding: 3px;
+    transition: var(--transition);
 }
 
-/* 🖱️ เพิ่มเอฟเฟกต์เมื่อโฮเวอร์โลโก้ */
-.sidebar .logo img:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(255, 192, 203, 0.5);
-}
-
-/* 📌 เมนู Sidebar */
-.nav {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-}
-
-.nav-link {
-    text-decoration: none;
-    padding: 12px 15px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 25px;
-    color: #555;
-    font-size: 1rem;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-.nav-link i {
-    margin-right: 8px;
-}
-
-.nav-link:hover,
-.nav-link.active {
-    background-color: #ff9aa2;
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(255, 192, 203, 0.5);
-}
-
-/* 🎀 Welcome & Logout */
-.welcome-logout {
-    text-align: center;
-    padding: 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* 🔴 ปุ่ม Logout */
-.logout-btn {
-    width: 100%;
-    background-color: #dc3545;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    font-weight: bold;
-}
-
-.logout-btn:hover {
-    background-color: #c82333;
-    box-shadow: 0 4px 10px rgba(255, 99, 71, 0.4);
-}
-
-/* ✅ ปรับ Layout */
-.content {
-    margin-left: 270px;
-    margin-right: 300px;
-    width: calc(100% - 570px);
-    padding: 20px;
-}
-
-/* 🎀 Post Section */
-.create-post {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* 📝 Textarea */
-.create-post textarea {
-    border-radius: 10px;
-    resize: none;
-    padding: 10px;
-    font-size: 1rem;
-}
-
-/* ✅ ปรับปุ่มให้โดดเด่น */
-.create-post button {
-    font-weight: bold;
-    transition: 0.3s ease-in-out;
-}
-
-.create-post button:hover {
+.logo img:hover {
     transform: scale(1.05);
 }
 
-/* ✅ Post Card */
-.posts .post {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
+.nav {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-/* ✅ ปรับขนาดรูป */
-.post-media {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
-}
-
-.post-media img, .post-media video {
-    width: 100%;
-    border-radius: 8px;
-}
-
-/* ✅ ปุ่ม Action */
-.actions {
+.nav-link {
     display: flex;
     align-items: center;
-    gap: 10px;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-md);
+    color: var(--dark-gray);
+    text-decoration: none;
+    transition: var(--transition);
+    font-weight: 500;
 }
 
-.actions button, .actions a {
-    border-radius: 8px;
-    font-size: 0.9rem;
-    padding: 8px 12px;
-    transition: 0.3s;
+.nav-link i {
+    margin-right: 10px;
+    font-size: 1.2rem;
 }
 
-.actions .btn-light:hover {
-    background: #e2e2e2;
+.nav-link:hover, .nav-link.active {
+    background-color: rgba(255, 107, 139, 0.1);
+    color: var(--primary);
 }
 
-.actions .btn-danger:hover {
-    background: #c9302c;
+.nav-link.active {
+    background-color: var(--primary);
+    color: var(--white);
 }
 
-.actions .btn-warning:hover {
-    background: #f0ad4e;
+.welcome-logout {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray);
 }
 
-/* ✅ Comments */
+.logout-btn {
+    background: var(--light-gray);
+    border: 1px solid var(--gray);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.logout-btn:hover {
+    background: var(--gray);
+    border-color: var(--dark-gray);
+}
+
+/* ================= Main Content ================= */
+.content {
+    padding: 2rem;
+    background-color: var(--light-gray);
+}
+
+/* ================= Create Post ================= */
+.create-post {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+}
+
+.create-post h5 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.create-post textarea {
+    resize: none;
+    min-height: 100px;
+    border: 1px solid var(--gray);
+    border-radius: var(--radius-md);
+    padding: 0.8rem;
+    transition: var(--transition);
+}
+
+.create-post textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 107, 139, 0.2);
+}
+
+/* ================= Post ================= */
+.post {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+}
+
+.post:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* ================= Comments ================= */
 .comments {
-    margin-top: 15px;
+    background: var(--light-gray);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-top: 1rem;
 }
 
 .comments h6 {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #333;
-}
-
-.comments .comment {
-    background: #f5f5f5;
-    border-radius: 8px;
-    padding: 8px;
-}
-
-/* 🌟 Recommendations Sidebar */
-.recommendations {
-    width: 280px;
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    right: 10px;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    z-index: 1000;
-}
-
-/* 🌟 ปรับ Grid ของสินค้า */
-.product-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 10px;
-}
-
-/* 🎀 Card สินค้า */
-.product-card {
-    background: white;
-    padding: 12px;
-    text-align: center;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    border: 1px solid #eee;
-}
-
-/* 🛒 ปรับขนาดรูปสินค้า */
-.product-card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
-}
-
-/* 🔥 ป้ายโปรโมชั่น */
-.product-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: red;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 4px 8px;
-    border-radius: 5px;
-}
-
-/* 💬 รายละเอียดสินค้า */
-.product-info {
-    padding: 10px 0;
-}
-
-.product-info h3 {
-    font-size: 0.95rem;
+    color: var(--primary);
+    margin-bottom: 0.8rem;
     font-weight: 600;
-    margin-bottom: 5px;
-    line-height: 1.3;
-    color: #333;
 }
 
-/* 💰 ราคาสินค้า */
-.product-price {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #e654a7;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+.comment {
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    border-radius: var(--radius-md);
+    transition: var(--transition);
 }
 
-/* 🏷️ ไอคอนราคา */
-.product-price i {
-    font-size: 16px;
-    color: #ff8a65;
+.comment:hover {
+    background: var(--gray);
 }
 
-/* 🔘 ปุ่มดูสินค้า */
-.product-card .btn {
-    display: block;
-    text-align: center;
-    margin-top: 8px;
-    width: 100%;
-    font-size: 14px;
-    padding: 8px 12px;
-    background: linear-gradient(45deg, #ff85a2, #ff6384);
-    color: white;
-    border-radius: 6px;
-    border: none;
-    font-weight: bold;
-    transition: background 0.3s ease-in-out;
-}
-
-/* 📱 Responsive: ถ้าเป็นจอมือถือให้แสดง 1 คอลัมน์ */
-@media (max-width: 600px) {
-    .product-grid {
-        grid-template-columns: repeat(1, 1fr);
+/* ================= Responsive Design ================= */
+@media (max-width: 992px) {
+    body {
+        grid-template-columns: 1fr;
     }
+    
+    .sidebar, .recommendations {
+        display: none;
+    }
+}
+
+/* ================= Animations ================= */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.post {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* ================= Custom Scrollbar ================= */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--dark-gray);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--black);
 }

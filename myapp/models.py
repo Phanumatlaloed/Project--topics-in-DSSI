@@ -419,10 +419,17 @@ class Review(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="reviews", null=True, blank=True)  # ✅ รองรับค่า NULL ชั่วคราว
     rating = models.IntegerField(choices=[(i, f"⭐ {i}") for i in range(1, 6)])  
     comment = models.TextField()
+    sentiment = models.CharField(max_length=10, choices=[
+        ('positive', 'Positive'),
+        ('neutral', 'Neutral'),
+        ('negative', 'Negative')
+    ], default='neutral')  # ✅ เพิ่ม sentiment
+    analysis_done = models.BooleanField(default=False)  # ✅ ต้องเพิ่ม field นี้
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name} ({self.rating} ⭐)"
+
 
 
 

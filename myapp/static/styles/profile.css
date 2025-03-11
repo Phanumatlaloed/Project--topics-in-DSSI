@@ -1,362 +1,547 @@
-/* 🌸 General Styles */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+/* ธีมสีชมพู สำหรับหน้าโปรไฟล์ */
+:root {
+    --primary-color: #ff6b9d;
+    --secondary-color: #ffb6c1;
+    --tertiary-color: #ffd1dc;
+    --light-pink: #fff0f5;
+    --dark-pink: #d4506a;
+    --text-color: #333333;
+    --white: #ffffff;
+    --gray: #f8f8f8;
+    --border-color: #ffe0e9;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background-color: #fff5f7;
-    color: #333;
+    font-family: 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #ffeef2;
+    color: var(--text-color);
     line-height: 1.6;
 }
 
+/* ===== การจัดวางหลัก ===== */
 .wrapper {
     display: flex;
     min-height: 100vh;
 }
 
-/* 📌 Sidebar */
+
+/* ===== SIDEBAR ===== */
 .sidebar {
-    width: 220px;
-    height: 100vh;
+    width: 250px;
+    background: linear-gradient(135deg, var(--primary-color), #e43f75);
+    color: var(--white);
+    padding: 20px 15px;
     position: fixed;
-    background-color: #fde5e5;
-    padding: 12px 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    border-right: 3px solid #f7c2c2;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* ทำให้ตัวอักษรชิดซ้าย */
+    height: 100vh;
+    z-index: 100;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* 🎯 ปรับโลโก้ให้อยู่ตรงกลาง */
-.sidebar .logo {
-    width: 100%;
-    display: flex;
-    justify-content: center; /* ✅ จัดให้อยู่ตรงกลาง */
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-/* 🖼 ปรับขนาดและสไตล์ของโลโก้ */
-.sidebar .logo img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-}
-
-/* 🖱️ เพิ่มเอฟเฟกต์เมื่อโฮเวอร์โลโก้ */
-.sidebar .logo img:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(255, 192, 203, 0.5);
-}
-
-/* 👤 Welcome Message */
-/* จัดให้อักษรอยู่ตรงกลาง */
-.sidebar h5 {
-    color: #333;
-    font-weight: bold;
+.logo {
     text-align: center;
-    font-size: 1.4rem; /* ขยายขนาดให้เด่นขึ้น */
-    margin-top: 10px;
-
+    margin: 15px 0 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* 📌 เมนูใน Sidebar */
+.logo-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
+    border-color: var(--white);
+}
+
 .nav {
     list-style: none;
+    margin: 0;
     padding: 0;
-    width: 100%;
+}
+
+.nav li {
+    margin-bottom: 8px;
 }
 
 .nav-link {
-    text-decoration: none;
-    padding: 12px 15px;
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* ชิดซ้าย */
-    text-align: left;
-    padding-left: 25px; /* เพิ่มระยะชิดซ้าย */
-    color: #666;
-    font-size: 1rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    margin-bottom: 10px;
-    width: 100%; /* ทำให้กว้างเต็ม sidebar */
+    padding: 12px 15px;
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.2s ease;
 }
 
-/* ปรับให้ icon กับ text ห่างกันเล็กน้อย */
 .nav-link i {
-    margin-right: 8px;
+    margin-right: 12px;
+    font-size: 1.2em;
+    width: 20px;
+    text-align: center;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
 .nav-link.active {
-    background-color: #ff9aa2;
-    color: white;
-    font-weight: bold;
-}
-
-/* 🎀 Welcome Section */
-.welcome-logout {
-    text-align: center;
-    padding: 40px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 10px; /* เพิ่มระยะห่างก่อนปุ่ม Logout */
-}
-
-/* 🔴 ปุ่ม Logout */
-.logout-btn {
-    width: 100%;
-    background-color: #dc3545;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    font-weight: bold;
-    margin-top: auto; /* ดันปุ่มลงไปด้านล่างสุด */
-}
-
-/* ทำให้ Sidebar เป็น Flexbox เพื่อให้จัดตำแหน่งปุ่ม Logout ได้ */
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* ดันปุ่ม Logout ไปอยู่ด้านล่าง */
-    height: 100vh;
-}
-
-
-/* 🌸 Main Content */
-.content {
-    margin-left: 270px;  /* Give enough space for sidebar */
-    padding: 30px;
-    flex-grow: 1;
-    overflow: hidden;  /* Prevent overflow of content */
-}
-
-/* 🌸 Profile Header */
-.profile-header {
-    background: linear-gradient(135deg, #ff9aa2, #ff6b81);
-    padding: 20px 50px;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    color: white;
-    margin-bottom: 30px;
-}
-
-.profile-picture img {
-    width: 120px;
-    height: 120px;
-    border: 5px solid white;
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-bottom: 15px;
-}
-
-/* 🌸 Create Post */
-.create-post {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 3px solid #ff9aa2;
-    margin-bottom: 30px;
-}
-
-.create-post textarea {
-    width: 100%;
-    border: 1px solid #ffcdd2;
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 15px;
-    resize: none;
-}
-
-/* 🌸 Post Card */
-.post {
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 3px solid #ff9aa2;
-    margin-bottom: 30px;
-    transition: transform 0.3s;
-}
-
- /*🌸 ปรับขนาดรูปภาพในโพสต์ให้เล็กลง */
-.post-media .media-item img {
-    max-width: 400px; /* กำหนดความกว้างสูงสุด */
-    width: 100%; /* ปรับขนาดให้เหมาะสมกับหน้าจอ */
-    /*height: auto; /* คงอัตราส่วนของรูปภาพ */
-    display: block;
-    margin: 0 auto; /* จัดให้อยู่ตรงกลาง */
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* 🌸 ถ้ามีหลายรูป จัดเรียงให้ดูสวย */
-.post-media.d-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-}
-
-.post-media {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center; /* จัดให้อยู่กึ่งกลาง */
-    gap: 10px; /* ระยะห่างระหว่างรูป */
-}
-
-.post-media .media-item {
-    flex: 1 1 45%; /* ปรับขนาดให้แต่ละรูปใช้ 45% ของพื้นที่ */
-    max-width: 45%;
-}
-
-.post-media img,
-.post-media video {
-    width: 100%;
-    height: 300px; /* ปรับความสูงให้เท่ากัน */
-    object-fit: cover; /* ป้องกันรูปบิดเบี้ยว */
-    border-radius: 10px;
+    background-color: var(--white);
+    color: var(--primary-color);
+    font-weight: 500;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-
-.post:hover {
-    transform: translateY(-5px);
+.welcome-logout {
+    position: absolute;
+    bottom: 20px;
+    left: 15px;
+    right: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.post .user-info {
+.welcome-logout p {
+    margin-bottom: 10px;
+    color: var(--white);
+    font-size: 0.9em;
+}
+
+.logout-btn {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--white);
+    padding: 8px 0;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.logout-btn:hover {
+    background-color: var(--white);
+    color: var(--primary-color);
+}
+
+/* ===== MAIN CONTENT ===== */
+.content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 30px;
+    background-color: var(--light-pink);
+}
+
+/* ===== PROFILE HEADER ===== */
+.profile-header {
+    background: linear-gradient(135deg, var(--tertiary-color), var(--secondary-color));
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.profile-picture {
+    margin: 0 auto 15px;
+    width: 120px;
+    height: 120px;
+    position: relative;
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid var(--white);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+}
+
+.profile-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.username {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 10px 0;
+}
+
+.follow-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 15px 0;
+    font-size: 1rem;
+}
+
+.follow-stats strong {
+    color: var(--dark-pink);
+}
+
+.edit-profile-btn, .follow-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 8px 24px;
+    border-radius: 30px;
+    font-weight: 500;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 3px 8px rgba(255, 107, 157, 0.3);
+}
+
+.edit-profile-btn:hover, .follow-btn:hover {
+    background-color: var(--dark-pink);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(255, 107, 157, 0.4);
+}
+
+.follow-btn.following {
+    background-color: #ff4f70;
+}
+
+/* ===== CREATE POST ===== */
+.create-post {
+    background-color: var(--white);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.create-post h5 {
+    color: var(--dark-pink);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.post-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-family: inherit;
+    resize: none;
+    transition: border 0.3s;
+}
+
+.post-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(255, 107, 157, 0.2);
+}
+
+.media-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.media-btn {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    background-color: var(--light-pink);
+    border: 1px solid var(--tertiary-color);
+    border-radius: 20px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.media-btn i {
+    margin-right: 8px;
+}
+
+.media-btn:hover {
+    background-color: var(--tertiary-color);
+}
+
+.post-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 25px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.post-btn:hover {
+    background-color: var(--dark-pink);
+    transform: translateY(-2px);
+}
+
+/* ===== POST LIST ===== */
+.user-posts h3 {
+    color: var(--dark-pink);
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--tertiary-color);
+}
+
+.post {
+    background-color: var(--white);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-left: 4px solid var(--primary-color);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.post:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.post-user-info {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
 }
 
-.post .profile-img {
-    width: 40px;
-    height: 40px;
+.post-avatar {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    border: 2px solid #ff6b81;
-    margin-right: 10px;
+    margin-right: 15px;
+    border: 3px solid var(--tertiary-color);
+    object-fit: cover;
 }
 
-/* 🌸 Post Actions */
-.actions {
+.post-user-details {
     display: flex;
+    flex-direction: column;
+}
+
+.post-username {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.post-time {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.post-content {
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.post-media {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
+    margin-bottom: 15px;
+}
+
+.post-image, .post-video {
+    width: 100%;
+    border-radius: 8px;
+    transition: transform 0.3s;
+}
+
+.post-image:hover, .post-video:hover {
+    transform: scale(1.02);
+}
+
+/* ===== POST ACTIONS ===== */
+.post-actions {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    margin-right: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.action-btn i {
+    margin-right: 5px;
+    font-size: 1.1rem;
+}
+
+.action-btn:hover {
+    color: var(--primary-color);
+}
+
+.like-btn:hover {
+    color: #ff4d6d;
+}
+
+.delete-btn:hover {
+    color: #ff4d4d;
+}
+
+.like-count {
+    margin-right: 20px;
+    color: #888;
+}
+
+/* ===== COMMENTS ===== */
+.post-comments {
     margin-top: 15px;
 }
 
-.actions .btn {
-    padding: 8px 15px;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: all 0.3s ease;
+.post-comments h6 {
+    font-size: 1rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
-.actions .btn-light {
-    background: #fff5f7;
-    border: 1px solid #ff9aa2;
-    color: #ff6b81;
-}
-
-.actions .btn-light:hover {
-    background: #ff9aa2;
-    color: white;
-}
-
-/* 🌸 Comments Section */
-.comments {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #ffcdd2;
+.comments-list {
+    margin-bottom: 15px;
 }
 
 .comment {
-    background: #fff5f7;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
-
-.add-comment-form input {
-    width: 100%;
     padding: 10px;
-    border: 1px solid #ffcdd2;
+    background-color: var(--light-pink);
     border-radius: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
-.add-comment-form button {
-    background: #ff6b81;
-    color: white;
-    border: none;
+.comment-user {
+    font-weight: 600;
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+.comment-form {
+    display: flex;
+    gap: 10px;
+}
+
+.comment-input {
+    flex: 1;
     padding: 8px 15px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-family: inherit;
 }
 
-.add-comment-form button:hover {
-    background: #ff4f5a;
-    transform: scale(1.05);
+.comment-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
 }
 
-/* 🎀 ปรับปุ่ม Edit Profile */
-.edit-profile-btn {
-    display: inline-block;
-    background: linear-gradient(135deg, #007bff, #0056b3) !important;
-    color: white !important;
-    padding: 10px 18px !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    font-weight: bold !important;
-    text-decoration: none !important;
-    transition: all 0.3s ease-in-out !important;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) !important;
-    border: none !important;
+.comment-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
 }
 
-/* Hover Effect */
-.edit-profile-btn:hover {
-    background: linear-gradient(135deg, #0056b3, #004085) !important;
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3) !important;
-    transform: translateY(-2px) !important;
+.comment-btn:hover {
+    background-color: var(--dark-pink);
 }
 
-/* Animation เมื่อกดปุ่ม */
-.edit-profile-btn:active {
-    transform: scale(0.98) !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+/* ===== NO POSTS STATE ===== */
+.no-posts {
+    text-align: center;
+    padding: 50px 0;
+    color: #999;
 }
 
+.no-posts i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: var(--tertiary-color);
+}
 
-/* 🌸 Responsive Design */
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 200px;
+    }
+    .content {
+        margin-left: 200px;
+    }
+}
+
 @media (max-width: 768px) {
+    .wrapper {
+        flex-direction: column;
+    }
     .sidebar {
         width: 100%;
         height: auto;
         position: relative;
+        padding: 10px;
     }
-
+    .logo {
+        margin: 10px 0;
+    }
+    .welcome-logout {
+        position: static;
+        margin-top: 15px;
+    }
+    .nav-link {
+        padding: 8px 10px;
+    }
     .content {
         margin-left: 0;
-        padding: 20px;
+        padding: 15px;
     }
-
-    .actions {
+    .media-buttons {
         flex-wrap: wrap;
     }
+    .post-actions {
+        flex-wrap: wrap;
+    }
+    .action-btn {
+        margin-bottom: 5px;
+    }
 }
-
