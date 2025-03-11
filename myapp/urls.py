@@ -250,6 +250,10 @@ urlpatterns = [
 
     path("comments/<int:post_id>/", views.get_comments, name="get_comments"),
 
+    path("notifications/", views.member_notifications_list, name="member_notifications"),
+    path("api/notifications/", views.api_member_notifications, name="api_member_notifications"),
+    path("notifications/mark-as-read/", views.mark_notification_as_read, name="mark_notification_as_read"),
+
 ]
 
     

@@ -6,93 +6,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community Groups</title>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'styles/community.css' %}">
 </head>
 <body>
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo text-center">
-            <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
-        </div>
-        <nav>
-            <ul class="nav">
-                <li><a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="{% url 'community_list' %}" class="nav-link active"><i class="fas fa-users"></i> Community</a></li>
-                <li><a href="{% url 'savelist' %}" class="nav-link"><i class="fas fa-bookmark"></i> Save</a></li>
-                <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
-                <li><a href="{% url 'product_list' %}" class="nav-link"><i class="fas fa-shopping-cart"></i> Product List</a></li>
-                <li><a href="{% url 'notification_list' %}" class="nav-link"><i class="fas fa-bell"></i> Notifications</a></li>
-            </ul>
-        </nav>
-        <div class="welcome-logout">
-            <p>Welcome, <b>{{ request.user.username }}</b></p>
-            <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-            </form>
-        </div>
-    </aside>
+    <div class="container-fluid">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo text-center">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
 
-    <!-- Main Content -->
-    <main class="community-container">
-        <!-- Header -->
-        <div class="header">
-            <h1><i class="fas fa-users"></i> Community Groups</h1>
-            <a href="{% url 'create_group' %}" class="create-group-btn">
-                สร้างกลุ่มใหม่
-            </a>
-        </div>
+            </div>
+            <nav>
+                <ul class="nav">
+                    <li><a href="{% url 'home' %}" class="nav-link">🏠 Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link active">👥 Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link">💾 Save</a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link">📄 Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link">productlist</a></li>
+                    <li><a href="{% url 'notification_list' %}" class="nav-link">🔔 notification</a></li>
+                </ul>
+            </nav>
+            <div class="welcome-logout">
+                <p>Welcome, <b>{{ request.user.username }}</b></p>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </aside>
 
-        <!-- Group List -->
-        <div class="group-list">
-            {% for group in groups %}
-            <div class="group-card">
-                <img src="{{ group.image.url }}" alt="{{ group.name }}" class="group-image">
-                <div class="group-info">
-                    <h2>{{ group.name }}</h2>
-                    <p>{{ group.description|truncatewords:20 }}</p>
-                    
-                    <div class="group-stats">
-                        <span><i class="fas fa-user-friends"></i> {{ group.members.count }} สมาชิก</span>
-                        <span><i class="fas fa-calendar-alt"></i> สร้างเมื่อ {{ group.created_at|date:"d M Y" }}</span>
+        <!-- Main Content -->
+        <main class="community-container">
+            <!-- Header -->
+            <div class="header">
+                <h1>Community Groups</h1>
+                <a href="{% url 'create_group' %}" class="create-group-btn">+ Create New Group</a>
+            </div>
+
+            <!-- Group List -->
+            <div class="group-list">
+                {% for group in groups %}
+                <div class="group-card">
+                    <img src="{{ group.image.url }}" alt="{{ group.name }}" class="group-image">
+                    <div class="group-info">
+                        <h2>{{ group.name }}</h2>
+                        <p>{{ group.description|truncatewords:20 }}</p>
+                        <a href="{% url 'group_detail' group.id %}" class="view-group-btn">View Group</a>
                     </div>
-                    
-                    <a href="{% url 'group_detail' group.id %}" class="view-group-btn">
-                        <i class="fas fa-eye"></i> ดูรายละเอียด
-                    </a>
                 </div>
+                {% endfor %}
             </div>
-            {% empty %}
-            <div class="empty-state">
-                <i class="fas fa-users"></i>
-                <h3>ยังไม่มีกลุ่มคอมมูนิตี้</h3>
-                <p>เริ่มต้นสร้างกลุ่มแรกของคุณเพื่อแบ่งปันความสนใจร่วมกัน</p>
-                <a href="{% url 'create_group' %}" class="create-group-btn">
-                    สร้างกลุ่มแรก
-                </a>
-            </div>
-            {% endfor %}
-        </div>
-    </main>
-
-    <script>
-        // เพิ่ม Effect เมื่อมีการสร้างกลุ่มใหม่
-        document.addEventListener('DOMContentLoaded', function() {
-            // ตรวจสอบ URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('created') === 'true') {
-                // แสดงการแจ้งเตือนว่าสร้างกลุ่มเรียบร้อยแล้ว
-                alert('สร้างกลุ่มเรียบร้อยแล้ว!');
-            }
-        });
-    </script>
+        </main>
+    </div>
 </body>
 </html>

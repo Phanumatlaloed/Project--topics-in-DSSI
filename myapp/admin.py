@@ -37,3 +37,4 @@ class WithdrawalRequestAdmin(admin.ModelAdmin):
     list_display = ("seller", "amount", "status", "created_at")
     list_filter = ("status",)
     search_fields = ("seller__store_name", "amount")
+

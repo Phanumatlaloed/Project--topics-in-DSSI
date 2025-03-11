@@ -1,381 +1,168 @@
-/* CSS Variables */
-:root {
-    --primary-color: #FF6B8B;
-    --primary-light: #FFC0CB;
-    --primary-dark: #E5446D;
-    --secondary-color: #6C63FF;
-    --white: #FFFFFF;
-    --light-bg: #F8F9FA;
-    --gray: #E9ECEF;
-    --dark-gray: #6C757D;
-    --dark-bg: #343A40;
-    --success: #20C997;
-    --warning: #FFC107;
-    --danger: #DC3545;
-    --border-radius-sm: 8px;
-    --border-radius-md: 12px;
-    --border-radius-lg: 20px;
-    --box-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    --box-shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
-    --transition: all 0.3s ease;
-}
-
-/* General Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* 🌸 General Styles */
 body {
-    font-family: 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--light-bg);
-    color: var(--dark-bg);
-    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    background-color: #fff5f7; /* สีชมพูอ่อน */
 }
 
 .wrapper {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    min-height: 100vh;
+    display: flex;
 }
 
-/* Sidebar Styles */
+/* 📌 Reset ค่า Bootstrap ที่มายุ่งกับ Sidebar */
+.sidebar * {
+    all: unset; /* ล้างค่า CSS ที่ Bootstrap ใส่มา */
+}
+
+/* 📌 Sidebar */
 .sidebar {
-    background: var(--white);
-    padding: 1.5rem;
+    width: 250px;
     height: 100vh;
-    position: sticky;
-    top: 0;
-    box-shadow: var(--box-shadow-sm);
-    z-index: 100;
+    position: fixed;
+    background-color: #fde5e5;
+    padding: 12px 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-right: 3px solid #f7c2c2;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    align-items: flex-start; /* ทำให้ตัวอักษรชิดซ้าย */
 }
 
-.logo img {
-    width: 80px;
-    height: 80px;
+/* 🎯 ปรับโลโก้ให้อยู่ตรงกลาง */
+.sidebar .logo {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* ✅ จัดให้อยู่ตรงกลาง */
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* 🖼 ปรับขนาดและสไตล์ของโลโก้ */
+.sidebar .logo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
     object-fit: cover;
-    border: 3px solid var(--primary-color);
-    padding: 3px;
-    transition: var(--transition);
-    box-shadow: var(--box-shadow-sm);
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
 }
 
-.logo img:hover {
-    transform: scale(1.05);
+/* 🖱️ เพิ่มเอฟเฟกต์เมื่อโฮเวอร์โลโก้ */
+.sidebar .logo img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(255, 192, 203, 0.5);
 }
 
+/* 👤 Welcome Message */
+.sidebar h5 {
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    border: 20px;
+}
+
+/* 📌 เมนูใน Sidebar */
+/* 📌 เมนูใน Sidebar */
 .nav {
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    list-style-type: none;
+    list-style: none;
     padding: 0;
+    width: 100%;
 }
 
 .nav-link {
+    text-decoration: none;
+    padding: 12px 15px;
     display: flex;
     align-items: center;
-    padding: 0.8rem 1rem;
-    border-radius: var(--border-radius-md);
-    color: var(--dark-gray);
-    text-decoration: none;
-    transition: var(--transition);
+    justify-content: flex-start; /* ชิดซ้าย */
+    text-align: left;
+    padding-left: 25px; /* เพิ่มระยะชิดซ้าย */
+    color: #666;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
     font-weight: 500;
+    margin-bottom: 10px;
+    width: 100%; /* ทำให้กว้างเต็ม sidebar */
 }
 
+/* ปรับให้ icon กับ text ห่างกันเล็กน้อย */
 .nav-link i {
-    margin-right: 10px;
-    font-size: 1.2rem;
+    margin-right: 8px;
 }
 
-.nav-link:hover, .nav-link.active {
-    background-color: var(--primary-light);
-    color: var(--primary-dark);
-}
-
+.nav-link:hover,
 .nav-link.active {
-    background-color: var(--primary-color);
-    color: var(--white);
+    background-color: #ff9aa2;
+    color: white;
+    font-weight: bold;
 }
 
+/* 🎀 Welcome Section */
 .welcome-logout {
-    margin-top: auto;
-    padding-top: 1rem;
-    border-top: 1px solid var(--gray);
+    text-align: center;
+    padding: 40px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px; /* เพิ่มระยะห่างก่อนปุ่ม Logout */
 }
 
-.welcome-logout p {
-    margin-bottom: 0.5rem;
-    color: var(--dark-gray);
-}
-
+/* 🔴 ปุ่ม Logout */
 .logout-btn {
-    background-color: var(--light-bg);
-    border: 1px solid var(--gray);
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius-md);
-    cursor: pointer;
-    transition: var(--transition);
     width: 100%;
-    color: var(--dark-gray);
-    font-weight: 500;
+    background-color: #dc3545;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: auto; /* ดันปุ่มลงไปด้านล่างสุด */
 }
 
-.logout-btn:hover {
-    background-color: var(--primary-light);
-    color: var(--primary-dark);
-    border-color: var(--primary-light);
+/* ทำให้ Sidebar เป็น Flexbox เพื่อให้จัดตำแหน่งปุ่ม Logout ได้ */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* ดันปุ่ม Logout ไปอยู่ด้านล่าง */
+    height: 100vh;
 }
 
-/* Main Content */
+/* 🌸 Main Content */
 .content {
-    padding: 2rem;
-    min-height: 100vh;
+    margin-left: 270px;
+    flex-grow: 1;
+    padding: 20px;
 }
 
-header {
-    margin-bottom: 2rem !important;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid var(--primary-light);
-}
-
-header h2 {
-    color: var(--primary-dark) !important;
-    font-weight: 600;
-    position: relative;
-    display: inline-block;
-    padding-bottom: 0.5rem;
-}
-
-header h2::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100px;
-    height: 3px;
-    background: var(--secondary-color);
-    border-radius: 10px;
-}
-
-/* Tabs Navigation */
-.nav-tabs {
-    border-bottom: 2px solid var(--primary-light);
-    margin-bottom: 1.5rem !important;
-}
-
-.nav-tabs .nav-link {
-    border: none;
-    color: var(--dark-gray);
-    font-weight: 500;
-    padding: 0.8rem 1.5rem;
-    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
-    transition: var(--transition);
-    margin-right: 0.5rem;
-}
-
-.nav-tabs .nav-link:hover {
-    color: var(--primary-dark);
-    background-color: rgba(255, 192, 203, 0.2);
-}
-
-.nav-tabs .nav-link.active {
-    color: var(--primary-dark);
-    background-color: var(--primary-light);
-    border-bottom: 3px solid var(--primary-color);
-}
-
-/* Search Bar */
 .search-bar {
-    margin-bottom: 1.5rem;
+    margin-bottom: 20px;
 }
 
-.search-bar input {
-    border-radius: var(--border-radius-md);
-    padding: 0.8rem 1rem;
-    border: 1px solid var(--gray);
-    box-shadow: var(--box-shadow-sm);
-    transition: var(--transition);
-}
-
-.search-bar input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(255, 107, 139, 0.2);
-}
-
-/* Post Cards */
-.post-item {
-    margin-bottom: 1.5rem;
-    transition: var(--transition);
-}
-
-.post-item:hover {
-    transform: translateY(-5px);
-}
-
+/* 🌸 Card Styling */
 .card {
-    border-radius: var(--border-radius-md);
-    overflow: hidden;
-    border: none;
-    box-shadow: var(--box-shadow-sm);
-    transition: var(--transition);
-    height: 100%;
-    border-top: 3px solid var(--primary-color);
+    border-radius: 15px;
+    transition: transform 0.2s;
+    background: white;
 }
 
 .card:hover {
-    box-shadow: var(--box-shadow);
+    transform: scale(1.03);
 }
 
-.card-body {
-    padding: 1.5rem;
-}
-
-.card-text {
-    color: var(--dark-bg);
-    margin-bottom: 1rem;
-    line-height: 1.6;
-    max-height: 100px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-}
-
-/* Badges */
-.badge {
-    padding: 0.5em 0.8em;
-    font-weight: 500;
-    border-radius: var(--border-radius-sm);
-    font-size: 0.8rem;
-}
-
-.badge.bg-info {
-    background-color: var(--secondary-color) !important;
-    color: var(--white);
-}
-
-/* Buttons */
-.btn-outline-danger {
-    color: var(--danger);
-    border-color: var(--danger);
-    border-radius: var(--border-radius-sm);
-    transition: var(--transition);
-    font-weight: 500;
-}
-
-.btn-outline-danger:hover {
-    background-color: var(--danger);
-    color: var(--white);
-    transform: translateY(-2px);
-    box-shadow: var(--box-shadow-sm);
-}
-
-/* Empty State */
-.text-muted {
-    color: var(--dark-gray) !important;
-    padding: 2rem;
-    text-align: center;
-    background: var(--white);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--box-shadow-sm);
-    font-size: 1.1rem;
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.post-item {
-    animation: fadeIn 0.4s ease-out;
-    animation-fill-mode: both;
-}
-
-.post-item:nth-child(2) {
-    animation-delay: 0.1s;
-}
-
-.post-item:nth-child(3) {
-    animation-delay: 0.2s;
-}
-
-.post-item:nth-child(4) {
-    animation-delay: 0.3s;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--light-bg);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--primary-light);
+.post-media img,
+.post-media video {
+    max-height: 120px;
+    object-fit: cover;
     border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-    .wrapper {
-        grid-template-columns: 1fr;
-    }
-    
-    .sidebar {
-        display: none;
-    }
-}
-
-@media (max-width: 576px) {
-    .content {
-        padding: 1rem;
-    }
-    
-    .col-md-6 {
-        padding: 0 0.5rem;
-    }
-}
-
-.post-stats {
-    font-size: 0.9rem;
-    padding: 0.5rem 0;
-    border-top: 1px solid var(--gray);
-    border-bottom: 1px solid var(--gray);
-}
-
-.post-stats i {
-    margin-right: 5px;
-}
-
-.media-indicator {
-    background-color: var(--light-bg);
-    padding: 0.3rem 0.5rem;
-    border-radius: var(--border-radius-sm);
-    margin-top: 0.5rem;
-    display: inline-block;
-}
-
-.group-avatar {
-    width: 40px;
-    height: 40px;
-    background: var(--primary-light);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-dark);
+.remove-btn {
+    font-size: 14px;
+    font-weight: bo
 }

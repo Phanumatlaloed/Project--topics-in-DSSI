@@ -6,200 +6,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saved Posts</title>
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Bootstrap & Custom CSS -->
+    <!-- ✅ Bootstrap & Custom CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'styles/savelist.css' %}">
 
-    <!-- JavaScript -->
+    <!-- ✅ JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="{% static 'js/savelistre.js' %}" defer></script>
     <script src="{% static 'js/group_savelistre.js' %}" defer></script>
+
 </head>
 <body>
-    <div class="wrapper">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+    <div class="wrapper d-flex">
+         <!-- Sidebar -->
+         <aside class="sidebar">
             <div class="logo text-center">
                 <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
+
             </div>
             <nav>
                 <ul class="nav">
-                    <li><a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="{% url 'community_list' %}" class="nav-link"><i class="fas fa-users"></i> Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="nav-link active"><i class="fas fa-bookmark"></i> Save</a></li>
-                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
-                    <li><a href="{% url 'product_list' %}" class="nav-link"><i class="fas fa-shopping-cart"></i> Product List</a></li>
-                    <li><a href="{% url 'notification_list' %}" class="nav-link"><i class="fas fa-bell"></i> Notifications</a></li>
+                    <li><a href="{% url 'home' %}" class="nav-link"><i>🏠</i> Home</a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link "><i>👥</i> Community</a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link active"><i>💾</i> Save</a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i>📄</i> Profile</a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link"><i>🛒</i> Product List</a></li>
+                    <li><a href="{% url 'notifications' %}" class="nav-link"><i>🔔</i> Notifications</a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">
                 <p>Welcome, <b>{{ request.user.username }}</b></p>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <button type="submit" class="logout-btn">Logout</button>
                 </form>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="content">
-            <header class="text-center">
-                <h2><i class="fas fa-bookmark"></i> โพสต์ที่บันทึกไว้</h2>
+        <main class="content p-4">
+            <header class="text-center mb-4">
+                <h2 class="text-primary">📌 Saved Posts</h2>
             </header>
 
-            <!-- Tab Navigation -->
-            <ul class="nav nav-tabs" id="savedPostTabs">
+            <!-- 🔹 Tab Navigation -->
+            <ul class="nav nav-tabs mb-3" id="savedPostTabs">
                 <li class="nav-item">
-                    <button class="nav-link active" id="home-posts-tab" data-bs-toggle="tab" data-bs-target="#homePosts">
-                        <i class="fas fa-home"></i> โพสต์หน้าหลัก
-                    </button>
+                    <button class="nav-link active" id="home-posts-tab" data-bs-toggle="tab" data-bs-target="#homePosts">🏠 Home Posts</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="group-posts-tab" data-bs-toggle="tab" data-bs-target="#groupPosts">
-                        <i class="fas fa-users"></i> โพสต์กลุ่ม
-                    </button>
+                    <button class="nav-link" id="group-posts-tab" data-bs-toggle="tab" data-bs-target="#groupPosts">🏛 Group Posts</button>
                 </li>
             </ul>
 
-            <!-- Search Bar -->
+            <!-- 🔹 Search Bar -->
             <div class="search-bar">
-                <div class="input-group">
-                    <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" id="searchInput" class="form-control" placeholder="ค้นหาโพสต์ที่บันทึกไว้..." onkeyup="searchPosts()">
-                </div>
+                <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search saved posts..." onkeyup="searchPosts()">
             </div>
 
-            <!-- Tab Content -->
+            <!-- 🔹 Tab Content -->
             <div class="tab-content">
-                <!-- Home Posts -->
+                <!-- ✅ Home Posts -->
                 <div class="tab-pane fade show active" id="homePosts">
                     <div class="row">
                         {% for saved_post in saved_posts %}
                         <div class="col-md-6 col-lg-4 post-item">
-                            <div class="card">
+                            <div class="card shadow-sm">
                                 <div class="card-body">
                                     <!-- User Info -->
-                                    <div class="d-flex align-items-center mb-3">
-                                        {% if saved_post.post.user.member_profile and saved_post.post.user.member_profile.profile_picture %}
-                                            <img src="{{ saved_post.post.user.member_profile.profile_picture.url }}" class="rounded-circle me-2" width="40" height="40" alt="User">
-                                        {% else %}
-                                            <img src="{% static 'media/default_profile.png' %}" class="rounded-circle me-2" width="40" height="40" alt="User">
-                                        {% endif %}                            
+                                    <div class="d-flex align-items-center mb-2">
+                                    {% if saved_post.post.user.member_profile and saved_post.post.user.member_profile.profile_picture %}
+                                        <img src="{{ saved_post.post.user.member_profile.profile_picture.url }}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                                    {% else %}
+                                        <img src="{% static 'media/default_profile.png' %}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                                    {% endif %}                            
                                         <div>
                                             <h6 class="mb-0">{{ saved_post.post.user.username }}</h6>
-                                            <small class="text-muted">{{ saved_post.post.created_at|date:"d M Y, H:i" }}</small>
+                                            <small class="text-muted">{{ saved_post.post.created_at|date:"M d, Y H:i" }}</small>
                                         </div>
                                     </div>
 
                                     <!-- Post Type -->
-                                    <span class="badge bg-info"><i class="fas fa-home"></i> โพสต์หน้าหลัก</span>
+                                    <span class="badge bg-info text-white">Home Post 🏠</span>
 
                                     <!-- Post Content -->
                                     <a href="{% url 'post_detail' saved_post.post.id %}" class="text-decoration-none text-dark">
-                                        <p class="card-text mt-3">{{ saved_post.post.content }}</p>
-                                        
-                                        <!-- If post has media, show indicator -->
-                                        {% if saved_post.post.media.all|length > 0 %}
-                                        <div class="media-indicator">
-                                            <i class="fas fa-image text-muted"></i> 
-                                            <span class="small text-muted">{{ saved_post.post.media.all|length }} รูปภาพ/วิดีโอ</span>
-                                        </div>
-                                        {% endif %}
+                                        <p class="card-text mt-2">{{ saved_post.post.content }}</p>
                                     </a>
-
-                                    <!-- Post Stats -->
-                                    <div class="post-stats d-flex align-items-center my-2">
-                                        <span class="me-3"><i class="fas fa-heart text-danger"></i> {{ saved_post.post.likes.count }}</span>
-                                        <span><i class="fas fa-comment text-primary"></i> {{ saved_post.post.comments.count }}</span>
-                                    </div>
 
                                     <!-- Remove Button -->
                                     <button class="btn btn-outline-danger btn-sm w-100 mt-2 remove-btn" 
-                                        data-post-id="{{ saved_post.post.id }}">
-                                        <i class="fas fa-trash"></i> นำออก
+                                        data-post-id="{{ saved_post.post.id }}" >
+                                        🗑 Remove
                                     </button>                                
+                                    
                                 </div>
                             </div>
                         </div>
                         {% empty %}
-                        <div class="col-12">
-                            <div class="text-muted">
-                                <i class="fas fa-folder-open fa-3x mb-3"></i>
-                                <p>ยังไม่มีโพสต์หน้าหลักที่บันทึกไว้</p>
-                                <a href="{% url 'home' %}" class="btn btn-primary mt-2">
-                                    <i class="fas fa-home"></i> ไปยังหน้าหลัก
-                                </a>
-                            </div>
-                        </div>
+                        <p class="text-center text-muted">😢 No saved home posts yet.</p>
                         {% endfor %}
                     </div>
                 </div>
 
+                <!-- ✅ Group Posts -->
                 <!-- Group Posts -->
                 <div class="tab-pane fade" id="groupPosts">
                     <div class="row">
                         {% for saved_post in saved_group_posts %}
                         <div class="col-md-6 col-lg-4 post-item">
-                            <div class="card">
+                            <div class="card shadow-sm">
                                 <div class="card-body">
                                     <!-- Group Info -->
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="group-avatar me-2">
-                                            <i class="fas fa-users fa-2x text-secondary"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0">{{ saved_post.post.group.name }}</h6>
-                                            <small class="text-muted">{{ saved_post.post.created_at|date:"d M Y, H:i" }}</small>
-                                        </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h6 class="mb-0">{{ saved_post.post.group.name }}</h6>
+                                        <small class="text-muted ms-2">🏛 Group</small>
                                     </div>
-                                    
-                                    <!-- Post Type -->
-                                    <span class="badge bg-info"><i class="fas fa-users"></i> โพสต์กลุ่ม</span>
-                                    
                                     <!-- Post Content -->
                                     <a href="{% url 'group_detail' saved_post.post.id %}" class="text-decoration-none text-dark">
-                                        <p class="card-text mt-3">{{ saved_post.post.content }}</p>
-                                        
-                                        <!-- If post has media, show indicator -->
-                                        {% if saved_post.post.media.all|length > 0 %}
-                                        <div class="media-indicator">
-                                            <i class="fas fa-image text-muted"></i> 
-                                            <span class="small text-muted">{{ saved_post.post.media.all|length }} รูปภาพ/วิดีโอ</span>
-                                        </div>
-                                        {% endif %}
+                                        <p class="card-text mt-2">{{ saved_post.post.content }}</p>
                                     </a>
-                                    
-                                    <!-- Post Stats -->
-                                    <div class="post-stats d-flex align-items-center my-2">
-                                        <span class="me-3"><i class="fas fa-heart text-danger"></i> {{ saved_post.post.likes.count }}</span>
-                                        <span><i class="fas fa-comment text-primary"></i> {{ saved_post.post.comments.count }}</span>
-                                    </div>
-                                    
                                     <!-- Remove Button -->
                                     <button class="btn btn-outline-danger btn-sm w-100 mt-2 remove-btn" 
                                         data-post-id="{{ saved_post.post.id }}" 
                                         data-group-id="{{ saved_post.post.group.id|default:'' }}">
-                                        <i class="fas fa-trash"></i> นำออก
+                                        🗑 Remove
                                     </button> 
                                 </div>
                             </div>
                         </div>
                         {% empty %}
-                        <div class="col-12">
-                            <div class="text-muted">
-                                <i class="fas fa-folder-open fa-3x mb-3"></i>
-                                <p>ยังไม่มีโพสต์กลุ่มที่บันทึกไว้</p>
-                                <a href="{% url 'community_list' %}" class="btn btn-primary mt-2">
-                                    <i class="fas fa-users"></i> ไปยังหน้ากลุ่ม
-                                </a>
-                            </div>
-                        </div>
+                        <p class="text-center text-muted">😢 No saved group posts yet.</p>
                         {% endfor %}
                     </div>
                 </div>
@@ -217,18 +154,6 @@
                 item.style.display = text.includes(input) ? "block" : "none";
             });
         }
-        
-        // เพิ่ม Animation เมื่อเปลี่ยน Tab
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
-                document.querySelectorAll('.post-item').forEach((item, index) => {
-                    item.style.animation = 'none';
-                    setTimeout(() => {
-                        item.style.animation = `fadeIn 0.4s ease-out ${index * 0.1}s`;
-                    }, 10);
-                });
-            });
-        });
     </script>
 </body>
 </html>

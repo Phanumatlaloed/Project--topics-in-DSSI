@@ -1,89 +1,5 @@
-from django.db.models.signals import post_save, m2m_changed
-from django.dispatch import receiver
-from django.contrib.auth import get_user_model
-from .models import Post, Comment, Order, Follow, GroupPost, Member,CustomUser, Member
 
-from notifications.utils import create_notification
-
-# ✅ ใช้ CustomUser แทน `auth.User`
-User = get_user_model()
-
-# ✅ แจ้งเตือนเมื่อมีโพสต์ใหม่
-@receiver(post_save, sender=Post)
-def new_post_notification(sender, instance, created, **kwargs):
-    if created:
-        followers = Follow.objects.filter(following=instance.user)
-        for follower in followers:
-            create_notification(
-                user=follower.follower,
-                sender=instance.user,
-                notification_type="new_post",
-                post=instance
-            )
-
-# ✅ แจ้งเตือนเมื่อมีคอมเมนต์ใหม่ในโพสต์
-@receiver(post_save, sender=Comment)
-def new_comment_notification(sender, instance, created, **kwargs):
-    if created:
-        create_notification(
-            user=instance.post.user,
-            sender=instance.user,
-            notification_type="new_comment",
-            post=instance.post
-        )
-
-# ✅ แจ้งเตือนเมื่อมีการสั่งซื้อใหม่
-@receiver(post_save, sender=Order)
-def new_order_notification(sender, instance, created, **kwargs):
-    if created:
-        create_notification(
-            user=instance.seller.user,
-            sender=instance.user,
-            notification_type="new_order",
-            order=instance
-        )
-
-# ✅ แจ้งเตือนเมื่อมีคนกดไลค์โพสต์ในกลุ่ม
-@receiver(m2m_changed, sender=GroupPost.likes.through)
-def group_post_like_notification(sender, instance, action, pk_set, **kwargs):
-    if action == "post_add":
-        for user_id in pk_set:
-            try:
-                user = User.objects.get(id=user_id)  # ✅ ใช้ CustomUser
-                create_notification(
-                    user=instance.user,
-                    sender=user,
-                    notification_type="like_group_post",
-                    post=None,
-                    group_post=instance
-                )
-            except User.DoesNotExist:
-                print(f"❌ Error: User with id {user_id} does not exist.")
-
-# ✅ แจ้งเตือนเมื่อมีคนกดไลค์โพสต์ทั่วไป
-@receiver(m2m_changed, sender=Post.likes.through)
-def post_like_notification(sender, instance, action, pk_set, **kwargs):
-    if action == "post_add":
-        for user_id in pk_set:
-            try:
-                user = User.objects.get(id=user_id)  # ✅ ใช้ CustomUser
-                create_notification(
-                    user=instance.user,
-                    sender=user,
-                    notification_type="like_post",
-                    post=instance
-                )
-            except User.DoesNotExist:
-                print(f"❌ Error: User with id {user_id} does not exist.")
-
-@receiver(post_save, sender=CustomUser)
-def create_member_profile(sender, instance, created, **kwargs):
-    if created:
-        # ✅ ตรวจสอบก่อนว่าสร้าง `Member` ซ้ำหรือไม่
-        if not Member.objects.filter(user=instance).exists():
-            Member.objects.create(user=instance)
 from django.db.models.signals import post_save
-
 from django.dispatch import receiver
 from .models import Order, RefundRequest, SellerNotification, Review, WithdrawalRequest
 
@@ -163,3 +79,48 @@ def notify_seller_withdrawal_rejected(sender, instance, **kwargs):
             seller=instance.seller.user,
             message=f"❌ คำขอถอนเงิน {instance.amount} บาท ถูกปฏิเสธ"
         )
+
+
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import Post, Comment, Order, MemberNotification
+
+# 📢 แจ้งเตือนเมื่อมีโพสต์ใหม่จากคนที่เราติดตาม
+@receiver(post_save, sender=Post)
+def notify_followers_new_post(sender, instance, created, **kwargs):
+    if created:
+        followers = instance.author.followers.all()  # คนที่ติดตามเจ้าของโพสต์
+        for follower in followers:
+            MemberNotification.objects.create(
+                user=follower,
+                message=f"📢 {instance.author.username} ได้โพสต์ใหม่: {instance.title}"
+            )
+
+# 💬 แจ้งเตือนเมื่อมีคอมเมนต์ในโพสต์ของเรา
+@receiver(post_save, sender=Comment)
+def notify_post_owner_new_comment(sender, instance, created, **kwargs):
+    if created and instance.post.author != instance.user:
+        MemberNotification.objects.create(
+            user=instance.post.author,
+            message=f"💬 {instance.user.username} คอมเมนต์โพสต์ของคุณ: {instance.content[:50]}"
+        )
+
+# ❤️ แจ้งเตือนเมื่อมีคนกดไลค์โพสต์ของเรา
+@receiver(post_save, sender=Post.likes.through)  # ใช้ ManyToMany signal
+def notify_post_owner_new_like(sender, instance, **kwargs):
+    post = instance.post
+    liker = instance.user
+    if post.author != liker:
+        MemberNotification.objects.create(
+            user=post.author,
+            message=f"❤️ {liker.username} ถูกใจโพสต์ของคุณ!"
+        )
+
+# 📦 แจ้งเตือนสถานะคำสั่งซื้อ
+@receiver(post_save, sender=Order)
+def notify_buyer_order_status(sender, instance, **kwargs):
+    MemberNotification.objects.create(
+        user=instance.user,
+        message=f"📦 คำสั่งซื้อของคุณ #{instance.id} ถูกเปลี่ยนเป็น {instance.status}"
+    )

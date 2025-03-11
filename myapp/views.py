@@ -2948,3 +2948,39 @@ def seller_respond_review(request, review_id):
             messages.success(request, "Response submitted successfully.")
 
     return redirect("seller_reviews")
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from .models import MemberNotification
+
+@login_required
+def member_notifications_list(request):
+    """ แสดงหน้าแจ้งเตือนทั้งหมดของสมาชิก """
+    notifications = MemberNotification.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, "notifications.html", {"notifications": notifications})
+
+@login_required
+def api_member_notifications(request):
+    """ ส่งแจ้งเตือนของสมาชิกเป็น JSON (AJAX) """
+    notifications = MemberNotification.objects.filter(user=request.user, is_read=False).order_by("-created_at")[:10]
+    
+    data = [
+        {"id": n.id, "message": n.message, "created_at": n.created_at.strftime("%Y-%m-%d %H:%M:%S")}
+        for n in notifications
+    ]
+    return JsonResponse({"notifications": data})
+
+@csrf_exempt
+@login_required
+def mark_notification_as_read(request):
+    """ เปลี่ยนสถานะแจ้งเตือนเป็น 'อ่านแล้ว' """
+    if request.method == "POST":
+        notification_id = request.POST.get("notification_id")
+        try:
+            notification = MemberNotification.objects.get(id=notification_id, user=request.user)
+            notification.mark_as_read()
+            return JsonResponse({"status": "success"})
+        except MemberNotification.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Notification not found"}, status=404)
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)

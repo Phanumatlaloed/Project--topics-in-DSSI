@@ -570,3 +570,20 @@ class SellerNotification(models.Model):
 
     def __str__(self):
         return f"📢 {self.seller.username} - {self.message[:50]}"
+
+from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class MemberNotification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="member_notifications")
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"📢 {self.user.username} - {self.message[:50]}"

@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การแจ้งเตือนของฉัน</title>
+    <link rel="stylesheet" href="{% static 'styles/notificationss.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="{% static 'js/notifications.js' %}" defer></script>
+</head>
+<body>
+    <div class="notifications-container">
+        <h2>🔔 การแจ้งเตือนของฉัน</h2>
+        
+        <ul id="notification-list">
+            {% if notifications %}
+                {% for notification in notifications %}
+                <li class="notification-item {% if not notification.is_read %}unread{% endif %}" data-id="{{ notification.id }}">
+                    <div class="notif-content">
+                        {{ notification.message|safe }}  
+                    </div>
+                    <div class="notif-time">{{ notification.created_at|date:"d/m/Y H:i" }}</div>
+                </li>
+                {% endfor %}
+            {% else %}
+                <li class="no-notifications">✅ ไม่มีการแจ้งเตือน</li>
+            {% endif %}
+        </ul>
+
+        <button class="mark-all-read-btn" onclick="markAllAsRead()">✅ ทำเครื่องหมายว่าอ่านแล้ว</button>
+    </div>
+
+    <script>
+        function markAllAsRead() {
+            fetch("{% url 'mark_notification_as_read' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            }).then(response => response.json())
+            .then(() => {
+                document.querySelectorAll(".notification-item").forEach(item => {
+                    item.classList.remove("unread");
+                });
+            });
+        }
+
+        function loadNotifications() {
+            fetch("{% url 'api_member_notifications' %}")
+            .then(response => response.json())
+            .then(data => {
+                const notificationList = document.getElementById("notification-list");
+                notificationList.innerHTML = "";
+
+                if (data.notifications.length === 0) {
+                    notificationList.innerHTML = "<li class='no-notifications'>✅ ไม่มีการแจ้งเตือน</li>";
+                } else {
+                    data.notifications.forEach(notification => {
+                        const notifItem = document.createElement("li");
+                        notifItem.className = `notification-item unread`;
+                        notifItem.innerHTML = `
+                            <div class="notif-content">${notification.message}</div>
+                            <div class="notif-time">${notification.created_at}</div>
+                        `;
+                        notificationList.appendChild(notifItem);
+                    });
+                }
+            });
+        }
+
+        // โหลดแจ้งเตือนใหม่ทุก 10 วินาที
+        setInterval(loadNotifications, 10000);
+    </script>
+</body>
+</html>
