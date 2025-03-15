@@ -1,112 +1,282 @@
-/* ตั้งค่าพื้นฐานของกล่องแจ้งเตือน */
-.notification-container {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    margin: 20px auto;
-    font-family: 'Poppins', sans-serif;
-}
-
-/* หัวข้อการแจ้งเตือน */
-.notification-container h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-}
-
-.notification-container h3::before {
-    content: "🔔";
-    font-size: 22px;
-    margin-right: 10px;
-}
-
-/* รายการแจ้งเตือน */
-#notification-list {
-    list-style: none;
-    padding: 0;
+/* Reset and base styles */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Prompt', sans-serif;
 }
 
-/* สไตล์ของรายการแจ้งเตือน */
-.notification-item {
-    background: #f8f9fa;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
+body {
+    background-color: #f5f7fa;
+    color: #333;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* Notifications container */
+.notifications-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    position: relative;
+}
+
+.notification-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-left: 5px solid #007bff;
-    transition: all 0.3s ease-in-out;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
 }
 
-.notification-item.unread {
-    background: #fffae6;
-    border-left: 5px solid #ffa500;
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-/* ข้อความแจ้งเตือน */
-.notif-message {
-    font-weight: 500;
+.auto-refresh {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.auto-refresh label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.auto-refresh input[type="checkbox"] {
+    cursor: pointer;
+}
+
+h2 {
+    font-size: 24px;
     color: #333;
-    flex: 1;
-    word-break: break-word;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
 }
 
-/* เวลาแจ้งเตือน */
+/* ไฟกระพริบแสดงสถานะเรียลไทม์ */
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    color: #f44336;
+    font-weight: 500;
+}
+
+.live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #f44336;
+    border-radius: 50%;
+    animation: livePulse 1.5s infinite;
+}
+
+@keyframes livePulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* Notification list */
+#notification-list {
+    list-style: none;
+    margin-bottom: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.notification-item {
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    border-left: 4px solid #ddd;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Unread notifications */
+.notification-item.unread {
+    background-color: #e8f4ff;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+/* Read notifications */
+.notification-item:not(.unread) {
+    background-color: #f8f8f8;
+    border-left: 4px solid #c0c0c0;
+    color: #555;
+}
+
+.notif-content {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
 .notif-time {
-    font-size: 0.85em;
-    color: #666;
-    white-space: nowrap;
+    font-size: 12px;
+    color: #777;
+    text-align: right;
 }
 
-/* ถ้าไม่มีแจ้งเตือน */
+.notification-item.unread .notif-time {
+    color: #0066cc;
+    font-weight: 500;
+}
+
+/* Empty state */
 .no-notifications {
     text-align: center;
-    font-weight: bold;
-    color: #666;
+    padding: 40px 20px;
+    color: #888;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin: 20px 0;
 }
 
-/* ปุ่ม "ทำเครื่องหมายว่าอ่านแล้ว" */
-.mark-read-btn {
-    background: #4CAF50;
+/* Footer controls */
+.footer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Buttons */
+.mark-all-read-btn, .refresh-btn {
+    background-color: #007bff;
     color: white;
-    padding: 10px;
     border: none;
-    cursor: pointer;
-    margin-top: 10px;
-    display: block;
-    width: 100%;
-    border-radius: 5px;
+    padding: 12px 20px;
+    border-radius: 8px;
     font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    transition: background 0.3s ease-in-out;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
 }
 
-.mark-read-btn:hover {
-    background: #45a049;
+.mark-all-read-btn:hover, .refresh-btn:hover {
+    background-color: #0069d9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
 }
 
-/* Responsive */
+.refresh-btn {
+    background-color: #6c757d;
+}
+
+.refresh-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Hover effects */
+.notification-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.notification-item.unread:hover {
+    background-color: #d9edff;
+}
+
+.notification-item:not(.unread):hover {
+    background-color: #f1f1f1;
+}
+
+/* Animation for new notifications */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-item.new {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* เพิ่มแอนิเมชั่นสำหรับไฮไลท์การแจ้งเตือนใหม่ (เรียลไทม์) */
+@keyframes highlightPulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+}
+
+.notification-item.highlight-new {
+    animation: highlightPulse 1.5s ease-out;
+}
+
+/* Indicator for unread notifications */
+.notification-item.unread::after {
+    content: '';
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 8px;
+    height: 8px;
+    background-color: #007bff;
+    border-radius: 50%;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-    .notification-container {
-        max-width: 100%;
+    .notifications-container {
         padding: 15px;
+        margin: 10px;
     }
-
+    
+    h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    
     .notification-item {
-        flex-direction: column;
-        align-items: flex-start;
+        padding: 14px;
     }
+    
+    .notif-content {
+        font-size: 14px;
+    }
+    
+    .mark-all-read-btn {
+        width: 100%;
+        padding: 12px 15px;
+    }
+}
 
-    .notif-time {
-        margin-top: 5px;
-        align-self: flex-end;
-    }
+/* Scrollbar styling */
+#notification-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#notification-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#notification-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+#notification-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }

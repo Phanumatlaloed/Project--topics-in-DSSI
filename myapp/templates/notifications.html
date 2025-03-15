@@ -1,18 +1,314 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>การแจ้งเตือนของฉัน</title>
-    <link rel="stylesheet" href="{% static 'styles/notificationss.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="{% static 'js/notifications.js' %}" defer></script>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Notifications container */
+        .notifications-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            position: relative;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .auto-refresh label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .auto-refresh input[type="checkbox"] {
+            cursor: pointer;
+        }
+        
+        h2 {
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+        
+        /* ไฟกระพริบแสดงสถานะเรียลไทม์ */
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #f44336;
+            font-weight: 500;
+        }
+        
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #f44336;
+            border-radius: 50%;
+            animation: livePulse 1.5s infinite;
+        }
+        
+        @keyframes livePulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* Notification list */
+        #notification-list {
+            list-style: none;
+            margin-bottom: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .notification-item {
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            border-left: 4px solid #ddd;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Unread notifications */
+        .notification-item.unread {
+            background-color: #e8f4ff;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+        }
+
+        /* Read notifications */
+        .notification-item:not(.unread) {
+            background-color: #f8f8f8;
+            border-left: 4px solid #c0c0c0;
+            color: #555;
+        }
+
+        .notif-content {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .notif-time {
+            font-size: 12px;
+            color: #777;
+            text-align: right;
+        }
+
+        .notification-item.unread .notif-time {
+            color: #0066cc;
+            font-weight: 500;
+        }
+
+        /* Empty state */
+        .no-notifications {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        /* Footer controls */
+        .footer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        /* Buttons */
+        .mark-all-read-btn, .refresh-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
+        }
+
+        .mark-all-read-btn:hover, .refresh-btn:hover {
+            background-color: #0069d9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+        
+        .refresh-btn {
+            background-color: #6c757d;
+        }
+        
+        .refresh-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Hover effects */
+        .notification-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-item.unread:hover {
+            background-color: #d9edff;
+        }
+
+        .notification-item:not(.unread):hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Animation for new notifications */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notification-item.new {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* เพิ่มแอนิเมชั่นสำหรับไฮไลท์การแจ้งเตือนใหม่ (เรียลไทม์) */
+        @keyframes highlightPulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+        }
+        
+        .notification-item.highlight-new {
+            animation: highlightPulse 1.5s ease-out;
+        }
+
+        /* Indicator for unread notifications */
+        .notification-item.unread::after {
+            content: '';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 8px;
+            height: 8px;
+            background-color: #007bff;
+            border-radius: 50%;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .notifications-container {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            h2 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .notification-item {
+                padding: 14px;
+            }
+            
+            .notif-content {
+                font-size: 14px;
+            }
+            
+            .mark-all-read-btn {
+                width: 100%;
+                padding: 12px 15px;
+            }
+        }
+
+        /* Scrollbar styling */
+        #notification-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #notification-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        #notification-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        #notification-list::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
 </head>
 <body>
     <div class="notifications-container">
-        <h2>🔔 การแจ้งเตือนของฉัน</h2>
+        <div class="notification-header">
+            <h2>🔔 การแจ้งเตือนของฉัน</h2>
+            <div class="controls">
+                <div class="auto-refresh">
+                    <label>
+                        <input type="checkbox" id="autoRefreshToggle" checked>
+                        <span>อัพเดทอัตโนมัติ</span>
+                    </label>
+                </div>
+                <div class="live-indicator">
+                    <span class="live-dot"></span> Live
+                </div>
+            </div>
+        </div>
         
         <ul id="notification-list">
             {% if notifications %}
@@ -29,50 +325,270 @@
             {% endif %}
         </ul>
 
-        <button class="mark-all-read-btn" onclick="markAllAsRead()">✅ ทำเครื่องหมายว่าอ่านแล้ว</button>
+        {% if notifications %}
+        <div class="footer-controls">
+            <form id="mark-all-form" action="{% url 'mark_notification_as_read' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="mark_all" value="true">
+                <button type="submit" class="mark-all-read-btn">✅ ทำเครื่องหมายว่าอ่านแล้วทั้งหมด</button>
+            </form>
+            <button class="refresh-btn" id="refresh-button">↻ รีเฟรชข้อมูล</button>
+        </div>
+        {% endif %}
     </div>
 
     <script>
-        function markAllAsRead() {
-            fetch("{% url 'mark_notification_as_read' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
-                    "Content-Type": "application/json"
+        // ตัวแปร global
+        let notificationInterval = null;
+        let lastResponseData = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // เพิ่ม event listener สำหรับการคลิกที่แต่ละการแจ้งเตือน
+            setupNotificationListeners();
+            
+            // ตั้งค่าการรีเฟรชอัตโนมัติ
+            const autoRefreshToggle = document.getElementById('autoRefreshToggle');
+            autoRefreshToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    // เปิดการอัพเดทอัตโนมัติ
+                    notificationInterval = setInterval(loadNotifications, 15000);
+                    document.querySelector('.live-dot').style.display = 'inline-block';
+                    document.querySelector('.live-indicator').style.color = '#f44336';
+                    document.querySelector('.live-indicator').innerHTML = '<span class="live-dot"></span> Live';
+                } else {
+                    // ปิดการอัพเดทอัตโนมัติ
+                    clearInterval(notificationInterval);
+                    document.querySelector('.live-dot').style.display = 'none';
+                    document.querySelector('.live-indicator').style.color = '#888';
+                    document.querySelector('.live-indicator').textContent = 'Paused';
                 }
-            }).then(response => response.json())
-            .then(() => {
-                document.querySelectorAll(".notification-item").forEach(item => {
-                    item.classList.remove("unread");
+            });
+            
+            // ปุ่มรีเฟรชข้อมูลด้วยตนเอง
+            const refreshButton = document.getElementById('refresh-button');
+            if (refreshButton) {
+                refreshButton.addEventListener('click', manualRefresh);
+            }
+            
+            // ส่งฟอร์มทำเครื่องหมายว่าอ่านแล้วทั้งหมดด้วย JavaScript
+            const markAllForm = document.getElementById('mark-all-form');
+            if (markAllForm) {
+                markAllForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    markAllAsRead();
+                });
+            }
+            
+            // เริ่มอัพเดทอัตโนมัติ
+            notificationInterval = setInterval(loadNotifications, 15000);
+            
+            // หยุดการอัพเดทเมื่อแท็บไม่ได้ใช้งาน
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    clearInterval(notificationInterval);
+                } else {
+                    if (document.getElementById('autoRefreshToggle').checked) {
+                        loadNotifications();
+                        clearInterval(notificationInterval);
+                        notificationInterval = setInterval(loadNotifications, 15000);
+                    }
+                }
+            });
+            
+            // อัพเดทแท็บเมื่อโหลดหน้า
+            updateUnreadBadge();
+        });
+        
+        // เพิ่ม event listener ให้การแจ้งเตือนทุกรายการ
+        function setupNotificationListeners() {
+            document.querySelectorAll('.notification-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const notificationId = this.dataset.id;
+                    markAsRead(notificationId, this);
                 });
             });
         }
 
-        function loadNotifications() {
-            fetch("{% url 'api_member_notifications' %}")
-            .then(response => response.json())
-            .then(data => {
-                const notificationList = document.getElementById("notification-list");
-                notificationList.innerHTML = "";
+        // ทำเครื่องหมายว่าอ่านแล้ว
+        function markAsRead(notificationId, element) {
+            if (element.classList.contains('unread')) {
+                // อัพเดท UI ทันที
+                element.classList.remove('unread');
+                updateUnreadBadge();
+                
+                // ส่งข้อมูลไปยังเซิร์ฟเวอร์โดยใช้ fetch แบบ form data
+                const formData = new FormData();
+                formData.append('notification_id', notificationId);
+                
+                fetch("{% url 'mark_notification_as_read' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': "{{ csrf_token }}"
+                    },
+                    body: formData
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
 
-                if (data.notifications.length === 0) {
-                    notificationList.innerHTML = "<li class='no-notifications'>✅ ไม่มีการแจ้งเตือน</li>";
-                } else {
-                    data.notifications.forEach(notification => {
-                        const notifItem = document.createElement("li");
-                        notifItem.className = `notification-item unread`;
-                        notifItem.innerHTML = `
-                            <div class="notif-content">${notification.message}</div>
-                            <div class="notif-time">${notification.created_at}</div>
-                        `;
-                        notificationList.appendChild(notifItem);
-                    });
-                }
+        // ทำเครื่องหมายว่าอ่านแล้วทั้งหมด
+        function markAllAsRead() {
+            // อัพเดท UI ทันที
+            document.querySelectorAll('.notification-item.unread').forEach(item => {
+                item.classList.remove('unread');
+            });
+            updateUnreadBadge();
+            
+            // ซ่อนปุ่ม
+            const markAllForm = document.getElementById('mark-all-form');
+            if (markAllForm) {
+                markAllForm.style.display = 'none';
+            }
+            
+            // ส่งข้อมูลไปยังเซิร์ฟเวอร์
+            const formData = new FormData();
+            formData.append('mark_all', 'true');
+            
+            fetch("{% url 'mark_notification_as_read' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': "{{ csrf_token }}"
+                },
+                body: formData
+            }).catch(error => {
+                console.error('Error:', error);
             });
         }
 
-        // โหลดแจ้งเตือนใหม่ทุก 10 วินาที
-        setInterval(loadNotifications, 10000);
+        // อัพเดทจำนวนการแจ้งเตือนที่ยังไม่ได้อ่าน
+        function updateUnreadBadge() {
+            const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+            
+            // อัพเดทหัวข้อหน้า
+            if (unreadCount > 0) {
+                document.title = `(${unreadCount}) การแจ้งเตือนของฉัน`;
+            } else {
+                document.title = 'การแจ้งเตือนของฉัน';
+            }
+            
+            // แสดง/ซ่อนปุ่มทำเครื่องหมายว่าอ่านแล้วทั้งหมด
+            const markAllForm = document.getElementById('mark-all-form');
+            if (markAllForm) {
+                markAllForm.style.display = unreadCount > 0 ? 'block' : 'none';
+            }
+        }
+        
+        // รีเฟรชข้อมูลด้วยตนเอง
+        function manualRefresh() {
+            const refreshButton = document.querySelector('.refresh-btn');
+            if (refreshButton) {
+                refreshButton.textContent = '↻ กำลังโหลด...';
+                refreshButton.disabled = true;
+            }
+            
+            loadNotifications()
+                .then(() => {
+                    if (refreshButton) {
+                        refreshButton.textContent = '↻ รีเฟรชข้อมูล';
+                        refreshButton.disabled = false;
+                    }
+                })
+                .catch(() => {
+                    if (refreshButton) {
+                        refreshButton.textContent = '↻ รีเฟรชข้อมูล';
+                        refreshButton.disabled = false;
+                    }
+                });
+        }
+        
+        // โหลดข้อมูลแจ้งเตือน
+        function loadNotifications() {
+            return new Promise((resolve, reject) => {
+                const timestamp = new Date().getTime();
+                
+                fetch(`{% url 'api_member_notifications' %}?_=${timestamp}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // ตรวจสอบว่าข้อมูลเปลี่ยนแปลงหรือไม่
+                        if (lastResponseData && JSON.stringify(data) === JSON.stringify(lastResponseData)) {
+                            console.log("No changes in notifications");
+                            resolve(data);
+                            return;
+                        }
+                        
+                        // บันทึกข้อมูลล่าสุด
+                        lastResponseData = data;
+                        
+                        const notificationList = document.getElementById('notification-list');
+                        
+                        // กรณีไม่มีการแจ้งเตือน
+                        if (data.notifications.length === 0) {
+                            notificationList.innerHTML = "<li class='no-notifications'>✅ ไม่มีการแจ้งเตือน</li>";
+                            resolve(data);
+                            return;
+                        }
+                        
+                        // เก็บ ID ที่มีอยู่แล้ว
+                        const existingIds = new Set();
+                        document.querySelectorAll('.notification-item').forEach(item => {
+                            existingIds.add(item.dataset.id);
+                        });
+                        
+                        // ลบข้อความว่าไม่มีการแจ้งเตือน (ถ้ามี)
+                        const noNotificationsElement = document.querySelector('.no-notifications');
+                        if (noNotificationsElement) {
+                            notificationList.innerHTML = '';
+                        }
+                        
+                        // เรียงลำดับข้อมูล
+                        data.notifications.sort((a, b) => {
+                            return new Date(b.created_at) - new Date(a.created_at);
+                        });
+                        
+                        let hasNewNotifications = false;
+                        
+                        // เพิ่มการแจ้งเตือนใหม่
+                        data.notifications.forEach(notification => {
+                            if (!existingIds.has(notification.id)) {
+                                hasNewNotifications = true;
+                                
+                                const notifItem = document.createElement('li');
+                                notifItem.className = `notification-item unread new`;
+                                notifItem.dataset.id = notification.id;
+                                notifItem.innerHTML = `
+                                    <div class="notif-content">${notification.message}</div>
+                                    <div class="notif-time">${notification.created_at}</div>
+                                `;
+                                
+                                // เพิ่มไว้ด้านบนสุด
+                                notificationList.insertBefore(notifItem, notificationList.firstChild);
+                                
+                                // เพิ่ม event listener
+                                notifItem.addEventListener('click', function() {
+                                    markAsRead(notification.id, this);
+                                });
+                                
+                                // เพิ่มเอฟเฟกต์
+                                setTimeout(() => {
+                                    notifItem.classList.add('highlight-new');
+                                    setTimeout(() => {
+                                        notifItem.classList.remove('highlight-new');
+                                    }, 2000);
+                                }, 100);
+                            }
+                        });
+                        
+                        // อัพเดท UI
+                        updateUnreadBadge();
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        console.error('Error loading notifications:', error);
+                        reject(error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>

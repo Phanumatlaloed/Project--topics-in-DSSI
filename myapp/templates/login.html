@@ -1,85 +1,80 @@
-{% load static %}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- เชื่อมโยงไฟล์ CSS -->
-    <link rel="stylesheet" href="{% static 'styles/login.css' %}">
+{% load static %}  
+<!DOCTYPE html> 
+<html lang="th"> 
+<head>     
+    <meta charset="UTF-8">     
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">     
+    <title>Login</title>     
+    <!-- เชื่อมโยงไฟล์ CSS -->     
+    <link rel="stylesheet" href="{% static 'styles/login.css' %}">     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-
-
-</head>
-<body>
-    <div class="login-container">
-        <!-- โลโก้ -->
-        <div class="logo-container">
-            <img src="{% static 'media/logo.jpg' %}" alt="Company Logo">
-        </div>
-
-        <!-- หัวข้อ -->
-        <h2>สมาชิกเข้าสู่ระบบ</h2>
-        <p>Sign in or create an account to enjoy <b>FREE</b> standard shipping.</p>
-
-        <!-- ฟอร์ม -->
-        <form method="POST">
-            {% csrf_token %}
-            {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                        <li style="color: red;">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            <input type="username" name="username" placeholder="Enter your username" required>
-            <!-- ฟิลด์รหัสผ่าน พร้อมไอคอนตา -->
-            <div class="password-container">
-                <input type="password" id="password" name="password" placeholder="Password" required>
-                <span class="toggle-password" onclick="togglePassword()">
-                    <i class="fa fa-eye"></i>
-                </span>
-            </div>
+</head> 
+<body>     
+    <div class="login-container">         
+        <!-- โลโก้ -->         
+        <div class="logo-container">             
+            <img src="{% static 'media/logo.jpg' %}" alt="Company Logo">         
+        </div>                  
+        
+        <!-- หัวข้อ -->         
+        <h2>สมาชิกเข้าสู่ระบบ</h2>         
+        <p>Sign in or create an account to enjoy <b>FREE</b> standard shipping.</p>                  
+        
+        <!-- ฟอร์ม -->         
+        <form method="POST">             
+            {% csrf_token %}             
+            {% if messages %}                 
+                <ul>                     
+                    {% for message in messages %}                         
+                        <li>{{ message }}</li>                     
+                    {% endfor %}                 
+                </ul>             
+            {% endif %}                          
             
-            <!--input type="password" name="password" placeholder="Password" required-->
-            <button type="submit" class="btn-login">เข้าสู่ระบบ</button>
-        </form>
-
-        <!-- ลิงก์ -->
-        <div class="links">
-            <a href="{% url 'password_reset' %}" class="forgotPass">ลืมรหัสผ่าน?</a>
-            <a href="{% url 'register' %}" class="create-account">ลงทะเบียน</a>
-        </div>
-
-        <!-- ลิงก์ผู้ดูแลระบบ -->
-        <div class="admin-login">
-            <a href="{% url 'admin_login' %}">ผู้ดูแลระบบ</a>
+            <input type="username" name="username" placeholder="Enter your username" required>
+            
+            <!-- ฟิลด์รหัสผ่าน พร้อมไอคอนตา -->             
+            <div class="password-container">                 
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePassword()">                     
+                    <i class="fa fa-eye"></i>                 
+                </span>             
+            </div>                          
+            
+            <button type="submit" class="btn-login">เข้าสู่ระบบ</button>         
+        </form>                  
+        
+        <!-- ลิงก์ -->         
+        <div class="links">             
+            <a href="{% url 'password_reset' %}" class="forgotPass">ลืมรหัสผ่าน?</a>             
+            <a href="{% url 'register' %}" class="create-account">ลงทะเบียน</a>         
+        </div>                  
+        
+        <!-- ส่วนล่าง -->         
+        <div class="admin-login">             
+            <a href="{% url 'admin_login' %}">ผู้ดูแลระบบ</a>             
         </div>
         
-        <!-- ลิงก์ผู้ขาย -->
-        <div class="seller">
-            <a href="{% url 'seller_login' %}">ผู้ขาย</a>
-        </div>
-        
-    </div>
-    <script>
-        function togglePassword() {
-            let passwordField = document.getElementById("password");
-            let toggleIcon = document.querySelector(".toggle-password i");
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                toggleIcon.classList.remove("fa-eye");
-                toggleIcon.classList.add("fa-eye-slash"); // เปลี่ยนเป็นไอคอนซ่อนรหัสผ่าน
-            } else {
-                passwordField.type = "password";
-                toggleIcon.classList.remove("fa-eye-slash");
-                toggleIcon.classList.add("fa-eye"); // เปลี่ยนกลับเป็นไอคอนเปิดตา
-            }
-        }
-
-    </script>
-</body>
+        <div class="seller">             
+            <a href="{% url 'seller_login' %}">ผู้ขาย</a>             
+        </div>     
+    </div>      
+    
+    <script>         
+        function togglePassword() {             
+            let passwordField = document.getElementById("password");             
+            let toggleIcon = document.querySelector(".toggle-password i");                          
+            
+            if (passwordField.type === "password") {                 
+                passwordField.type = "text";                 
+                toggleIcon.classList.remove("fa-eye");                 
+                toggleIcon.classList.add("fa-eye-slash"); // เปลี่ยนเป็นไอคอนซ่อนรหัสผ่าน             
+            } else {                 
+                passwordField.type = "password";                 
+                toggleIcon.classList.remove("fa-eye-slash");                 
+                toggleIcon.classList.add("fa-eye"); // เปลี่ยนกลับเป็นไอคอนเปิดตา             
+            }         
+        }     
+    </script> 
+</body> 
 </html>

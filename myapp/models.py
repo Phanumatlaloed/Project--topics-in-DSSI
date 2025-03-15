@@ -86,8 +86,15 @@ def upload_to(instance, filename):
     unique_filename = f"{uuid.uuid4()}.{ext}"  # ใช้ UUID4 เป็นชื่อไฟล์
     return os.path.join(f"posts/{folder}/", unique_filename)
 
+
+from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # ✅ ดึงโมเดล User จากระบบ Auth อัตโนมัติ
+
 class Post(models.Model):
     """ โมเดลโพสต์ทั่วไป """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")  # ✅ เช็คตรงนี้
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
     content = models.TextField(blank=True, null=True, default="")
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_posts', blank=True)
