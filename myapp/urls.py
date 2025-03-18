@@ -18,6 +18,7 @@ urlpatterns = [
     path('remove_saved_post/<int:post_id>/', views.remove_saved_post, name='remove_saved_post'),
     path('profile_management/', views.profile_management, name='profile_management'),
     path('follow/<int:user_id>/', views.follow_user, name='follow_user'),
+    path("follow_status/<int:user_id>/", views.follow_status, name="follow_status"),
     #path('follow_status/<int:user_id>/', check_follow_status, name='check_follow_status'),  # ✅ API ตรวจสอบสถานะติดตาม
     path('report/<int:post_id>/', report_post, name='report_post'),  # ✅ เพิ่ม URL pattern สำหรับการรายงานโพสต์
     

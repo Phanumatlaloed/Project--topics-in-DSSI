@@ -4,17 +4,20 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             let button = this.querySelector(".follow-btn");
             let userId = button.dataset.userId;
-            let formData = new FormData(this);
+            let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
             if (!userId) {
                 console.error("❌ userId is undefined or null");
                 return;
             }
 
-            fetch(this.action, {
+            fetch(`/follow/${userId}/`, {
                 method: "POST",
-                body: formData,
-                headers: { "X-CSRFToken": formData.get("csrfmiddlewaretoken") }
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
             })
             .then(response => response.json())
             .then(data => {
@@ -22,11 +25,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (data.is_following) {
                         button.classList.remove("btn-outline-primary");
                         button.classList.add("btn-danger");
-                        button.textContent = "Unfollow";
+                        button.textContent = "ติดตามแล้ว";
                     } else {
                         button.classList.remove("btn-danger");
                         button.classList.add("btn-outline-primary");
-                        button.textContent = "Follow";
+                        button.textContent = "ติดตาม";
                     }
                 } else {
                     console.error("❌ Follow API error:", data.message);
@@ -51,11 +54,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.is_following) {
                     button.classList.remove("btn-outline-primary");
                     button.classList.add("btn-danger");
-                    button.textContent = "Unfollow";
+                    button.textContent = "ติดตามแล้ว";
                 } else {
                     button.classList.remove("btn-danger");
                     button.classList.add("btn-outline-primary");
-                    button.textContent = "Follow";
+                    button.textContent = "ติดตาม";
                 }
             })
             .catch(error => console.error("❌ Error fetching follow status:", error));

@@ -138,37 +138,45 @@ p {
 /* 🌸 ปรับปุ่มให้สวยขึ้น */
 .btn {
     width: 100%;
-    padding: 12px;
+    padding: 12px 0;
     font-size: 16px;
     font-weight: bold;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* ปุ่มเพิ่มในตะกร้า */
 .btn-success {
     background: linear-gradient(to right, #ff758c, #ff7eb3);
     color: white;
+    box-shadow: 0px 3px 8px rgba(255, 117, 140, 0.3);
 }
 
 .btn-success:hover {
     background: linear-gradient(to right, #ff5e62, #ff99ac);
-    box-shadow: 0px 4px 10px rgba(255, 105, 135, 0.3);
+    box-shadow: 0px 5px 12px rgba(255, 105, 135, 0.4);
+    transform: translateY(-2px);
 }
 
 /* ปุ่มดูรายละเอียด */
 .btn-info {
-    background: linear-gradient(to right, #ffb6c1, #ffdde1);
-    color: white;
+    background: white;
+    color: #ff758c;
+    border: 2px solid #ff758c;
+    box-shadow: 0px 3px 8px rgba(255, 117, 140, 0.15);
 }
 
 .btn-info:hover {
-    background: linear-gradient(to right, #ff9aa2, #ffc3d1);
-    box-shadow: 0px 4px 10px rgba(255, 105, 135, 0.3);
+    background: #fff5f8;
+    color: #ff5e62;
+    border-color: #ff5e62;
+    box-shadow: 0px 5px 12px rgba(255, 105, 135, 0.25);
+    transform: translateY(-2px);
 }
-
 /* 🌸 แจ้งเตือนเพิ่มสินค้าลงตะกร้า */
 .cart-message {
     text-align: center;

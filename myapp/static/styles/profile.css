@@ -561,3 +561,55 @@ body {
         margin-bottom: 5px;
     }
 }
+
+/* ===== COMMENT OPTIONS DROPDOWN ===== */
+.comment-options {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.comment-options:hover {
+    color: var(--primary-color);
+}
+
+/* 🎨 Dropdown เมนู */
+.dropdown-menu {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 📌 เพิ่มสไตล์ให้ปุ่ม */
+.dropdown-item {
+    font-size: 0.95rem;
+    padding: 10px 15px;
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+/* 🖊 ปุ่มแก้ไข */
+.dropdown-item.edit-comment {
+    color: var(--primary-color);
+}
+
+.dropdown-item.edit-comment:hover {
+    background-color: var(--tertiary-color);
+    color: var(--dark-pink);
+}
+
+/* 🗑 ปุ่มลบ */
+.dropdown-item.delete-comment {
+    color: #ff4d4d;
+    font-weight: bold;
+}
+
+.dropdown-item.delete-comment:hover {
+    background-color: #ffebec;
+    color: #d40f0f;
+}

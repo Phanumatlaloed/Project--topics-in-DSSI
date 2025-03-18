@@ -1300,6 +1300,7 @@ from .models import Product, Review
 from .services import analyze_text
 
 # ✅ แสดงรายละเอียดสินค้า
+@login_required
 def product_detail(request, product_id):
     """แสดงรายละเอียดสินค้า พร้อมการวิเคราะห์รีวิวโดย AI"""
     product = get_object_or_404(Product, id=product_id)
@@ -1356,6 +1357,7 @@ def product_detail(request, product_id):
         'summary': summary,
         'translated_summary': translated_summary
     })
+
 @login_required
 def product_detail_user(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -1631,8 +1633,15 @@ def upload_payment(request, order_ids):
 @login_required
 def add_review(request, order_id, product_id):
     """ ✅ ให้รีวิวสินค้าได้เฉพาะเมื่อออเดอร์จัดส่งสำเร็จ และไม่สามารถรีวิวซ้ำได้ """
+    
+    # ตรวจสอบออเดอร์ที่จัดส่งสำเร็จ
     order = get_object_or_404(Order, id=order_id, user=request.user, status="delivered")
     product = get_object_or_404(Product, id=product_id)
+
+    # 🔍 Debugging
+    print(f"🔍 DEBUG: order_id -> {order_id}, product_id -> {product_id}")
+    print(f"🔍 DEBUG: Order Exists? {order is not None}")
+    print(f"🔍 DEBUG: Product Exists? {product is not None}")
 
     # ✅ ตรวจสอบว่าผู้ใช้เคยรีวิวสินค้านี้ไปแล้วหรือไม่
     if Review.objects.filter(user=request.user, product=product, order=order).exists():
@@ -1646,7 +1655,7 @@ def add_review(request, order_id, product_id):
 
         if not rating or not comment:
             messages.error(request, "❌ กรุณาให้คะแนนและเขียนรีวิวก่อนส่ง")
-            return render(request, "add_review.html", {"product": product})
+            return render(request, "add_review.html", {"product": product, "order": order})
 
         # ✅ บันทึกรีวิว
         review = Review.objects.create(
@@ -1666,17 +1675,11 @@ def add_review(request, order_id, product_id):
         if product.seller:
             print(f"🛎 กำลังสร้างแจ้งเตือนให้ {product.seller.user.username} ...")  # ✅ Debugging
 
-            create_seller_notification(
-                user=product.seller.user,  # ✅ ส่งแจ้งเตือนให้เจ้าของร้าน
-                sender=request.user,  # ✅ คนที่รีวิว
-                notification_type="new_review",  # ✅ ประเภทการแจ้งเตือน
-                order=order
-            )
-
         messages.success(request, "✅ รีวิวของคุณถูกบันทึกเรียบร้อย!")
         return redirect("product_detail", product_id=product.id)
 
-    return render(request, "add_review.html", {"product": product})
+    return render(request, "add_review.html", {"product": product, "order": order})
+
 
 
 
@@ -1800,6 +1803,8 @@ def order_history(request):
     cancelled_orders = orders.filter(status="cancelled")
     return_orders = RefundRequest.objects.filter(user=request.user)
 
+    reviewed_products = {}
+
     # ✅ ดึงสินค้าที่ถูกรีวิวแล้วและแปลงเป็น dict
     reviewed_products = Review.objects.filter(user=request.user).values_list("product_id", "order_id")
     reviewed_dict = {str(f"{product_id}_{order_id}"): True for product_id, order_id in reviewed_products}  # 🔥 แปลง key เป็น string
@@ -1818,9 +1823,6 @@ def order_history(request):
         'return_orders': return_orders,
         'reviewed_products': reviewed_json,  # ✅ JSON ถูกต้อง
     })
-
-
-
 
 @login_required
 def refund_history(request):
@@ -2023,12 +2025,14 @@ def sellercancel_order(request, order_id):
 @login_required
 def seller_payment_verification(request):
     """ ✅ แสดงคำสั่งซื้อที่รอการตรวจสอบการชำระเงินสำหรับผู้ขาย """
-    orders = Order.objects.filter(seller=request.user.seller_profile, payment_status="pending")
-
+    orders = Order.objects.filter(
+        seller=request.user.seller_profile, 
+        payment_status="pending"
+    ).exclude(status="cancelled")  # ไม่รวมออเดอร์ที่มีสถานะเป็น cancelled
+    
     return render(request, "seller_payment_verification.html", {
         "orders": orders
     })
-
 
 def reject_seller_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id)
@@ -2045,6 +2049,7 @@ def reject_seller_payment(request, order_id):
 
 @login_required
 def follow_user(request, user_id):
+    """ ✅ ติดตามหรือเลิกติดตามผู้ใช้ """
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
 
@@ -2061,7 +2066,6 @@ def follow_user(request, user_id):
     else:
         is_following = True
 
-    # ✅ ดึงค่าล่าสุดจาก Database
     followers_count = Follow.objects.filter(following=target_user).count()
     following_count = Follow.objects.filter(follower=request.user).count()
 
@@ -2071,6 +2075,13 @@ def follow_user(request, user_id):
         "followers_count": followers_count,
         "following_count": following_count
     })
+@login_required
+def follow_status(request, user_id):
+    """ ✅ ตรวจสอบว่ายูสเซอร์ที่ล็อกอินติดตาม user_id หรือไม่ """
+    target_user = get_object_or_404(CustomUser, id=user_id)
+    is_following = Follow.objects.filter(follower=request.user, following=target_user).exists()
+
+    return JsonResponse({"success": True, "is_following": is_following})
 
 @login_required
 def delete_uploaded_file(request, file_id):
@@ -2268,15 +2279,16 @@ def is_admin(user):
 # แอดมินล็อกอิน
 def admin_login(request):
     if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        if user is not None and user.is_staff:  # ✅ ต้องเป็นแอดมินเท่านั้น
-            login(request, user)
-            return redirect("admin_dashboard")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username=username, password=password)  # ตรวจสอบข้อมูล
+
+        if user is not None and user.is_staff:  # เช็คว่าเป็นแอดมิน
+            login(request, user)  # ทำการ Login
+            return redirect("admin_dashboard")  # ไปที่หน้าหลักของแอดมิน
         else:
-            messages.error(request, "Invalid credentials or not an admin.")
-    
+            messages.error(request, "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง หรือคุณไม่มีสิทธิ์เข้าถึงแอดมิน")  # แสดง Error
+
     return render(request, "admin_login.html")
 
 
@@ -2297,7 +2309,7 @@ def is_admin(user):
 
 # แสดงแดชบอร์ดแอดมิน
 # แสดงแดชบอร์ดแอดมิน (เฉพาะแอดมินเข้าได้)
-@user_passes_test(is_admin, login_url='/login/')
+@login_required(login_url="/admin_login/")
 def admin_dashboard(request):
     reported_posts = Report.objects.select_related('post', 'reported_by').order_by('-created_at')
     return render(request, "admin_dashboard.html", {"reported_posts": reported_posts})
@@ -2398,37 +2410,39 @@ from .models import SellerWallet, WithdrawalRequest, RefundRequest, OrderItem, O
 
 @login_required
 def seller_wallet(request):
-    """แสดงข้อมูลกระเป๋าเงินของผู้ขาย โดยคำนวณยอดขายเฉพาะคำสั่งซื้อที่จัดส่งสำเร็จ และไม่รวมสินค้าคืนหรือคำสั่งซื้อที่ถูกยกเลิก"""
+    """ แสดงข้อมูลกระเป๋าเงิน โดยคำนวณยอดเฉพาะคำสั่งซื้อที่สำเร็จ """
     seller = request.user.seller_profile
     wallet, created = SellerWallet.objects.get_or_create(seller=seller)
-    withdrawals = WithdrawalRequest.objects.filter(seller=seller).order_by('-created_at')
 
-    # ✅ ตรวจสอบคำขอคืนเงินที่ได้รับการอนุมัติ (ไม่หักจากกระเป๋า แต่แสดงแยก)
-    approved_refunds = RefundRequest.objects.filter(order__seller=seller, status="approved")
-
-    # ✅ คำนวณยอดที่ต้องคืนเงิน (แสดงแยกจากยอดเงินในกระเป๋า)
-    total_refund_amount = approved_refunds.aggregate(
-        total_refund=Sum(F('item__price_per_item') * F('item__quantity'))
-    )['total_refund'] or 0
-
-    # ✅ คำนวณยอดขายทั้งหมด (เฉพาะคำสั่งซื้อที่ `delivered` และไม่รวม `refunded` หรือ `cancelled`)
+    # ✅ นับเฉพาะคำสั่งซื้อที่ `delivered`
     total_sales = OrderItem.objects.filter(
         order__seller=seller,
-        order__status='delivered'  # ✅ นับเฉพาะคำสั่งซื้อที่ส่งสำเร็จ
+        order__status="delivered"
     ).aggregate(
         total_revenue=Sum(F('price_per_item') * F('quantity'))
     )['total_revenue'] or 0
 
-    # ✅ คำนวณยอดขายสุทธิหลังหักคืนสินค้า
-    net_sales = total_sales - total_refund_amount
+    # ✅ คำนวณยอดคืนเงิน
+    total_refund_amount = RefundRequest.objects.filter(
+        order__seller=seller,
+        status="approved"
+    ).aggregate(
+        total_refund=Sum(F('item__price_per_item') * F('item__quantity'))
+    )['total_refund'] or 0
+
+    # ✅ คำนวณยอดขายสุทธิ (หักยอดคืนและยอดที่ถอนแล้ว)
+    net_sales = total_sales - total_refund_amount - wallet.last_withdrawn_amount
+
+    withdrawals = WithdrawalRequest.objects.filter(seller=seller).order_by('-created_at')
 
     return render(request, 'seller_wallet.html', {
         'wallet': wallet,
         'withdrawals': withdrawals,
-        'total_refund_amount': total_refund_amount,  # ✅ แสดงยอดคืน
-        'total_sales': total_sales,  # ✅ แสดงยอดขายทั้งหมดก่อนหักคืน
-        'net_sales': net_sales,  # ✅ แสดงยอดขายสุทธิหลังหักคืน
+        'total_refund_amount': total_refund_amount,
+        'total_sales': total_sales,
+        'net_sales': net_sales,
     })
+
 
 
 
@@ -2613,40 +2627,45 @@ from .models import SellerWallet, WithdrawalRequest, OrderItem, RefundRequest
 
 @login_required
 def request_withdrawal(request):
-    """ ดำเนินการขอถอนเงินโดยนับเฉพาะยอดขายที่ถอนจริงได้ """
+    """ ดำเนินการขอถอนเงิน โดยไม่นับคำสั่งซื้อที่ถูกยกเลิกและคืนเงิน """
     if request.method == "POST":
-        seller = request.user.seller_profile  # ดึงข้อมูลผู้ขาย
-        wallet = seller.wallet
+        seller = request.user.seller_profile  
+        wallet, created = SellerWallet.objects.get_or_create(seller=seller)
 
-        # ✅ คำนวณยอดที่สามารถถอนได้ (เฉพาะคำสั่งซื้อที่ `delivered` และไม่นับคืนสินค้า)
+        # ✅ นับเฉพาะออเดอร์ที่ `delivered` และไม่รวม `cancelled`
         total_earnings = OrderItem.objects.filter(
             order__seller=seller,
-            order__status="delivered"  # ✅ นับเฉพาะออเดอร์ที่จัดส่งสำเร็จ
+            order__status="delivered"
         ).aggregate(
             total_revenue=Sum(F('price_per_item') * F('quantity'))
         )['total_revenue'] or 0
 
-        # ✅ คำนวณยอดคืนเงิน (ไม่ให้ผู้ขายถอนส่วนนี้ไป)
+        # ✅ หักยอดคืนเงินที่ได้รับการอนุมัติ
         total_refund_amount = RefundRequest.objects.filter(
             order__seller=seller,
-            status="approved"  # ✅ เฉพาะการคืนเงินที่อนุมัติแล้ว
+            status="approved"
         ).aggregate(
             total_refund=Sum(F('item__price_per_item') * F('item__quantity'))
         )['total_refund'] or 0
 
-        # ✅ คำนวณยอดเงินที่สามารถถอนได้จริง
+        # ✅ คำนวณยอดเงินที่ถอนได้จริง
         withdrawable_balance = total_earnings - total_refund_amount
 
         if withdrawable_balance <= 0:
             messages.error(request, "❌ ไม่มีเงินที่สามารถถอนได้")
             return redirect("seller_wallet")
 
-        # ✅ บันทึกคำขอถอนเงิน (ใช้ยอดที่ถอนได้จริง)
+        # ✅ บันทึกคำขอถอนเงิน
         WithdrawalRequest.objects.create(
             seller=seller,
-            amount=withdrawable_balance,  # ✅ ใช้ยอดที่ถอนได้
+            amount=withdrawable_balance,
             status="pending"
         )
+
+        # ✅ อัปเดตยอดเงินในกระเป๋าให้เป็น 0 หลังถอนเงิน
+        wallet.balance = 0
+        wallet.last_withdrawn_amount += withdrawable_balance  # เก็บบันทึกยอดที่ถูกถอน
+        wallet.save()
 
         messages.success(request, f"✅ คำขอถอนเงิน ฿{withdrawable_balance} ถูกส่งไปยังแอดมินแล้ว")
         return redirect("seller_wallet")

@@ -88,20 +88,14 @@
                                 {% endif %}
 
                                 {% if post.user.id in following_users %}
-                                    <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-danger follow-btn" data-user-id="{{ post.user.id }}">
-                                            Unfollow
-                                        </button>
-                                    </form>
-                                {% else %}
-                                    <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-outline-primary follow-btn" data-user-id="{{ post.user.id }}">
-                                            Follow
-                                        </button>
-                                    </form>
-                                {% endif %}
+                                <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn"
+                                        data-user-id="{{ post.user.id }}">
+                                        {% if post.user.id in following_users %}ติดตามแล้ว{% else %}ติดตาม{% endif %}
+                                    </button>
+                                </form>
+                            {% endif %}
                             
 
                                 <!-- Follow Button >

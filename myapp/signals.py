@@ -90,21 +90,23 @@ from .models import Post, Comment, Order, MemberNotification
 @receiver(post_save, sender=Post)
 def notify_followers_new_post(sender, instance, created, **kwargs):
     if created:
-        followers = instance.author.followers.all()  # คนที่ติดตามเจ้าของโพสต์
+        followers = instance.user.followers.all()  # ✅ เปลี่ยนจาก `author` เป็น `user`
         for follower in followers:
             MemberNotification.objects.create(
                 user=follower,
-                message=f"📢 {instance.author.username} ได้โพสต์ใหม่: {instance.title}"
+                message=f"📢 {instance.user.username} ได้โพสต์ใหม่: {instance.content[:50]}"  # เปลี่ยนจาก `title` เป็น `content`
             )
+
 
 # 💬 แจ้งเตือนเมื่อมีคอมเมนต์ในโพสต์ของเรา
 @receiver(post_save, sender=Comment)
 def notify_post_owner_new_comment(sender, instance, created, **kwargs):
-    if created and instance.post.author != instance.user:
+    if created and instance.post.user != instance.user:  # ✅ เปลี่ยน `author` เป็น `user`
         MemberNotification.objects.create(
-            user=instance.post.author,
+            user=instance.post.user,  # ✅ เปลี่ยนจาก `author` เป็น `user`
             message=f"💬 {instance.user.username} คอมเมนต์โพสต์ของคุณ: {instance.content[:50]}"
         )
+
 
 # ❤️ แจ้งเตือนเมื่อมีคนกดไลค์โพสต์ของเรา
 @receiver(post_save, sender=Post.likes.through)  # ใช้ ManyToMany signal

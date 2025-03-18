@@ -263,29 +263,36 @@ body {
 }
 
 .btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #FF6B8B, #E5446D);
+    border: none;
+    color: white !important;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(229, 68, 109, 0.3);
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-hover);
-    border-color: var(--primary-hover);
+    background: linear-gradient(135deg, #E5446D, #E5446D);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 6px 14px rgba(229, 68, 109, 0.5);
 }
 
 .btn-warning {
-    background-color: var(--warning-color);
-    border-color: var(--warning-color);
-    color: #212529;
+    background: linear-gradient(135deg, #E5446D, #E5446D);
+    border: none;
+    color: #f3f8fe;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
 }
 
 .btn-warning:hover {
-    background-color: #e0af35;
-    border-color: #e0af35;
+    background: linear-gradient(135deg, #E5446D, #E5446D);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 6px 14px rgba(255, 152, 0, 0.5);
 }
+
 
 .btn-outline-primary {
     color: var(--primary-color);

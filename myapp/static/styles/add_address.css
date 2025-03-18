@@ -18,7 +18,7 @@ body {
 
 /* 🌸 ส่วนของที่อยู่ */
 .address-container {
-    max-width: 800px;
+    max-width: 600px;
     width: 90%;
     margin: 40px auto;
     padding: 35px;
@@ -50,41 +50,48 @@ h2 {
     display: inline-block;
 }
 
-/* 🌸 การ์ดที่อยู่ */
-.address-card {
-    padding: 20px;
-    margin-bottom: 25px;
-    background-color: #fffafc;
-    border-radius: 15px;
-    box-shadow: 0px 5px 15px rgba(255, 105, 135, 0.15);
+/* 🌸 ฟอร์ม */
+form {
     text-align: left;
-    border-left: 5px solid #ff758c;
-    transition: all 0.3s ease;
+    margin-bottom: 30px;
+}
+
+form p {
+    margin-bottom: 20px;
     position: relative;
-    overflow: hidden;
 }
 
-.address-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 8px 20px rgba(255, 105, 135, 0.25);
-}
-
-.address-card p {
-    margin: 8px 0;
-    color: #555;
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-.address-card p strong {
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
     color: #ff6b81;
-    margin-right: 5px;
+    font-size: 16px;
+    transform: translateX(5px);
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #ffb6c1;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background-color: #fffafc;
+}
+
+form input:focus, form select:focus, form textarea:focus {
+    outline: none;
+    border-color: #ff6b81;
+    box-shadow: 0 0 0 4px rgba(255, 107, 129, 0.2);
+    transform: translateY(-2px);
 }
 
 /* 🌸 ปุ่มต่างๆ */
 .btn {
     display: inline-block;
-    padding: 12px 24px;
+    padding: 14px 28px;
     margin: 10px 8px;
     font-size: 16px;
     font-weight: bold;
@@ -95,18 +102,45 @@ h2 {
     transition: all 0.3s ease-in-out;
     text-transform: uppercase;
     letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
 }
 
-.btn-primary {
+.btn::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    transition: all 0.3s;
+    z-index: -1;
+}
+
+.btn-success {
     background: linear-gradient(to right, #ff758c, #ff7eb3);
     color: white;
     box-shadow: 0px 5px 15px rgba(255, 117, 140, 0.4);
 }
 
-.btn-primary:hover {
-    background: linear-gradient(to right, #ff5e62, #ff99ac);
+.btn-success:hover {
     box-shadow: 0px 8px 20px rgba(255, 105, 135, 0.5);
     transform: translateY(-3px);
+}
+
+.btn-success::before {
+    background: linear-gradient(to right, #ff5e62, #ff99ac);
 }
 
 .btn-secondary {
@@ -124,101 +158,54 @@ h2 {
     transform: translateY(-3px);
 }
 
-.btn-warning {
-    background: linear-gradient(to right, #ffb347, #ffcc33);
-    color: white;
-    box-shadow: 0px 4px 10px rgba(255, 179, 71, 0.3);
+.btn:hover::before {
+    width: 100%;
 }
 
-.btn-warning:hover {
-    background: linear-gradient(to right, #ff9a00, #ffb347);
-    box-shadow: 0px 6px 15px rgba(255, 179, 71, 0.4);
-    transform: translateY(-3px);
-}
-
-.btn-danger {
-    background: linear-gradient(to right, #ff6b6b, #ff8585);
-    color: white;
-    box-shadow: 0px 4px 10px rgba(255, 107, 107, 0.3);
-}
-
-.btn-danger:hover {
-    background: linear-gradient(to right, #ff5252, #ff6b6b);
-    box-shadow: 0px 6px 15px rgba(255, 107, 107, 0.4);
-    transform: translateY(-3px);
-}
-
-/* 🌸 ข้อความเมื่อไม่มีที่อยู่ */
-.address-container > p {
-    font-size: 18px;
-    color: #ff6b81;
-    background-color: rgba(255, 107, 129, 0.1);
-    padding: 15px;
-    border-radius: 10px;
-    margin: 20px 0;
-}
-
-/* 🌸 ฟุตเตอร์ */
-footer {
-    text-align: center;
-    padding: 20px;
-    background: white;
-    box-shadow: 0px -4px 12px rgba(255, 105, 135, 0.1);
-    border-top: 3px solid #ffb6c1;
-    margin-top: auto;
-}
-
-footer p {
-    color: #ff6b81;
+/* 🌸 ข้อความแจ้ง error */
+.errorlist {
+    color: #ff4757;
     font-size: 14px;
-    margin: 0;
+    list-style: none;
+    padding: 0;
+    margin-top: 5px;
+    background-color: rgba(255, 71, 87, 0.1);
+    border-radius: 8px;
+    padding: 8px;
 }
 
 /* 🌸 เอฟเฟกต์สวยๆ */
-@keyframes pulse {
+@keyframes float {
     0% {
-        box-shadow: 0 0 0 0 rgba(255, 107, 129, 0.7);
+        transform: translateY(0px);
     }
-    70% {
-        box-shadow: 0 0 0 10px rgba(255, 107, 129, 0);
+    50% {
+        transform: translateY(-10px);
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(255, 107, 129, 0);
+        transform: translateY(0px);
     }
-}
-
-/* ปุ่มในการ์ด */
-.address-card .btn {
-    padding: 8px 16px;
-    font-size: 14px;
-    margin: 10px 5px 0 0;
 }
 
 /* 🌸 ปรับแต่งให้รองรับมือถือ */
 @media (max-width: 768px) {
     .address-container {
         width: 85%;
-        padding: 25px 15px;
+        padding: 25px;
         margin: 20px auto;
-    }
-    
-    h2 {
-        font-size: 24px;
-    }
-    
-    .address-card {
-        padding: 15px;
     }
     
     .btn {
         display: block;
         width: 100%;
-        margin: 10px 0;
+        margin: 15px 0;
     }
     
-    .address-card .btn {
-        display: inline-block;
-        width: calc(50% - 10px);
-        margin: 10px 5px 0 0;
+    form label {
+        font-size: 15px;
+    }
+    
+    form input, form select, form textarea {
+        padding: 12px;
     }
 }

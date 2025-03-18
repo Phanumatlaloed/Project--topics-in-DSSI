@@ -35,7 +35,7 @@
                     <li><a href="{% url 'savelist' %}" class="nav-link"><i class="fas fa-bookmark"></i> <span>รายการบันทึก</span></a></li>
                     <li><a href="{% url 'profile' request.user.id %}" class="nav-link active"><i class="fas fa-user"></i> <span>โปรไฟล์</span></a></li>
                     <li><a href="{% url 'product_list' %}" class="nav-link"><i class="fas fa-shopping-cart"></i> <span>รายการสินค้า</span></a></li>
-                    <li><a href="{% url 'notification_list' %}" class="nav-link"><i class="fas fa-bell"></i> <span>การแจ้งเตือน</span></a></li>
+                    <li><a href="{% url 'notifications' %}" class="nav-link"><i class="fas fa-bell"></i> <span>การแจ้งเตือน</span></a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">
@@ -180,6 +180,7 @@
                                 </div>
                             {% endfor %}
                         </div>
+                        
 
                         <!-- Add Comment Form -->
                         <form class="comment-form" data-post-id="{{ post.id }}">

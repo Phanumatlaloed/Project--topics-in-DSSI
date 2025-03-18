@@ -10,8 +10,11 @@
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'styles/add_review.css' %}">
     
-    <!-- Google Font -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Navbar -->
@@ -32,31 +35,31 @@
     <div class="container">
         <h1>✍️ รีวิวสินค้า</h1>
 
+        {% if order.id and product.id %}
         <div class="product-info">
             <img src="{{ product.image.url }}" alt="{{ product.name }}">
             <h2>{{ product.name }}</h2>
             <p>💰 ราคา: ฿{{ product.price }}</p>
-            <p>📦 จำนวน: {{ product.stock }}</p>
+            <p>📦 จำนวนในสต็อก: {{ product.stock }}</p>
         </div>
 
-        <form method="POST" enctype="multipart/form-data" 
-      action="{% url 'add_review' order_id=order.id product_id=product.id %}">
-
+        <!-- ฟอร์มการรีวิว -->
+        <form method="POST" enctype="multipart/form-data" action="{% url 'add_review' order_id=order.id product_id=product.id %}">
             {% csrf_token %}
 
-            <!-- เลือกคะแนน -->
+            <!-- คะแนน -->
             <label>🌟 ให้คะแนน:</label>
-            <select name="rating">
+            <select name="rating" required>
                 <option value="1">⭐ 1</option>
                 <option value="2">⭐ 2</option>
                 <option value="3">⭐ 3</option>
                 <option value="4">⭐ 4</option>
-                <option value="5">⭐ 5</option>
+                <option value="5" selected>⭐ 5</option>
             </select>
 
             <!-- รีวิวข้อความ -->
-            <label>📝 เขียนรีวิว:</label>
-            <textarea name="comment" placeholder="พิมพ์รีวิวของคุณที่นี่..."></textarea>
+            <label>📝 รีวิวของคุณ:</label>
+            <textarea name="comment" placeholder="พิมพ์รีวิวของคุณที่นี่..." required></textarea>
 
             <!-- อัปโหลดไฟล์ -->
             <label>📷 อัปโหลดรูป/วิดีโอ (ไม่บังคับ):</label>
@@ -65,6 +68,22 @@
             <!-- ปุ่มส่ง -->
             <button type="submit" class="btn-submit">📩 ส่งรีวิว</button>
         </form>
+
+        {% else %}
+            <p class="error-msg">❌ ไม่สามารถรีวิวได้ เนื่องจากไม่มีข้อมูลออเดอร์</p>
+        {% endif %}
     </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const fileInput = document.querySelector("input[name='media']");
+            fileInput.addEventListener("change", function() {
+                if (fileInput.files.length > 0) {
+                    alert(`📂 คุณเลือกไฟล์ ${fileInput.files.length} ไฟล์`);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

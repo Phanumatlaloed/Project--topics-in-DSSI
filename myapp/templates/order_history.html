@@ -36,9 +36,13 @@
             console.log("🔍 DEBUG: Reviewed Products JSON after parsing ->", reviewedProducts);
         });
     </script>
-    
-    
+    <input type="hidden" id="reviewed-products-data" value="{{ reviewed_products|safe }}">
 
+    <!-- แนะนำให้ใส่ก่อนส่วน tab content -->
+    <script>
+      // Debug ข้อมูล reviewed_products
+      console.log("Django template reviewed_products:", {{ reviewed_products|safe }});
+    </script>
     <!-- ✅ CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token }}">
 

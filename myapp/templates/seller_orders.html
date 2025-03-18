@@ -62,8 +62,7 @@
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
                     <div class="stat-content">
-                        <h3>คำสั่งซื้อทั้งหมด</h3>
-                        <p class="stat-number">{{ orders|length }}</p>
+                        <h3>คำสั่งซื้อทั้งหมด  {{ orders|length }} ออเดอร์</h3>
                     </div>
                 </div>
                 
@@ -120,8 +119,8 @@
                                     <span class="status-badge shipped">🚚 กำลังจัดส่ง</span>
                                 {% elif order.status == "delivered" %}
                                     <span class="status-badge delivered">✅ จัดส่งสำเร็จ</span>
-                                {% elif order.status == "cancelled" %}
-                                    <span class="status-badge cancelled">❌ ยกเลิกแล้ว</span>
+                                {% elif order.status != "cancelled" and order.status != "delivered"  %}
+                                <a href="{% url 'update_order_status' order.id 'cancelled' %}" class="btn cancel"><i class="fas fa-times-circle"></i> ยกเลิกออเดอร์</a>
                                 {% endif %}
                             </td>
 

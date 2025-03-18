@@ -347,13 +347,6 @@ class OrderItem(models.Model):
 
 
 
-class Review(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
-    rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])
-    comment = models.TextField()
-
-
 class Follow(models.Model):
     follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="following")
     following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="followers")
@@ -434,6 +427,10 @@ class Review(models.Model):
     analysis_done = models.BooleanField(default=False)  # ✅ ต้องเพิ่ม field นี้
     created_at = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        # ป้องกันการรีวิวซ้ำ
+        unique_together = ('user', 'product', 'order')
+
     def __str__(self):
         return f"{self.user.username} - {self.product.name} ({self.rating} ⭐)"
 
@@ -476,6 +473,7 @@ class SellerWallet(models.Model):
     """ กระเป๋าเงินของผู้ขาย """
     seller = models.OneToOneField('Seller', on_delete=models.CASCADE, related_name='wallet')
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)  # ยอดเงินในกระเป๋า
+    last_withdrawn_amount = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)  # ✅ เก็บยอดเงินที่ถอนในรอบล่าสุด
     updated_at = models.DateTimeField(auto_now=True)  # อัปเดตล่าสุด
 
     def withdraw(self, amount):
