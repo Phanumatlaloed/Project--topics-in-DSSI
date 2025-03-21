@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // ✅ ใช้ event delegation เพื่อให้รองรับปุ่มที่โหลดมาภายหลัง
-    document.addEventListener("click", function (event) {
+    console.log("✅ Comment System & Post Management Loaded!");
+
+    // ===== DELETE POST =====
+    document.addEventListener("click", async function (event) {
         if (event.target.classList.contains("delete-btn")) {
             let postId = event.target.dataset.postId;
             let groupId = event.target.dataset.groupId;
@@ -21,43 +23,32 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             if (confirm("คุณต้องการลบโพสต์ใช่หรือไม่ ?")) {
-                fetch(`/community/${groupId}/group/post/${postId}/delete/`, {
+                const csrfToken = document.querySelector("[name='csrfmiddlewaretoken']").value;
+                
+                const response = await fetch(`/community/${groupId}/group/post/${postId}/delete/`, {
                     method: "POST",
                     headers: {
-                        "X-CSRFToken": getCSRFToken(),
+                        "X-CSRFToken": csrfToken,
                         "Content-Type": "application/json"
                     }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert("โพสต์ถูกลบเรียบร้อยแล้ว!");
-                        let postElement = document.getElementById(`post-${postId}`);
-                        if (postElement) {
-                            postElement.remove();
-                        } else {
-                            console.warn(`⚠️ ไม่พบองค์ประกอบที่มี ID: post-${postId}`);
-                        }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("โพสต์ถูกลบเรียบร้อยแล้ว!");
+                    let postElement = document.getElementById(`post-${postId}`);
+                    if (postElement) {
+                        postElement.style.opacity = "0";
+                        postElement.style.transition = "opacity 0.3s ease";
+                        setTimeout(() => postElement.remove(), 300);
                     } else {
-                        alert("เกิดข้อผิดพลาด: " + (data.message || "ไม่สามารถลบโพสต์ได้"));
+                        console.warn(`⚠️ ไม่พบองค์ประกอบที่มี ID: post-${postId}`);
                     }
-                })
-                .catch(error => console.error("❌ Error:", error));
+                } else {
+                    alert("เกิดข้อผิดพลาด: " + (data.message || "ไม่สามารถลบโพสต์ได้"));
+                }
             }
         }
     });
-
-    function getCSRFToken() {
-        let tokenElement = document.querySelector("[name=csrfmiddlewaretoken]");
-        if (!tokenElement) {
-            console.error("❌ CSRF token not found in the document.");
-            return "";
-        }
-        return tokenElement.value;
-    }
 });

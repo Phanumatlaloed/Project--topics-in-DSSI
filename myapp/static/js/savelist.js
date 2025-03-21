@@ -18,14 +18,14 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.success) {
                     if (data.saved) {
-                        btn.innerHTML = "💾 Unsave";
+                        btn.innerHTML = `<i class="fas fa-bookmark"></i> ยกเลิกบันทึก`;
                         btn.classList.add("btn-success");
                         btn.classList.remove("btn-light");
                     } else {
-                        btn.innerHTML = "💾 Save";
+                        btn.innerHTML = `<i class="far fa-bookmark"></i> บันทึก`; // ใช้ 'far' (outline) เมื่อยังไม่บันทึก
                         btn.classList.add("btn-light");
                         btn.classList.remove("btn-success");
-                    }
+                    }                    
                 } else {
                     alert("❌ ไม่สามารถบันทึกโพสต์ได้");
                 }

@@ -93,8 +93,8 @@ def notify_followers_new_post(sender, instance, created, **kwargs):
         followers = instance.user.followers.all()  # ✅ เปลี่ยนจาก `author` เป็น `user`
         for follower in followers:
             MemberNotification.objects.create(
-                user=follower,
-                message=f"📢 {instance.user.username} ได้โพสต์ใหม่: {instance.content[:50]}"  # เปลี่ยนจาก `title` เป็น `content`
+                user=follower.follower,  # ✅ ใช้ follower.follower เพื่อให้ได้ CustomUser instance
+                message=f"📢 {instance.user.username} ได้โพสต์ใหม่: {instance.content[:50]}"
             )
 
 

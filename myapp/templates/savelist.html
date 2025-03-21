@@ -4,139 +4,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saved Posts</title>
-
-    <!-- ✅ Bootstrap & Custom CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>รายการบันทึก</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'styles/savelist.css' %}">
-
-    <!-- ✅ JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    
+    <!-- JavaScript -->
+    <script src="{% static 'js/savelist.js' %}" defer></script>
     <script src="{% static 'js/savelistre.js' %}" defer></script>
-    <script src="{% static 'js/group_savelistre.js' %}" defer></script>
-
 </head>
 <body>
-    <div class="wrapper d-flex">
-         <!-- Sidebar -->
-         <aside class="sidebar">
-            <div class="logo text-center">
-                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle mb-3">
-
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo">
             </div>
             <nav>
                 <ul class="nav">
-                    <li><a href="{% url 'home' %}" class="nav-link"><i>🏠</i> Home</a></li>
-                    <li><a href="{% url 'community_list' %}" class="nav-link "><i>👥</i> Community</a></li>
-                    <li><a href="{% url 'savelist' %}" class="nav-link active"><i>💾</i> Save</a></li>
-                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i>📄</i> Profile</a></li>
-                    <li><a href="{% url 'product_list' %}" class="nav-link"><i>🛒</i> Product List</a></li>
-                    <li><a href="{% url 'notifications' %}" class="nav-link"><i>🔔</i> Notifications</a></li>
+                    <li><a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> <span>หน้าหลัก</span></a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link"><i class="fas fa-users"></i> <span>ชุมชน</span></a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link active"><i class="fas fa-bookmark"></i> <span>รายการบันทึก</span></a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i class="fas fa-user"></i> <span>โปรไฟล์</span></a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link"><i class="fas fa-shopping-cart"></i> <span>รายการสินค้า</span></a></li>
+                    <li><a href="{% url 'notifications' %}" class="nav-link"><i class="fas fa-bell"></i> <span>การแจ้งเตือน</span></a></li>
                 </ul>
             </nav>
             <div class="welcome-logout">
-                <p>Welcome, <b>{{ request.user.username }}</b></p>
+                <p>ยินดีต้อนรับ, <b>{{ request.user.username }}</b></p>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="logout-btn">Logout</button>
+                    <button type="submit" class="logout-btn">ออกจากระบบ</button>
                 </form>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="content p-4">
-            <header class="text-center mb-4">
-                <h2 class="text-primary">📌 Saved Posts</h2>
+        <main class="content">
+            <header>
+                <h2 class="page-title"><i class="fas fa-bookmark"></i> รายการบันทึก</h2>
             </header>
 
-            <!-- 🔹 Tab Navigation -->
-            <ul class="nav nav-tabs mb-3" id="savedPostTabs">
-                <li class="nav-item">
-                    <button class="nav-link active" id="home-posts-tab" data-bs-toggle="tab" data-bs-target="#homePosts">🏠 Home Posts</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" id="group-posts-tab" data-bs-toggle="tab" data-bs-target="#groupPosts">🏛 Group Posts</button>
-                </li>
-            </ul>
-
-            <!-- 🔹 Search Bar -->
-            <div class="search-bar">
-                <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search saved posts..." onkeyup="searchPosts()">
+            <!-- Tab Navigation -->
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" id="home-tab" onclick="switchTab('homePosts')">
+                        <i class="fas fa-home"></i> โพสต์จากหน้าหลัก
+                    </button>
+                    <button class="tab-btn" id="group-tab" onclick="switchTab('groupPosts')">
+                        <i class="fas fa-users"></i> โพสต์จากชุมชน
+                    </button>
+                </div>
             </div>
 
-            <!-- 🔹 Tab Content -->
+            <!-- Search Bar -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="ค้นหาโพสต์ที่บันทึก..." onkeyup="searchPosts()">
+            </div>
+
+            <!-- Tab Content -->
             <div class="tab-content">
-                <!-- ✅ Home Posts -->
-                <div class="tab-pane fade show active" id="homePosts">
-                    <div class="row">
+                <!-- Home Posts -->
+                <div class="tab-panel active" id="homePosts">
+                    <div class="post-container">
                         {% for saved_post in saved_posts %}
-                        <div class="col-md-6 col-lg-4 post-item">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <!-- User Info -->
-                                    <div class="d-flex align-items-center mb-2">
+                        <div class="post-item">
+                            <div class="post-header">
+                                <div class="user-info">
                                     {% if saved_post.post.user.member_profile and saved_post.post.user.member_profile.profile_picture %}
-                                        <img src="{{ saved_post.post.user.member_profile.profile_picture.url }}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                                        <img src="{{ saved_post.post.user.member_profile.profile_picture.url }}" class="profile-pic" alt="User">
                                     {% else %}
-                                        <img src="{% static 'media/default_profile.png' %}" class="rounded-circle me-2" width="40" height="40" alt="User">
-                                    {% endif %}                            
-                                        <div>
-                                            <h6 class="mb-0">{{ saved_post.post.user.username }}</h6>
-                                            <small class="text-muted">{{ saved_post.post.created_at|date:"M d, Y H:i" }}</small>
-                                        </div>
+                                        <img src="{% static 'media/default_profile.png' %}" class="profile-pic" alt="User">
+                                    {% endif %}
+                                    <div class="user-details">
+                                        <div class="username">{{ saved_post.post.user.username }}</div>
+                                        <div class="post-date">{{ saved_post.post.created_at|date:"d M Y, H:i" }}</div>
                                     </div>
-
-                                    <!-- Post Type -->
-                                    <span class="badge bg-info text-white">Home Post 🏠</span>
-
-                                    <!-- Post Content -->
-                                    <a href="{% url 'post_detail' saved_post.post.id %}" class="text-decoration-none text-dark">
-                                        <p class="card-text mt-2">{{ saved_post.post.content }}</p>
-                                    </a>
-
-                                    <!-- Remove Button -->
-                                    <button class="btn btn-outline-danger btn-sm w-100 mt-2 remove-btn" 
-                                        data-post-id="{{ saved_post.post.id }}" >
-                                        🗑 Remove
-                                    </button>                                
-                                    
+                                </div>
+                                <div class="post-type-badge">
+                                    <i class="fas fa-home"></i> โพสต์จากหน้าหลัก
                                 </div>
                             </div>
+
+                            <div class="post-content">
+                                <a href="{% url 'post_detail' saved_post.post.id %}">
+                                    {{ saved_post.post.content }}
+                                </a>
+                            </div>
+
+                            <button class="remove-button" data-post-id="{{ saved_post.post.id }}">
+                                <i class="fas fa-trash"></i> นำออก
+                            </button>
                         </div>
                         {% empty %}
-                        <p class="text-center text-muted">😢 No saved home posts yet.</p>
+                        <div class="empty-state">
+                            <i class="fas fa-bookmark-slash"></i>
+                            <p>ยังไม่มีโพสต์ที่บันทึกไว้จากหน้าหลัก</p>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
 
-                <!-- ✅ Group Posts -->
                 <!-- Group Posts -->
-                <div class="tab-pane fade" id="groupPosts">
-                    <div class="row">
+                <div class="tab-panel" id="groupPosts">
+                    <div class="post-container">
                         {% for saved_post in saved_group_posts %}
-                        <div class="col-md-6 col-lg-4 post-item">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <!-- Group Info -->
-                                    <div class="d-flex align-items-center mb-2">
-                                        <h6 class="mb-0">{{ saved_post.post.group.name }}</h6>
-                                        <small class="text-muted ms-2">🏛 Group</small>
+                        <div class="post-item">
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="group-icon">
+                                        <i class="fas fa-users"></i>
                                     </div>
-                                    <!-- Post Content -->
-                                    <a href="{% url 'group_detail' saved_post.post.id %}" class="text-decoration-none text-dark">
-                                        <p class="card-text mt-2">{{ saved_post.post.content }}</p>
-                                    </a>
-                                    <!-- Remove Button -->
-                                    <button class="btn btn-outline-danger btn-sm w-100 mt-2 remove-btn" 
-                                        data-post-id="{{ saved_post.post.id }}" 
-                                        data-group-id="{{ saved_post.post.group.id|default:'' }}">
-                                        🗑 Remove
-                                    </button> 
+                                    <div class="user-details">
+                                        <div class="username">{{ saved_post.post.group.name }}</div>
+                                        <div class="post-date">ชุมชน</div>
+                                    </div>
+                                </div>
+                                <div class="post-type-badge">
+                                    <i class="fas fa-users"></i> โพสต์จากชุมชน
                                 </div>
                             </div>
+
+                            <div class="post-content">
+                                <a href="{% url 'group_detail' saved_post.post.id %}">
+                                    {{ saved_post.post.content }}
+                                </a>
+                            </div>
+
+                            <button class="remove-button" data-post-id="{{ saved_post.post.id }}" data-group-id="{{ saved_post.post.group.id|default:'' }}">
+                                <i class="fas fa-trash"></i> นำออก
+                            </button>
                         </div>
                         {% empty %}
-                        <p class="text-center text-muted">😢 No saved group posts yet.</p>
+                        <div class="empty-state">
+                            <i class="fas fa-users-slash"></i>
+                            <p>ยังไม่มีโพสต์ที่บันทึกไว้จากชุมชน</p>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -145,13 +154,58 @@
     </div>
 
     <script>
+        // Switch between tabs
+        function switchTab(tabId) {
+            // Hide all tab panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            
+            // Deactivate all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show the selected tab panel
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activate the correct tab button
+            if (tabId === 'homePosts') {
+                document.getElementById('home-tab').classList.add('active');
+            } else if (tabId === 'groupPosts') {
+                document.getElementById('group-tab').classList.add('active');
+            }
+            
+            // Clear search input when switching tabs
+            document.getElementById('searchInput').value = '';
+            
+            // Show all posts in the new active tab
+            showAllPosts();
+        }
+        
+        // Search functionality
         function searchPosts() {
-            let input = document.getElementById("searchInput").value.toLowerCase();
-            let items = document.querySelectorAll(".post-item");
-
-            items.forEach(item => {
-                let text = item.textContent.toLowerCase();
-                item.style.display = text.includes(input) ? "block" : "none";
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const activeTab = document.querySelector('.tab-panel.active');
+            const posts = activeTab.querySelectorAll('.post-item');
+            
+            posts.forEach(post => {
+                const content = post.textContent.toLowerCase();
+                if (content.includes(searchInput)) {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+        }
+        
+        // Show all posts (used when clearing search or switching tabs)
+        function showAllPosts() {
+            const activeTab = document.querySelector('.tab-panel.active');
+            const posts = activeTab.querySelectorAll('.post-item');
+            
+            posts.forEach(post => {
+                post.style.display = 'block';
             });
         }
     </script>

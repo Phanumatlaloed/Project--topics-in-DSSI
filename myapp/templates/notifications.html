@@ -6,588 +6,678 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>การแจ้งเตือนของฉัน</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        /* Reset and base styles */
+        /* ===== VARIABLES ===== */
+        :root {
+            --primary-color: #ff6b9d;
+            --secondary-color: #ffb6c1;
+            --tertiary-color: #ffd1dc;
+            --light-pink: #fff0f5;
+            --dark-pink: #d4506a;
+            --text-color: #333333;
+            --white: #ffffff;
+            --gray: #f8f8f8;
+            --light-gray: #e9e9e9;
+            --border-color: #ffe0e9;
+            --shadow: 0 4px 12px rgba(255, 107, 157, 0.15);
+            --danger-color: #ff6b6b;
+            --warning-color: #ffb347;
+        }
+
+        /* ===== RESET ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Prompt', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
         }
 
         body {
-            background-color: #f5f7fa;
-            color: #333;
-            padding: 20px;
+            font-family: 'Prompt', sans-serif;
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button, input {
+            font-family: 'Prompt', sans-serif;
+        }
+
+        /* ===== LAYOUT ===== */
+        .wrapper {
+            display: grid;
+            grid-template-columns: 250px 1fr;
             min-height: 100vh;
         }
 
-        /* Notifications container */
-        .notifications-container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-            position: relative;
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background-color: var(--light-pink);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            left: 0;
+            padding: 20px 15px;
+            box-shadow: 2px 0 10px rgba(255, 182, 193, 0.2);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+            z-index: 100;
         }
 
-        .notification-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
         }
-        
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+
+        .logo-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            padding: 5px;
+            transition: transform 0.3s ease;
         }
-        
-        .auto-refresh {
+
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-link {
             display: flex;
             align-items: center;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            border-radius: 30px;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            font-weight: 400;
+        }
+
+        .nav-link:hover {
+            background-color: var(--tertiary-color);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 8px rgba(255, 107, 157, 0.25);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .welcome-logout {
+            margin-top: auto;
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .welcome-logout p {
+            margin-bottom: 10px;
             font-size: 14px;
         }
-        
-        .auto-refresh label {
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px 0;
+            background-color: var(--dark-pink);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(212, 80, 106, 0.2);
+        }
+
+        .logout-btn:hover {
+            background-color: #c13c56;
+            box-shadow: 0 6px 12px rgba(212, 80, 106, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .content {
+            padding: 20px 30px;
+        }
+
+        /* Notifications Container */
+        .notifications-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Notification Header */
+        .notification-header {
             display: flex;
             align-items: center;
-            gap: 5px;
-            cursor: pointer;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
-        
-        .auto-refresh input[type="checkbox"] {
-            cursor: pointer;
-        }
-        
-        h2 {
+
+        .notification-header h2 {
             font-size: 24px;
-            color: #333;
             font-weight: 600;
+            color: var(--text-color);
             display: flex;
             align-items: center;
             gap: 10px;
-            margin: 0;
         }
-        
-        /* ไฟกระพริบแสดงสถานะเรียลไทม์ */
+
+        .notification-header i {
+            color: var(--primary-color);
+        }
+
         .live-indicator {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            background-color: var(--light-pink);
+            padding: 5px 12px;
+            border-radius: 30px;
+            color: var(--dark-pink);
             font-size: 14px;
-            color: #f44336;
             font-weight: 500;
         }
-        
+
         .live-dot {
-            display: inline-block;
             width: 8px;
             height: 8px;
-            background-color: #f44336;
+            background-color: var(--dark-pink);
             border-radius: 50%;
-            animation: livePulse 1.5s infinite;
-        }
-        
-        @keyframes livePulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
+            display: inline-block;
+            animation: pulse 1.5s infinite;
         }
 
-        /* Notification list */
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0.8;
+            }
+        }
+
+        /* Notification List */
         #notification-list {
             list-style: none;
             margin-bottom: 20px;
             max-height: 70vh;
             overflow-y: auto;
-            padding-right: 5px;
+            padding-right: 10px;
         }
 
         .notification-item {
             padding: 16px;
-            border-radius: 10px;
-            margin-bottom: 14px;
-            border-left: 4px solid #ddd;
-            background-color: #f9f9f9;
-            transition: all 0.3s ease;
+            border-radius: 12px;
+            margin-bottom: 15px;
             position: relative;
             cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid var(--light-gray);
+            background-color: var(--gray);
         }
 
-        /* Unread notifications */
         .notification-item.unread {
-            background-color: #e8f4ff;
-            border-left: 4px solid #007bff;
-            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+            background-color: var(--light-pink);
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 3px 10px rgba(255, 107, 157, 0.1);
         }
 
-        /* Read notifications */
-        .notification-item:not(.unread) {
-            background-color: #f8f8f8;
-            border-left: 4px solid #c0c0c0;
-            color: #555;
+        .notification-item:hover {
+            transform: translateX(5px);
         }
 
         .notif-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 15px;
-            line-height: 1.5;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+        }
+
+        .notif-content i.heart-icon {
+            color: var(--primary-color);
+            font-size: 18px;
         }
 
         .notif-time {
+            text-align: right;
             font-size: 12px;
             color: #777;
-            text-align: right;
         }
 
-        .notification-item.unread .notif-time {
-            color: #0066cc;
-            font-weight: 500;
-        }
-
-        /* Empty state */
         .no-notifications {
             text-align: center;
             padding: 40px 20px;
-            color: #888;
+            color: #777;
             font-size: 16px;
-            background-color: #f9f9f9;
-            border-radius: 10px;
+            background-color: var(--gray);
+            border-radius: 12px;
             margin: 20px 0;
         }
 
-        /* Footer controls */
+        .no-notifications i {
+            font-size: 40px;
+            color: var(--tertiary-color);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Footer Controls */
         .footer-controls {
             display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        /* Buttons */
-        .mark-all-read-btn, .refresh-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
+            gap: 8px;
             padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 30px;
             font-weight: 500;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
+            transition: all 0.3s;
+            border: none;
+            width: 48%;
         }
 
-        .mark-all-read-btn:hover, .refresh-btn:hover {
-            background-color: #0069d9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 8px rgba(255, 107, 157, 0.25);
         }
-        
-        .refresh-btn {
+
+        .primary-btn:hover {
+            background-color: var(--dark-pink);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 107, 157, 0.3);
+        }
+
+        .secondary-btn {
             background-color: #6c757d;
+            color: white;
         }
-        
-        .refresh-btn:hover {
+
+        .secondary-btn:hover {
             background-color: #5a6268;
-        }
-
-        /* Hover effects */
-        .notification-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
         }
 
-        .notification-item.unread:hover {
-            background-color: #d9edff;
-        }
-
-        .notification-item:not(.unread):hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Animation for new notifications */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .notification-item.new {
-            animation: fadeIn 0.5s ease forwards;
-        }
-        
-        /* เพิ่มแอนิเมชั่นสำหรับไฮไลท์การแจ้งเตือนใหม่ (เรียลไทม์) */
-        @keyframes highlightPulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
-        }
-        
-        .notification-item.highlight-new {
-            animation: highlightPulse 1.5s ease-out;
-        }
-
-        /* Indicator for unread notifications */
-        .notification-item.unread::after {
-            content: '';
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            width: 8px;
-            height: 8px;
-            background-color: #007bff;
-            border-radius: 50%;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .notifications-container {
-                padding: 15px;
-                margin: 10px;
-            }
-            
-            h2 {
-                font-size: 20px;
-                margin-bottom: 20px;
-            }
-            
-            .notification-item {
-                padding: 14px;
-            }
-            
-            .notif-content {
-                font-size: 14px;
-            }
-            
-            .mark-all-read-btn {
-                width: 100%;
-                padding: 12px 15px;
-            }
-        }
-
-        /* Scrollbar styling */
+        /* Custom Scrollbar */
         #notification-list::-webkit-scrollbar {
             width: 6px;
         }
 
         #notification-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: var(--light-pink);
             border-radius: 10px;
         }
 
         #notification-list::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
+            background-color: var(--tertiary-color);
             border-radius: 10px;
         }
 
         #notification-list::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
+            background-color: var(--secondary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .wrapper {
+                grid-template-columns: 80px 1fr;
+            }
+            
+            .sidebar {
+                padding: 20px 5px;
+            }
+            
+            .logo-img {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .nav-link span {
+                display: none;
+            }
+            
+            .nav-link {
+                padding: 12px 0;
+                justify-content: center;
+            }
+            
+            .nav-link i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .welcome-logout {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                height: auto;
+                padding: 10px;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                z-index: 1000;
+            }
+            
+            .logo, .welcome-logout {
+                display: none;
+            }
+            
+            .nav {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            .nav-link {
+                margin-bottom: 0;
+                border-radius: 50%;
+                width: 45px;
+                height: 45px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .nav-link i {
+                margin-right: 0;
+            }
+            
+            .content {
+                padding-bottom: 80px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="notifications-container">
-        <div class="notification-header">
-            <h2>🔔 การแจ้งเตือนของฉัน</h2>
-            <div class="controls">
-                <div class="auto-refresh">
-                    <label>
-                        <input type="checkbox" id="autoRefreshToggle" checked>
-                        <span>อัพเดทอัตโนมัติ</span>
-                    </label>
-                </div>
-                <div class="live-indicator">
-                    <span class="live-dot"></span> Live
-                </div>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="logo-img">
             </div>
-        </div>
-        
-        <ul id="notification-list">
-            {% if notifications %}
-                {% for notification in notifications %}
-                <li class="notification-item {% if not notification.is_read %}unread{% endif %}" data-id="{{ notification.id }}">
-                    <div class="notif-content">
-                        {{ notification.message|safe }}  
-                    </div>
-                    <div class="notif-time">{{ notification.created_at|date:"d/m/Y H:i" }}</div>
-                </li>
-                {% endfor %}
-            {% else %}
-                <li class="no-notifications">✅ ไม่มีการแจ้งเตือน</li>
-            {% endif %}
-        </ul>
+            <nav>
+                <ul class="nav">
+                    <li><a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> <span>หน้าหลัก</span></a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link"><i class="fas fa-users"></i> <span>ชุมชน</span></a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link"><i class="fas fa-bookmark"></i> <span>รายการบันทึก</span></a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i class="fas fa-user"></i> <span>โปรไฟล์</span></a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link"><i class="fas fa-shopping-cart"></i> <span>รายการสินค้า</span></a></li>
+                    <li><a href="{% url 'notifications' %}" class="nav-link active"><i class="fas fa-bell"></i> <span>การแจ้งเตือน</span></a></li>
+                </ul>
+            </nav>
+            <div class="welcome-logout">
+                <p>ยินดีต้อนรับ, <b>{{ request.user.username }}</b></p>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">ออกจากระบบ</button>
+                </form>
+            </div>
+        </aside>
 
-        {% if notifications %}
-        <div class="footer-controls">
-            <form id="mark-all-form" action="{% url 'mark_notification_as_read' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="mark_all" value="true">
-                <button type="submit" class="mark-all-read-btn">✅ ทำเครื่องหมายว่าอ่านแล้วทั้งหมด</button>
-            </form>
-            <button class="refresh-btn" id="refresh-button">↻ รีเฟรชข้อมูล</button>
-        </div>
-        {% endif %}
+        <!-- Main Content -->
+        <main class="content">
+            <div class="notifications-container">
+                <div class="notification-header">
+                    <h2><i class="fas fa-bell"></i> การแจ้งเตือนของฉัน</h2>
+                    <div class="live-indicator">
+                        <span class="live-dot"></span> Live
+                    </div>
+                </div>
+                
+                <ul id="notification-list">
+                    {% if notifications %}
+                        {% for notification in notifications %}
+                        <li class="notification-item {% if not notification.is_read %}unread{% endif %}" data-id="{{ notification.id }}">
+                            <div class="notif-content">
+                                {% if "ถูกใจ" in notification.message %}
+                                    <i class="fas fa-heart heart-icon"></i>
+                                {% elif "คอมเมนต์" in notification.message %}
+                                    <i class="fas fa-comment heart-icon"></i>
+                                {% elif "ติดตาม" in notification.message %}
+                                    <i class="fas fa-user-plus heart-icon"></i>
+                                {% else %}
+                                    <i class="fas fa-bell heart-icon"></i>
+                                {% endif %}
+                                {{ notification.message|safe }}  
+                            </div>
+                            <div class="notif-time">{{ notification.created_at|date:"Y-m-d H:i:s" }}</div>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="no-notifications">
+                            <i class="fas fa-check-circle"></i>
+                            <p>ไม่มีการแจ้งเตือน</p>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                {% if notifications %}
+                <div class="footer-controls">
+                    <button id="mark-all-btn" class="action-btn primary-btn">
+                        <i class="fas fa-check-double"></i> ทำเครื่องหมายว่าอ่านแล้วทั้งหมด
+                    </button>
+                    <button id="refresh-btn" class="action-btn secondary-btn">
+                        <i class="fas fa-sync-alt"></i> รีเฟรชข้อมูล
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </main>
     </div>
 
     <script>
-        // ตัวแปร global
-        let notificationInterval = null;
-        let lastResponseData = null;
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            // เพิ่ม event listener สำหรับการคลิกที่แต่ละการแจ้งเตือน
-            setupNotificationListeners();
-            
-            // ตั้งค่าการรีเฟรชอัตโนมัติ
-            const autoRefreshToggle = document.getElementById('autoRefreshToggle');
-            autoRefreshToggle.addEventListener('change', function() {
-                if (this.checked) {
-                    // เปิดการอัพเดทอัตโนมัติ
-                    notificationInterval = setInterval(loadNotifications, 15000);
-                    document.querySelector('.live-dot').style.display = 'inline-block';
-                    document.querySelector('.live-indicator').style.color = '#f44336';
-                    document.querySelector('.live-indicator').innerHTML = '<span class="live-dot"></span> Live';
-                } else {
-                    // ปิดการอัพเดทอัตโนมัติ
-                    clearInterval(notificationInterval);
-                    document.querySelector('.live-dot').style.display = 'none';
-                    document.querySelector('.live-indicator').style.color = '#888';
-                    document.querySelector('.live-indicator').textContent = 'Paused';
-                }
-            });
-            
-            // ปุ่มรีเฟรชข้อมูลด้วยตนเอง
-            const refreshButton = document.getElementById('refresh-button');
-            if (refreshButton) {
-                refreshButton.addEventListener('click', manualRefresh);
-            }
-            
-            // ส่งฟอร์มทำเครื่องหมายว่าอ่านแล้วทั้งหมดด้วย JavaScript
-            const markAllForm = document.getElementById('mark-all-form');
-            if (markAllForm) {
-                markAllForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    markAllAsRead();
-                });
-            }
-            
-            // เริ่มอัพเดทอัตโนมัติ
-            notificationInterval = setInterval(loadNotifications, 15000);
-            
-            // หยุดการอัพเดทเมื่อแท็บไม่ได้ใช้งาน
-            document.addEventListener('visibilitychange', function() {
-                if (document.hidden) {
-                    clearInterval(notificationInterval);
-                } else {
-                    if (document.getElementById('autoRefreshToggle').checked) {
-                        loadNotifications();
-                        clearInterval(notificationInterval);
-                        notificationInterval = setInterval(loadNotifications, 15000);
-                    }
-                }
-            });
-            
-            // อัพเดทแท็บเมื่อโหลดหน้า
-            updateUnreadBadge();
-        });
-        
-        // เพิ่ม event listener ให้การแจ้งเตือนทุกรายการ
+        // เพิ่ม event listener ให้การแจ้งเตือน
         function setupNotificationListeners() {
             document.querySelectorAll('.notification-item').forEach(item => {
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function(e) {
+                    // เช็คว่าคลิกที่ลิงก์หรือไม่
+                    if (e.target.tagName === 'A' || e.target.closest('a')) {
+                        // ถ้าคลิกที่ลิงก์ ให้ทำตามปกติ (นำทางไปตามลิงก์)
+                        return;
+                    }
+                    
+                    // ถ้าไม่ได้คลิกที่ลิงก์ ให้ทำเครื่องหมายว่าอ่านแล้ว
                     const notificationId = this.dataset.id;
-                    markAsRead(notificationId, this);
+                    if (this.classList.contains('unread')) {
+                        markAsRead(notificationId, this);
+                    }
+                    
+                    // หาลิงก์ในการแจ้งเตือนนี้
+                    const link = this.querySelector('a.notif-link');
+                    if (link) {
+                        // นำทางไปตามลิงก์
+                        window.location.href = link.getAttribute('href');
+                    }
                 });
             });
         }
-
-        // ทำเครื่องหมายว่าอ่านแล้ว
-        function markAsRead(notificationId, element) {
-            if (element.classList.contains('unread')) {
-                // อัพเดท UI ทันที
-                element.classList.remove('unread');
-                updateUnreadBadge();
-                
-                // ส่งข้อมูลไปยังเซิร์ฟเวอร์โดยใช้ fetch แบบ form data
-                const formData = new FormData();
-                formData.append('notification_id', notificationId);
-                
-                fetch("{% url 'mark_notification_as_read' %}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': "{{ csrf_token }}"
-                    },
-                    body: formData
-                }).catch(error => {
-                    console.error('Error:', error);
-                });
+        
+        // สคริปต์สำหรับการแจ้งเตือน
+        document.addEventListener('DOMContentLoaded', function() {
+            // ดึงการแจ้งเตือนเมื่อโหลดหน้า
+            loadNotifications();
+            
+            // ตั้งเวลาดึงการแจ้งเตือนทุก 10 วินาที
+            setInterval(loadNotifications, 10000);
+            
+            // ปุ่มรีเฟรช
+            const refreshBtn = document.getElementById('refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', loadNotifications);
             }
+            
+            // ปุ่มทำเครื่องหมายว่าอ่านแล้วทั้งหมด
+            const markAllBtn = document.getElementById('mark-all-btn');
+            if (markAllBtn) {
+                markAllBtn.addEventListener('click', markAllAsRead);
+            }
+            
+            // เพิ่ม event listener สำหรับแต่ละการแจ้งเตือน
+            setupNotificationListeners();
+        });
+        
+        // ฟังก์ชันโหลดการแจ้งเตือน
+        function loadNotifications() {
+            fetch("{% url 'api_member_notifications' %}")
+                .then(response => response.json())
+                .then(data => {
+                    const notificationList = document.getElementById('notification-list');
+                    
+                    // กรณีไม่มีการแจ้งเตือน
+                    if (data.notifications.length === 0) {
+                        notificationList.innerHTML = "<li class='no-notifications'><i class='fas fa-check-circle'></i><p>ไม่มีการแจ้งเตือน</p></li>";
+                        return;
+                    }
+                    
+                    // ล้างรายการแจ้งเตือนเดิม
+                    notificationList.innerHTML = "";
+                    
+                    // แสดงการแจ้งเตือนใหม่
+                    data.notifications.forEach(notification => {
+                        const li = document.createElement('li');
+                        li.className = `notification-item ${notification.is_read ? '' : 'unread'}`;
+                        li.dataset.id = notification.id;
+                        
+                        // กำหนด icon ตามประเภทของการแจ้งเตือน
+                        let icon = 'bell';
+                        if (notification.message.includes('ถูกใจ')) {
+                            icon = 'heart';
+                        } else if (notification.message.includes('คอมเมนต์')) {
+                            icon = 'comment';
+                        } else if (notification.message.includes('ติดตาม')) {
+                            icon = 'user-plus';
+                        }
+                        
+                        li.innerHTML = `
+                            <div class="notif-content">
+                                <i class="fas fa-${icon} heart-icon"></i>
+                                ${notification.message}
+                            </div>
+                            <div class="notif-time">${notification.created_at}</div>
+                        `;
+                        
+                        notificationList.appendChild(li);
+                    });
+                    
+                    // เพิ่ม event listener ให้การแจ้งเตือน
+                    setupNotificationListeners();
+                    
+                    // อัพเดทหัวข้อหน้าเว็บ
+                    updatePageTitle();
+                })
+                .catch(error => console.error('Error loading notifications:', error));
         }
-
+        
+        // อัพเดทหัวข้อหน้าเว็บ
+        function updatePageTitle() {
+            const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+            document.title = unreadCount > 0 ? `(${unreadCount}) การแจ้งเตือนของฉัน` : 'การแจ้งเตือนของฉัน';
+        }
+        
         // ทำเครื่องหมายว่าอ่านแล้วทั้งหมด
         function markAllAsRead() {
-            // อัพเดท UI ทันที
-            document.querySelectorAll('.notification-item.unread').forEach(item => {
-                item.classList.remove('unread');
-            });
-            updateUnreadBadge();
-            
-            // ซ่อนปุ่ม
-            const markAllForm = document.getElementById('mark-all-form');
-            if (markAllForm) {
-                markAllForm.style.display = 'none';
-            }
-            
-            // ส่งข้อมูลไปยังเซิร์ฟเวอร์
-            const formData = new FormData();
-            formData.append('mark_all', 'true');
-            
             fetch("{% url 'mark_notification_as_read' %}", {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': "{{ csrf_token }}"
+                    'X-CSRFToken': "{{ csrf_token }}",
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: formData
-            }).catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        // อัพเดทจำนวนการแจ้งเตือนที่ยังไม่ได้อ่าน
-        function updateUnreadBadge() {
-            const unreadCount = document.querySelectorAll('.notification-item.unread').length;
-            
-            // อัพเดทหัวข้อหน้า
-            if (unreadCount > 0) {
-                document.title = `(${unreadCount}) การแจ้งเตือนของฉัน`;
-            } else {
-                document.title = 'การแจ้งเตือนของฉัน';
-            }
-            
-            // แสดง/ซ่อนปุ่มทำเครื่องหมายว่าอ่านแล้วทั้งหมด
-            const markAllForm = document.getElementById('mark-all-form');
-            if (markAllForm) {
-                markAllForm.style.display = unreadCount > 0 ? 'block' : 'none';
-            }
-        }
-        
-        // รีเฟรชข้อมูลด้วยตนเอง
-        function manualRefresh() {
-            const refreshButton = document.querySelector('.refresh-btn');
-            if (refreshButton) {
-                refreshButton.textContent = '↻ กำลังโหลด...';
-                refreshButton.disabled = true;
-            }
-            
-            loadNotifications()
-                .then(() => {
-                    if (refreshButton) {
-                        refreshButton.textContent = '↻ รีเฟรชข้อมูล';
-                        refreshButton.disabled = false;
-                    }
-                })
-                .catch(() => {
-                    if (refreshButton) {
-                        refreshButton.textContent = '↻ รีเฟรชข้อมูล';
-                        refreshButton.disabled = false;
-                    }
-                });
-        }
-        
-        // โหลดข้อมูลแจ้งเตือน
-        function loadNotifications() {
-            return new Promise((resolve, reject) => {
-                const timestamp = new Date().getTime();
-                
-                fetch(`{% url 'api_member_notifications' %}?_=${timestamp}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // ตรวจสอบว่าข้อมูลเปลี่ยนแปลงหรือไม่
-                        if (lastResponseData && JSON.stringify(data) === JSON.stringify(lastResponseData)) {
-                            console.log("No changes in notifications");
-                            resolve(data);
-                            return;
-                        }
-                        
-                        // บันทึกข้อมูลล่าสุด
-                        lastResponseData = data;
-                        
-                        const notificationList = document.getElementById('notification-list');
-                        
-                        // กรณีไม่มีการแจ้งเตือน
-                        if (data.notifications.length === 0) {
-                            notificationList.innerHTML = "<li class='no-notifications'>✅ ไม่มีการแจ้งเตือน</li>";
-                            resolve(data);
-                            return;
-                        }
-                        
-                        // เก็บ ID ที่มีอยู่แล้ว
-                        const existingIds = new Set();
-                        document.querySelectorAll('.notification-item').forEach(item => {
-                            existingIds.add(item.dataset.id);
-                        });
-                        
-                        // ลบข้อความว่าไม่มีการแจ้งเตือน (ถ้ามี)
-                        const noNotificationsElement = document.querySelector('.no-notifications');
-                        if (noNotificationsElement) {
-                            notificationList.innerHTML = '';
-                        }
-                        
-                        // เรียงลำดับข้อมูล
-                        data.notifications.sort((a, b) => {
-                            return new Date(b.created_at) - new Date(a.created_at);
-                        });
-                        
-                        let hasNewNotifications = false;
-                        
-                        // เพิ่มการแจ้งเตือนใหม่
-                        data.notifications.forEach(notification => {
-                            if (!existingIds.has(notification.id)) {
-                                hasNewNotifications = true;
-                                
-                                const notifItem = document.createElement('li');
-                                notifItem.className = `notification-item unread new`;
-                                notifItem.dataset.id = notification.id;
-                                notifItem.innerHTML = `
-                                    <div class="notif-content">${notification.message}</div>
-                                    <div class="notif-time">${notification.created_at}</div>
-                                `;
-                                
-                                // เพิ่มไว้ด้านบนสุด
-                                notificationList.insertBefore(notifItem, notificationList.firstChild);
-                                
-                                // เพิ่ม event listener
-                                notifItem.addEventListener('click', function() {
-                                    markAsRead(notification.id, this);
-                                });
-                                
-                                // เพิ่มเอฟเฟกต์
-                                setTimeout(() => {
-                                    notifItem.classList.add('highlight-new');
-                                    setTimeout(() => {
-                                        notifItem.classList.remove('highlight-new');
-                                    }, 2000);
-                                }, 100);
-                            }
-                        });
-                        
-                        // อัพเดท UI
-                        updateUnreadBadge();
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        console.error('Error loading notifications:', error);
-                        reject(error);
+                body: 'mark_all=true'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // ทำเครื่องหมายว่าอ่านแล้วในหน้าเว็บ
+                    document.querySelectorAll('.notification-item.unread').forEach(item => {
+                        item.classList.remove('unread');
                     });
-            });
+                    updatePageTitle();
+                }
+            })
+            .catch(error => console.error('Error marking all as read:', error));
+        }
+        
+        // ทำเครื่องหมายว่าอ่านแล้ว
+        function markAsRead(notificationId, element) {
+            fetch("{% url 'mark_notification_as_read' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': "{{ csrf_token }}",
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `notification_id=${notificationId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    element.classList.remove('unread');
+                    updatePageTitle();
+                }
+            })
+            .catch(error => console.error('Error marking as read:', error));
         }
     </script>
 </body>

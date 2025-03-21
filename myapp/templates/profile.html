@@ -7,20 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Page</title>
     <link rel="stylesheet" href="{% static 'styles/profile.css' %}">
+
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <!-- ใช้ Font Awesome จาก CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
 
-    <script src="{% static 'js/profile.js' %}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+    <!-- <script src="{% static 'js/profile.js' %}" defer></script> -->
     <script src="{% static 'js/post.js' %}" defer></script>
     <script src="{% static 'js/like.js' %}" defer></script>
     <script src="{% static 'js/share.js' %}" defer></script>
     <script src="{% static 'js/delete.js' %}" defer></script>
-    <script src="{% static 'js/comment.js' %}" defer></script>
+    <script src="{% static 'js/commentProfile.js' %}" defer></script>
     <script src="{% static 'js/savelist.js' %}" defer></script>
     <script src="{% static 'js/follow.js' %}" defer></script>
 </head>
+
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
@@ -53,7 +58,7 @@
             <header class="profile-header">
                 <div class="profile-picture">
                     {% if user.member_profile.profile_picture %}
-                        <img src="{{ user.member_profile.profile_picture.url }}" alt="Profile Picture" class="profile-img">
+                        <img src="{{ user.member_profile.profile_picture.url }}" alt="Profile Picture" class="profile-header-img">
                     {% else %}
                         <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-img">
                     {% endif %}
@@ -105,102 +110,221 @@
             </div>
 
             <!-- User Posts -->
-            <div class="user-posts">
+            <div class="posts mt-4">
                 <h3>โพสต์ของฉัน</h3>
 
+                 <!-- ✅ Posts Section -->
                 {% for post in posts %}
-                <article class="post" id="post-{{ post.id }}">
-                    <!-- Post Header - User Info -->
-                    <div class="post-user-info">
-                        {% if post.user.member_profile.profile_picture %}
-                            <img src="{{ post.user.member_profile.profile_picture.url }}" alt="User Avatar" class="post-avatar">
-                        {% else %}
-                            <img src="{% static 'images/default-profile.png' %}" alt="Default Avatar" class="post-avatar">
-                        {% endif %}
-                        <div class="post-user-details">
-                            <span class="post-username">{{ post.user.username }}</span>
-                            <span class="post-time">{{ post.created_at|date:"F j, Y, g:i a" }}</span>
-                        </div>
-                    </div>
+                    {% if not post.is_reported %}
+                        <div class="post card p-3 mb-3 shadow-sm" id="post-{{ post.id }}">
+                            <!-- User Info -->
+                            <div class="user-info d-flex align-items-center">
+                                {% if post.user.member_profile.profile_picture %}
+                                    <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img me-2 rounded-circle" width="40" height="40">
+                                {% else %}
+                                    <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
+                                {% endif %}
+                            
+                                <b>{{ post.user.username }}</b>
+                                <small class="text-muted">{{ post.created_at|date:"F j, Y, g:i a" }}</small>
 
-                    <!-- Post Content -->
-                    <p class="post-content">{{ post.content }}</p>
-
-                    <!-- Post Media (Images & Videos) -->
-                    {% if post.media.all %}
-                    <div class="post-media">
-                        {% for media in post.media.all %}
-                            <div class="media-item">
-                                {% if media.media_type == "image" %}
-                                    <img src="{{ media.file.url }}" alt="Post Image" class="post-image">
-                                {% elif media.media_type == "video" %}
-                                    <video src="{{ media.file.url }}" controls class="post-video"></video>
+                                <!-- Follow Button -->
+                                {% if post.user.id != request.user.id %}
+                                    <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-2 follow-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %}">
+                                            {% if post.user.id in following_users %}ติดตามแล้ว{% else %}ติดตาม{% endif %}
+                                        </button>
+                                    </form>
                                 {% endif %}
                             </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
 
-                    <!-- Post Actions -->
-                    <div class="post-actions">
-                        <button class="action-btn like-btn" data-post-id="{{ post.id }}">
-                            <i class="{% if request.user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i> 
-                            <span class="action-text">ถูกใจ</span>
-                        </button>
-                        <span class="like-count" id="like-count-{{ post.id }}">{{ post.likes.count }}</span>
-                        
-                        <button class="action-btn share-btn" data-post-id="{{ post.id }}">
-                            <i class="fas fa-share"></i> <span class="action-text">แชร์</span>
-                        </button>
-                        
-                        <button class="action-btn save-btn" data-post-id="{{ post.id }}">
-                            <i class="{% if post in request.user.saved_posts.all %}fas{% else %}far{% endif %} fa-bookmark"></i>
-                            <span class="action-text">{% if post in request.user.saved_posts.all %}เลิกบันทึก{% else %}บันทึก{% endif %}</span>
-                        </button>
+                            <!-- Post Content -->
+                            <p>{{ post.content }}</p>
 
-                        {% if request.user == post.user %}
-                            <a href="{% url 'edit_post' post.id %}" class="action-btn edit-btn">
-                                <i class="fas fa-edit"></i> <span class="action-text">แก้ไข</span>
-                            </a>
-                            
-                            <button class="action-btn delete-btn" data-post-id="{{ post.id }}">
-                                <i class="fas fa-trash"></i> <span class="action-text">ลบ</span>
-                            </button>
-                        {% endif %}
-                    </div>
-
-                    <!-- Comments Section -->
-                    <div class="post-comments">
-                        <h6><i class="far fa-comment"></i> ความคิดเห็น</h6>
-                        <div class="comments-list" id="comments-{{ post.id }}">
-                            {% for comment in post.comments.all %}
-                                <div class="comment">
-                                    <span class="comment-user">{{ comment.user.username }}:</span>
-                                    <span class="comment-content">{{ comment.content }}</span>
+                            <!-- Post Media -->
+                            {% if post.media.all %}
+                                <div class="post-media mb-3">
+                                    {% for media in post.media.all|slice:":4" %}
+                                        <div class="media-item">
+                                            {% if media.media_type == "image" %}
+                                                <img src="{{ media.file.url }}" class="rounded img-fluid" alt="Post image">
+                                            {% elif media.media_type == "video" %}
+                                                <video src="{{ media.file.url }}" controls class="rounded img-fluid"></video>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                            {% endfor %}
+                            {% endif %}
+                            
+                            
+
+                            <!-- Actions -->
+                            <div class="actions mt-2 d-flex gap-2">
+                                <button class="btn like-btn" data-post-id="{{ post.id }}">
+                                    <i class="fas fa-heart"></i> ถูกใจ
+                                </button>
+                                <span id="like-count-{{ post.id }}">{{ post.likes.count }} Likes</span>
+                                <button class="btn share-btn" data-post-id="{{ post.id }}">
+                                    <i class="fas fa-share-alt"></i> แชร์
+                                </button>
+                                <!-- <button class="btn btn-light save-btn" data-post-id="{{ post.id }}">
+                                     {% if post in request.user.saved_posts.all %}Unsave{% else %}Save{% endif %}
+                                </button>   -->
+                                <button class="btn save-btn" data-post-id="{{ post.id }}">
+                                    {% if post in request.user.saved_posts.all %}
+                                        <i class="fas fa-bookmark"></i> ยกเลิกบันทึก
+                                    {% else %}
+                                        <i class="far fa-bookmark"></i> บันทึก
+                                    {% endif %}
+                                </button>
+                                {% if request.user == post.user %}
+                                    <a href="{% url 'edit_post' post.id %}" class="btn">
+                                        <i class="fas fa-edit"></i> แก้ไข
+                                    </a>                          
+                                    <button class="btn btn-danger delete-btn" data-post-id="{{ post.id }}">
+                                        <i class="fas fa-trash"></i> ลบ
+                                    </button>
+                                {% endif %}
+                            </div>
                         </div>
                         
+                        <!-- Comments Section -->
+                        <!-- Comments Section -->
+                        <div class="comments-section">
+                            <div class="comments-header">
+                                <h3><i class="fas fa-comments"></i> ความคิดเห็น <span class="comment-count">{{ post.comments.all|length }}</span></h3>
+                            </div>
+                            
+                            <div class="comment-list" id="comments-{{ post.id }}">
+                                {% for comment in post.comments.all %}
+                                    <div class="comment-item" id="comment-{{ comment.id }}">
+                                        <div class="comment-avatar">
+                                            {% if comment.user.member_profile.profile_picture %}
+                                                <img src="{{ comment.user.member_profile.profile_picture.url }}" alt="{{ comment.user.username }}">
+                                            {% else %}
+                                                <img src="{% static 'images/default-profile.png' %}" alt="Default profile">
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="comment-content">
+                                            <div class="comment-bubble {% if comment.user == request.user %}own-comment{% endif %}">
+                                                <div class="comment-author">{{ comment.user.username }}</div>
+                                                <div class="comment-text">{{ comment.content }}</div>
+                                            </div>
+                                            
+                                            <div class="comment-meta">
+                                                <span class="comment-time">{{ comment.created_at|timesince }} ที่แล้ว</span>
+                                                
+                                                {% if request.user == comment.user %}
+                                                    <div class="comment-actions">
+                                                        <button class="action-btn edit-comment" data-comment-id="{{ comment.id }}">
+                                                            <i class="fas fa-edit"></i> แก้ไข
+                                                        </button>
+                                                        <button class="action-btn delete-comment" data-comment-id="{{ comment.id }}">
+                                                            <i class="fas fa-trash"></i> ลบ
+                                                        </button>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <div class="no-comments">
+                                        <i class="fas fa-comment-slash"></i>
+                                        <p>ยังไม่มีความคิดเห็น เป็นคนแรกที่แสดงความคิดเห็น!</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Add Comment Form -->
+                            <form class="comment-form" data-post-id="{{ post.id }}">
+                                {% csrf_token %}
+                                <div class="comment-form-avatar">
+                                    {% if request.user.member_profile.profile_picture %}
+                                        <img src="{{ request.user.member_profile.profile_picture.url }}" alt="{{ request.user.username }}">
+                                    {% else %}
+                                        <img src="{% static 'images/default-profile.png' %}" alt="Default profile">
+                                    {% endif %}
+                                </div>
+                                <div class="comment-input-wrapper">
+                                    <input type="text" name="content" class="comment-input" placeholder="เขียนความคิดเห็น..." autocomplete="off">
+                                    <button type="submit" class="comment-submit" disabled>
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
 
-                        <!-- Add Comment Form -->
-                        <form class="comment-form" data-post-id="{{ post.id }}">
-                            {% csrf_token %}
-                            <input type="text" name="content" placeholder="เขียนความคิดเห็น..." class="comment-input">
-                            <button type="submit" class="comment-btn">ส่ง</button>
-                        </form>
-                    </div>
-                </article>
-                {% empty %}
-                <div class="no-posts">
-                    <i class="fas fa-inbox"></i>
-                    <p>ยังไม่มีโพสต์</p>
-                </div>
+                        <!-- Comment Notification Template -->
+                        <div id="comment-notification" class="comment-notification">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="notification-message"></span>
+                            <button class="comment-notification-close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="no-posts">
+                            <i class="fas fa-inbox"></i>
+                            <p>ยังไม่มีโพสต์</p>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </main>
-    </div>
 
-    <script>
+        <!-- JavaScript -->
+        <script>
+            // Media preview functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                // Preview images before upload
+                const postImages = document.getElementById('postImages');
+                const imagePreview = document.getElementById('imagePreview');
+                
+                if (postImages && imagePreview) {
+                    postImages.addEventListener('change', function() {
+                        imagePreview.innerHTML = '';
+                        
+                        if (this.files) {
+                            const fileCount = Math.min(this.files.length, 4);
+                            imagePreview.classList.add('d-flex', 'flex-wrap', 'gap-2');
+                            
+                            for (let i = 0; i < fileCount; i++) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const imgPreview = document.createElement('div');
+                                    imgPreview.className = 'preview-item position-relative';
+                                    imgPreview.innerHTML = `
+                                        <img src="${e.target.result}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                        <button type="button" class="btn-close position-absolute top-0 end-0 bg-danger text-white" style="padding: 2px;"></button>
+                                    `;
+                                    imagePreview.appendChild(imgPreview);
+                                    
+                                    // Remove image on close button click
+                                    imgPreview.querySelector('.btn-close').addEventListener('click', function() {
+                                        imgPreview.remove();
+                                    });
+                                }
+                                reader.readAsDataURL(this.files[i]);
+                            }
+                            
+                            if (this.files.length > 4) {
+                                const moreIndicator = document.createElement('div');
+                                moreIndicator.className = 'more-indicator bg-light rounded p-2 d-flex align-items-center justify-content-center';
+                                moreIndicator.style.width = '100px';
+                                moreIndicator.style.height = '100px';
+                                moreIndicator.innerHTML = `<span>+${this.files.length - 4} เพิ่มเติม</span>`;
+                                imagePreview.appendChild(moreIndicator);
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
+    </div>
+</body>
+    <!-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             // ฟังก์ชันปุ่มติดตาม
             const followButton = document.getElementById('follow-button');
@@ -332,4 +456,4 @@
         });
     </script>
 </body>
-</html>
+</html> -->

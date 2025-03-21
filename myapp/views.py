@@ -466,18 +466,52 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Post  # ✅ ตรวจสอบว่า import ถูกต้อง
 
+# @login_required
+# def toggle_like(request, post_id):
+#     if request.method == "POST":
+#         post = get_object_or_404(Post, id=post_id)
+#         user = request.user  # ✅ ใช้ request.user ตรงๆ
+        
+#         if post.likes.filter(id=user.id).exists():
+#             post.likes.remove(user)  # ✅ ถ้าเคยไลค์ -> กดอีกครั้งเพื่อลบ
+#             liked = False
+#         else:
+#             post.likes.add(user)  # ✅ ถ้ายังไม่เคยไลค์ -> กดไลค์
+#             liked = True
+
+#         like_count = post.likes.count()
+
+#         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#             return JsonResponse({"success": True, "liked": liked, "like_count": like_count})
+
+#         return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+#     return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
+
 @login_required
 def toggle_like(request, post_id):
     if request.method == "POST":
         post = get_object_or_404(Post, id=post_id)
-        user = request.user  # ✅ ใช้ request.user ตรงๆ
+        user = request.user
         
         if post.likes.filter(id=user.id).exists():
-            post.likes.remove(user)  # ✅ ถ้าเคยไลค์ -> กดอีกครั้งเพื่อลบ
+            # ถ้าเคยไลค์แล้ว -> กดอีกครั้งเพื่อยกเลิกการไลค์
+            post.likes.remove(user)
             liked = False
         else:
-            post.likes.add(user)  # ✅ ถ้ายังไม่เคยไลค์ -> กดไลค์
+            # ถ้ายังไม่เคยไลค์ -> กดไลค์
+            post.likes.add(user)
             liked = True
+            
+            # สร้างการแจ้งเตือนโดยตรงเมื่อมีคนกดไลค์
+            # ไม่ต้องแจ้งเตือนถ้าเป็นโพสต์ของตัวเอง
+            if post.user != user:
+                MemberNotification.objects.create(
+                    user=post.user,
+                    message=f"❤️ {user.username} ถูกใจโพสต์ของคุณ!",
+                    is_read=False  # ตั้งค่าเริ่มต้นเป็นยังไม่ได้อ่าน
+                )
+                print(f"DEBUG: สร้างการแจ้งเตือนกดไลค์แล้ว -> ผู้รับ: {post.user.username}, ผู้ส่ง: {user.username}")
 
         like_count = post.likes.count()
 
@@ -487,8 +521,6 @@ def toggle_like(request, post_id):
         return redirect(request.META.get('HTTP_REFERER', 'home'))
 
     return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
-
-
 
 
 @login_required
@@ -571,25 +603,48 @@ def remove_saved_post(request, post_id):
     except SavedPost.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Post not found in saved list'}, status=404)
     
+# @login_required
+# def add_comment(request, post_id):
+#     post = get_object_or_404(Post, id=post_id)
+
+#     if request.method == "POST":
+#         content = request.POST.get('content')
+#         if content:
+#             comment = Comment.objects.create(post=post, user=request.user, content=content)
+#             return JsonResponse({
+#                 'success': True,
+#                 'message': 'Comment added successfully!',
+#                 'username': request.user.username,  # ✅ ส่งชื่อผู้ใช้กลับไป
+#                 'content': comment.content,
+#                 "is_owner": True,  # ส่งค่ากลับไปว่าเป็นเจ้าของคอมเมนต์
+#             }, status=201)
+
+#         return JsonResponse({'success': False, 'message': 'Comment cannot be empty!'}, status=400)
+
+#     return JsonResponse({'success': False, 'message': 'Invalid request!'}, status=400)
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Comment, Post
+
 @login_required
 def add_comment(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-
     if request.method == "POST":
-        content = request.POST.get('content')
-        if content:
-            comment = Comment.objects.create(post=post, user=request.user, content=content)
-            return JsonResponse({
-                'success': True,
-                'message': 'Comment added successfully!',
-                'username': request.user.username,  # ✅ ส่งชื่อผู้ใช้กลับไป
-                'content': comment.content,
-                "is_owner": True,  # ส่งค่ากลับไปว่าเป็นเจ้าของคอมเมนต์
-            }, status=201)
+        content = request.POST.get("content", "").strip()
+        if not content:
+            return JsonResponse({"success": False, "message": "เนื้อหาว่างเปล่า"})
 
-        return JsonResponse({'success': False, 'message': 'Comment cannot be empty!'}, status=400)
+        post = Post.objects.get(id=post_id)
+        comment = Comment.objects.create(user=request.user, post=post, content=content)
 
-    return JsonResponse({'success': False, 'message': 'Invalid request!'}, status=400)
+        return JsonResponse({
+            "success": True,
+            "comment_id": comment.id,
+            "content": comment.content,
+            "username": request.user.username,
+            "user_avatar": request.user.member_profile.profile_picture.url if request.user.member_profile.profile_picture else "/static/images/default-profile.png",
+            "created_at": "เมื่อสักครู่"
+        })
 
 
 
@@ -802,13 +857,13 @@ def toggle_group_post_like(request, post_id):
     })
 
 
-#เพิ่มคอมเม้นในกลุ่ม
+
 import json
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from myapp.models import GroupPost, GroupComment
-
+#เพิ่มคอมเม้นในกลุ่ม
 @login_required
 def add_group_post_comment(request, post_id):
     post = get_object_or_404(GroupPost, id=post_id)
@@ -822,7 +877,7 @@ def add_group_post_comment(request, post_id):
                 comment = GroupComment.objects.create(post=post, user=request.user, content=content)
                 return JsonResponse({
                     "success": True,
-                    "message": "Comment added successfully!",
+                    "comment_id": comment.id,  # ✅ เพิ่มการส่ง comment_id กลับไป
                     "comment": {
                         "user": comment.user.username,
                         "content": comment.content,
@@ -835,6 +890,50 @@ def add_group_post_comment(request, post_id):
             return JsonResponse({"success": False, "message": "Invalid JSON request!"}, status=400)
 
     return JsonResponse({"success": False, "message": "Invalid request!"}, status=400)
+
+@login_required
+def delete_group_comment(request, comment_id):
+    if request.method == "POST":
+        comment = get_object_or_404(GroupComment, id=comment_id)
+
+        if comment.user != request.user:
+            return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบคอมเมนต์นี้"}, status=403)
+
+        comment.delete()
+        return JsonResponse({"success": True, "message": "คอมเมนต์ถูกลบเรียบร้อยแล้ว", "comment_id": comment_id})
+    
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+
+@login_required
+def edit_group_comment(request, comment_id):
+    comment = get_object_or_404(GroupComment, id=comment_id)
+
+    if request.method == "POST":
+        if comment.user != request.user:
+            return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์แก้ไขคอมเมนต์นี้"}, status=403)
+
+        try:
+            data = json.loads(request.body)
+            new_content = data.get("content", "").strip()
+
+            if not new_content:
+                return JsonResponse({"success": False, "message": "คอมเมนต์ต้องมีข้อความ"}, status=400)
+
+            comment.content = new_content
+            comment.save()
+
+            return JsonResponse({
+                "success": True,
+                "message": "แก้ไขคอมเมนต์สำเร็จ",
+                "content": new_content,  # ✅ ส่งเนื้อหาคอมเมนต์กลับไปเพื่ออัปเดตใน frontend
+            })
+        
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
 
 
 #อัพเดทโปรไฟล์
@@ -2075,6 +2174,7 @@ def follow_user(request, user_id):
         "followers_count": followers_count,
         "following_count": following_count
     })
+
 @login_required
 def follow_status(request, user_id):
     """ ✅ ตรวจสอบว่ายูสเซอร์ที่ล็อกอินติดตาม user_id หรือไม่ """
@@ -2130,9 +2230,14 @@ def group_post_detail(request, post_id):
 
 
 
-# ✅ ลบคอมเมนต์
+# ✅ ลบคอมเมนต์ (รองรับ JSON request)
 @login_required
 def delete_comment(request, comment_id):
+    try:
+        comment_id = int(comment_id)
+    except ValueError:
+        return JsonResponse({"success": False, "message": "Invalid comment ID!"}, status=400)
+
     comment = get_object_or_404(Comment, id=comment_id, user=request.user)
 
     if request.method == "POST":
@@ -2141,13 +2246,28 @@ def delete_comment(request, comment_id):
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
-# ✅ แก้ไขคอมเมนต์
+
+# ✅ แก้ไขคอมเมนต์ (รองรับ JSON request)
 @login_required
 def edit_comment(request, comment_id):
+    try:
+        comment_id = int(comment_id)
+    except ValueError:
+        return JsonResponse({"success": False, "message": "Invalid comment ID!"}, status=400)
+
     comment = get_object_or_404(Comment, id=comment_id, user=request.user)
 
     if request.method == "POST":
-        content = request.POST.get("content")
+        # เช็คว่าเป็น JSON หรือ FormData
+        if request.content_type == "application/json":
+            try:
+                data = json.loads(request.body)
+                content = data.get("content", "").strip()
+            except json.JSONDecodeError:
+                return JsonResponse({"success": False, "message": "Invalid JSON format!"}, status=400)
+        else:
+            content = request.POST.get("content", "").strip()
+
         if content:
             comment.content = content
             comment.save()
@@ -2155,7 +2275,6 @@ def edit_comment(request, comment_id):
         return JsonResponse({"success": False, "message": "Comment cannot be empty!"}, status=400)
 
     return JsonResponse({"success": False, "message": "Invalid request!"}, status=400)
-
 
 def group_post_detail(request, post_id):
     post = get_object_or_404(GroupPost, id=post_id)
@@ -2191,16 +2310,8 @@ def edit_group_post(request, post_id):
 
 
 
-# ✅ ลบคอมเมนต์
-@login_required
-def delete_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
 
-    if request.method == "POST":
-        comment.delete()
-        return JsonResponse({"success": True, "message": "คอมเมนต์ถูกลบเรียบร้อยแล้ว"}, status=200)
 
-    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 
 @login_required
@@ -2946,6 +3057,71 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from .models import MemberNotification
 
+# @login_required
+# def member_notifications_list(request):
+#     """ แสดงหน้าแจ้งเตือนทั้งหมดของสมาชิก """
+#     notifications = MemberNotification.objects.filter(user=request.user).order_by('-created_at')
+    
+#     # เพิ่ม debug เพื่อตรวจสอบข้อมูล
+#     print(f"Debug - จำนวนการแจ้งเตือน: {notifications.count()}")
+#     for notif in notifications[:5]:  # แสดงเฉพาะ 5 รายการแรกเพื่อไม่ให้ log มากเกินไป
+#         print(f"Debug - แจ้งเตือน {notif.id}: {notif.message[:50]}...")
+    
+#     return render(request, "member_notifications.html", {"notifications": notifications})
+    
+# @login_required
+# def api_member_notifications(request):
+#     """ ส่งแจ้งเตือนของสมาชิกเป็น JSON (AJAX) """
+#     notifications = MemberNotification.objects.filter(user=request.user, is_read=False).order_by("-created_at")[:10]
+    
+#     data = [
+#         {"id": n.id, "message": n.message, "created_at": n.created_at.strftime("%Y-%m-%d %H:%M:%S")}
+#         for n in notifications
+#     ]
+#     return JsonResponse({"notifications": data})
+
+# @login_required
+# def mark_notification_as_read(request):
+#     if request.method == 'POST':
+#         data = json.loads(request.body)
+#         notification_id = data.get('notification_id')
+        
+#         if notification_id:
+#             # Mark specific notification as read
+#             notification = Notification.objects.get(id=notification_id, user=request.user)
+#             notification.is_read = True
+#             notification.save()
+#         else:
+#             # Mark all notifications as read
+#             Notification.objects.filter(user=request.user).update(is_read=True)
+            
+#         return JsonResponse({'success': True})
+    
+#     return JsonResponse({'success': False}, status=400)
+
+# @login_required
+# def mark_all_notifications_as_read(request):
+#     Notification.objects.filter(user=request.user).update(is_read=True)
+#     return JsonResponse({'success': True})
+
+# def create_notification(user, sender, notification_type, post=None, order=None, group_post=None):
+#     message = ""
+    
+#     if notification_type == "like_post":
+#         if post:
+#             message = f"❤️ {sender.username} ถูกใจโพสต์ของคุณ!"
+#         elif group_post:
+#             message = f"❤️ {sender.username} ถูกใจโพสต์ของคุณในกลุ่ม!"
+    
+#     # เพิ่มประเภทการแจ้งเตือนอื่นๆ ตามต้องการ
+    
+#     # สร้างการแจ้งเตือน
+#     MemberNotification.objects.create(
+#         user=user,
+#         message=message
+#     )
+
+# 1. แก้ไขฟังก์ชัน mark_notification_as_read ให้ใช้ MemberNotification แทน Notification
 @login_required
 def member_notifications_list(request):
     """ แสดงหน้าแจ้งเตือนทั้งหมดของสมาชิก """
@@ -2957,43 +3133,55 @@ def member_notifications_list(request):
         print(f"Debug - แจ้งเตือน {notif.id}: {notif.message[:50]}...")
     
     return render(request, "member_notifications.html", {"notifications": notifications})
+
+@login_required
+def mark_notification_as_read(request):
+    """ทำเครื่องหมายว่าอ่านแล้วสำหรับการแจ้งเตือนของสมาชิก"""
+    if request.method == 'POST':
+        # ตรวจสอบว่าเป็นการทำเครื่องหมายอ่านแล้วทั้งหมดหรือไม่
+        mark_all = request.POST.get('mark_all')
+        
+        if mark_all:
+            # ทำเครื่องหมายทั้งหมดว่าอ่านแล้ว
+            MemberNotification.objects.filter(user=request.user).update(is_read=True)
+            return JsonResponse({'success': True, 'message': 'ทำเครื่องหมายทั้งหมดแล้ว'})
+        
+        # ทำเครื่องหมายเฉพาะการแจ้งเตือนที่ระบุ
+        notification_id = request.POST.get('notification_id')
+        if notification_id:
+            try:
+                notification = MemberNotification.objects.get(id=notification_id, user=request.user)
+                notification.is_read = True
+                notification.save()
+                return JsonResponse({'success': True, 'message': 'ทำเครื่องหมายแล้ว'})
+            except MemberNotification.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'ไม่พบการแจ้งเตือน'}, status=404)
     
+    return JsonResponse({'success': False, 'message': 'คำขอไม่ถูกต้อง'}, status=400)
+
+# 2. แก้ไขฟังก์ชัน api_member_notifications ให้รวมทั้งการแจ้งเตือนที่อ่านแล้วและยังไม่ได้อ่าน
+
 @login_required
 def api_member_notifications(request):
-    """ ส่งแจ้งเตือนของสมาชิกเป็น JSON (AJAX) """
-    notifications = MemberNotification.objects.filter(user=request.user, is_read=False).order_by("-created_at")[:10]
+    """ส่งแจ้งเตือนของสมาชิกเป็น JSON (AJAX)"""
+    # ดึงการแจ้งเตือนทั้งหมด ไม่เฉพาะแค่ที่ยังไม่ได้อ่าน
+    notifications = MemberNotification.objects.filter(user=request.user).order_by("-created_at")[:20]
     
     data = [
-        {"id": n.id, "message": n.message, "created_at": n.created_at.strftime("%Y-%m-%d %H:%M:%S")}
+        {
+            "id": n.id, 
+            "message": n.message, 
+            "created_at": n.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "is_read": n.is_read
+        }
         for n in notifications
     ]
     return JsonResponse({"notifications": data})
 
-@login_required
-def mark_notification_as_read(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        notification_id = data.get('notification_id')
-        
-        if notification_id:
-            # Mark specific notification as read
-            notification = Notification.objects.get(id=notification_id, user=request.user)
-            notification.is_read = True
-            notification.save()
-        else:
-            # Mark all notifications as read
-            Notification.objects.filter(user=request.user).update(is_read=True)
-            
-        return JsonResponse({'success': True})
-    
-    return JsonResponse({'success': False}, status=400)
+# 3. แก้ไขฟังก์ชัน create_notification ให้ใช้งานได้จริง
 
-@login_required
-def mark_all_notifications_as_read(request):
-    Notification.objects.filter(user=request.user).update(is_read=True)
-    return JsonResponse({'success': True})
-
-def create_notification(user, sender, notification_type, post=None, order=None, group_post=None):
+def create_notification(user, notification_type, sender=None, post=None, order=None, group_post=None):
+    """สร้างการแจ้งเตือนใหม่"""
     message = ""
     
     if notification_type == "like_post":
@@ -3001,11 +3189,30 @@ def create_notification(user, sender, notification_type, post=None, order=None, 
             message = f"❤️ {sender.username} ถูกใจโพสต์ของคุณ!"
         elif group_post:
             message = f"❤️ {sender.username} ถูกใจโพสต์ของคุณในกลุ่ม!"
+    elif notification_type == "new_order":
+        message = f"🛒 คุณมีคำสั่งซื้อใหม่ #{order.id} จาก {order.user.username}"
+    elif notification_type == "comment":
+        if post:
+            message = f"💬 {sender.username} ได้แสดงความคิดเห็นต่อโพสต์ของคุณ"
+        elif group_post:
+            message = f"💬 {sender.username} ได้แสดงความคิดเห็นต่อโพสต์ของคุณในกลุ่ม"
+    elif notification_type == "order_status":
+        message = f"📦 คำสั่งซื้อ #{order.id} ของคุณมีการเปลี่ยนแปลงสถานะเป็น {order.status}"
     
-    # เพิ่มประเภทการแจ้งเตือนอื่นๆ ตามต้องการ
-    
-    # สร้างการแจ้งเตือน
-    MemberNotification.objects.create(
-        user=user,
-        message=message
-    )
+    # สร้างการแจ้งเตือนตามประเภทผู้ใช้
+    if hasattr(user, 'seller_profile'):
+        SellerNotification.objects.create(
+            seller=user,
+            message=message
+        )
+    else:
+        MemberNotification.objects.create(
+            user=user,
+            message=message
+        )
+    # ในฟังก์ชันที่เรียกใช้ create_notification
+    notification_message = create_notification(post.user, "like_post", sender=user, post=post)
+    print(f"DEBUG: สร้างการแจ้งเตือน -> {notification_message}")
+        
+    # ส่งคืนข้อความเพื่อการตรวจสอบ
+    return message

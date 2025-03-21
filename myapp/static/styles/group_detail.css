@@ -1,459 +1,868 @@
-/* 🌸 General Styles */
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background-color: #fff5f7;
-    color: #333;
+/* Pink Theme Community CSS - group_detail.css */
+
+:root {
+    --primary-color: #ff6b9d;      /* Vibrant pink - main accent */
+    --secondary-color: #ffb6c1;    /* Light pink - secondary accent */
+    --tertiary-color: #ffd1dc;     /* Soft pink - background elements */
+    --light-pink: #fff0f5;         /* Very light pink - backgrounds */
+    --dark-pink: #d4506a;          /* Deep pink - for hover states */
+    --text-color: #333333;         /* Dark gray - main text */
+    --text-light: #666666;         /* Medium gray - secondary text */
+    --white: #ffffff;              /* Pure white - backgrounds */
+    --gray: #f8f8f8;               /* Light gray - dividers, borders */
+    --border-color: #ffe0e9;       /* Pale pink - border accents */
+    --sidebar-width: 270px;        /* Width of the sidebar */
+    --shadow-small: 0 2px 8px rgba(255, 107, 157, 0.15);
+    --shadow-medium: 0 4px 12px rgba(255, 107, 157, 0.2);
+    --shadow-large: 0 8px 24px rgba(255, 107, 157, 0.25);
+    --transition-speed: 0.3s;
 }
 
-/* 📌 Sidebar */
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-pink);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-pink);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Sidebar Styling */
 .sidebar {
-    width: 250px;
-    height: 100vh;
     position: fixed;
-    background-color: #fde5e5;
-    padding: 12px 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    border-right: 3px solid #f7c2c2;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    background: var(--white);
+    box-shadow: var(--shadow-medium);
+    padding: 1.5rem;
+    z-index: 100;
+    transition: all var(--transition-speed) ease;
+    border-right: 2px solid var(--border-color);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+    border-radius: 50%;
+    transition: transform var(--transition-speed);
+    box-shadow: var(--shadow-small);
+}
+
+.logo img:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-medium);
+}
+
+.logo h5 {
+    margin-top: 1rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.nav {
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* ทำให้ตัวอักษรชิดซ้าย */
-    left: 0; /* ✅ ทำให้ชิดขอบซ้าย */
-    top: 0; /* ✅ ทำให้เริ่มจากด้านบน */
-    margin: 0; /* ✅ เอา margin ออกเพื่อให้ติดขอบ */
-}
-
-/* 🖼 ปรับขนาดและการจัดวางโลโก้ */
-.sidebar .logo {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.sidebar .logo img {
-    width: 90px;
-    height: 90px;
-    display: block;
-    margin: 0 auto;
-    border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-    /*padding-left: 20px; */
-}
-
-.sidebar .logo img:hover {
-    transform: scale(1.05);
-    padding-left: 20;
-}
-
-/* 👤 Welcome Message */
-/* จัดให้อักษรอยู่ตรงกลาง */
-.sidebar h5 {
-    color: #333;
-    font-weight: bold;
-    text-align: center;
-    font-size: 1.4rem; /* ขยายขนาดให้เด่นขึ้น */
-    margin-top: 10px;
+    gap: 0.5rem;
 }
 
 .nav-link {
-    text-decoration: none;
-    padding: 12px 15px;
+    color: var(--text-color);
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    transition: all var(--transition-speed);
     display: flex;
     align-items: center;
-    justify-content: center; /* ✅ จัดให้ icon และ text อยู่ตรงกลาง */
-    text-align: center; /* ✅ ให้ข้อความอยู่กึ่งกลาง */
-    width: 100%; /* ✅ ปรับให้กว้างเต็ม sidebar */
-    min-height: 45px; /* ✅ กำหนดความสูงขั้นต่ำให้เท่ากัน */
-    color: #666;
-    font-size: 1rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    margin-bottom: 10px;
+    gap: 0.75rem;
+    text-decoration: none;
 }
 
-/* ปรับให้ icon กับ text ห่างกันเล็กน้อย */
-.nav-link i {
-    margin-right: 8px;
-    font-size: 1.2rem; /* ✅ ทำให้ไอคอนมีขนาดเท่ากัน */
+.nav-link:hover {
+    background-color: var(--tertiary-color);
+    color: var(--dark-pink);
+    transform: translateX(5px);
 }
 
-/* ปรับ hover ให้มีขนาดเท่ากัน */
-.nav-link:hover,
 .nav-link.active {
-    background-color: #ff9aa2;
-    color: white;
-    font-weight: bold;
-    width: 100%; /* ✅ ปรับ hover ให้กว้างเท่ากับ sidebar */
+    background-color: var(--primary-color);
+    color: var(--white);
+    box-shadow: var(--shadow-small);
 }
 
-
-/* 🎀 Welcome Section */
-.welcome-logout {
+.nav-link i {
+    width: 20px;
     text-align: center;
-    padding: 40px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 10px; /* เพิ่มระยะห่างก่อนปุ่ม Logout */
+    font-size: 1.1rem;
 }
 
-/* 🔴 ปุ่ม Logout */
+.welcome-logout {
+    position: absolute;
+    bottom: 2rem;
+    width: calc(100% - 3rem);
+    background: linear-gradient(to right, var(--tertiary-color), var(--light-pink));
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow-small);
+    border: 1px solid var(--border-color);
+}
+
+.welcome-logout p {
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.welcome-logout b {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
 .logout-btn {
-    width: 100%;
-    background-color: #dc3545;
+    background-color: var(--dark-pink);
+    color: var(--white);
     border: none;
-    padding: 12px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
     font-weight: bold;
-    margin-top: auto; /* ดันปุ่มลงไปด้านล่างสุด */
-}
-
-/* ทำให้ Sidebar เป็น Flexbox เพื่อให้จัดตำแหน่งปุ่ม Logout ได้ */
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* ดันปุ่ม Logout ไปอยู่ด้านล่าง */
-    height: 100vh;
-}
-
-/* 🌸 Content */
-.content {
-    margin-left: 280px;
-    padding: 30px;
-}
-
-/* 🌸 Post Media - ปรับให้รูปภาพเรียงเป็น 2 คอลัมน์ */
-.post-media {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* ✅ ให้มี 2 คอลัมน์ */
-    gap: 10px; /* ✅ เพิ่มระยะห่างระหว่างรูป */
-    justify-content: center; /* ✅ จัดให้อยู่กึ่งกลาง */
-    margin-top: 10px;
-}
-
-/* ✅ ปรับขนาดรูปภาพให้มีขนาดเท่ากัน */
-.post-media .media-item {
+    transition: all var(--transition-speed);
+    width: 100%;
+    margin-top: 0.5rem;
+    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 0.5rem;
 }
 
-/* ✅ ปรับให้ทุกภาพมีขนาดเท่ากัน */
-.post-media img,
-.post-media video {
-    width: 100%; /* ✅ ทำให้รูปขนาดเท่ากัน */
-    height: 300px; /* ✅ กำหนดความสูงคงที่ */
-    object-fit: cover; /* ✅ ครอบรูปให้อยู่ในขนาดที่กำหนด */
-    aspect-ratio: 1 / 1; /* ✅ ปรับให้รูปเป็นจัตุรัส */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
+.logout-btn:hover {
+    background-color: #c03a52;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-small);
 }
 
-/* ✅ ปรับเป็น 1 คอลัมน์เมื่ออยู่บนมือถือ */
-@media (max-width: 768px) {
-    .post-media {
-        grid-template-columns: 1fr;
+/* Main Content */
+.content {
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    min-height: 100vh;
+    transition: margin-left var(--transition-speed) ease;
+}
+/* เพิ่ม CSS นี้ไปยังไฟล์ group_detail.css ที่มีอยู่เดิม */
+
+/* ปรับแต่ง Dropdown เพื่อให้ทำงานถูกต้อง */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    background-color: transparent;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dropdown-toggle:hover {
+    background-color: var(--tertiary-color);
+}
+
+.dropdown-toggle::after {
+    display: none; /* ซ่อนลูกศร dropdown ที่มาจาก Bootstrap */
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: 100;
+    min-width: 10rem;
+    margin-top: 0.125rem;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-medium);
+    padding: 0.5rem 0;
+    display: none;
+    border: 1px solid var(--border-color);
+}
+
+.dropdown-menu.show {
+    display: block;
+    animation: dropdownFadeIn 0.2s ease-in-out;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
     }
-
-    .post-media img,
-    .post-media video {
-        height: auto; /* ✅ บนมือถือให้ปรับขนาดอัตโนมัติ */
-        aspect-ratio: auto;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-
-/* ✅ ปรับรูปให้เป็น 1 คอลัมน์เมื่ออยู่บนมือถือ */
-@media (max-width: 768px) {
-    .post-media .media-item {
-        width: 100%; /* ✅ รูปเต็มพื้นที่เมื่อหน้าจอเล็ก */
-    }
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: all 0.2s;
 }
 
-/* 🌸 Group Header */
+.dropdown-item:hover {
+    background-color: var(--light-pink);
+    color: var(--primary-color);
+}
+
+/* สไตล์สำหรับฟอร์มแก้ไขคอมเมนต์ */
+.edit-comment-form {
+    margin-top: 0.5rem;
+}
+
+.edit-comment-form .form-control {
+    background-color: var(--light-pink);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.edit-comment-form .btn {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+/* ปรับแต่งคอมเมนต์ */
+.comment {
+    transition: background-color 0.3s;
+}
+
+.comment:hover {
+    background-color: var(--light-pink);
+}
+
+/* ทำให้ปุ่ม dropdown-toggle ไม่เป็นสีฟ้าเมื่อกด */
+.dropdown-toggle:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* ทำให้ input ในฟอร์มแก้ไขเติบโตตามความกว้างที่มี */
+.edit-comment-form input.form-control {
+    width: 100%;
+}
+
+/* เพิ่มแอนิเมชั่นเมื่อมีการแก้ไขหรือลบคอมเมนต์ */
+@keyframes fadeBackground {
+    0% { background-color: var(--tertiary-color); }
+    100% { background-color: var(--white); }
+}
+
+.comment-highlight {
+    animation: fadeBackground 1.5s;
+}
+
+/* Group Header */
 .group-header {
-    text-align: center;
-    background-color: #fff;
-    padding: 40px;
-    margin-bottom: 20px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
     border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 3px solid #ff9aa2;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-medium);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.group-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 240, 245, 0.85); /* เบลอด้วยการทำ overlay ของสีพื้นหลัง */
+    backdrop-filter: blur(8px);
+    z-index: 0;
+}
+
+.group-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    z-index: 1;
+}
+
+.group-header-content {
+    position: relative;
+    z-index: 2;
 }
 
 .group-image {
     width: 120px;
     height: 120px;
     object-fit: cover;
-    margin-bottom: 15px;
+    border: 4px solid var(--white);
     border-radius: 50%;
-    border: 4px solid #ff6b81;
+    box-shadow: var(--shadow-medium);
+    transition: all var(--transition-speed) ease;
+    cursor: pointer;
 }
 
-/* 🌸 ปุ่มแก้ไขและลบกลุ่ม */
-.group-header .btn {
-    font-size: 14px;
-    padding: 10px 15px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    font-weight: bold;
-}
-
-.group-header .btn-warning {
-    background-color: #ffcc00;
-    color: #fff;
-}
-
-.group-header .btn-warning:hover {
-    background-color: #ffb300;
+.group-image:hover {
     transform: scale(1.05);
+    box-shadow: var(--shadow-large);
 }
 
-.group-header .btn-danger {
-    background-color: #ff4f5a;
-    color: #fff;
-}
-
-.group-header .btn-danger:hover {
-    background-color: #e63946;
-    transform: scale(1.05);
-}
-
-/* 🌸 Post Form */
-/* 🌸 Post Card */
-.post {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid #ddd;
-    margin-bottom: 30px;
-}
-
-/* 🌸 User Info */
-.post-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.post-header img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #ff6b81;
-}
-
-/* 🌸 Post Actions */
-.actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 15px;
-}
-
-.actions .btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    border: 1px solid #ddd;
-    transition: all 0.3s ease;
-}
-
-.actions .btn i {
-    font-size: 16px;
-}
-
-.actions .btn-light {
-    background: #f8f9fa;
-    color: #333;
-}
-
-.actions .btn-light:hover {
-    background: #e9ecef;
-}
-
-.actions .btn-danger {
-    background: #dc3545;
-    color: white;
-}
-
-.actions .btn-danger:hover {
-    background: #c82333;
-}
-
-/* 🌸 Comments Section */
-.comments {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-}
-
-.comment {
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    font-size: 14px;
-}
-
-.comment strong {
-    color: #333;
-    font-weight: bold;
-}
-
-/* 🌸 Comment Form */
-.add-comment-form input {
+/* Modal for full-size image */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    margin-bottom: 10px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.add-comment-form button {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 15px;
+.image-modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    max-width: 80%;
+    max-height: 80%;
+    animation: zoomIn 0.3s;
+    position: relative;
+}
+
+.modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     border-radius: 8px;
-    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-.add-comment-form button:hover {
-    background: #0056b3;
+.close-modal {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    color: white;
+    font-size: 30px;
+    background-color: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
 }
 
+.close-modal:hover {
+    background-color: var(--dark-pink);
+    transform: scale(1.1);
+}
 
+@keyframes zoomIn {
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.group-header h1 {
+    color: var(--primary-color);
+    margin: 1rem 0;
+    font-weight: 600;
+}
+
+.group-header .text-muted {
+    color: var(--text-light);
+}
+
+.rules {
+    background-color: var(--light-pink);
+    border-left: 4px solid var(--primary-color);
+    padding: 1rem;
+    border-radius: 0 10px 10px 0;
+    margin: 1.5rem 0;
+}
+
+.group-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Button Styling */
+.btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    margin: 0.25rem;
+    transition: all var(--transition-speed);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-small);
+}
+
+.btn-light {
+    background-color: var(--light-pink);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.btn-light:hover {
+    background-color: var(--tertiary-color);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--dark-pink);
+    border-color: var(--dark-pink);
+}
+
+.btn-success {
+    background-color: #6ac045;
+    border-color: #6ac045;
+}
+
+.btn-success:hover {
+    background-color: #58a638;
+    border-color: #58a638;
+}
+
+.btn-danger {
+    background-color: #ff5c77;
+    border-color: #ff5c77;
+}
+
+.btn-danger:hover {
+    background-color: var(--dark-pink);
+    border-color: var(--dark-pink);
+}
+
+/* Post Form */
 .post-form-container {
-    background-color: #fff;
-    padding: 25px;
+    background: var(--white);
     border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 3px solid #ff9aa2;
-    margin-bottom: 30px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-medium);
+    transition: all var(--transition-speed);
+    border: 1px solid var(--border-color);
+}
+
+.post-form-container:hover {
+    box-shadow: var(--shadow-large);
 }
 
 .post-form-container h3 {
-    color: #ff6b81;
-    font-weight: bold;
+    color: var(--primary-color);
+    font-weight: 600;
+    border-bottom: 2px solid var(--tertiary-color);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
 }
 
-/* 🌸 Post Card */
-.post-card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 3px solid #ff9aa2;
-    margin-bottom: 30px;
-}
-
-.post-card .media-container img,
-.post-card .media-container video {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+textarea.form-control {
+    border: 1px solid var(--border-color);
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    resize: none;
+    font-size: 1.1rem;
+    transition: all var(--transition-speed);
+    background-color: var(--light-pink);
 }
 
-/* 🌸 Like & Comment Buttons */
-.post-actions .btn {
-    font-size: 14px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    font-weight: bold;
+textarea.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.25);
+    outline: none;
 }
 
-.post-actions .btn-outline-primary {
-    border: 2px solid #ff6b81;
-    color: #ff6b81;
+/* Upload buttons */
+.upload-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
-.post-actions .btn-outline-primary:hover {
-    background: #ff6b81;
-    color: white;
+/* Posts Section */
+.posts-section h3 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
 }
 
-.post-actions .like-count {
-    font-weight: bold;
-    color: #ff6b81;
+.posts-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--primary-color), var(--tertiary-color));
+    border-radius: 3px;
 }
 
-/* 🌸 Comments */
-.comments-section {
-    margin-top: 20px;
-    padding: 15px;
-    border-top: 1px solid #ddd;
+.post {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-medium);
+    transition: all var(--transition-speed);
+    border: 1px solid var(--border-color);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.post:hover {
+    box-shadow: var(--shadow-large);
+    transform: translateY(-3px);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.profile-img {
+    border: 2px solid var(--primary-color);
+    transition: all var(--transition-speed);
+    margin-right: 0.75rem;
+}
+
+.profile-img:hover {
+    transform: scale(1.1);
+}
+
+.post-header b {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.post-header small {
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+
+.post-content {
+    margin: 1rem 0;
+    line-height: 1.6;
+}
+
+.post-media {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.media-item {
+    border-radius: 10px;
+    overflow: hidden;
+    max-height: 300px;
+    border: 1px solid var(--border-color);
+}
+
+.media-item img, .media-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all var(--transition-speed);
+}
+
+.media-item:hover img, .media-item:hover video {
+    transform: scale(1.05);
+}
+
+.actions {
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 0;
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.like-count {
+    display: flex;
+    align-items: center;
+    color: var(--text-light);
+    gap: 0.25rem;
+}
+
+.like-count i {
+    color: var(--primary-color);
+}
+
+/* Comment Section */
+.comments {
+    background-color: var(--light-pink);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.comments h6 {
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
 }
 
 .comment {
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: #555;
-    padding: 12px;
     border-radius: 10px;
-    background-color: #fff0f3;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    background-color: var(--white);
+    box-shadow: var(--shadow-small);
+    transition: all var(--transition-speed);
+    border: 1px solid var(--border-color);
 }
 
-.comment strong {
-    color: #ff6b81;
-    display: block;
-    margin-bottom: 5px;
-    font-size: 15px;
+.comment:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateX(3px);
 }
 
-/* 🌸 Responsive */
-@media (max-width: 768px) {
+.comment b {
+    color: var(--primary-color);
+}
+
+.add-comment-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.add-comment-form .form-control {
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    flex-grow: 1;
+    background-color: var(--white);
+}
+
+.add-comment-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.25);
+    outline: none;
+}
+
+/* Empty state styling */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background-color: var(--white);
+    border-radius: 15px;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--border-color);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.empty-state .text-muted {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.empty-state p:last-child {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Animation for interaction elements */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.like-btn:hover, .share-group-btn:hover, .save-btn:hover {
+    animation: pulse 0.5s ease-in-out;
+}
+
+/* Liked state */
+.liked i.fas {
+    color: var(--primary-color) !important;
+}
+
+/* Special animation for heart icon */
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    15% { transform: scale(1.3); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.3); }
+    60% { transform: scale(1); }
+}
+
+.liked i.fas.fa-heart {
+    animation: heartBeat 1s;
+}
+
+/* Responsiveness */
+@media (max-width: 992px) {
     .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        border-right: none;
+        width: 80px;
+        padding: 1rem 0.5rem;
     }
-
+    
+    .sidebar .logo h5, .welcome-logout p, .nav-link span {
+        display: none;
+    }
+    
+    .logo img {
+        width: 50px;
+        height: 50px;
+    }
+    
     .content {
-        margin-left: 0;
-        padding: 20px;
+        margin-left: 80px;
     }
-
-    .post-card {
-        padding: 15px;
+    
+    .nav-link {
+        justify-content: center;
+        padding: 0.8rem;
     }
+    
+    .welcome-logout {
+        width: calc(100% - 1rem);
+        text-align: center;
+    }
+}
 
-    .post-actions {
+@media (max-width: 768px) {
+    .content {
+        padding: 1.5rem;
+    }
+    
+    .group-header {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .content {
+        padding: 1rem;
+    }
+    
+    .group-header {
+        padding: 1rem;
+    }
+    
+    .group-image {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .post {
+        padding: 1rem;
+    }
+    
+    .actions {
         flex-direction: column;
-        gap: 5px;
+        align-items: flex-start;
     }
-}
-/* ✅ ปรับขนาดรูปโปรไฟล์ให้น่ารัก */
-.profile-pic {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #ff6f91;
-}
-
-
-
-/* ✅ เมื่อโฮเวอร์ที่รูป จะขยายใหญ่ขึ้น */
-.profile-pic:hover {
-    transform: scale(1.1); /* ✅ ขยายขึ้น 10% */
-    transition: 0.3s ease-in-out;
+    
+    .add-comment-form {
+        flex-direction: column;
+    }
+    
+    .add-comment-form .btn {
+        width: 100%;
+    }
 }

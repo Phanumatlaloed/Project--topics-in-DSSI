@@ -1,66 +1,44 @@
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".follow-form").forEach(form => {
-        form.addEventListener("submit", function (event) {
-            event.preventDefault();
-            let button = this.querySelector(".follow-btn");
-            let userId = button.dataset.userId;
-            let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-
-            if (!userId) {
-                console.error("❌ userId is undefined or null");
-                return;
-            }
-
-            fetch(`/follow/${userId}/`, {
-                method: "POST",
+// ในไฟล์ static/js/follow.js
+document.addEventListener('DOMContentLoaded', function() {
+    const followForms = document.querySelectorAll('.follow-form');
+    
+    followForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userId = this.querySelector('.follow-btn').dataset.userId;
+            const csrfToken = this.querySelector('[name="csrfmiddlewaretoken"]').value;
+            
+            fetch(this.action, {
+                method: 'POST',
                 headers: {
-                    "X-CSRFToken": csrfToken,
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
                 },
-                body: JSON.stringify({})
+                body: new URLSearchParams({
+                    'csrfmiddlewaretoken': csrfToken
+                })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    if (data.is_following) {
-                        button.classList.remove("btn-outline-primary");
-                        button.classList.add("btn-danger");
-                        button.textContent = "ติดตามแล้ว";
-                    } else {
-                        button.classList.remove("btn-danger");
-                        button.classList.add("btn-outline-primary");
-                        button.textContent = "ติดตาม";
-                    }
-                } else {
-                    console.error("❌ Follow API error:", data.message);
+                    // อัพเดททุกปุ่มที่เกี่ยวข้องกับผู้ใช้คนนี้
+                    const allButtons = document.querySelectorAll(`.follow-btn[data-user-id="${userId}"]`);
+                    
+                    allButtons.forEach(button => {
+                        if (data.is_following) {
+                            button.classList.remove('btn-outline-primary');
+                            button.classList.add('btn-danger');
+                            button.textContent = 'ติดตามแล้ว';
+                        } else {
+                            button.classList.remove('btn-danger');
+                            button.classList.add('btn-outline-primary');
+                            button.textContent = 'ติดตาม';
+                        }
+                    });
                 }
             })
-            .catch(error => console.error("❌ Error fetching follow status:", error));
+            .catch(error => console.error('Error:', error));
         });
-    });
-
-    // ✅ โหลดสถานะติดตามหลังจากรีเฟรชหน้าเว็บ
-    document.querySelectorAll(".follow-btn").forEach(button => {
-        let userId = button.dataset.userId;
-
-        if (!userId) {
-            console.error("❌ userId is undefined in follow status check.");
-            return;
-        }
-
-        fetch(`/follow_status/${userId}/`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.is_following) {
-                    button.classList.remove("btn-outline-primary");
-                    button.classList.add("btn-danger");
-                    button.textContent = "ติดตามแล้ว";
-                } else {
-                    button.classList.remove("btn-danger");
-                    button.classList.add("btn-outline-primary");
-                    button.textContent = "ติดตาม";
-                }
-            })
-            .catch(error => console.error("❌ Error fetching follow status:", error));
     });
 });

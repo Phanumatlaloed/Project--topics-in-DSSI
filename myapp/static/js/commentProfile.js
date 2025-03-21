@@ -1,19 +1,16 @@
 document.addEventListener("DOMContentLoaded", function() {
     console.log("✅ Enhanced Comments System Loaded!");
-    
+
     // ===== ENABLE/DISABLE SUBMIT BUTTON =====
     document.querySelectorAll('.comment-input').forEach(input => {
         const submitButton = input.parentElement.querySelector('.comment-submit');
-        
-        // Initial button state
         submitButton.disabled = input.value.trim() === '';
-        
-        // Update button state on input
+
         input.addEventListener('input', function() {
             submitButton.disabled = this.value.trim() === '';
         });
     });
-    
+
     // ===== ADD COMMENT =====
     document.querySelectorAll(".comment-form").forEach(form => {
         form.addEventListener("submit", async function(event) {
@@ -24,13 +21,12 @@ document.addEventListener("DOMContentLoaded", function() {
             const content = contentInput.value.trim();
             const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
             const submitButton = this.querySelector('.comment-submit');
-            
+
             if (!content) return;
-            
-            // Disable input and button during submission
+
             contentInput.disabled = true;
             submitButton.disabled = true;
-            
+
             try {
                 let response = await fetch(`/add_comment/${postId}/`, {
                     method: "POST",
@@ -40,24 +36,20 @@ document.addEventListener("DOMContentLoaded", function() {
                     },
                     body: new URLSearchParams({ "content": content })
                 });
-                
+
                 let data = await response.json();
-                console.log("API Response:", data); // เพิ่มการแสดง log เพื่อตรวจสอบข้อมูลที่ได้รับ
-                
+                console.log("🟢 API Response:", data);
+
                 if (data.success) {
-                    // Get comment container
                     let commentsList = document.getElementById(`comments-${postId}`);
-                    
-                    // Remove "no comments" message if exists
-                    const noComments = commentsList.querySelector('.no-comments');
-                    if (noComments) {
-                        noComments.remove();
+
+                    if (!commentsList) {
+                        console.error("❌ Error: commentsList not found for post:", postId);
+                        return;
                     }
-                    
-                    // Determine avatar URL - แก้ไขเส้นทาง URL ให้ถูกต้อง ตามที่เก็บรูปไว้ที่ media/profile_picture
-                    const avatarUrl = data.user_avatar || '/media/profile_pictures/';
-                    
-                    // Create new comment element
+
+                    const avatarUrl = data.user_avatar || '/static/images/default-profile.png';
+
                     const newComment = document.createElement('div');
                     newComment.classList.add('comment-item', 'd-flex');
                     newComment.id = `comment-${data.comment_id}`;
@@ -83,17 +75,10 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         </div>
                     `;
-                    
-                    // Add to the top of the list
+
                     commentsList.appendChild(newComment);
-                    
-                    // Update comment count
                     updateCommentCount(postId, 1);
-                    
-                    // Show success notification
                     showNotification('เพิ่มความคิดเห็นสำเร็จ');
-                    
-                    // Clear input
                     contentInput.value = '';
                 } else {
                     showNotification(`เกิดข้อผิดพลาด: ${data.message}`, true);
@@ -102,14 +87,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.error("❌ Error:", error);
                 showNotification('เกิดข้อผิดพลาดในการเพิ่มความคิดเห็น', true);
             } finally {
-                // Re-enable input and button
                 contentInput.disabled = false;
                 submitButton.disabled = true;
                 contentInput.focus();
             }
         });
     });
-    
     // ===== EDIT COMMENT =====
     document.addEventListener("click", function(event) {
         // ปรับปรุงการตรวจจับการคลิกปุ่มแก้ไข
@@ -207,132 +190,138 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
     
-    // ===== DELETE COMMENT =====
-    document.addEventListener("click", function(event) {
-        // ปรับปรุงการตรวจจับการคลิกปุ่มลบ
-        const deleteButton = event.target.closest('.delete-comment');
-        
-        if (deleteButton) {
-            const commentId = deleteButton.dataset.commentId;
-            
-            if (confirm("คุณต้องการลบความคิดเห็นนี้ใช่หรือไม่?")) {
-                deleteComment(commentId);
-            }
-        }
-    });
+ // ===== DELETE COMMENT =====
+ document.addEventListener("click", function(event) {
+    const deleteButton = event.target.closest('.delete-comment');
     
-    async function deleteComment(commentId) {
-        try {
-            const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
-            
-            let response = await fetch(`/comment/delete/${commentId}/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken
-                }
-            });
-            
-            let data = await response.json();
-            console.log("Delete Response:", data); // เพิ่มการแสดง log
-            
-            if (data.success) {
-                const commentElement = document.getElementById(`comment-${commentId}`);
-                
-                if (commentElement) {
-                    // Get post ID
-                    const commentsList = commentElement.closest('.comments-list');
-                    const postId = commentsList.id.replace('comments-', '');
-                    
-                    // Fade out and remove
-                    commentElement.style.opacity = '0';
-                    commentElement.style.transform = 'translateY(-10px)';
-                    commentElement.style.transition = 'all 0.3s ease';
-                    
-                    setTimeout(() => {
-                        commentElement.remove();
-                        
-                        // Update comment count
-                        updateCommentCount(postId, -1);
-                        
-                        // If no more comments, add the no comments message
-                        if (commentsList.children.length === 0) {
-                            commentsList.innerHTML = `
-                                <div class="no-comments">
-                                    <i class="fas fa-comment-slash"></i>
-                                    <p>ยังไม่มีความคิดเห็น เป็นคนแรกที่แสดงความคิดเห็น!</p>
-                                </div>
-                            `;
-                        }
-                    }, 300);
-                    
-                    showNotification('ลบความคิดเห็นสำเร็จ');
-                }
-            } else {
-                showNotification('เกิดข้อผิดพลาดในการลบความคิดเห็น', true);
+    if (deleteButton) {
+        const commentId = deleteButton.dataset.commentId;
+
+        if (!commentId) {
+            console.error("❌ Error: commentId is undefined");
+            return;
+        }
+
+        if (confirm("คุณต้องการลบความคิดเห็นนี้ใช่หรือไม่?")) {
+            deleteComment(commentId);
+        }
+    }
+});
+
+async function deleteComment(commentId) {
+    try {
+        const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
+        const response = await fetch(`/comment/delete/${commentId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
             }
-        } catch (error) {
-            console.error("❌ Error:", error);
+        });
+
+        const data = await response.json();
+        console.log("🟢 Delete Response:", data);
+
+        if (data.success) {
+            const commentElement = document.getElementById(`comment-${commentId}`);
+
+            if (!commentElement) {
+                console.error("❌ Error: commentElement not found for ID:", commentId);
+                return;
+            }
+
+            const commentsList = commentElement.closest('.comment-list');
+
+            if (!commentsList) {
+                console.error("❌ Error: commentsList not found.");
+                return;
+            }
+
+            commentElement.style.opacity = '0';
+            commentElement.style.transform = 'translateY(-10px)';
+            commentElement.style.transition = 'all 0.3s ease';
+
+            setTimeout(() => {
+                commentElement.remove();
+                updateCommentCount(commentsList, -1);
+
+                if (commentsList.children.length === 0) {
+                    commentsList.innerHTML = `
+                        <div class="no-comments">
+                            <i class="fas fa-comment-slash"></i>
+                            <p>ยังไม่มีความคิดเห็น เป็นคนแรกที่แสดงความคิดเห็น!</p>
+                        </div>
+                    `;
+                }
+            }, 300);
+
+            showNotification('ลบความคิดเห็นสำเร็จ');
+        } else {
             showNotification('เกิดข้อผิดพลาดในการลบความคิดเห็น', true);
         }
+    } catch (error) {
+        console.error("❌ Error:", error);
+        showNotification('เกิดข้อผิดพลาดในการลบความคิดเห็น', true);
     }
-    
-    // ===== UTILITY FUNCTIONS =====
-    
-    // Update comment count
-    function updateCommentCount(postId, change) {
-        const commentsSection = document.querySelector(`.comments-count`);
-        
-        if (commentsSection) {
-            const currentCount = parseInt(commentsSection.textContent || '0');
-            const newCount = Math.max(0, currentCount + change);
-            commentsSection.textContent = newCount;
-        }
+}
+
+// ===== UPDATE COMMENT COUNT =====
+function updateCommentCount(postId, change) {
+    const commentsSection = document.querySelector(`#comments-${postId}`);
+
+    if (!commentsSection) {
+        console.error("❌ Error: commentsSection not found for post:", postId);
+        return;
     }
-    
-    // Show notification
-    function showNotification(message, isError = false) {
-        // Check if notification element exists, create if not
-        let notification = document.getElementById('comment-notification');
-        
-        if (!notification) {
-            notification = document.createElement('div');
-            notification.id = 'comment-notification';
-            notification.className = 'comment-notification';
-            notification.innerHTML = `
-                <i class="fas fa-check-circle"></i>
-                <span id="notification-message"></span>
-                <button class="comment-notification-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            document.body.appendChild(notification);
-            
-            // Add event listener to close button
-            notification.querySelector('.comment-notification-close').addEventListener('click', function() {
-                notification.classList.remove('show');
-            });
-        }
-        
-        const messageElement = notification.querySelector('#notification-message');
-        
-        if (messageElement) {
-            messageElement.textContent = message;
-            
-            if (isError) {
-                notification.style.backgroundColor = '#ff5252';
-                notification.querySelector('i').className = 'fas fa-exclamation-circle';
-            } else {
-                notification.style.backgroundColor = '#ff6b9d';
-                notification.querySelector('i').className = 'fas fa-check-circle';
-            }
-            
-            notification.classList.add('show');
-            
-            // Auto hide after 3 seconds
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
+
+    const commentCountElement = commentsSection.closest('.comments-section')?.querySelector('.comment-count');
+
+    if (commentCountElement) {
+        let currentCount = parseInt(commentCountElement.textContent || '0', 10);
+        let newCount = Math.max(0, currentCount + change);
+        commentCountElement.textContent = newCount;
     }
+}
+
+// ===== SHOW NOTIFICATION =====
+function showNotification(message, isError = false) {
+    let notification = document.getElementById('comment-notification');
+
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'comment-notification';
+        notification.className = 'comment-notification';
+        notification.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            <span id="notification-message"></span>
+            <button class="comment-notification-close">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        document.body.appendChild(notification);
+
+        notification.querySelector('.comment-notification-close').addEventListener('click', function() {
+            notification.classList.remove('show');
+        });
+    }
+
+    const messageElement = notification.querySelector('#notification-message');
+    if (messageElement) {
+        messageElement.textContent = message;
+
+        if (isError) {
+            notification.style.backgroundColor = '#ff5252';
+            notification.querySelector('i').className = 'fas fa-exclamation-circle';
+        } else {
+            notification.style.backgroundColor = '#ff6b9d';
+            notification.querySelector('i').className = 'fas fa-check-circle';
+        }
+
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+}
 });

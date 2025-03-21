@@ -53,7 +53,7 @@ urlpatterns = [
 
     #จัดการโพสต์ในกลุ่ม group_deta
     path('group_post/like/<int:post_id>/like', views.toggle_group_post_like, name='toggle_group_post_like'),
-    path('group_post/comment/<int:post_id>/', views.add_group_post_comment, name='add_group_post_comment'),
+    path('group_post/<int:post_id>/add_comment/', views.add_group_post_comment, name='add_group_post_comment'),
     path('community/<int:group_id>/post/', create_group_post, name='create_group_post'),
     path('group/post/<int:post_id>/edit/', views.group_edit_post, name='group_edit_post'),
     path('community/<int:group_id>/group/post/<int:post_id>/delete/', delete_group_post, name='delete_group_post'),
@@ -67,6 +67,8 @@ urlpatterns = [
 
     path('group_post/<int:post_id>/', views.group_post_detail, name='group_post_detail'),
     #path('delete_media/<int:media_id>/', views.delete_media, name='delete_media'),
+    path('group_comment/<int:comment_id>/delete/', views.delete_group_comment, name='delete_group_comment'),
+    path('group_comment/<int:comment_id>/edit/', views.edit_group_comment, name='edit_group_comment'),
 
     # ✅ เส้นทางสำหรับผู้ขาย
     path("seller/login/", seller_login, name="seller_login"),
@@ -254,7 +256,7 @@ urlpatterns = [
     path("notifications/", views.member_notifications_list, name="member_notifications"),
     path("api/notifications/", views.api_member_notifications, name="api_member_notifications"),
     path("notifications/mark-as-read/", views.mark_notification_as_read, name="mark_notification_as_read"),
-    path('notifications/mark-all-read/', views.mark_all_notifications_as_read, name='mark_all_notifications_as_read'),
+    # path('notifications/mark-all-read/', views.mark_all_notifications_as_read, name='mark_all_notifications_as_read'),
 
 ]
 

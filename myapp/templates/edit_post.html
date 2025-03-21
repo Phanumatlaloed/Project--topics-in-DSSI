@@ -1,71 +1,385 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Post</title>
-
-    <!-- ✅ Bootstrap CSS -->
+    
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'styles/edit_post.css' %}">
-
-    <!-- ✅ JavaScript -->
+    
+    <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="{% static 'js/edit.js' %}" defer></script>
+    
+    <style>
+        /* เพิ่ม CSS เสริมเพื่อความสวยงาม */
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .edit-post-card {
+            max-width: 700px;
+            border-radius: 15px;
+            background-color: #fff;
+            padding: 2rem !important;
+        }
+        
+        h2 {
+            color: #0d6efd;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        h5 {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .file-preview {
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        #existingFilesList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .file-item {
+            position: relative;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .file-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .remove-existing-file {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+        
+        .upload-section {
+            margin-bottom: 10px;
+        }
+        
+        .upload-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 0;
+            border: 1px dashed #adb5bd;
+            transition: all 0.3s;
+            font-weight: 500;
+            gap: 8px;
+        }
+        
+        .upload-btn:hover {
+            background-color: #e9ecef;
+            border-color: #6c757d;
+        }
+        
+        .selected-files {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .selected-file-item {
+            position: relative;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .empty-files-message {
+            padding: 1rem;
+            color: #6c757d;
+            text-align: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px dashed #ced4da;
+            grid-column: 1 / -1;
+        }
+        
+        /* สำหรับขอบเขตความสูงหน้าจอต่างๆ */
+        @media (max-height: 800px) {
+            .container.vh-100 {
+                height: auto !important;
+                min-height: 100vh;
+                padding: 2rem 0;
+            }
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* ปุ่มบันทึกและยกเลิก */
+        .action-btn {
+            font-weight: 500;
+            padding: 10px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .file-badge {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.75rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="edit-post-card p-4 shadow-lg bg-white rounded">
+        <div class="edit-post-card p-4 shadow-lg bg-white rounded w-100">
             <h2 class="text-center">📝 แก้ไขโพสต์</h2>
-
+            
             <!-- ฟอร์มแก้ไขโพสต์ -->
             <form id="editPostForm" action="{% url 'edit_post' post.id %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="postContent" class="form-label">โพสต์ของคุณ</label>
+                    <label for="postContent" class="form-label fw-bold">โพสต์ของคุณ</label>
                     <textarea name="content" id="postContent" class="form-control" required>{{ post.content }}</textarea>
                 </div>
-
-                <!-- ✅ แสดงไฟล์ที่อัปโหลดไว้ก่อนหน้า -->
-                <div class="existing-files mt-3">
-                    <h5>📂 ไฟล์ที่อัปโหลดไว้</h5>
+                
+                <!-- แสดงไฟล์ที่อัปโหลดไว้แล้ว -->
+                <div class="existing-files mt-4">
+                    <h5>
+                        <i class="bi bi-folder2-open"></i> ไฟล์ที่อัปโหลดไว้
+                        <span class="badge bg-primary rounded-pill">{{ post.media.all|length }}</span>
+                    </h5>
                     <div id="existingFilesList">
                         {% for media in post.media.all %}
-                            <div class="file-item d-flex align-items-center mb-2" data-file-id="{{ media.id }}">
+                            <div class="file-item" data-file-id="{{ media.id }}">
                                 {% if media.media_type == "image" %}
-                                    <img src="{{ media.file.url }}" class="file-preview me-2 rounded" width="80">
+                                    <img src="{{ media.file.url }}" class="file-preview mb-2" width="120" height="120" alt="รูปภาพ">
+                                    <span class="file-badge">รูปภาพ</span>
                                 {% else %}
-                                    <video src="{{ media.file.url }}" class="file-preview me-2 rounded" width="100" controls></video>
+                                    <video src="{{ media.file.url }}" class="file-preview mb-2" width="120" height="120" controls></video>
+                                    <span class="file-badge">วิดีโอ</span>
                                 {% endif %}
-                                <button type="button" class="btn btn-sm btn-danger remove-existing-file" data-file-id="{{ media.id }}">✖</button>
+                                <button type="button" class="btn btn-sm btn-danger remove-existing-file" data-file-id="{{ media.id }}" title="ลบไฟล์">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        {% empty %}
+                            <div class="empty-files-message">
+                                <i class="bi bi-exclamation-circle me-2"></i>ยังไม่มีไฟล์ที่อัปโหลด
                             </div>
                         {% endfor %}
                     </div>
+                    
+                    <!-- ไฟล์ที่ถูกลบจะถูกเก็บไว้ที่นี่ -->
+                    <div id="removedFiles"></div>
                 </div>
-
-                <!-- ✅ อัปโหลดรูปภาพ -->
-                <div class="upload-section mt-3">
-                    <label for="editPostImages" class="btn btn-light border">🖼️ เพิ่มรูปภาพ</label>
-                    <input type="file" name="images" id="editPostImages" accept="image/*" multiple hidden>
-                </div>
-
-                <!-- ✅ อัปโหลดวิดีโอ -->
-                <div class="upload-section mt-2">
-                    <label for="editPostVideos" class="btn btn-light border">🎥 เพิ่มวิดีโอ</label>
-                    <input type="file" name="videos" id="editPostVideos" accept="video/*" multiple hidden>
-                </div>
-
-                <!-- ✅ แสดงไฟล์ที่เลือกใหม่ -->
-                <div id="selectedEditFiles" class="selected-files mt-3"></div>
-
-                <!-- ปุ่มบันทึก -->
-                <button type="submit" id="savePostButton" class="btn btn-success w-100 mt-3">💾 บันทึก</button>
                 
-                <!-- ปุ่มยกเลิก -->
-                <a href="{% url 'home' %}" class="btn btn-danger w-100 mt-2">❌ ยกเลิก</a>
+                <!-- อัปโหลดไฟล์ใหม่ -->
+                <div class="upload-section mt-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="editPostImages" class="btn btn-light border w-100">
+                                <i class="bi bi-image me-2"></i> 🖼️ เพิ่มรูปภาพ
+                            </label>
+                            <input type="file" name="images" id="editPostImages" accept="image/*" multiple hidden>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editPostVideos" class="btn btn-light border w-100">
+                                <i class="bi bi-camera-video me-2"></i> 🎥 เพิ่มวิดีโอ
+                            </label>
+                            <input type="file" name="videos" id="editPostVideos" accept="video/*" multiple hidden>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- แสดงไฟล์ที่เลือกใหม่ -->
+                <div id="selectedEditFiles" class="selected-files"></div>
+                
+                <!-- ปุ่มบันทึกและยกเลิก -->
+                <div class="action-buttons mt-4">
+                    <button type="submit" id="savePostButton" class="btn btn-success w-100 action-btn mb-2">
+                        <i class="bi bi-save me-2"></i> 💾 บันทึก
+                    </button>
+                    <a href="{% url 'home' %}" class="btn btn-danger w-100 action-btn">
+                        <i class="bi bi-x-circle me-2"></i> ❌ ยกเลิก
+                    </a>
+                </div>
             </form>
         </div>
     </div>
+
+    <!-- JavaScript สำหรับแสดงตัวอย่างไฟล์ที่เลือกใหม่และจัดการไฟล์ที่ถูกลบ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // จัดการไฟล์ที่เลือกใหม่
+            const imageInput = document.getElementById('editPostImages');
+            const videoInput = document.getElementById('editPostVideos');
+            const previewContainer = document.getElementById('selectedEditFiles');
+            
+            function previewFiles(files, type) {
+                for (const file of files) {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'selected-file-item';
+                    
+                    if (type === 'image') {
+                        const img = document.createElement('img');
+                        img.className = 'file-preview mb-2';
+                        img.width = 120;
+                        img.height = 120;
+                        img.file = file;
+                        fileItem.appendChild(img);
+                        
+                        const fileType = document.createElement('span');
+                        fileType.className = 'file-badge';
+                        fileType.textContent = 'รูปภาพ';
+                        fileItem.appendChild(fileType);
+                        
+                        const reader = new FileReader();
+                        reader.onload = (function(aImg) { 
+                            return function(e) { aImg.src = e.target.result; }; 
+                        })(img);
+                        reader.readAsDataURL(file);
+                    } else {
+                        const video = document.createElement('video');
+                        video.className = 'file-preview mb-2';
+                        video.width = 120;
+                        video.height = 120;
+                        video.controls = true;
+                        fileItem.appendChild(video);
+                        
+                        const fileType = document.createElement('span');
+                        fileType.className = 'file-badge';
+                        fileType.textContent = 'วิดีโอ';
+                        fileItem.appendChild(fileType);
+                        
+                        const reader = new FileReader();
+                        reader.onload = (function(aVideo) { 
+                            return function(e) { aVideo.src = e.target.result; }; 
+                        })(video);
+                        reader.readAsDataURL(file);
+                    }
+                    
+                    const fileName = document.createElement('div');
+                    fileName.className = 'small text-truncate text-center w-100 mb-2';
+                    fileName.textContent = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+                    fileItem.appendChild(fileName);
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1';
+                    removeBtn.innerHTML = '<i class="bi bi-x"></i>';
+                    removeBtn.title = 'ลบไฟล์';
+                    removeBtn.addEventListener('click', function() {
+                        fileItem.remove();
+                        // หากไม่มีไฟล์ใดที่เลือกใหม่แล้ว ซ่อน container
+                        if (previewContainer.children.length === 0) {
+                            previewContainer.style.marginTop = '0';
+                        }
+                    });
+                    fileItem.appendChild(removeBtn);
+                    
+                    previewContainer.appendChild(fileItem);
+                    
+                    // แสดง container เมื่อมีไฟล์
+                    if (previewContainer.children.length > 0) {
+                        previewContainer.style.marginTop = '15px';
+                    }
+                }
+            }
+            
+            if (imageInput) {
+                imageInput.addEventListener('change', function() {
+                    previewFiles(this.files, 'image');
+                });
+            }
+            
+            if (videoInput) {
+                videoInput.addEventListener('change', function() {
+                    previewFiles(this.files, 'video');
+                });
+            }
+            
+            // จัดการไฟล์ที่ถูกลบ
+            const removedFilesContainer = document.getElementById('removedFiles');
+            
+            document.querySelectorAll('.remove-existing-file').forEach(button => {
+                button.addEventListener('click', function() {
+                    const fileId = this.getAttribute('data-file-id');
+                    const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                    
+                    if (fileItem) {
+                        // เพิ่ม hidden input เพื่อติดตามไฟล์ที่ถูกลบ
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'removed_files';
+                        hiddenInput.value = fileId;
+                        removedFilesContainer.appendChild(hiddenInput);
+                        
+                        // ซ่อนไฟล์ที่ถูกลบ
+                        fileItem.remove();
+                        
+                        // ตรวจสอบว่ายังมีไฟล์เหลืออยู่หรือไม่
+                        const remainingFiles = document.querySelectorAll('#existingFilesList .file-item');
+                        if (remainingFiles.length === 0) {
+                            const emptyMessage = document.createElement('div');
+                            emptyMessage.className = 'empty-files-message';
+                            emptyMessage.innerHTML = '<i class="bi bi-exclamation-circle me-2"></i>ยังไม่มีไฟล์ที่อัปโหลด';
+                            document.getElementById('existingFilesList').appendChild(emptyMessage);
+                        }
+                        
+                        // อัพเดทแบดจ์จำนวนไฟล์
+                        const badge = document.querySelector('.existing-files .badge');
+                        if (badge) {
+                            badge.textContent = remainingFiles.length;
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
