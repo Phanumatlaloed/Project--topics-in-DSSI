@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // สร้าง CSRF token
             const csrftoken = getCSRFToken();
             
-            fetch(`/remove_saved_group_post/${postId}/`, {
+            fetch(`/community/${groupId}/group/post/${postId}/unsave/`, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": csrftoken,

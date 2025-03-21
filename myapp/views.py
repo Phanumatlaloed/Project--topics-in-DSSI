@@ -15,6 +15,7 @@ from myapp.models import *
 from .models import *
 from myapp.forms import *
 from django.contrib.auth.decorators import user_passes_test
+import json
 
 
 User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
@@ -626,7 +627,7 @@ def remove_saved_post(request, post_id):
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Comment, Post
-
+#เพิ่มคอมเม้นในหน้าแรก
 @login_required
 def add_comment(request, post_id):
     if request.method == "POST":
@@ -647,7 +648,7 @@ def add_comment(request, post_id):
         })
 
 
-
+#หน้าชุมชน
 @login_required
 def community_list(request):
     """ แสดงรายการกลุ่ม Community สำหรับเฉพาะผู้ใช้ที่เป็น Member """
@@ -658,6 +659,7 @@ def community_list(request):
     groups = CommunityGroup.objects.all()
     return render(request, 'community_list.html', {'groups': groups})
 
+#หน้าสร้างกลุ่มในชุมชน
 @login_required
 def create_group(request):
     if request.method == 'POST':
@@ -681,6 +683,7 @@ def create_group(request):
 
     return render(request, 'create_group.html', {'form': form})
 
+#แก้ไขรายละเอียดกลุ่มที่สร้างในชุมชน
 @login_required
 def edit_group(request, group_id):
     """ ให้เจ้าของกลุ่มสามารถแก้ไขรายละเอียดกลุ่ม """
@@ -697,6 +700,7 @@ def edit_group(request, group_id):
 
     return render(request, 'edit_group.html', {'form': form, 'group': group})
 
+#ลบกลุ่มที่สร้างในหน้าชุมชน
 @login_required
 def delete_group(request, group_id, post_id):
     """ ให้เจ้าของกลุ่มสามารถลบกลุ่ม """
@@ -751,6 +755,7 @@ def group_detail(request, group_id):
         'posts': posts,
         'is_member': is_member
     })
+
 #โพสต์ในกลุ่ม
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib import messages
@@ -804,10 +809,6 @@ def join_group(request, group_id):
     return redirect('group_detail', group_id=group.id)
 
 #ออกจากกลุ่ม
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-from .models import CommunityGroup
 
 @login_required
 def leave_group(request, group_id):
@@ -856,13 +857,6 @@ def toggle_group_post_like(request, post_id):
         'like_count': post.likes.count(),
     })
 
-
-
-import json
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
-from myapp.models import GroupPost, GroupComment
 #เพิ่มคอมเม้นในกลุ่ม
 @login_required
 def add_group_post_comment(request, post_id):
@@ -891,18 +885,21 @@ def add_group_post_comment(request, post_id):
 
     return JsonResponse({"success": False, "message": "Invalid request!"}, status=400)
 
+#ลบคอมเม้นในกลุ่ม
 @login_required
-def delete_group_comment(request, comment_id):
+def delete_group_comment(request, group_id, comment_id):
     if request.method == "POST":
-        comment = get_object_or_404(GroupComment, id=comment_id)
+        comment = get_object_or_404(GroupComment, id=comment_id, post__group_id=group_id)
 
-        if comment.user != request.user:
+        # ✅ ตรวจสอบสิทธิ์ของผู้ใช้
+        if comment.user != request.user and request.user not in comment.post.group.admins.all():
             return JsonResponse({"success": False, "message": "คุณไม่มีสิทธิ์ลบคอมเมนต์นี้"}, status=403)
 
         comment.delete()
         return JsonResponse({"success": True, "message": "คอมเมนต์ถูกลบเรียบร้อยแล้ว", "comment_id": comment_id})
-    
+
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
 
 
 @login_required
@@ -1071,36 +1068,67 @@ def remove_saved_group_post(request, group_id, post_id):
     except SavedGroupPost.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Group post not found in saved list'}, status=404)
 
-# แชร์โพสต์ในกลุ่ม
-@login_required
-def share_group_post(request, post_id):
-    post = get_object_or_404(GroupPost, id=post_id)
-    group = post.group  # ใช้กลุ่มเดียวกันที่โพสต์อยู่
 
-    # สร้างโพสต์ใหม่โดยคัดลอกเนื้อหาต้นฉบับ
+# แชร์โพสต์ไปยังกลุ่มที่เลือก
+@login_required
+def share_group_post(request, group_id, post_id):
+    if request.method != "POST":
+        return JsonResponse({'success': False, 'error': 'Invalid method'}, status=405)
+
+    post = get_object_or_404(GroupPost, id=post_id)
+    target_group = get_object_or_404(CommunityGroup, id=group_id)  # ✅ ใช้ group_id ที่ส่งมา
+
+    # สร้างโพสต์ใหม่ในกลุ่มที่กำหนด
     shared_post = GroupPost.objects.create(
-        group=group,
+        group=target_group,
         user=request.user,
         content=f"📢 Shared from {post.user.username}: {post.content}",
-        shared_from=post  # เชื่อมโยงโพสต์ต้นฉบับ
+        shared_from=post  # ถ้ามี field shared_from
     )
 
-    # คัดลอกไฟล์สื่อ (ถ้ามี)
+    # คัดลอกสื่อ
     for media in post.media.all():
         GroupPostMedia.objects.create(
             post=shared_post, 
-            file=media.file, 
+            file=media.file,
             media_type=media.media_type
         )
 
     return JsonResponse({
         'success': True,
-        'message': "โพสต์ถูกแชร์แล้ว!",
+        'message': "โพสต์ถูกแชร์ไปยังกำหนดแล้ว!",
         'post_id': shared_post.id
     }, status=201)
 
 
 
+
+# แก้ไขโพสต์ในกลุ่ม
+# @login_required
+# def edit_group_post(request, post_id):
+#     post = get_object_or_404(GroupPost, id=post_id, user=request.user)
+
+#     if request.method == "POST":
+#         content = request.POST.get("content", "").strip()
+#         images = request.FILES.getlist("images")
+#         videos = request.FILES.getlist("videos")
+
+#         # ✅ อัปเดตเนื้อหาโพสต์
+#         post.content = content
+#         post.save()
+
+#         # ✅ ลบไฟล์ที่ผู้ใช้เลือก
+#         delete_media_ids = request.POST.getlist("delete_media")
+#         GroupPostMedia.objects.filter(id__in=delete_media_ids, post=post).delete()
+
+#         # ✅ เพิ่มไฟล์ใหม่
+#         for image in images:
+#             GroupPostMedia.objects.create(post=post, file=image, media_type="image")
+
+#         for video in videos:
+#             GroupPostMedia.objects.create(post=post, file=video, media_type="video")
+
+#         return redirect('group_post_detail', post_id=post.id)
 
 # แก้ไขโพสต์ในกลุ่ม
 @login_required
@@ -1136,7 +1164,7 @@ def group_edit_post(request, post_id):
 
     return render(request, "group_edit_post.html", {"form": form, "post": post})
 
-
+#ลบโพสต์ในกลุ่ม
 from django.http import JsonResponse, HttpResponseForbidden
 def delete_group_post(request, group_id, post_id):
     if request.method == "POST":
@@ -1156,6 +1184,7 @@ def delete_group_post(request, group_id, post_id):
 
     return HttpResponseForbidden("Method not allowed")
 
+#แดชบอร์ดผู้ขาย
 @login_required
 def seller_dashboard(request):
     seller = request.user.seller_profile
@@ -2281,32 +2310,6 @@ def group_post_detail(request, post_id):
     return render(request, 'group_post_detail.html', {'post': post})
 
 
-
-@login_required
-def edit_group_post(request, post_id):
-    post = get_object_or_404(GroupPost, id=post_id, user=request.user)
-
-    if request.method == "POST":
-        content = request.POST.get("content", "").strip()
-        images = request.FILES.getlist("images")
-        videos = request.FILES.getlist("videos")
-
-        # ✅ อัปเดตเนื้อหาโพสต์
-        post.content = content
-        post.save()
-
-        # ✅ ลบไฟล์ที่ผู้ใช้เลือก
-        delete_media_ids = request.POST.getlist("delete_media")
-        GroupPostMedia.objects.filter(id__in=delete_media_ids, post=post).delete()
-
-        # ✅ เพิ่มไฟล์ใหม่
-        for image in images:
-            GroupPostMedia.objects.create(post=post, file=image, media_type="image")
-
-        for video in videos:
-            GroupPostMedia.objects.create(post=post, file=video, media_type="video")
-
-        return redirect('group_post_detail', post_id=post.id)
 
 
 

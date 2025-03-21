@@ -7,13 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ group.name }}</title>
     
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'styles/group_detail.css' %}">
     
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="{% static 'js/group_post.js' %}" defer></script>
     <script src="{% static 'js/group_like.js' %}" defer></script>
     <script src="{% static 'js/group_share.js' %}" defer></script>
@@ -24,27 +28,27 @@
     <script src="{% static 'js/follow.js' %}" defer></script>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="wrapper">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="img-fluid rounded-circle">
-                <h5>My Community</h5>
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="logo-img">
             </div>
-            <ul class="nav">
-                <li><a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> <span>Home</span></a></li>
-                <li><a href="{% url 'community_list' %}" class="nav-link active"><i class="fas fa-users"></i> <span>Community</span></a></li>
-                <li><a href="{% url 'savelist' %}" class="nav-link"><i class="fas fa-bookmark"></i> <span>Save</span></a></li>
-                <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i class="fas fa-user"></i> <span>Profile</span></a></li>
-                <li><a href="{% url 'product_list' %}" class="nav-link"><i class="fas fa-shopping-cart"></i> <span>Product List</span></a></li>
-                <li><a href="{% url 'notifications' %}" class="nav-link"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
-            </ul>
-            
+            <nav>
+                <ul class="nav">
+                    <li><a href="{% url 'home' %}" class="nav-link "><i class="fas fa-home"></i> <span>หน้าหลัก</span></a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link active"><i class="fas fa-users"></i> <span>ชุมชน</span></a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link"><i class="fas fa-bookmark"></i> <span>รายการบันทึก</span></a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i class="fas fa-user"></i> <span>โปรไฟล์</span></a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link"><i class="fas fa-shopping-cart"></i> <span>รายการสินค้า</span></a></li>
+                    <li><a href="{% url 'notifications' %}" class="nav-link"><i class="fas fa-bell"></i> <span>การแจ้งเตือน</span></a></li>
+                </ul>
+            </nav>
             <div class="welcome-logout">
-                <p>Welcome, <b>{{ request.user.username }}</b></p>
-                <form action="{% url 'logout' %}" method="post">
+                <p>ยินดีต้อนรับ, <b>{{ request.user.username }}</b></p>
+                <form action="{% url 'logout' %}" method="post" class="mt-2">
                     {% csrf_token %}
-                    <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <button type="submit" class="logout-btn">ออกจากระบบ</button>
                 </form>
             </div>
         </aside>
@@ -56,17 +60,16 @@
                 {% if group.image %}
                     style="background-image: url('{{ group.image.url }}');"
                 {% else %}
-                    style="background-color: #f8f9fa;"
+                    style="background-color: var(--light-pink);"
                 {% endif %}
             >
-
                 <div class="group-header-content">
                     <img src="{% if group.image %}{{ group.image.url }}{% else %}{% static 'media/default-group.jpg' %}{% endif %}"
                         alt="{{ group.name }}"
                         class="group-image"
                         id="groupImage">
 
-                    <h1>{{ group.name }}</h1>
+                    <h1 class="group-title">{{ group.name }}</h1>
                     <p class="text-muted">{{ group.description }}</p>
                     <p class="text-muted"><i class="fas fa-user-shield"></i> <strong>Created by:</strong> {{ group.created_by.username }}</p>
                     
@@ -76,11 +79,11 @@
 
                     <div class="group-actions">
                         {% if request.user == group.created_by or request.user in group.admins.all %}
-                            <a href="{% url 'edit_group' group.id %}" class="btn btn-light">
-                                <i class="fas fa-edit"></i> Edit
+                            <a href="{% url 'edit_group' group.id %}" class="btn">
+                                <i class="fas fa-edit me-1"></i> Edit
                             </a>
                             <button class="btn btn-danger delete-btn" data-group-id="{{ group.id }}">
-                                <i class="fas fa-trash-alt"></i> Delete
+                                <i class="fas fa-trash me-1"></i> Delete
                             </button>
                         {% endif %}
 
@@ -88,20 +91,20 @@
                             <form action="{% url 'leave_group' group.id %}" method="post" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger">
-                                    <i class="fas fa-door-open"></i> Leave Group
+                                    <i class="fas fa-door-open me-1"></i> Leave Group
                                 </button>
                             </form>
                         {% endif %}
 
                         {% if request.user not in group.members.all %}
-                            <a href="{% url 'join_group' group.id %}" class="btn btn-success">
-                                <i class="fas fa-user-plus"></i> Join Group
+                            <a href="{% url 'join_group' group.id %}" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-1"></i> Join Group
                             </a>
                         {% endif %}
 
                         {% if request.user in group.admins.all %}
                             <a href="{% url 'group_members' group.id %}" class="btn btn-primary">
-                                <i class="fas fa-users-cog"></i> Members
+                                <i class="fas fa-users-cog me-1"></i> Members
                             </a>
                         {% endif %}
                     </div>
@@ -109,168 +112,298 @@
             </div>
             
             <!-- Modal for Full Image -->
-            <div class="image-modal" id="imageModal">
-                <div class="modal-content">
-                    <img src="" id="modalImage" class="modal-img">
-                    <div class="close-modal" id="closeModal">
-                        <i class="fas fa-times"></i>
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-image me-2"></i> {{ group.name }}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center p-0 position-relative">
+                            <button type="button" class="close-button" data-bs-dismiss="modal">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <img src="" id="modalImage" class="img-fluid">
+                        </div>
                     </div>
                 </div>
             </div>
         
             {% if is_member %}
             <!-- Post Form -->
-            <div class="post-form-container">
-                <h3><i class="fas fa-feather-alt"></i> สร้างโพสต์</h3>
+            <div class="create-post">
+                <h5><i class="fas fa-feather-alt me-2"></i> สร้างโพสต์</h5>
                 <form id="postForm" action="{% url 'create_group_post' group.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <textarea name="content" class="form-control mb-3" rows="3" placeholder="คุณกำลังคิดอะไร?" required></textarea>
                     
                     <input type="hidden" name="group_id" value="{{ group.id }}">
 
-                    <div class="upload-buttons">
-                        <label for="postImages" class="btn btn-light">
-                            <i class="fas fa-image"></i> เพิ่มรูปภาพ
+                    <!-- Media Preview Area -->
+                    <div id="imagePreview" class="preview-container mb-3"></div>
+
+                    <div class="d-flex gap-2">
+                        <label for="postImages" class="btn">
+                            <i class="fas fa-image me-1"></i> เพิ่มรูปภาพ
                         </label>
                         <input type="file" name="images" id="postImages" accept="image/*" multiple hidden>
                     
-                        <label for="postVideos" class="btn btn-light">
-                            <i class="fas fa-video"></i> เพิ่มวิดีโอ
+                        <label for="postVideos" class="btn">
+                            <i class="fas fa-video me-1"></i> เพิ่มวิดีโอ
                         </label>
                         <input type="file" name="videos" id="postVideos" accept="video/*" multiple hidden>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary w-100 mt-3">
-                        <i class="fas fa-paper-plane"></i> โพสต์
+                    <button type="submit" class="btn btn-primary mt-3 w-100">
+                        <i class="fas fa-paper-plane me-1"></i> โพสต์
                     </button>
                 </form>
             </div>    
             {% endif %}
             
             <!-- Posts Section -->
-            <div class="posts-section">
-                <h3><i class="fas fa-clipboard-list"></i> โพสต์</h3>
+            <div class="posts">
+                <h5><i class="fas fa-clipboard-list me-2"></i> โพสต์</h5>
                 
                 {% for post in posts %}
                     <div class="post" id="post-{{ post.id }}">
-                        <div class="post-header">
+                        <!-- User Info -->
+                        <div class="user-info d-flex align-items-center mb-3">
                             {% if post.user.member_profile.profile_picture %}
-                                <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img rounded-circle" width="40" height="40">
+                                <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img me-2 rounded-circle" width="40" height="40">
                             {% else %}
-                                <img src="{% static 'images/default-profile.png' %}" class="profile-img rounded-circle" width="40" height="40">
+                                <img src="{% static 'images/default-profile.png' %}" class="profile-img me-2 rounded-circle" width="40" height="40">
                             {% endif %}
+                            
                             <div class="d-flex flex-column">
                                 <b>{{ post.user.username }}</b>
-                                <small><i class="far fa-clock"></i> {{ post.created_at|date:"M d, Y H:i" }}</small>
+                                <small class="text-muted">{{ post.created_at|date:"F j, Y, g:i a" }}</small>
                             </div>
+                            
+                            <!-- Follow Button -->
+                            {% if post.user.id != request.user.id %}
+                                <form method="POST" action="{% url 'follow_user' post.user.id %}" class="ms-auto follow-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm {% if post.user.id in following_users %}btn-danger{% else %}btn-outline-primary{% endif %} follow-btn"
+                                        data-user-id="{{ post.user.id }}">
+                                        {% if post.user.id in following_users %}
+                                            <i class="fas fa-user-minus me-1"></i> ติดตามแล้ว
+                                        {% else %}
+                                            <i class="fas fa-user-plus me-1"></i> ติดตาม
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            {% endif %}
                         </div>
-                        
-                        <div class="post-content">
-                            {{ post.content }}
-                        </div>
-                    
-                        <!-- Post Media -->
+
+                        <!-- Post Content -->
+                        <p class="mb-3">{{ post.content }}</p>
+
+                        <!-- Post Media (Images & Videos) -->
                         {% if post.media.all %}
-                        <div class="post-media">
+                            <div class="post-media mb-3">
+                                {% with media_count=post.media.all|length %}
+                                    <div class="media-grid {% if media_count == 1 %}media-single{% elif media_count == 2 %}media-dual{% elif media_count == 3 %}media-triple{% elif media_count >= 4 %}media-quad{% endif %}">
+                                        {% for media in post.media.all|slice:":4" %}
+                                            <div class="media-item" data-bs-toggle="modal" data-bs-target="#mediaModal-{{ post.id }}-{{ forloop.counter }}">
+                                                {% if media.media_type == "image" %}
+                                                    <img src="{{ media.file.url }}" class="rounded" alt="Post image">
+                                                {% elif media.media_type == "video" %}
+                                                    <video src="{{ media.file.url }}" class="rounded" controls></video>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                        {% if media_count > 4 %}
+                                            <div class="media-more">+{{ media_count|add:"-4" }}</div>
+                                        {% endif %}
+                                    </div>
+                                {% endwith %}
+                            </div>
+                            
+                            <!-- Media Modal -->
                             {% for media in post.media.all %}
-                                <div class="media-item">
-                                    {% if media.media_type == "image" %}
-                                        <img src="{{ media.file.url }}" class="rounded img-fluid">
-                                    {% elif media.media_type == "video" %}
-                                        <video src="{{ media.file.url }}" controls class="rounded img-fluid"></video>
-                                    {% endif %}
+                                <div class="modal fade" id="mediaModal-{{ post.id }}-{{ forloop.counter }}" tabindex="-1" aria-labelledby="mediaModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                {% if media.media_type == "image" %}
+                                                    <i class="fas fa-image me-2"></i> รูปภาพโพสต์
+                                                {% elif media.media_type == "video" %}
+                                                    <i class="fas fa-video me-2"></i> วิดีโอโพสต์
+                                                {% endif %}
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body text-center p-0 position-relative">
+                                            <button type="button" class="close-button" data-bs-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            
+                                            {% if media.media_type == "image" %}
+                                                <img src="{{ media.file.url }}" class="img-fluid">
+                                            {% elif media.media_type == "video" %}
+                                                <video src="{{ media.file.url }}" controls class="img-fluid w-100"></video>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
                             {% endfor %}
-                        </div>
+
+                            {% if post.media.all|length > 4 %}
+                            <div class="modal fade" id="mediaGalleryModal-{{ post.id }}" tabindex="-1" aria-labelledby="mediaGalleryModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                <i class="fas fa-images me-2"></i> รูปภาพทั้งหมด ({{ post.media.all|length }})
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body position-relative">
+                                            <button type="button" class="close-button" data-bs-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            
+                                            <div class="gallery-grid">
+                                                {% for media in post.media.all %}
+                                                    <div class="gallery-item" onclick="openMediaModal('mediaModal-{{ post.id }}-{{ forloop.counter }}')">
+                                                        {% if media.media_type == "image" %}
+                                                            <img src="{{ media.file.url }}" class="rounded" alt="Post image">
+                                                        {% elif media.media_type == "video" %}
+                                                            <div class="video-thumbnail">
+                                                                <video src="{{ media.file.url }}" class="rounded"></video>
+                                                                <div class="play-overlay">
+                                                                    <i class="fas fa-play-circle"></i>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
                         {% endif %}
 
                         <!-- Actions -->
                         <div class="actions">
-                            <button class="btn btn-light like-btn" data-post-id="{{ post.id }}">
-                                <i class="far fa-heart"></i> Like
+                            <button class="btn like-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
+                                <i class="fas fa-heart"></i> ถูกใจ
+                            </button>
+                            <span id="like-count-{{ post.id }}">{{ post.likes.count }} ถูกใจ</span>
+                            
+                            <button class="btn share-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
+                                <i class="fas fa-share-alt"></i> แชร์
                             </button>
                             
-                            <span class="like-count" id="like-count-{{ post.id }}">
-                                <i class="fas fa-heart"></i> {{ post.likes.count }} Likes
-                            </span>
-
-                            <button class="btn btn-light share-group-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
-                                <i class="fas fa-share-alt"></i> Share
-                            </button>
-
-                            <button class="btn btn-light save-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
+                            <button class="btn save-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
                                 {% if post in request.user.saved_posts.all %}
-                                <i class="fas fa-bookmark"></i> Unsave
+                                    <i class="fas fa-bookmark"></i> ยกเลิกบันทึก
                                 {% else %}
-                                <i class="far fa-bookmark"></i> Save
+                                    <i class="far fa-bookmark"></i> บันทึก
                                 {% endif %}
                             </button>
 
                             {% if request.user == post.user %}
-                                <a href="{% url 'group_edit_post' post.id %}" class="btn btn-light">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>                          
-                                <button class="btn btn-danger delete-btn" 
-                                    data-post-id="{{ post.id }}" 
-                                    data-group-id="{{ group.id }}">
-                                    <i class="fas fa-trash-alt"></i> Delete
+
+                                <!-- {% comment %}
+                                <a href="{% url 'group_edit_post' post.id %}" class="btn">
+                                    <i class="fas fa-edit"></i> แก้ไข
+                                </a>
+                                {% endcomment %}                           -->
+                                
+                                <!-- If your regular edit_post view works for group posts too, use this: -->
+                                <a href="{% url 'group_edit_post' post.id %}" class="btn">
+                                    <i class="fas fa-edit"></i> แก้ไข
+                                </a>
+                                
+                                <button class="btn btn-danger delete-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
+                                    <i class="fas fa-trash"></i> ลบ
                                 </button>
                             {% endif %}
+
+                            {% if request.user != post.user %}
+                                <a href="{% url 'report_post' post.id %}" class="btn btn-warning">
+                                    <i class="fas fa-flag"></i> รายงาน
+                                </a>
+                            {% endif %}
                         </div>
-                        
+
                         <!-- Comments Section -->
                         <div class="comments">
-                            <h6><i class="far fa-comment-dots"></i> Comments</h6>
-                        
-                            <div id="comments-{{ post.id }}">
+                            <h6 class="comments-header">
+                                <i class="fas fa-comments me-1"></i> ความคิดเห็น 
+                                <span class="comments-count">{{ post.comments.all|length }}</span>
+                            </h6>
+                            
+                            <div class="comments-list" id="comments-{{ post.id }}">
                                 {% for comment in post.comments.all %}
-                                <div class="comment" id="comment-{{ comment.id }}" data-comment-id="{{ comment.id }}">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <b>{{ comment.user.username }}</b>:
-                                            <span class="comment-content">{{ comment.content }}</span>
+                                    <div class="comment-item d-flex" id="comment-{{ comment.id }}">
+                                        <!-- Comment Avatar -->
+                                        <div class="comment-avatar">
+                                            {% if comment.user.member_profile.profile_picture %}
+                                                <img src="{{ comment.user.member_profile.profile_picture.url }}" alt="{{ comment.user.username }}">
+                                            {% else %}
+                                                <img src="{% static 'images/default-profile.png' %}" alt="Default Profile">
+                                            {% endif %}
                                         </div>
-                        
-                                        {% if comment.user == request.user %}
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </button>
-                        
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <button class="dropdown-item edit-comment-btn"
-                                                        data-comment-id="{{ comment.id }}">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button class="dropdown-item delete-comment-btn"
-                                                        data-comment-id="{{ comment.id }}">
-                                                        <i class="fas fa-trash-alt"></i> Delete
-                                                    </button>
-                                                </li>
-                                            </ul>
+                                        
+                                        <!-- Comment Content -->
+                                        <div class="comment-content">
+                                            <div class="comment-bubble {% if comment.user == request.user %}own-comment{% endif %}">
+                                                <div class="comment-author">{{ comment.user.username }}</div>
+                                                <div class="comment-text">{{ comment.content }}</div>
+                                            </div>
+                                            
+                                            <div class="comment-meta">
+                                                <span class="comment-time">{{ comment.created_at|timesince }} ที่แล้ว</span>
+                                                
+                                                {% if request.user == comment.user %}
+                                                    <div class="comment-actions">
+                                                        <button class="action-btn edit-comment" data-comment-id="{{ comment.id }}">
+                                                            <i class="fas fa-edit"></i> แก้ไข
+                                                        </button>
+                                                        <button class="action-btn delete-comment" data-comment-id="{{ comment.id }}">
+                                                            <i class="fas fa-trash"></i> ลบ
+                                                        </button>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                        {% endif %}
                                     </div>
-                                </div>
                                 {% empty %}
-                                <div class="no-comments">
-                                    <i class="fas fa-comment-slash"></i>
-                                    <p>ยังไม่มีความคิดเห็น เป็นคนแรกที่แสดงความคิดเห็น!</p>
-                                </div>
+                                    <div class="no-comments">
+                                        <i class="fas fa-comment-slash"></i>
+                                        <p>ยังไม่มีความคิดเห็น เป็นคนแรกที่แสดงความคิดเห็น!</p>
+                                    </div>
                                 {% endfor %}
                             </div>
-                        
-                            <form class="add-comment-form" data-post-id="{{ post.id }}">
+
+                            <!-- Add Comment Form -->
+                            <form class="comment-form" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
                                 {% csrf_token %}
-                                <input type="text" name="content" placeholder="เขียนความคิดเห็น..." class="form-control">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-paper-plane"></i> Comment
-                                </button>
+                                <div class="comment-form-avatar">
+                                    {% if request.user.member_profile.profile_picture %}
+                                        <img src="{{ request.user.member_profile.profile_picture.url }}" alt="{{ request.user.username }}">
+                                    {% else %}
+                                        <img src="{% static 'images/default-profile.png' %}" alt="Default Profile">
+                                    {% endif %}
+                                </div>
+                                <div class="comment-input-wrapper">
+                                    <input type="text" name="content" class="comment-input" placeholder="เขียนความคิดเห็น..." autocomplete="off">
+                                    <button type="submit" class="comment-submit" disabled>
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
                             </form>
                         </div>
+                    </div>
                 {% empty %}
                     <div class="empty-state">
                         <i class="fas fa-comment-slash"></i>
@@ -282,6 +415,32 @@
                 {% endfor %}
             </div>
         </main>
+        
+        <!-- Recommended Products -->
+        <aside class="recommendations">
+            <h5><i class="fas fa-tags me-2"></i>แนะนำสินค้า</h5>
+            <div class="product-grid">
+                {% if products %}
+                    {% for product in products %}
+                        <div class="product-card">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                            <p class="mt-2 mb-1 fw-bold">{{ product.name }}</p>
+                            <p class="text-primary mb-2">
+                                <i class="fas fa-coins me-1"></i> ฿{{ product.price }}
+                            </p>
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-shopping-bag me-1"></i> ดูรายละเอียด
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-box-open text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted">ไม่มีสินค้าแนะนำในขณะนี้</p>
+                    </div>
+                {% endif %}
+            </div>
+        </aside>
     </div>
 
     <script>
@@ -291,18 +450,78 @@
             const videoInput = document.getElementById('postVideos');
             const imageLabel = document.querySelector('label[for="postImages"]');
             const videoLabel = document.querySelector('label[for="postVideos"]');
+            const imagePreview = document.getElementById('imagePreview');
 
             imageInput.addEventListener('change', function() {
                 imageLabel.innerHTML = this.files.length > 0 
-                    ? `<i class="fas fa-image"></i> เลือก ${this.files.length} รูป` 
-                    : '<i class="fas fa-image"></i> เพิ่มรูปภาพ';
+                    ? `<i class="fas fa-image me-1"></i> เลือก ${this.files.length} รูป` 
+                    : '<i class="fas fa-image me-1"></i> เพิ่มรูปภาพ';
+                
+                // แสดงตัวอย่างรูปภาพ
+                showPreview(this.files, 'image');
             });
 
             videoInput.addEventListener('change', function() {
                 videoLabel.innerHTML = this.files.length > 0 
-                    ? `<i class="fas fa-video"></i> เลือก ${this.files.length} วิดีโอ` 
-                    : '<i class="fas fa-video"></i> เพิ่มวิดีโอ';
+                    ? `<i class="fas fa-video me-1"></i> เลือก ${this.files.length} วิดีโอ` 
+                    : '<i class="fas fa-video me-1"></i> เพิ่มวิดีโอ';
+                
+                // แสดงตัวอย่างวิดีโอ
+                showPreview(this.files, 'video');
             });
+            
+            // ฟังก์ชันแสดงตัวอย่างไฟล์ที่อัพโหลด
+            function showPreview(files, type) {
+                if (files.length === 0) return;
+                
+                for (const file of files) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    
+                    if (type === 'image') {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        previewItem.appendChild(img);
+                    } else if (type === 'video') {
+                        const videoThumb = document.createElement('div');
+                        videoThumb.className = 'video-thumbnail';
+                        
+                        const video = document.createElement('video');
+                        video.src = URL.createObjectURL(file);
+                        videoThumb.appendChild(video);
+                        
+                        const playOverlay = document.createElement('div');
+                        playOverlay.className = 'play-overlay';
+                        playOverlay.innerHTML = '<i class="fas fa-play-circle"></i>';
+                        videoThumb.appendChild(playOverlay);
+                        
+                        previewItem.appendChild(videoThumb);
+                    }
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    removeBtn.onclick = function() {
+                        previewItem.remove();
+                    };
+                    
+                    previewItem.appendChild(removeBtn);
+                    imagePreview.appendChild(previewItem);
+                }
+            }
+            
+            // Group Image Modal
+            const groupImage = document.getElementById('groupImage');
+            const imageModal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            if (groupImage) {
+                groupImage.addEventListener('click', function() {
+                    modalImage.src = this.src;
+                    const bsModal = new bootstrap.Modal(imageModal);
+                    bsModal.show();
+                });
+            }
             
             // เพิ่ม animation เมื่อโหลดหน้า
             const posts = document.querySelectorAll('.post');
@@ -312,63 +531,21 @@
                 }, index * 150);
             });
             
-            // Animation สำหรับปุ่ม Like
-            const likeBtns = document.querySelectorAll('.like-btn');
-            likeBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const icon = this.querySelector('i');
-                    if (icon.classList.contains('far')) {
-                        icon.classList.remove('far');
-                        icon.classList.add('fas');
-                        this.classList.add('liked');
-                    } else {
-                        icon.classList.remove('fas');
-                        icon.classList.add('far');
-                        this.classList.remove('liked');
-                    }
+            // Comment Input Enabling
+            const commentInputs = document.querySelectorAll('.comment-input');
+            commentInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const submitBtn = this.parentElement.querySelector('.comment-submit');
+                    submitBtn.disabled = this.value.trim() === '';
                 });
             });
             
-            // Modal สำหรับแสดงรูปภาพเต็มจอ
-            const groupImage = document.getElementById('groupImage');
-            const imageModal = document.getElementById('imageModal');
-            const modalImage = document.getElementById('modalImage');
-            const closeModal = document.getElementById('closeModal');
-            
-            // เปิด Modal เมื่อคลิกที่รูป
-            if (groupImage) {
-                groupImage.addEventListener('click', function() {
-                    modalImage.src = this.src;
-                    imageModal.classList.add('show');
-                    document.body.style.overflow = 'hidden'; // ป้องกันการเลื่อนหน้าเว็บเมื่อ Modal เปิด
-                });
-            }
-            
-            // ปิด Modal
-            if (closeModal) {
-                closeModal.addEventListener('click', function() {
-                    imageModal.classList.remove('show');
-                    document.body.style.overflow = 'auto'; // อนุญาตให้เลื่อนหน้าเว็บอีกครั้ง
-                });
-            }
-            
-            // ปิด Modal เมื่อคลิกนอกรูปภาพ
-            if (imageModal) {
-                imageModal.addEventListener('click', function(event) {
-                    if (event.target === this) {
-                        imageModal.classList.remove('show');
-                        document.body.style.overflow = 'auto';
-                    }
-                });
-            }
-            
-            // ปิด Modal ด้วยการกด ESC
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape' && imageModal.classList.contains('show')) {
-                    imageModal.classList.remove('show');
-                    document.body.style.overflow = 'auto';
-                }
-            });
+            // Function to open media modals from gallery
+            window.openMediaModal = function(modalId) {
+                const modal = document.getElementById(modalId);
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+            };
         });
     </script>
 </body>

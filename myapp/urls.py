@@ -32,13 +32,14 @@ urlpatterns = [
     path('community/<int:group_id>/leave/', views.leave_group, name='leave_group'),
 
 
-    #like
+    #main
     path('create_post/', views.create_post, name='create_post'),
     path('like/<int:post_id>/', views.toggle_like, name='toggle_like'),
     path('save/<int:post_id>/', views.saved_post, name='save_post'),
     path('community/<int:group_id>/group/post/<int:post_id>/unsave/', remove_saved_group_post, name='remove_saved_group_post'),
     path('add_comment/<int:post_id>/', views.add_comment, name='add_comment'),
-
+    path('comment/edit/<int:comment_id>/', views.edit_comment, name='edit_comment'),
+    path('comment/delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
     path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),
     path('post/<int:post_id>/', views.post_detail, name='post_detail'),  # ✅ แก้ปัญหา NoReverseMatch
@@ -58,16 +59,10 @@ urlpatterns = [
     path('group/post/<int:post_id>/edit/', views.group_edit_post, name='group_edit_post'),
     path('community/<int:group_id>/group/post/<int:post_id>/delete/', delete_group_post, name='delete_group_post'),
     path('community/<int:group_id>/group/post/<int:post_id>/save/', save_group_post, name='save_group_post'),
-    path('group_post/<int:post_id>/share/', share_group_post, name='share_group_post'),
-
-    # เส้นทางสำหรับแก้ไขคอมเมนต์
-    path('comment/edit/<int:comment_id>/', views.edit_comment, name='edit_comment'),
-    # เส้นทางสำหรับลบคอมเมนต์
-    path('comment/delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
-
+    path('community/<int:group_id>/group/post/<int:post_id>/share/', views.share_group_post, name='share_group_post'),
     path('group_post/<int:post_id>/', views.group_post_detail, name='group_post_detail'),
     #path('delete_media/<int:media_id>/', views.delete_media, name='delete_media'),
-    path('group_comment/<int:comment_id>/delete/', views.delete_group_comment, name='delete_group_comment'),
+    path('community/<int:group_id>/group_comment/<int:comment_id>/delete/', views.delete_group_comment, name='delete_group_comment'),
     path('group_comment/<int:comment_id>/edit/', views.edit_group_comment, name='edit_group_comment'),
 
     # ✅ เส้นทางสำหรับผู้ขาย

@@ -230,7 +230,7 @@ async function deleteComment(commentId) {
                 return;
             }
 
-            const commentsList = commentElement.closest('.comment-list');
+            const commentsList = commentElement?.closest('.comments-list') || commentElement?.parentElement;
 
             if (!commentsList) {
                 console.error("❌ Error: commentsList not found.");
