@@ -119,8 +119,10 @@
                                     <span class="status-badge shipped">🚚 กำลังจัดส่ง</span>
                                 {% elif order.status == "delivered" %}
                                     <span class="status-badge delivered">✅ จัดส่งสำเร็จ</span>
-                                {% elif order.status != "cancelled" and order.status != "delivered"  %}
-                                <a href="{% url 'update_order_status' order.id 'cancelled' %}" class="btn cancel"><i class="fas fa-times-circle"></i> ยกเลิกออเดอร์</a>
+                                {% elif order.status == "cancelled" %}
+                                    <span class="delivery-success">❌ ออเดอร์ถูกยกเลิก</span>
+                                {% elif order.status == "refunded" %}
+                                    <span class="delivery-success">  🔄 คืนเงิน</span>
                                 {% endif %}
                             </td>
 
@@ -133,11 +135,17 @@
                                     <span class="awaiting-confirmation">⏳ รอการยืนยันจากลูกค้า</span>
                                 {% elif order.status == "delivered" %}
                                     <span class="delivery-success">✅ จัดส่งสำเร็จ</span>
+                                {% elif order.status == "cancelled" %}
+                                    <span class="delivery-success">❌ ออเดอร์ถูกยกเลิก</span>
+                                {% elif order.status == "refunded" %}
+                                    <span class="delivery-success">  🔄 คืนเงิน</span>
                                 {% endif %}
                                 
-                                {% if order.status != "cancelled" and order.status != "delivered" %}
+                                {% with refund=order.refund_requests.first %}
+                                    {% if order.status != "cancelled" and order.status != "delivered" and not refund %}
                                     <a href="{% url 'update_order_status' order.id 'cancelled' %}" class="btn cancel"><i class="fas fa-times-circle"></i> ยกเลิกออเดอร์</a>
                                 {% endif %}
+                                {% endwith %}
                             </td>
                         </tr>
                         {% endfor %}

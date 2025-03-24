@@ -5,78 +5,393 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📊 รายงานประสิทธิภาพผู้ขาย</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{% static 'styles/admin_performance.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+
+    <!-- โหลด Chart.js จาก CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a6fdc;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        h3 {
+            color: var(--dark-color);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-box {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .summary-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .summary-box h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+        
+        .summary-box p {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 10px 0 0;
+            color: var(--primary-color);
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .chart-container1 {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            padding-bottom: 40px; /* ✅ เพิ่มส่วนล่างให้มีพื้นที่แสดงแกน x */
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .badge-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .badge-warning {
+            background-color: var(--warning-color);
+            color: #212529;
+        }
+        
+        .badge-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-
     <div class="container">
         <h2>📊 รายงานประสิทธิภาพผู้ขาย</h2>
-
-        <!-- ✅ ยอดขายรวม -->
-        <div class="summary-box">
-            <h3>💰 ยอดขายรวมทั้งหมด</h3>
-            <p>฿{{ total_sales }}</p>
+        
+        <!-- สรุปข้อมูลสำคัญ -->
+        <div class="dashboard-grid">
+            <!-- ยอดขายรวม -->
+            <div class="summary-box">
+                <h3>💰 ยอดขายรวมทั้งหมด</h3>
+                <p>฿{{ total_sales }}</p>
+            </div>
+            
+            <!-- จำนวนผู้ขายที่มีสถานะ Active -->
+            <div class="summary-box">
+                <h3>👥 ผู้ขายที่เปิดร้านอยู่</h3>
+                <p>{{ active_sellers }}</p>
+            </div>
+            
+            <!-- จำนวนสินค้าทั้งหมด -->
+            <div class="summary-box">
+                <h3>📦 จำนวนสินค้าทั้งหมด</h3>
+                <p>{{ total_products }}</p>
+            </div>
+            
+            <!-- อัตราการคืนสินค้า -->
+            <div class="summary-box">
+                <h3>🔄 อัตราการคืนสินค้า</h3>
+                <p>{{ refund_rate }}%</p>
+            </div>
         </div>
-
-        <!-- ✅ กราฟยอดขายรายเดือน -->
-        <h3>📈 ยอดขายรายเดือน</h3>
-        <canvas id="salesChart"></canvas>
-
-        <!-- ✅ ผู้ขายที่มียอดขายสูงสุด -->
+        
+        <!-- กราฟยอดขายรายเดือน -->
+        <div class="chart-container1" style="height: 500px; width: 100%;">
+            <h3>📈 ยอดขายรายเดือน</h3>
+            <canvas id="salesChart" style="width: 100%; height: 100%;"></canvas>
+        </div>
+        
+        
+        <!-- กราฟจำนวนผู้ใช้งานรายวัน
+        <div class="chart-container">
+            <h3>👤 จำนวนผู้ใช้งานระบบรายวัน</h3>
+            <canvas id="dailyUsersChart"></canvas>
+        </div> -->
+        
+        <!-- ผู้ขายที่มียอดขายสูงสุด -->
         <h3>🏆 ผู้ขายที่มียอดขายสูงสุด</h3>
         <table>
             <thead>
                 <tr>
+                    <th>อันดับ</th>
                     <th>ร้านค้า</th>
                     <th>ยอดขาย</th>
+                    <th>จำนวนคำสั่งซื้อ</th>
+                    <th>อัตราการคืนสินค้า</th>
+                    <th>สถานะ</th>
                 </tr>
             </thead>
             <tbody>
                 {% for seller in top_sellers %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ seller.store_name }}</td>
                     <td>฿{{ seller.total_revenue }}</td>
+                    <td>{{ seller.order_count }}</td>
+                    <td>{{ seller.refund_rate }}%</td>
+                    <td>
+                        {% if seller.refund_rate < 5 %}
+                            <span class="badge badge-success">ดีเยี่ยม</span>
+                        {% elif seller.refund_rate < 10 %}
+                            <span class="badge badge-warning">ปานกลาง</span>
+                        {% else %}
+                            <span class="badge badge-danger">ต้องปรับปรุง</span>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-
-        <!-- ✅ กราฟจำนวนการคืนสินค้า -->
-        <h3>🔄 การคืนสินค้ารายเดือน</h3>
-        <canvas id="refundChart"></canvas>
+        
+        <!-- กราฟจำนวนการคืนสินค้า -->
+        <div class="chart-container">
+            <h3>🔄 การคืนสินค้ารายเดือน</h3>
+            <canvas id="refundChart"></canvas>
+        </div>
     </div>
 
+    <!-- เตรียม JavaScript สำหรับกราฟ -->
     <script>
-        // ✅ กราฟยอดขายรายเดือน
-        var salesCtx = document.getElementById('salesChart').getContext('2d');
-        var salesChart = new Chart(salesCtx, {
-            type: 'line',
-            data: {
-                labels: [{% for data in sales_by_month %} "{{ data.created_at__month }}/{{ data.created_at__year }}", {% endfor %}],
-                datasets: [{
-                    label: 'ยอดขาย (บาท)',
-                    data: [{% for data in sales_by_month %} {{ data.total_sales }}, {% endfor %}],
-                    borderColor: 'blue',
-                    borderWidth: 2
-                }]
+    document.addEventListener('DOMContentLoaded', function() {
+        // ดึง CSRF token จาก cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
             }
-        });
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
 
-        // ✅ กราฟจำนวนการคืนสินค้า
-        var refundCtx = document.getElementById('refundChart').getContext('2d');
-        var refundChart = new Chart(refundCtx, {
-            type: 'bar',
-            data: {
-                labels: [{% for data in refunds_by_month %} "{{ data.created_at__month }}/{{ data.created_at__year }}", {% endfor %}],
-                datasets: [{
-                    label: 'จำนวนการคืนสินค้า',
-                    data: [{% for data in refunds_by_month %} {{ data.total_refunds }}, {% endfor %}],
-                    backgroundColor: 'red'
-                }]
+        // ดึงข้อมูลกราฟจาก API endpoint
+        fetch('/admins/performance-data/', {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/json'
             }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // สร้างกราฟยอดขายรายเดือน
+            var salesCtx = document.getElementById('salesChart').getContext('2d');
+            var salesChart = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: data.sales_data.labels,
+                    datasets: [{
+                        label: 'ยอดขาย (บาท)',
+                        data: data.sales_data.values,
+                        borderColor: '#4a6fdc',
+                        backgroundColor: 'rgba(74, 111, 220, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#4a6fdc',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '฿' + new Intl.NumberFormat('th-TH').format(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // // สร้างกราฟจำนวนผู้ใช้งานรายวัน
+            // var dailyUsersCtx = document.getElementById('dailyUsersChart').getContext('2d');
+            // var dailyUsersChart = new Chart(dailyUsersCtx, {
+            //     type: 'bar',
+            //     data: {
+            //         labels: data.users_data.labels,
+            //         datasets: [{
+            //             label: 'จำนวนผู้ใช้งานระบบ',
+            //             data: data.users_data.values,
+            //             backgroundColor: 'rgba(40, 167, 69, 0.7)',
+            //             borderColor: 'rgba(40, 167, 69, 1)',
+            //             borderWidth: 1,
+            //             borderRadius: 5,
+            //             maxBarThickness: 20
+            //         }]
+            //     },
+            //     options: {
+            //         responsive: true,
+            //         maintainAspectRatio: false,
+            //         plugins: {
+            //             legend: {
+            //                 position: 'top',
+            //             },
+            //             tooltip: {
+            //                 mode: 'index',
+            //                 intersect: false
+            //             }
+            //         },
+            //         scales: {
+            //             y: {
+            //                 beginAtZero: true,
+            //                 ticks: {
+            //                     precision: 0
+            //                 }
+            //             }
+            //         }
+            //     }
+            // });
+        })
+        .catch(error => {
+            console.error('Error fetching chart data:', error);
+            // แสดงข้อความแจ้งเตือนเมื่อโหลดข้อมูลไม่สำเร็จ
+            document.querySelectorAll('.chart-container').forEach(container => {
+                container.innerHTML = '<div class="alert alert-danger">ไม่สามารถโหลดข้อมูลกราฟได้ กรุณาลองใหม่อีกครั้ง</div>';
+            });
         });
+    });
     </script>
-
 </body>
 </html>

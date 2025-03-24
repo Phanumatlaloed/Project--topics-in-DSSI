@@ -5,13 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💼 คำขอถอนเงินร้านค้า</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'styles/admin_withdrawals.css' %}">
 </head>
 <body>
-
     <div class="container">
+        <a href="{% url 'admin_dashboard' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i> กลับไปแดชบอร์ด
+        </a>
+        
         <h2>💼 คำขอถอนเงินจากร้านค้า</h2>
-
+        
         {% if withdrawals %}
         <table class="table">
             <thead>
@@ -80,6 +85,5 @@
             <p class="no-requests">❌ ยังไม่มีคำขอถอนเงิน</p>
         {% endif %}
     </div>
-
 </body>
 </html>

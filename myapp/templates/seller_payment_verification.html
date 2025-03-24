@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ตรวจสอบการชำระเงิน | My Shop</title>
     <link rel="stylesheet" href="{% static 'styles/payments_sellers.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
 
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- เพิ่ม Font Awesome สำหรับ Icons -->
@@ -116,8 +117,23 @@
                     <p>ไม่มีคำสั่งซื้อที่รออนุมัติ</p>
                 </div>
             {% endif %}
+            <section class="contact-admin-card">
+                <h3><i class="fas fa-headset"></i> ต้องการความช่วยเหลือ?</h3>
+                <p>หากคุณมีปัญหาในการชำระเงิน หรือคำถามอื่น ๆ สามารถติดต่อทีมงานแอดมินได้เลย</p>
+            
+                <ul class="contact-list">
+                    <li><i class="fas fa-envelope"></i> อีเมล: <a href="mailto:support@myshop.com">support@myshop.com</a></li>
+                    <li><i class="fab fa-line"></i> LINE ID: <strong>@myshopadmin</strong></li>
+                    <li><i class="fas fa-phone-alt"></i> โทร: <a href="tel:0991234567">099-123-4567</a></li>
+                </ul>
+            
+                <a href="mailto:support@myshop.com" class="btn-contact-admin">
+                    <i class="fas fa-paper-plane"></i> ติดต่อแอดมิน
+                </a>
+            </section>
         </main>
     </div>
+
 
     <!-- JavaScript for Interactions -->
     <script>

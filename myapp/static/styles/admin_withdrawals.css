@@ -1,174 +1,244 @@
-/* 🌟 ตั้งค่าพื้นฐาน */
+/* admin_withdrawals.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+
+:root {
+  --primary-pink: #f8bbd0;
+  --light-pink: #ffeeff;
+  --dark-pink: #c48b9f;
+  --white: #ffffff;
+  --light-gray: #f5f5f5;
+  --medium-gray: #e0e0e0;
+  --text-dark: #333333;
+  --text-medium: #666666;
+  --success: #4caf50;
+  --warning: #ff9800;
+  --danger: #f44336;
+  --shadow: rgba(0, 0, 0, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: "Poppins", sans-serif;
-    background-color: #fffbfc;
-    margin: 0;
-    padding: 20px;
-    text-align: center;
+  font-family: 'Prompt', sans-serif;
+  background-color: var(--light-pink);
+  color: var(--text-dark);
+  line-height: 1.6;
+  padding: 20px;
 }
 
-/* ✅ กล่องหลัก */
 .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: var(--white);
+  border-radius: 15px;
+  box-shadow: 0 5px 15px var(--shadow);
+  padding: 30px;
+  position: relative;
 }
 
-/* ✅ หัวข้อหลัก */
+/* Navigation back button */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: var(--primary-pink);
+  color: var(--text-dark);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: var(--dark-pink);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
 h2 {
-    color: #d63384;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--dark-pink);
+  font-size: 28px;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 10px;
 }
 
-/* ✅ ตาราง */
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background-color: var(--primary-pink);
+  border-radius: 3px;
+}
+
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px var(--shadow);
+  overflow: hidden;
+  border-radius: 10px;
 }
 
-.table th, .table td {
-    padding: 12px;
-    text-align: center;
-    border: 1px solid #f3c1d1;
+.table thead {
+  background-color: var(--primary-pink);
 }
 
-/* ✅ หัวตาราง */
 .table th {
-    background: #ff7fa3;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
+  padding: 15px;
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-dark);
 }
 
-/* ✅ ข้อมูลในตาราง */
+.table tbody tr {
+  background-color: var(--white);
+  transition: all 0.3s ease;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: var(--light-gray);
+}
+
+.table tbody tr:hover {
+  background-color: var(--medium-gray);
+}
+
 .table td {
-    background: #fffdfd;
-    color: #333;
-    font-size: 14px;
+  padding: 15px;
+  border-bottom: 1px solid var(--medium-gray);
 }
 
-/* 🔥 ปรับช่องข้อมูลให้อ่านง่ายขึ้น */
-.table td:first-child {
-    font-weight: bold;
-    color: #d63384;
-}
-
-/* ✅ ปรับแต่ง "สถานะ" */
+/* Status styles */
 .status {
-    padding: 6px 12px;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    display: inline-block;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-/* 🚀 สีสถานะ */
 .status.pending {
-    background: #ffc107;
-    color: #000;
+  background-color: var(--warning);
+  color: var(--white);
 }
 
 .status.approved {
-    background: #28a745;
-    color: white;
+  background-color: var(--success);
+  color: var(--white);
 }
 
 .status.rejected {
-    background: #dc3545;
-    color: white;
+  background-color: var(--danger);
+  color: var(--white);
 }
 
-/* ✅ ปุ่ม */
-button, .btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-}
-
-/* ✅ ปุ่ม "อนุมัติ" */
-.btn-approve {
-    background: #28a745;
-    color: white;
-}
-
-.btn-approve:hover {
-    background: #218838;
-}
-
-/* ❌ ปุ่ม "ปฏิเสธ" */
-.btn-reject {
-    background: #dc3545;
-    color: white;
-}
-
-.btn-reject:hover {
-    background: #c82333;
-}
-
-/* 📄 ปุ่ม "ดูสลิป" */
-.btn-view {
-    background: #007bff;
-    color: white;
-}
-
-.btn-view:hover {
-    background: #0056b3;
-}
-
-/* ✅ ปุ่ม "ยืนยันการรับเงิน" */
+/* Button styles */
+.btn-view, 
+.btn-approve, 
+.btn-reject, 
 .btn-confirm {
-    background: #ff7fa3;
-    color: white;
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  margin: 2px;
+  transition: all 0.3s ease;
 }
 
+.btn-view {
+  background-color: var(--medium-gray);
+  color: var(--text-dark);
+  text-decoration: none;
+}
+
+.btn-approve, .btn-confirm {
+  background-color: var(--success);
+  color: var(--white);
+}
+
+.btn-reject {
+  background-color: var(--danger);
+  color: var(--white);
+}
+
+.btn-view:hover, 
+.btn-approve:hover, 
+.btn-reject:hover, 
 .btn-confirm:hover {
-    background: #e03e6b;
+  transform: translateY(-2px);
+  opacity: 0.9;
 }
 
-/* 🚫 ปุ่มที่ไม่สามารถกดได้ */
 .disabled {
-    background: #e3e3e3;
-    color: #777;
-    padding: 6px 10px;
-    border-radius: 5px;
-    font-size: 14px;
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-/* ✅ ปรับช่องว่างให้พอดี */
-.table td input[type="file"] {
-    display: block;
-    margin: 5px auto;
-    font-size: 12px;
+/* File input styling */
+input[type="file"] {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
 }
 
-/* ✅ ปรับแต่งข้อความแจ้งเตือน */
+/* No requests message */
 .no-requests {
-    color: #777;
-    font-size: 18px;
-    margin-top: 20px;
-    font-weight: bold;
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: var(--text-medium);
+  background-color: var(--light-gray);
+  border-radius: 10px;
+  margin-top: 20px;
 }
 
-/* ✅ Responsive */
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .container {
+    padding: 20px;
+  }
+  
+  .table {
+    font-size: 14px;
+  }
+}
+
 @media (max-width: 768px) {
-    .table th, .table td {
-        font-size: 12px;
-        padding: 8px;
-    }
-    
-    .btn {
-        font-size: 12px;
-        padding: 6px 10px;
-    }
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .back-button {
+    position: static;
+    margin-bottom: 15px;
+    display: inline-block;
+  }
+  
+  h2 {
+    font-size: 22px;
+    margin-top: 15px;
+  }
 }

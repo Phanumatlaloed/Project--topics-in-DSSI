@@ -16,6 +16,10 @@ from .models import *
 from myapp.forms import *
 from django.contrib.auth.decorators import user_passes_test
 import json
+from django.db.models import Sum, F, DecimalField, ExpressionWrapper, Q
+from datetime import datetime
+from django.core.exceptions import PermissionDenied
+
 
 
 User = get_user_model()  # ✅ ใช้ CustomUser แทน auth.User
@@ -1184,42 +1188,41 @@ def delete_group_post(request, group_id, post_id):
 
     return HttpResponseForbidden("Method not allowed")
 
-#แดชบอร์ดผู้ขาย
 @login_required
 def seller_dashboard(request):
+    # ✅ ป้องกันไม่ให้ user ที่ไม่ใช่ seller เข้ามา
+    if not hasattr(request.user, 'seller_profile') or request.user.role != 'seller':
+        raise PermissionDenied("คุณไม่มีสิทธิ์เข้าถึงหน้านี้")
+
     seller = request.user.seller_profile
-
-    # ✅ ดึงสินค้าของผู้ขาย
     products = seller.products.all()
+    total_products = products.count()
 
-    # ✅ คำนวณยอดขายของแต่ละสินค้า (ไม่นับสินค้าถูกคืน)
-    product_sales = OrderItem.objects.filter(
-        order__seller=seller
+    valid_orders = OrderItem.objects.filter(
+        order__seller=seller,
+        order__status='delivered'
     ).exclude(
-        refund_requests__status="approved"
-    ).values(
-        "product__id"
-    ).annotate(
-        total_sold_count=Sum("quantity")
+        refund_requests__status='approved'
     )
 
-    total_products = products.count()
-    total_earnings = sum(p.price * p.total_sold for p in products)
+    total_earnings_data = valid_orders.annotate(
+        item_total=ExpressionWrapper(F('quantity') * F('price_per_item'), output_field=DecimalField())
+    ).aggregate(total=Sum('item_total'))
+    total_earnings = total_earnings_data['total'] or 0
 
-    # ✅ สร้าง Dictionary สำหรับการเชื่อมยอดขายแต่ละสินค้า
+    product_sales = valid_orders.values("product__id").annotate(
+        total_sold_count=Sum("quantity")
+    )
     sales_dict = {item["product__id"]: item["total_sold_count"] for item in product_sales}
-
-    # ✅ เพิ่มยอดขายเข้าไปใน products
     for product in products:
-        product.sales_count = sales_dict.get(product.id, 0)  # ถ้าไม่มียอดขาย ให้เป็น 0
+        product.sales_count = sales_dict.get(product.id, 0)
 
     return render(request, "seller_dashboard.html", {
         "products": products,
         "seller": seller,
-        'total_products': total_products,
-        'total_earnings': total_earnings,
+        "total_products": total_products,
+        "total_earnings": total_earnings,
     })
-
 
 @login_required
 def add_product(request):
@@ -1367,29 +1370,30 @@ def product_list(request):
     return render(request, "product_list.html", {"products": products, "query": query, "category_filter": category_filter})
 
 
-# ✅ แสดงสินค้าของร้านค้าตนเอง (เฉพาะผู้ขาย)
 @login_required
 def my_products(request):
-    # ตรวจสอบว่าผู้ใช้เป็น Seller หรือไม่
+    # ✅ ตรวจสอบว่าเป็นผู้ขายจริงหรือไม่
+    if not hasattr(request.user, 'seller_profile') or request.user.role != 'seller':
+        raise PermissionDenied("คุณไม่มีสิทธิ์เข้าถึงหน้านี้")
+
+    # ✅ ดึง seller profile
     seller = get_object_or_404(Seller, user=request.user)
 
-    # ดึงข้อมูลร้านค้าของผู้ขาย
-    store = seller  # สามารถใช้ `store` หรือ `seller` ตามที่ใช้ในเทมเพลต
-
-    # ดึงสินค้าทั้งหมดของผู้ขาย
+    # ✅ ดึงสินค้าทั้งหมดของผู้ขาย
     products = Product.objects.filter(seller=seller)
 
-    # คำนวณจำนวนสินค้าทั้งหมด และรายได้รวม
+    # ✅ คำนวณยอดรวมสินค้า และยอดขายรวม
     total_products = products.count()
     total_earnings = sum(p.price * p.total_sold for p in products)
 
     context = {
         'seller': seller,
-        'store': store,
+        'store': seller,
         'products': products,
         'total_products': total_products,
         'total_earnings': total_earnings,
     }
+
     return render(request, 'my_products.html', context)
 
 
@@ -2104,12 +2108,14 @@ def edit_shipping_address(request, order_id):
 @login_required
 def seller_orders(request):
     """ แสดงคำสั่งซื้อของผู้ขาย """
-    seller = getattr(request.user, "seller_profile", None)
 
-    if not seller:
-        return render(request, "seller_orders.html", {"orders": []})  # ไม่มีข้อมูลผู้ขาย
+    # ✅ ตรวจสอบว่า user เป็น seller
+    if not hasattr(request.user, "seller_profile") or request.user.role != "seller":
+        raise PermissionDenied("คุณไม่มีสิทธิ์เข้าถึงหน้านี้")
 
-    # ✅ ดึง `OrderItem` และ `Product` มาพร้อมกับคำสั่งซื้อ
+    seller = request.user.seller_profile
+
+    # ✅ ดึงออเดอร์พร้อมสินค้าที่สั่ง
     orders = Order.objects.filter(seller=seller).prefetch_related("order_items__product").order_by("-created_at")
 
     return render(request, "seller_orders.html", {"orders": orders})
@@ -2153,14 +2159,20 @@ def sellercancel_order(request, order_id):
 @login_required
 def seller_payment_verification(request):
     """ ✅ แสดงคำสั่งซื้อที่รอการตรวจสอบการชำระเงินสำหรับผู้ขาย """
+
+    # ✅ ป้องกัน user ที่ไม่ใช่ seller
+    if not hasattr(request.user, 'seller_profile') or request.user.role != 'seller':
+        raise PermissionDenied("คุณไม่มีสิทธิ์เข้าถึงหน้านี้")
+
     orders = Order.objects.filter(
-        seller=request.user.seller_profile, 
+        seller=request.user.seller_profile,
         payment_status="pending"
-    ).exclude(status="cancelled")  # ไม่รวมออเดอร์ที่มีสถานะเป็น cancelled
-    
+    ).exclude(status="cancelled")
+
     return render(request, "seller_payment_verification.html", {
         "orders": orders
     })
+
 
 def reject_seller_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id)
@@ -2425,8 +2437,28 @@ def is_admin(user):
 # แสดงแดชบอร์ดแอดมิน (เฉพาะแอดมินเข้าได้)
 @login_required(login_url="/admin_login/")
 def admin_dashboard(request):
+    # Get reported posts
     reported_posts = Report.objects.select_related('post', 'reported_by').order_by('-created_at')
-    return render(request, "admin_dashboard.html", {"reported_posts": reported_posts})
+    
+    # Get total users
+    total_users = User.objects.count()
+    
+    # Get total shops/sellers
+    total_shops = Seller.objects.count()
+    
+    # Get orders created today
+    from django.utils import timezone
+    today = timezone.now().date()
+    orders_today = Order.objects.filter(created_at__date=today).count()
+    
+    context = {
+        "reported_posts": reported_posts,
+        "total_users": total_users,
+        "total_shops": total_shops,
+        "orders_today": orders_today
+    }
+    
+    return render(request, "admin_dashboard.html", context)
 
 # ลบโพสต์ที่ถูกรีพอร์ต
 @user_passes_test(is_admin)
@@ -2522,44 +2554,15 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F
 from .models import SellerWallet, WithdrawalRequest, RefundRequest, OrderItem, Order
 
-@login_required
+from django.utils import timezone
+from datetime import datetime
 def seller_wallet(request):
-    """ แสดงข้อมูลกระเป๋าเงิน โดยคำนวณยอดเฉพาะคำสั่งซื้อที่สำเร็จ """
+    """ แสดงข้อมูลกระเป๋าเงินของผู้ขาย """
     seller = request.user.seller_profile
     wallet, created = SellerWallet.objects.get_or_create(seller=seller)
-
-    # ✅ นับเฉพาะคำสั่งซื้อที่ `delivered`
-    total_sales = OrderItem.objects.filter(
-        order__seller=seller,
-        order__status="delivered"
-    ).aggregate(
-        total_revenue=Sum(F('price_per_item') * F('quantity'))
-    )['total_revenue'] or 0
-
-    # ✅ คำนวณยอดคืนเงิน
-    total_refund_amount = RefundRequest.objects.filter(
-        order__seller=seller,
-        status="approved"
-    ).aggregate(
-        total_refund=Sum(F('item__price_per_item') * F('item__quantity'))
-    )['total_refund'] or 0
-
-    # ✅ คำนวณยอดขายสุทธิ (หักยอดคืนและยอดที่ถอนแล้ว)
-    net_sales = total_sales - total_refund_amount - wallet.last_withdrawn_amount
-
     withdrawals = WithdrawalRequest.objects.filter(seller=seller).order_by('-created_at')
 
-    return render(request, 'seller_wallet.html', {
-        'wallet': wallet,
-        'withdrawals': withdrawals,
-        'total_refund_amount': total_refund_amount,
-        'total_sales': total_sales,
-        'net_sales': net_sales,
-    })
-
-
-
-
+    return render(request, 'seller_wallet.html', {'wallet': wallet, 'withdrawals': withdrawals})
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -2581,20 +2584,23 @@ from .forms import RefundRequestForm
 
 @login_required
 def request_refund(request, order_id):
-    """ ฟังก์ชันให้ผู้ใช้ขอคืนเงินสำหรับทั้งออเดอร์ """
+    """ ฟังก์ชันให้ผู้ใช้ขอคืนเงินสำหรับทั้งออเดอร์ (รวมถึงกรณียกเลิกแล้วแต่ชำระเงินแล้ว) """
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    order_items = order.order_items.all()  # ✅ ดึงสินค้าทั้งหมดในออเดอร์
+    order_items = order.order_items.all()
 
-    # ✅ ตรวจสอบว่ามีการส่งคำขอคืนเงินไปแล้วหรือไม่
+    # ✅ ตรวจสอบว่ามีคำขอคืนเงินไปแล้วหรือยัง
     if RefundRequest.objects.filter(order=order).exists():
         messages.warning(request, "⚠️ คุณได้ส่งคำขอคืนเงินสำหรับออเดอร์นี้ไปแล้ว")
         return redirect("order_history")
 
+    # ✅ ต้องเป็นออเดอร์ที่ "ชำระเงินแล้ว"
+    if order.payment_status != "paid":
+        messages.error(request, "⛔ ไม่สามารถขอคืนเงินได้ เนื่องจากยังไม่ได้ชำระเงิน")
+        return redirect("order_history")
+
     if request.method == "POST":
-        # ✅ รับไฟล์หลักฐานสินค้าที่ส่งคืน
         return_item_proof = request.FILES.get("return_item_proof")
 
-        # ✅ สร้างคำขอคืนเงิน
         refund_request = RefundRequest.objects.create(
             user=request.user,
             order=order,
@@ -2603,19 +2609,16 @@ def request_refund(request, order_id):
             bank_name=request.POST.get("bank_name"),
             refund_reason=request.POST.get("refund_reason"),
             payment_proof=request.FILES.get("payment_proof"),
-            return_item_proof=return_item_proof,  # ✅ บันทึกหลักฐานสินค้าที่ส่งคืน
+            return_item_proof=return_item_proof,
             status="pending",
         )
 
-        # ✅ อัปเดตสถานะของออเดอร์เป็น `refunded`
+        # ✅ เปลี่ยนสถานะออเดอร์เป็น refunded (ขอคืนเงิน)
         order.status = "refunded"
         order.save()
 
-        messages.success(request, "✅ คำขอคืนเงินถูกส่งเรียบร้อยแล้ว 🎉")
+        messages.success(request, "✅ ส่งคำขอคืนเงินสำเร็จ 🎉")
         return redirect("order_history")
-
-    # ✅ Debugging: ตรวจสอบสินค้าที่อยู่ในออเดอร์
-    print(f"🔍 Debug: order_items -> {order_items}")
 
     return render(request, "partials/refund_request.html", {
         "order": order,
@@ -2626,11 +2629,20 @@ def request_refund(request, order_id):
 @login_required
 def seller_refund_requests(request):
     """ แสดงรายการคำขอคืนเงินของผู้ขาย """
-    seller = request.user.seller_profile  # ดึงโปรไฟล์ของผู้ขาย
+
+    # ✅ ตรวจสอบว่าเป็นผู้ขายเท่านั้น
+    if not hasattr(request.user, 'seller_profile') or request.user.role != 'seller':
+        raise PermissionDenied("คุณไม่มีสิทธิ์เข้าถึงหน้านี้")
+
+    seller = request.user.seller_profile
+
     refund_requests = RefundRequest.objects.filter(order__seller=seller)\
                                            .select_related("order", "user", "item", "item__product")\
                                            .prefetch_related("order__order_items", "order__order_items__product")
-    return render(request, "refund_requests_seller.html", {"refund_requests": refund_requests})
+
+    return render(request, "refund_requests_seller.html", {
+        "refund_requests": refund_requests
+    })
 
 
 
@@ -2741,50 +2753,44 @@ from .models import SellerWallet, WithdrawalRequest, OrderItem, RefundRequest
 
 @login_required
 def request_withdrawal(request):
-    """ ดำเนินการขอถอนเงิน โดยไม่นับคำสั่งซื้อที่ถูกยกเลิกและคืนเงิน """
     if request.method == "POST":
-        seller = request.user.seller_profile  
-        wallet, created = SellerWallet.objects.get_or_create(seller=seller)
-
-        # ✅ นับเฉพาะออเดอร์ที่ `delivered` และไม่รวม `cancelled`
-        total_earnings = OrderItem.objects.filter(
-            order__seller=seller,
-            order__status="delivered"
-        ).aggregate(
-            total_revenue=Sum(F('price_per_item') * F('quantity'))
-        )['total_revenue'] or 0
-
-        # ✅ หักยอดคืนเงินที่ได้รับการอนุมัติ
-        total_refund_amount = RefundRequest.objects.filter(
-            order__seller=seller,
-            status="approved"
-        ).aggregate(
-            total_refund=Sum(F('item__price_per_item') * F('item__quantity'))
-        )['total_refund'] or 0
-
-        # ✅ คำนวณยอดเงินที่ถอนได้จริง
-        withdrawable_balance = total_earnings - total_refund_amount
-
-        if withdrawable_balance <= 0:
-            messages.error(request, "❌ ไม่มีเงินที่สามารถถอนได้")
+        seller = request.user.seller_profile  # ดึงข้อมูลผู้ขาย
+        wallet = seller.wallet
+        
+        if wallet.balance <= 0:
+            messages.error(request, "❌ ยอดเงินไม่พอสำหรับการถอน")
             return redirect("seller_wallet")
 
-        # ✅ บันทึกคำขอถอนเงิน
+        # บันทึกคำขอถอนเงิน
         WithdrawalRequest.objects.create(
             seller=seller,
-            amount=withdrawable_balance,
+            amount=wallet.balance,
             status="pending"
         )
 
-        # ✅ อัปเดตยอดเงินในกระเป๋าให้เป็น 0 หลังถอนเงิน
+        # รีเซ็ตยอดเงินให้เป็น 0
         wallet.balance = 0
-        wallet.last_withdrawn_amount += withdrawable_balance  # เก็บบันทึกยอดที่ถูกถอน
         wallet.save()
 
-        messages.success(request, f"✅ คำขอถอนเงิน ฿{withdrawable_balance} ถูกส่งไปยังแอดมินแล้ว")
+        messages.success(request, "✅ คำขอถอนเงินถูกส่งไปยังแอดมินแล้ว")
         return redirect("seller_wallet")
-
+    
     return redirect("seller_wallet")
+
+
+def update_order_status(request, order_id, new_status):
+    order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
+
+    if new_status == "delivered" and order.status != "delivered":
+        # ✅ เพิ่มยอดเข้า Wallet
+        wallet, _ = SellerWallet.objects.get_or_create(seller=order.seller)
+        for item in order.order_items.all():
+            wallet.balance += item.price_per_item * item.quantity
+        wallet.save()
+
+    order.status = new_status
+    order.save()
+    return redirect('seller_orders')
 
 
 
@@ -2800,7 +2806,8 @@ from django.contrib.auth.decorators import user_passes_test
 
 def is_admin(user):
     return user.is_authenticated and user.is_staff  # ✅ เฉพาะแอดมิน
-@login_required
+
+@login_required(login_url="/admin_login/")
 def admin_withdrawals(request):
     if not request.user.is_staff:  # ✅ ถ้าไม่ใช่แอดมิน รีไดเรกต์ไปหน้าอื่น
         return redirect('home')
@@ -2900,42 +2907,137 @@ def seller_performance(request):
 def is_admin(user):
     return user.is_staff  # ✅ อนุญาตเฉพาะแอดมิน
 
+#แสดงกราฟหน้าแอดมิน
+from django.db.models import Sum, Count, F, Q, Case, When, Value, ExpressionWrapper, FloatField, Subquery, OuterRef
+# from django.db.models.functions import TruncDate
+from django.db.models.functions import TruncMonth, TruncDate
 @user_passes_test(is_admin)
 def admin_performance(request):
     """ แสดงรายงานสถิติของผู้ขายทั้งหมด """
 
-    # ✅ ยอดขายรวมทั้งหมด
+    # ยอดขายรวมทั้งหมด
     total_sales = Order.objects.filter(status="delivered").aggregate(Sum("total_price"))["total_price__sum"] or 0
 
-    # ✅ ยอดขายรายเดือน
+    # ยอดขายรายเดือน
     sales_by_month = (
-        Order.objects.filter(status="delivered")
-        .values("created_at__year", "created_at__month")
+        Order.objects.filter(status="delivered", created_at__isnull=False)
+        .annotate(month=TruncMonth("created_at"))
+        .values("month")
         .annotate(total_sales=Sum("total_price"))
-        .order_by("created_at__year", "created_at__month")
+        .order_by("month")
     )
 
-    # ✅ ผู้ขายที่มียอดขายสูงสุด
+    # ผู้ขายที่มียอดขายสูงสุด
     top_sellers = (
-        Seller.objects.annotate(total_revenue=Sum("orders__total_price"))
-        .order_by("-total_revenue")[:5]
+        Seller.objects.annotate(
+            total_revenue=Sum("orders__total_price"),
+            order_count=Count("orders"),
+            refund_rate=ExpressionWrapper(
+                Count("orders__refund_requests", filter=Q(orders__refund_requests__status="approved")) * 100.0 / 
+                Case(When(order_count=0, then=Value(1)), default="order_count", output_field=FloatField()),
+                output_field=FloatField()
+            )
+        )
+        .order_by("-total_revenue")[:10]
     )
 
-    # ✅ การคืนสินค้ารายเดือน
+    # การคืนสินค้ารายเดือน
     refunds_by_month = (
         RefundRequest.objects.values("created_at__year", "created_at__month")
-        .annotate(total_refunds=Count("id"))
+        .annotate(
+            total_refunds=Count("id"),
+            refund_rate=ExpressionWrapper(
+                F("total_refunds") * 100.0 / 
+                Case(
+                    When(total_refunds=0, then=Value(1)),
+                    default=Subquery(
+                        Order.objects.filter(
+                            created_at__year=OuterRef("created_at__year"),
+                            created_at__month=OuterRef("created_at__month")
+                        ).values("created_at__month").annotate(count=Count("id")).values("count")[:1]
+                    ),
+                    output_field=FloatField()
+                ),
+                output_field=FloatField()
+            )
+        )
         .order_by("created_at__year", "created_at__month")
     )
+    
+    # จำนวนผู้ขายทั้งหมด (แทนที่การกรอง is_active)
+    active_sellers = Seller.objects.count()
+    
+    # จำนวนผู้ใช้งานระบบรายวัน
+    daily_users = (
+        CustomUser.objects.filter(last_login__isnull=False)
+        .annotate(date=TruncDate("last_login"))
+        .values("date")
+        .annotate(user_count=Count("id", distinct=True))
+        .order_by("-date")[:30]  # แสดง 30 วันล่าสุด
+    )
+    
+    # จำนวนสินค้าทั้งหมด
+    total_products = Product.objects.count()
+    
+    # อัตราการคืนสินค้าโดยรวม
+    total_orders = Order.objects.filter(status="delivered").count()
+    total_refunds = RefundRequest.objects.filter(status="approved").count()
+    refund_rate = (total_refunds / total_orders * 100) if total_orders > 0 else 0
 
     context = {
         "total_sales": total_sales,
         "sales_by_month": list(sales_by_month),
         "top_sellers": top_sellers,
         "refunds_by_month": list(refunds_by_month),
+        "daily_users": list(daily_users),
+        "active_sellers": active_sellers,
+        "total_products": total_products,
+        "refund_rate": round(refund_rate, 2)
     }
 
     return render(request, "admin_performance.html", context)
+
+
+# กราฟแอดมิน
+@user_passes_test(is_admin)
+def admin_performance_chart_data(request):
+    from django.db.models.functions import TruncMonth
+    from django.db.models import Sum
+    from myapp.models import Order, CustomUser
+    from django.db.models.functions import TruncDate
+    from django.http import JsonResponse
+
+    sales_by_month = (
+        Order.objects.filter(status="delivered", created_at__isnull=False)
+        .annotate(month=TruncMonth("created_at"))
+        .values("month")
+        .annotate(total_sales=Sum("total_price"))
+        .order_by("month")
+    )
+
+    daily_users = (
+        CustomUser.objects.filter(last_login__isnull=False)
+        .annotate(date=TruncDate("last_login"))
+        .values("date")
+        .annotate(user_count=Count("id"))
+        .order_by("date")
+    )
+
+    sales_data = {
+        'labels': [item['month'].strftime('%m/%Y') for item in sales_by_month if item['month']],
+        'values': [float(item['total_sales']) for item in sales_by_month]
+    }
+
+    users_data = {
+        'labels': [item['date'].strftime('%d/%m/%Y') for item in daily_users if item['date']],
+        'values': [item['user_count'] for item in daily_users]
+    }
+
+    return JsonResponse({
+        'sales_data': sales_data,
+        'users_data': users_data
+    })
+
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -3186,23 +3288,32 @@ def api_member_notifications(request):
 def create_notification(user, notification_type, sender=None, post=None, order=None, group_post=None):
     """สร้างการแจ้งเตือนใหม่"""
     message = ""
-    
+
     if notification_type == "like_post":
         if post:
             message = f"❤️ {sender.username} ถูกใจโพสต์ของคุณ!"
         elif group_post:
             message = f"❤️ {sender.username} ถูกใจโพสต์ของคุณในกลุ่ม!"
+    
     elif notification_type == "new_order":
-        message = f"🛒 คุณมีคำสั่งซื้อใหม่ #{order.id} จาก {order.user.username}"
+        if order and order.user:
+            message = f"🛒 คุณมีคำสั่งซื้อใหม่ #{order.id} จาก {order.user.username}"
+        else:
+            message = "🛒 คุณมีคำสั่งซื้อใหม่"
+    
     elif notification_type == "comment":
         if post:
             message = f"💬 {sender.username} ได้แสดงความคิดเห็นต่อโพสต์ของคุณ"
         elif group_post:
             message = f"💬 {sender.username} ได้แสดงความคิดเห็นต่อโพสต์ของคุณในกลุ่ม"
-    elif notification_type == "order_status":
-        message = f"📦 คำสั่งซื้อ #{order.id} ของคุณมีการเปลี่ยนแปลงสถานะเป็น {order.status}"
     
-    # สร้างการแจ้งเตือนตามประเภทผู้ใช้
+    elif notification_type == "order_status":
+        if order:
+            message = f"📦 คำสั่งซื้อ #{order.id} ของคุณมีการเปลี่ยนแปลงสถานะเป็น {order.status}"
+        else:
+            message = "📦 สถานะคำสั่งซื้อของคุณมีการอัปเดต"
+
+    # ✅ สร้างการแจ้งเตือน
     if hasattr(user, 'seller_profile'):
         SellerNotification.objects.create(
             seller=user,
@@ -3213,9 +3324,6 @@ def create_notification(user, notification_type, sender=None, post=None, order=N
             user=user,
             message=message
         )
-    # ในฟังก์ชันที่เรียกใช้ create_notification
-    notification_message = create_notification(post.user, "like_post", sender=user, post=post)
-    print(f"DEBUG: สร้างการแจ้งเตือน -> {notification_message}")
-        
-    # ส่งคืนข้อความเพื่อการตรวจสอบ
+
+    print(f"DEBUG: สร้างการแจ้งเตือน -> {message}")
     return message

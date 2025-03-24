@@ -204,7 +204,17 @@ class SavedGroupPost(models.Model):
     def __str__(self):
         return f"{self.user.user.username} saved GroupPost {self.post.id}"
 
-
+BANK_CHOICES = [
+    ('kbank', 'ธนาคารกสิกรไทย'),
+    ('scb', 'ธนาคารไทยพาณิชย์'),
+    ('bbl', 'ธนาคารกรุงเทพ'),
+    ('ktb', 'ธนาคารกรุงไทย'),
+    ('bay', 'ธนาคารกรุงศรีอยุธยา'),
+    ('ttb', 'ธนาคารทหารไทยธนชาต'),
+    ('gsb', 'ธนาคารออมสิน'),
+    ('baac', 'ธ.ก.ส.'),
+    ('other', 'ธนาคารอื่นๆ'),
+]
 class Seller(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='seller_profile')
     store_name = models.CharField(max_length=255)
@@ -212,6 +222,7 @@ class Seller(models.Model):
     store_image = models.ImageField(upload_to='store_images/', blank=True, null=True)
     contact_info = models.TextField(blank=True, null=True)
     # ✅ เพิ่มเลขบัญชีและชื่อบัญชีธนาคาร
+    bank_name = models.CharField(max_length=50, choices=BANK_CHOICES, blank=True, null=True)  # ✅ เปลี่ยนให้เลือกจาก dropdown
     bank_account_name = models.CharField(max_length=255, blank=True, null=True)  # ชื่อบัญชีธนาคาร
     bank_account_number = models.CharField(max_length=50, blank=True, null=True)  # เลขบัญชีธนาคาร
     created_at = models.DateTimeField(auto_now_add=True)
@@ -474,6 +485,8 @@ class SellerWallet(models.Model):
     seller = models.OneToOneField('Seller', on_delete=models.CASCADE, related_name='wallet')
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)  # ยอดเงินในกระเป๋า
     last_withdrawn_amount = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)  # ✅ เก็บยอดเงินที่ถอนในรอบล่าสุด
+    last_withdrawal_time = models.DateTimeField(null=True, blank=True)
+    last_withdrawn_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)  # อัปเดตล่าสุด
 
     def withdraw(self, amount):
@@ -486,6 +499,7 @@ class SellerWallet(models.Model):
 
     def __str__(self):
         return f"Wallet of {self.seller.store_name}: ฿{self.balance}"
+    
 
 @receiver(post_save, sender=Seller)
 def create_or_update_seller_wallet(sender, instance, created, **kwargs):

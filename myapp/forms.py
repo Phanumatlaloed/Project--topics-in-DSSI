@@ -317,13 +317,14 @@ class SellerUpdateForm(forms.ModelForm):
     """ ฟอร์มแก้ไขข้อมูลร้านค้า """
     class Meta:
         model = Seller
-        fields = ['store_name', 'contact_info', 'store_image', 'bank_account_name', 'bank_account_number']
+        fields = ("store_name", "store_image", "contact_info", "bank_name", "bank_account_name", "bank_account_number")
         widgets = {
             'store_name': forms.TextInput(attrs={'class': 'form-control'}),
             'contact_info': forms.Textarea(attrs={'class': 'form-control'}),
             'store_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'bank_account_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ชื่อบัญชีธนาคาร'}),
-            'bank_account_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เลขบัญชีธนาคาร'}),
+            'bank_name': forms.Select(attrs={'class': 'form-control'}),  # ✅ dropdown
+            'bank_account_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'bank_account_number': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 

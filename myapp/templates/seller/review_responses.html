@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Customer Reviews 💖</title>
     <link rel="stylesheet" href="{% static 'styles/sellreviews.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -30,7 +31,7 @@
             </h2> 
             <ul class="menu">
                 <li class="menu-header"><i class="fas fa-shopping-cart"></i> คำสั่งซื้อ</li>
-                <li class="menu-item active"><a href="{% url 'seller_dashboard' %}"><i class="fas fa-chart-line"></i> แดชบอร์ด</a></li>
+                <li class="menu-item"><a href="{% url 'seller_dashboard' %}"><i class="fas fa-chart-line"></i> แดชบอร์ด</a></li>
                 <li class="menu-item"><a href="{% url 'seller_orders' %}"><i class="fas fa-box"></i> คำสั่งซื้อของฉัน</a></li>
                 <li class="menu-item"><a href="{% url 'seller_payment_verification' %}"><i class="fas fa-credit-card"></i> ตรวจสอบการชำระเงิน</a></li>
                 <li class="menu-item"><a href="{% url 'seller_refund_requests' %}"><i class="fas fa-undo"></i> ขอคืนสินค้า</a></li>
@@ -42,7 +43,7 @@
                 <li class="menu-header"><i class="fas fa-chart-bar"></i> รายงาน</li>
                 <li class="menu-item"><a href="{% url 'seller_performance' %}"><i class="fas fa-award"></i> ประสิทธิภาพร้านค้า</a></li>
                 <li class="menu-item"><a href="{% url 'seller_notifications_lists' %}"><i class="fas fa-bell"></i> การแจ้งเตือน</a></li>
-                <li class="menu-item"><a href="{% url 'seller_reviews' %}"><i class="fas fa-star"></i> ตรวจสอบการรีวิว</a></li>
+                <li class="menu-item active "><a href="{% url 'seller_reviews' %}"><i class="fas fa-star"></i> ตรวจสอบการรีวิว</a></li>
             
                 <li class="menu-header"><i class="fas fa-cog"></i> การตั้งค่า</li>
                 <li class="menu-item"><a href="{% url 'edit_store' %}"><i class="fas fa-store-alt"></i> แก้ไขร้านค้า</a></li>

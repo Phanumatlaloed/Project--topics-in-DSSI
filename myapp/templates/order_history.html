@@ -393,6 +393,7 @@
                 <th>ยอดรวม</th>
                 <th>สถานะคำสั่งซื้อ</th>
                 <th>สถานะคืนเงิน</th>
+                <th>คำขอคืนเงิน</th>
             </tr>
         </thead>
         <tbody>
@@ -446,6 +447,13 @@
                         {% endif %}
                     {% endwith %}
                 </td>
+                <td>
+                    {% if order.payment_status == "paid" and order.status in "pending,processing,shipped,cancelled" %}
+                        <a href="{% url 'request_refund' order.id %}" class="btn btn-danger btn-sm">🔄 ขอคืนเงิน</a>
+                    {% else %}
+                        <span class="text-muted">ไม่สามารถขอคืนเงินได้</span>
+                    {% endif %}
+                </td>                
             </tr>
             {% endfor %}
         </tbody>
