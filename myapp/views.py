@@ -725,6 +725,9 @@ def group_detail(request, group_id):
     
     is_member = request.user in group.members.all()
     # ✅ ป้องกันไม่ให้เห็นโพสต์ ถ้าไม่ได้เป็นสมาชิก
+    # ✅ ดึงสินค้าที่แนะนำมาแสดง (เช่น 6 รายการล่าสุด)
+    products = Product.objects.all()[:6]
+
     posts = GroupPost.objects.filter(group=group).order_by('-created_at') if is_member else None
 
     if request.method == "POST":
@@ -757,7 +760,8 @@ def group_detail(request, group_id):
     return render(request, 'group_detail.html', {
         'group': group,
         'posts': posts,
-        'is_member': is_member
+        'is_member': is_member,
+        'products': products,  # ✅ ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
     })
 
 #โพสต์ในกลุ่ม
@@ -2355,33 +2359,77 @@ def approve_seller_payment(request, order_id):
     return redirect('seller_payment_verification')  # 🔄 เปลี่ยนเส้นทางกลับไปที่หน้า seller_orders
 
 
-
 @login_required
 def report_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-
-    # ✅ ป้องกันไม่ให้ผู้ใช้รีพอร์ตโพสต์ของตัวเอง
+    
+    # ป้องกันไม่ให้ผู้ใช้รีพอร์ตโพสต์ของตัวเอง
     if post.user == request.user:
         messages.error(request, "❌ คุณไม่สามารถรีพอร์ตโพสต์ของตัวเองได้!")
         return redirect('home')
-
+    
     if request.method == 'POST':
         form = ReportForm(request.POST)
         if form.is_valid():
-            Report.objects.create(
+            # สร้างรายงาน แต่ยังไม่ตั้งค่า is_reported เป็น True
+            report = Report.objects.create(
                 post=post,
                 reported_by=request.user,
                 reason=form.cleaned_data['reason'],
                 description=form.cleaned_data['description']
             )
-            post.is_reported = True  # ✅ ซ่อนโพสต์ที่ถูกรายงาน
-            post.save()
-            messages.success(request, "Post reported successfully.")
-            return redirect('block_user', post.user.id)  # ✅ นำไปสู่หน้าบล็อคผู้ใช้
+            
+            # เก็บ report id ไว้ใน session เพื่อใช้ในหน้า block_user
+            request.session['report_id'] = report.id
+            messages.success(request, "ส่งรายงานโพสต์เรียบร้อยแล้ว")
+            
+            # ไปยังหน้าบล็อคผู้ใช้
+            return redirect('block_user', post.user.id)
     else:
         form = ReportForm()
+    
     return render(request, 'report_post.html', {'form': form, 'post': post})
 
+@login_required
+def block_user(request, user_id):
+    blocked_user = get_object_or_404(User, id=user_id)
+    
+    if blocked_user == request.user:
+        messages.error(request, "❌ คุณไม่สามารถบล็อกตัวเองได้!")
+        return redirect('home')
+    
+    # ดึงข้อมูลรายงานจาก session (ถ้ามี)
+    report_id = request.session.get('report_id')
+    report = None
+    if report_id:
+        report = get_object_or_404(Report, id=report_id)
+    
+    if request.method == 'POST':
+        action = request.POST.get('action', '')
+        
+        if action == 'block':
+            # สร้างการบล็อคผู้ใช้
+            BlockedUser.objects.create(blocked_by=request.user, blocked_user=blocked_user)
+            
+            # ถ้ามีรายงาน ให้ซ่อนโพสต์ด้วย
+            if report:
+                post = report.post
+                post.is_reported = True
+                post.save()
+            
+            messages.success(request, f"✅ คุณได้บล็อก {blocked_user.username} แล้ว")
+        else:  # action == 'cancel'
+            messages.info(request, f"คุณไม่ได้บล็อก {blocked_user.username}")
+        
+        # ลบข้อมูลรายงานออกจาก session
+        if 'report_id' in request.session:
+            del request.session['report_id']
+        
+        return redirect('home')
+    
+    return render(request, 'block_user.html', {'blocked_user': blocked_user, 'report': report})
+
+#แสดงการบล็อคผู้ใช้
 from.models import BlockedUser
 @login_required
 def block_user(request, user_id):

@@ -1,14 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("✅ Like.js Loaded!");
+    console.log("✅ โหลดไฟล์ Like.js เรียบร้อยแล้ว!");
 
+    // เลือกปุ่มถูกใจทั้งหมดในหน้าเว็บ
     document.querySelectorAll(".like-btn").forEach(button => {
         button.addEventListener("click", async (event) => {
             event.preventDefault();
             const postId = button.dataset.postId;
             const likeCountSpan = document.getElementById(`like-count-${postId}`);
+            
+            if (!postId || !likeCountSpan) {
+                console.error("ไม่พบ postId หรือ likeCountSpan");
+                return;
+            }
 
             try {
-                const response = await fetch(`/like/${postId}/`, {  // ✅ แก้ URL ให้ถูกต้อง
+                const response = await fetch(`/like/${postId}/`, {
                     method: "POST",
                     headers: {
                         "X-CSRFToken": getCSRFToken(),
@@ -18,18 +24,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const result = await response.json();
                 if (result.success) {
-                    button.innerHTML = result.liked ?  "❤️ Unlike" : "🤍 Like";
-                    likeCountSpan.textContent = `${result.like_count} Likes`;
+                    // อัพเดทปุ่มตามสถานะการถูกใจ
+                    if (result.liked) {
+                        button.innerHTML = '<i class="fas fa-heart"></i> ถูกใจแล้ว';
+                        button.classList.add('liked');
+                    } else {
+                        button.innerHTML = '<i class="far fa-heart"></i> ถูกใจ';
+                        button.classList.remove('liked');
+                    }
+                    
+                    // อัพเดทจำนวนคนถูกใจ
+                    likeCountSpan.textContent = `${result.like_count} ถูกใจ`;
                 } else {
-                    console.error("Error:", result.error);
+                    console.error("เกิดข้อผิดพลาด:", result.error);
                 }
             } catch (error) {
-                console.error("❌ AJAX Error:", error);
+                console.error("❌ เกิดข้อผิดพลาด AJAX:", error);
             }
         });
     });
 
     function getCSRFToken() {
-        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+        const tokenInput = document.querySelector("[name=csrfmiddlewaretoken]");
+        if (!tokenInput) {
+            console.error("ไม่พบ CSRF token");
+            return '';
+        }
+        return tokenInput.value;
     }
 });

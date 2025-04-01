@@ -373,7 +373,7 @@ img, video {
 .comment-actions {
     display: flex;
     gap: 8px;
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.2s ease;
 }
 
@@ -952,7 +952,44 @@ img, video {
     font-size: 14px;
     color: #777;
 }
+/* สไตล์สำหรับปุ่มถูกใจ */
+.like-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background-color: var(--light-pink);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+}
 
+.like-btn i {
+    margin-right: 5px;
+}
+
+.like-btn:hover {
+    background-color: var(--tertiary-color);
+}
+
+.like-btn.liked {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.like-btn.liked:hover {
+    background-color: var(--dark-pink);
+}
+
+/* สไตล์สำหรับจำนวนคนถูกใจ */
+.like-count {
+    margin-left: 5px;
+    font-size: 14px;
+    color: #777;
+}
 /* Comments Section */
 .comments {
     margin-top: 15px;
