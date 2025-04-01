@@ -1,0 +1,641 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ผู้ใช้ที่ถูกบล็อค</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Prompt', sans-serif;
+        }
+        
+        body {
+            background-color: #ffeff3;
+            color: #333;
+        }
+        
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Left Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #ffeff3;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #ffd0dc;
+        }
+        
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .nav {
+            list-style: none;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: #ffc0cb;
+        }
+        
+        .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .welcome-logout {
+            margin-top: auto;
+            padding: 15px;
+            border-top: 1px solid #ffd0dc;
+        }
+        
+        .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Main Content */
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .page-header {
+            background-color: #ffc0cb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .page-title i {
+            margin-right: 10px;
+            color: #e74c3c;
+        }
+        
+        .blocked-users-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .info-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .blocked-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+        
+        .blocked-list-title {
+            font-size: 18px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .blocked-list-title i {
+            margin-right: 8px;
+            color: #e74c3c;
+        }
+        
+        .blocked-count {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 8px 15px;
+            padding-left: 35px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 250px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            color: #999;
+        }
+        
+        .blocked-user-card {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .blocked-user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 3px solid #ffc0cb;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .blocked-date {
+            color: #777;
+            font-size: 13px;
+        }
+        
+        .reason-tag {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .reason-tag.spam {
+            background-color: #ffeaa7;
+            color: #d35400;
+        }
+        
+        .reason-tag.harassment {
+            background-color: #fab1a0;
+            color: #e17055;
+        }
+        
+        .reason-tag.violence {
+            background-color: #ff7675;
+            color: #d63031;
+        }
+        
+        .reason-tag.other {
+            background-color: #a29bfe;
+            color: #5f27cd;
+        }
+        
+        .action-btn {
+            margin-left: 15px;
+        }
+        
+        .unblock-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .unblock-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .unblock-btn i {
+            margin-right: 5px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 50px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .empty-state p {
+            color: #999;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .back-to-profile-btn {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-to-profile-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Confirmation Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-container {
+            background-color: white;
+            border-radius: 10px;
+            width: 400px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            background-color: #ffc0cb;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .modal-title i {
+            margin-right: 8px;
+            color: #e74c3c;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 22px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        
+        .modal-username {
+            font-weight: 500;
+            font-size: 16px;
+        }
+        
+        .modal-message {
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .modal-btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .cancel-btn {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .confirm-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .confirm-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Debug section */
+        .debug-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="logo-img">
+            </div>
+            <nav>
+                <ul class="nav">
+                    <li><a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> <span>หน้าหลัก</span></a></li>
+                    <li><a href="{% url 'community_list' %}" class="nav-link"><i class="fas fa-users"></i> <span>ชุมชน</span></a></li>
+                    <li><a href="{% url 'savelist' %}" class="nav-link"><i class="fas fa-bookmark"></i> <span>รายการบันทึก</span></a></li>
+                    <li><a href="{% url 'profile' request.user.id %}" class="nav-link"><i class="fas fa-user"></i> <span>โปรไฟล์</span></a></li>
+                    <li><a href="{% url 'product_list' %}" class="nav-link"><i class="fas fa-shopping-cart"></i> <span>รายการสินค้า</span></a></li>
+                    <li><a href="{% url 'notifications' %}" class="nav-link"><i class="fas fa-bell"></i> <span>การแจ้งเตือน</span></a></li>
+                </ul>
+            </nav>
+            <div class="welcome-logout">
+                <p>ยินดีต้อนรับ, <b>{{ request.user.username }}</b></p>
+                <form action="{% url 'logout' %}" method="post" class="mt-2">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">ออกจากระบบ</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="page-header">
+                <h1 class="page-title"><i class="fas fa-user-slash"></i> ผู้ใช้ที่ถูกบล็อค</h1>
+                <a href="{% url 'profile' request.user.id %}" class="back-to-profile-btn">
+                    <i class="fas fa-arrow-left"></i> กลับไปที่โปรไฟล์
+                </a>
+            </div>
+            
+            <!-- เพิ่มส่วน debug -->
+            <div class="debug-box">
+                Debug: พบผู้ใช้ที่ถูกบล็อคทั้งหมด {{ blocked_users|length }} คน
+            </div>
+            
+            <div class="blocked-users-container">
+                <div class="info-box">
+                    <p><i class="fas fa-info-circle"></i> เมื่อคุณบล็อคผู้ใช้ คุณจะไม่เห็นโพสต์หรือความคิดเห็นของพวกเขา และพวกเขาจะไม่สามารถติดต่อคุณได้</p>
+                </div>
+                
+                <div class="blocked-list-header">
+                    <h2 class="blocked-list-title">
+                        <i class="fas fa-ban"></i> รายชื่อผู้ใช้ที่ถูกบล็อค
+                        <span class="blocked-count">{{ blocked_users|length }}</span>
+                    </h2>
+                    
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" placeholder="ค้นหาชื่อผู้ใช้..." class="search-input" id="searchInput">
+                    </div>
+                </div>
+                
+                {% if blocked_users %}
+                    <div id="blockedUsersList">
+                        {% for blocked in blocked_users %}
+                            <div class="blocked-user-card" data-username="{{ blocked.blocked_user.username }}">
+                                {% if blocked.blocked_user.member_profile.profile_picture %}
+                                    <img src="{{ blocked.blocked_user.member_profile.profile_picture.url }}" alt="{{ blocked.blocked_user.username }}" class="user-avatar">
+                                {% else %}
+                                    <img src="{% static 'images/default-profile.png' %}" alt="Default Profile" class="user-avatar">
+                                {% endif %}
+                                
+                                <div class="user-info">
+                                    <h3 class="user-name">{{ blocked.blocked_user.username }}</h3>
+                                    <div class="blocked-date">บล็อคเมื่อ {{ blocked.created_at|date:"j F Y, H:i" }}</div>
+                                    
+                                    {% if blocked.report %}
+                                        <div class="reason-tag {{ blocked.report.reason }}">{{ blocked.report.get_reason_display }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="action-btn">
+                                    <button class="unblock-btn" onclick="showUnblockConfirmation('{{ blocked.blocked_user.id }}', '{{ blocked.blocked_user.username }}')">
+                                        <i class="fas fa-user-check"></i> ยกเลิกบล็อค
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-ban"></i>
+                        <p>คุณยังไม่ได้บล็อคผู้ใช้คนใด</p>
+                        <a href="{% url 'home' %}" class="back-to-profile-btn">
+                            <i class="fas fa-arrow-left"></i> กลับไปที่หน้าหลัก
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Unblock Confirmation Modal -->
+    <div id="unblockModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-user-check"></i> ยกเลิกการบล็อคผู้ใช้</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-user-info">
+                    <img src="" alt="" id="modalUserAvatar" class="modal-user-avatar">
+                    <span id="modalUsername" class="modal-username"></span>
+                </div>
+                <p class="modal-message">คุณต้องการยกเลิกการบล็อคผู้ใช้นี้หรือไม่? เมื่อยกเลิกการบล็อค คุณจะเห็นโพสต์และความคิดเห็นของผู้ใช้นี้อีกครั้ง</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel-btn" onclick="closeModal()">ยกเลิก</button>
+                <form id="unblockForm" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="modal-btn confirm-btn">ยืนยัน</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded");
+            
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                console.log("Search input found");
+                searchInput.addEventListener('input', function() {
+                    const searchValue = this.value.toLowerCase();
+                    console.log("Searching for:", searchValue);
+                    
+                    const userCards = document.querySelectorAll('.blocked-user-card');
+                    console.log("Found", userCards.length, "user cards");
+                    
+                    userCards.forEach(card => {
+                        const username = card.getAttribute('data-username').toLowerCase();
+                        console.log("Checking card:", username);
+                        if (username.includes(searchValue)) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            } else {
+                console.error("Search input not found");
+            }
+        });
+        
+        // Modal functions
+        function showUnblockConfirmation(userId, username) {
+            console.log("Showing unblock confirmation for:", username, "ID:", userId);
+            
+            const modal = document.getElementById('unblockModal');
+            const form = document.getElementById('unblockForm');
+            const modalUsername = document.getElementById('modalUsername');
+            const modalUserAvatar = document.getElementById('modalUserAvatar');
+            
+            // Set the username in the modal
+            modalUsername.textContent = username;
+            
+            // Find the user avatar from the card
+            const userCard = document.querySelector(`.blocked-user-card[data-username="${username}"]`);
+            if (userCard) {
+                const userAvatar = userCard.querySelector('.user-avatar').src;
+                modalUserAvatar.src = userAvatar;
+                
+                // Set the form action
+                form.action = `{% url 'unblock_user' 0 %}`.replace('0', userId);
+                
+                // Show the modal
+                modal.classList.add('active');
+            } else {
+                console.error("User card not found for username:", username);
+            }
+        }
+        
+        function closeModal() {
+            console.log("Closing modal");
+            const modal = document.getElementById('unblockModal');
+            modal.classList.remove('active');
+        }
+    </script>
+</body>
+</html>

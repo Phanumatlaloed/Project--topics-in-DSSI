@@ -134,6 +134,8 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),
     
     path('block_user/<int:user_id>/', block_user, name='block_user'),  # ✅ เพิ่ม URL pattern สำหรับการบล็อกผู้ใช้
+    path('unblock_user/<int:user_id>/', views.unblock_user, name='unblock_user'),
+    path('blocked-users/', views.blocked_users_list, name='blocked_users_list'),
 
     # ✅ เส้นทางสำหรับการลงชื่อเข้าใช้ของผู้ดูแลระบบ
     path('admin_register/', admin_register, name='admin_register'),  # ✅ เส้นทางสมัครแอดมิน

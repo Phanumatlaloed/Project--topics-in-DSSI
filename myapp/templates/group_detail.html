@@ -87,14 +87,13 @@
                             </button>
                         {% endif %}
 
-                        {% if request.user in group.members.all %}
-                            <form action="{% url 'leave_group' group.id %}" method="post" style="display:inline;">
+                        {% if request.user != group.created_by %}
+                            <form method="POST" action="{% url 'leave_group' group.id %}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fas fa-door-open me-1"></i> Leave Group
-                                </button>
+                                <button type="submit" class="btn btn-danger">Leave Group</button>
                             </form>
                         {% endif %}
+                    
 
                         {% if request.user not in group.members.all %}
                             <a href="{% url 'join_group' group.id %}" class="btn btn-primary">
@@ -294,7 +293,7 @@
                         <!-- Actions -->
                         <div class="actions">
                             <button class="btn like-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
-                                <i class="fas fa-heart"></i> ถูกใจ
+                                <i class="far fa-heart"></i> ถูกใจ
                             </button>
                             <span id="like-count-{{ post.id }}">{{ post.likes.count }} ถูกใจ</span>
                             

@@ -271,6 +271,9 @@ from django.contrib import messages
 from .models import Post, PostMedia
 
 def profile(request):
+
+    products = Product.objects.all()[:6]  
+
     user = request.user  # ดึงข้อมูลของผู้ใช้ที่ล็อกอินอยู่
     profile = get_object_or_404(Member, user=user)  # ดึงโปรไฟล์ของผู้ใช้
     posts = Post.objects.filter(user=user, is_reported=False).order_by('-created_at')  # กรองโพสต์ที่ไม่ถูกรีพอร์ต
@@ -295,8 +298,11 @@ def profile(request):
         messages.success(request, 'Profile updated successfully!')
         return redirect('profile')
 
-    return render(request, 'profile.html', {'user': user, 'posts': posts})
-
+    return render(request, 'profile.html', {
+        'user': user,
+        'posts': posts,
+        'products': products,  # ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
+        })
 
 
 def profile_edit(request):
@@ -817,19 +823,21 @@ def join_group(request, group_id):
     return redirect('group_detail', group_id=group.id)
 
 #ออกจากกลุ่ม
-
 @login_required
 def leave_group(request, group_id):
-    """ ให้สมาชิกออกจากกลุ่ม """
+    """ ให้สมาชิกออกจากกลุ่ม (ยกเว้นผู้สร้างกลุ่ม) """
     group = get_object_or_404(CommunityGroup, id=group_id)
 
-    if request.user in group.members.all():
-        group.members.remove(request.user)  # ลบสมาชิกออกจากกลุ่ม
+    if request.user == group.creator:
+        messages.error(request, "ผู้สร้างกลุ่มไม่สามารถออกจากกลุ่มของตนเองได้!")
+    elif request.user in group.members.all():
+        group.members.remove(request.user)
         messages.success(request, "คุณได้ออกจากกลุ่มเรียบร้อยแล้ว!")
     else:
         messages.error(request, "คุณไม่ได้เป็นสมาชิกของกลุ่มนี้!")
 
-    return redirect('community_list')  # หรือจะ redirect ไปหน้า 'group_detail' ก็ได้
+    return redirect('community_list')
+
 
 
 # ไลค์โพสในกลุ่ม
@@ -973,9 +981,12 @@ def profile_management(request):
         "password_form": password_form,
     })
 
-
-
+# แสดงโปรไฟล์ผู้ใช้
+@login_required
 def profile_view(request, user_id):
+
+    products = Product.objects.all()[:6]  
+
     user = get_object_or_404(CustomUser, pk=user_id)
     posts = Post.objects.filter(user=user)
     
@@ -988,6 +999,7 @@ def profile_view(request, user_id):
         'posts': posts,
         'is_own_profile': is_own_profile,
         'is_following': is_following,
+        'products': products,  # ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
     }
     return render(request, 'profile.html', context)
 
@@ -2365,13 +2377,15 @@ def report_post(request, post_id):
     
     # ป้องกันไม่ให้ผู้ใช้รีพอร์ตโพสต์ของตัวเอง
     if post.user == request.user:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'message': 'คุณไม่สามารถรีพอร์ตโพสต์ของตัวเองได้!'})
         messages.error(request, "❌ คุณไม่สามารถรีพอร์ตโพสต์ของตัวเองได้!")
         return redirect('home')
     
     if request.method == 'POST':
         form = ReportForm(request.POST)
         if form.is_valid():
-            # สร้างรายงาน แต่ยังไม่ตั้งค่า is_reported เป็น True
+            # สร้างรายงาน
             report = Report.objects.create(
                 post=post,
                 reported_by=request.user,
@@ -2379,16 +2393,24 @@ def report_post(request, post_id):
                 description=form.cleaned_data['description']
             )
             
-            # เก็บ report id ไว้ใน session เพื่อใช้ในหน้า block_user
+            # เก็บ report id ไว้ใน session
             request.session['report_id'] = report.id
-            messages.success(request, "ส่งรายงานโพสต์เรียบร้อยแล้ว")
             
-            # ไปยังหน้าบล็อคผู้ใช้
+            # ตอบกลับเป็น JSON ถ้าเป็น AJAX request
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': True, 
+                    'message': 'ส่งรายงานโพสต์เรียบร้อยแล้ว',
+                    'report_id': report.id
+                })
+            
+            messages.success(request, "ส่งรายงานโพสต์เรียบร้อยแล้ว")
             return redirect('block_user', post.user.id)
     else:
         form = ReportForm()
     
     return render(request, 'report_post.html', {'form': form, 'post': post})
+
 
 @login_required
 def block_user(request, user_id):
@@ -2398,9 +2420,10 @@ def block_user(request, user_id):
         messages.error(request, "❌ คุณไม่สามารถบล็อกตัวเองได้!")
         return redirect('home')
     
-    # ดึงข้อมูลรายงานจาก session (ถ้ามี)
-    report_id = request.session.get('report_id')
+    # ดึงข้อมูลรายงานจาก session หรือจาก POST data
+    report_id = request.POST.get('report_id') or request.session.get('report_id')
     report = None
+    
     if report_id:
         report = get_object_or_404(Report, id=report_id)
     
@@ -2427,24 +2450,62 @@ def block_user(request, user_id):
         
         return redirect('home')
     
+    # กรณีเข้าถึงหน้า block_user โดยตรง (ไม่ผ่าน AJAX)
     return render(request, 'block_user.html', {'blocked_user': blocked_user, 'report': report})
 
-#แสดงการบล็อคผู้ใช้
-from.models import BlockedUser
 @login_required
-def block_user(request, user_id):
+def blocked_users_list(request):
+    # ดึงรายการผู้ใช้ที่ถูกบล็อค
+    blocked_users = BlockedUser.objects.filter(blocked_by=request.user).order_by('-created_at')
+    
+    context = {
+        'blocked_users': blocked_users,
+        # 'products': products,
+    }
+    
+    return render(request, 'blocked_users_list.html', context)
+
+@login_required
+def unblock_user(request, user_id):
+    # ดึงข้อมูลผู้ใช้ที่ถูกบล็อค
     blocked_user = get_object_or_404(User, id=user_id)
+    
+    # ตรวจสอบว่าผู้ใช้นี้ถูกบล็อคจริงหรือไม่
+    blocked = BlockedUser.objects.filter(blocked_by=request.user, blocked_user=blocked_user).first()
 
-    if blocked_user == request.user:
-        messages.error(request, "❌ คุณไม่สามารถบล็อกตัวเองได้!")
-        return redirect('home')
-
+    
+    if not blocked:
+        messages.error(request, 'ผู้ใช้นี้ไม่ได้ถูกบล็อค')
+        return redirect('blocked_users_list')
+    
+    # ถ้าส่งฟอร์มมา
     if request.method == 'POST':
-        BlockedUser.objects.create(blocked_by=request.user, blocked_user=blocked_user)
-        messages.success(request, f"✅ คุณได้บล็อก {blocked_user.username} แล้ว")
-        return redirect('home')
+        # ลบข้อมูลการบล็อคจากตาราง
+        blocked.delete()
+        
+        messages.success(request, f'คุณได้เลิกบล็อค {blocked_user.username} เรียบร้อยแล้ว')
+        return redirect('blocked_users_list')
+    
+    # แสดงหน้ายืนยันการเลิกบล็อค
+    return render(request, 'unblock_user.html', {'blocked_user': blocked_user})
 
-    return render(request, 'block_user.html', {'blocked_user': blocked_user})
+
+# #แสดงการบล็อคผู้ใช้
+# from.models import BlockedUser
+# @login_required
+# def block_user(request, user_id):
+#     blocked_user = get_object_or_404(User, id=user_id)
+
+#     if blocked_user == request.user:
+#         messages.error(request, "❌ คุณไม่สามารถบล็อกตัวเองได้!")
+#         return redirect('home')
+
+#     if request.method == 'POST':
+#         BlockedUser.objects.create(blocked_by=request.user, blocked_user=blocked_user)
+#         messages.success(request, f"✅ คุณได้บล็อก {blocked_user.username} แล้ว")
+#         return redirect('home')
+
+#     return render(request, 'block_user.html', {'blocked_user': blocked_user})
 
 # ตรวจสอบว่าเป็นแอดมินหรือไม่
 def is_admin(user):

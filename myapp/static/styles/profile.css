@@ -51,9 +51,10 @@ img, video {
 }
 
 /* ===== LAYOUT ===== */
+/* ปรับโครงสร้าง Grid ในแถบ wrapper */
 .wrapper {
     display: grid;
-    grid-template-columns: 250px 1fr;
+    grid-template-columns: 250px 1fr 280px; /* เพิ่มคอลัมน์ที่ 3 ขนาด 280px */
     min-height: 100vh;
 }
 
@@ -156,7 +157,92 @@ img, video {
     padding: 30px;
 }
 
+/* Styles for the dropdown menu in profile header */
+.profile-header {
+    position: relative;
+}
 
+.profile-actions {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.settings-dropdown-btn {
+    background-color: #ff5b95;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.settings-dropdown-btn:hover {
+    background-color: #ff4081;
+}
+
+.settings-dropdown {
+    width: 240px;
+    padding: 8px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.dropdown-header {
+    color: #888;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 8px 16px;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #555;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #ffebf1;
+    color: #ff5b95;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+    color: #777;
+}
+
+.dropdown-item:hover i {
+    color: #ff5b95;
+}
+
+/* Remove the blocked users link from sidebar */
+.nav-link[href*="blocked_users_list"] {
+    display: none;
+}
+
+/* Style for text-danger item */
+.dropdown-item.text-danger {
+    color: #dc3545;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #ffe0e3;
+    color: #dc3545;
+}
+
+.dropdown-item.text-danger i {
+    color: #dc3545;
+}
 /* ===== PROFILE HEADER ===== */
 .profile-header {
     background-color: #ffb6c1;
@@ -246,7 +332,7 @@ img, video {
     color: var(--dark-pink);
     border: 1px solid var(--dark-pink);
 }
-
+/* 
 .edit-profile-btn {
     background-color: var(--white);
     color: var(--text-color);
@@ -257,7 +343,7 @@ img, video {
 .edit-profile-btn:hover {
     background-color: var(--light-gray);
     transform: translateY(-2px);
-}
+} */
 
 /* ===== CREATE POST ===== */
 .create-post {
@@ -1447,3 +1533,374 @@ img, video {
         margin-bottom: 5px;
     }
 }
+/* ===== RECOMMENDED PRODUCTS ===== */
+.recommendations {
+    background-color: var(--light-pink);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    right: 0;
+    padding: 20px;
+    overflow-y: auto;
+    border-left: 1px solid var(--border-color);
+    box-shadow: -2px 0 10px rgba(255, 182, 193, 0.2);
+}
+
+.recommendations h5 {
+    color: var(--dark-pink);
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.recommendations h5 i {
+    margin-right: 8px;
+}
+
+.product-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(255, 107, 157, 0.1);
+    padding: 10px;
+    text-align: center;
+    /* transition: transform 0.3s; */
+}
+
+.product-card:hover {
+    /* transform: translateY(-5px); */
+    box-shadow: 0 6px 15px rgba(255, 107, 157, 0.2);
+}
+
+.product-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.product-card p {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.product-price {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-price i {
+    margin-right: 5px;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.product-card .btn {
+    width: 100%;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #777;
+}
+
+.py-4 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+/* ===== MODAL ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    /* transition: all 0.3s; */
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-dialog {
+    width: 100%;
+    max-width: 800px;
+    margin: 30px;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background-color: var(--light-pink);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+    color: var(--dark-pink);
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.modal-title i {
+    margin-right: 8px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 0;
+    text-align: center;
+}
+
+.modal-body img, .modal-body video {
+    max-width: 100%;
+    max-height: 80vh;
+}
+/* Styles for the settings panel */
+.settings-menu {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+}
+
+.settings-section {
+    margin-bottom: 20px;
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+.settings-section h6 {
+    font-family: 'Prompt', sans-serif;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.settings-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.settings-list li {
+    margin-bottom: 8px;
+}
+
+.settings-link {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: #555;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.settings-link:hover {
+    background-color: #ffebf1;
+    color: #ff5b95;
+    text-decoration: none;
+}
+
+.settings-link i {
+    width: 24px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+/* Modify the sidebar to remove the blocked users item */
+.nav-link[href*="blocked_users_list"] {
+    display: none;
+}
+/* Enhanced Settings Dropdown Styling */
+.profile-header {
+    position: relative;
+    padding-top: 30px; /* Add space for the settings button at top */
+}
+
+/* Settings Button */
+.settings-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #ff5b95;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 15px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.settings-btn:hover {
+    background-color: #ff4081;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.settings-btn i {
+    font-size: 1rem;
+}
+
+/* Settings Dropdown Panel */
+.settings-dropdown-panel {
+    position: absolute;
+    top: 60px;
+    right: 15px;
+    width: 220px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    z-index: 100;
+    display: none;
+    animation: fadeInDown 0.3s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.settings-dropdown-panel.active {
+    display: block;
+}
+
+.settings-heading {
+    color: #888;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.settings-option {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+}
+
+.settings-option:hover {
+    background-color: #ffebf1;
+    color: #ff5b95;
+}
+
+.settings-option i {
+    width: 20px;
+    margin-right: 10px;
+    font-size: 1rem;
+    text-align: center;
+    color: #777;
+}
+
+.settings-option:hover i {
+    color: #ff5b95;
+}
+
+/* Logout Option */
+.logout-option {
+    color: #ff3b5c;
+    margin-top: 10px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 15px;
+}
+
+.logout-option i {
+    color: #ff3b5c;
+}
+
+.logout-option:hover {
+    background-color: #fff0f2;
+}
+
+/* Remove original blocked users link from sidebar */
+.nav-link[href*="blocked_users_list"] {
+    display: none;
+}
+
+/* * {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+} */

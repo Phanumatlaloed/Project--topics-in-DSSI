@@ -55,6 +55,7 @@
         <!-- Main Content -->
         <main class="content">
             <!-- Profile Header -->
+            <!-- Modified Profile Header with Dropdown Menu -->
             <header class="profile-header">
                 <div class="profile-picture">
                     {% if user.member_profile.profile_picture %}
@@ -64,6 +65,33 @@
                     {% endif %}
                 </div>
                 
+                <!-- Settings Dropdown for Own Profile -->
+                {% if is_own_profile %}
+                    <button class="settings-btn" id="settingsButton">
+                        <i class="fas fa-cog"></i> ตั้งค่า
+                    </button>
+                    
+                    <!-- Dropdown Menu Panel -->
+                    <div class="settings-dropdown-panel" id="settingsPanel">
+                        <h6 class="settings-heading">ตั้งค่า:</h6>
+                        
+                        <a href="{% url 'profile_management' %}" class="settings-option">
+                            <i class="fas fa-user-edit"></i> แก้ไขโปรไฟล์
+                        </a>
+                        
+                        <a href="{% url 'blocked_users_list' %}" class="settings-option">
+                            <i class="fas fa-ban"></i> ผู้ใช้ที่บล็อค
+                        </a>
+                        
+                        <form action="{% url 'logout' %}" method="post" class="mt-2">
+                            {% csrf_token %}
+                            <button type="submit" class="settings-option logout-option">
+                                <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+                
                 <h2 class="username">{{ user.username }}</h2>
                 
                 <!-- Follow Stats -->
@@ -72,8 +100,25 @@
                     <span><strong id="following-count">{{ user.following.count }}</strong> กำลังติดตาม</span>
                 </div>
                 
+                <!-- Follow Button for Other Profiles -->
+                {% if not is_own_profile %}
+                    <button id="follow-button"
+                            data-user-id="{{ user.id }}"
+                            class="follow-btn {% if request.user in user.followers.all %}following{% endif %}">
+                        {% if request.user in user.followers.all %}เลิกติดตาม{% else %}ติดตาม{% endif %}
+                    </button>
+                {% endif %}
+                
+                <!-- <h2 class="username">{{ user.username }}</h2> -->
+                
+                <!-- Follow Stats -->
+                <!-- <div class="follow-stats">
+                    <span><strong id="followers-count">{{ user.followers.count }}</strong> ผู้ติดตาม</span>
+                    <span><strong id="following-count">{{ user.following.count }}</strong> กำลังติดตาม</span>
+                </div> -->
+                
                 <!-- Follow/Edit Button -->
-                {% if user != request.user %}
+                <!-- {% if user != request.user %}
                     <button id="follow-button"
                             data-user-id="{{ user.id }}"
                             class="follow-btn {% if request.user in user.followers.all %}following{% endif %}">
@@ -83,7 +128,7 @@
                 
                 {% if is_own_profile %}
                     <a href="{% url 'profile_management' %}" class="edit-profile-btn">แก้ไขโปรไฟล์</a>
-                {% endif %}
+                {% endif %} -->
             </header>
 
             <!-- Create Post Section -->
@@ -246,7 +291,7 @@
                             <!-- Actions -->
                             <div class="actions">
                                 <button class="btn like-btn" data-post-id="{{ post.id }}">
-                                    <i class="fas fa-heart"></i> ถูกใจ
+                                    <i class="far fa-heart"></i> ถูกใจ
                                 </button>
                                 <span id="like-count-{{ post.id }}">{{ post.likes.count }} ถูกใจ</span>
                                 
@@ -356,7 +401,35 @@
                 {% endfor %}
             </div>
         </main>
+
+        <!-- Recommended Products -->
+        <aside class="recommendations">
+            <h5><i class="fas fa-tags me-2"></i>แนะนำสินค้า</h5>
+            <div class="product-grid">
+                {% if products %}
+                    {% for product in products %}
+                        <div class="product-card">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                            <p class="mt-2 mb-1 fw-bold">{{ product.name }}</p>
+                            <p class="text-primary mb-2">
+                                <i class="fas fa-coins me-1"></i> ฿{{ product.price }}
+                            </p>
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-shopping-bag me-1"></i> ดูรายละเอียด
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-box-open text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted">ไม่มีสินค้าแนะนำในขณะนี้</p>
+                    </div>
+                {% endif %}
+            </div>
+        </aside>
     </div>
+    <!-- ต่อจาก </main> และก่อน </div class="wrapper"> -->
+    
 
     <script>
         // JavaScript สำหรับการอัปโหลดรูปภาพและวิดีโอ
@@ -445,6 +518,39 @@
                 const bsModal = new bootstrap.Modal(modal);
                 bsModal.show();
             };
+        });
+
+        // JavaScript for toggling settings dropdown panel
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsButton = document.getElementById('settingsButton');
+            const settingsPanel = document.getElementById('settingsPanel');
+            
+            if (settingsButton && settingsPanel) {
+                // Toggle dropdown when settings button is clicked
+                settingsButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    settingsPanel.classList.toggle('active');
+                });
+                
+                // Close dropdown when clicking elsewhere on the document
+                document.addEventListener('click', function(e) {
+                    if (!settingsPanel.contains(e.target) && e.target !== settingsButton) {
+                        settingsPanel.classList.remove('active');
+                    }
+                });
+                
+                // Prevent closing when clicking inside the dropdown
+                settingsPanel.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+                
+                // Close dropdown when pressing Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && settingsPanel.classList.contains('active')) {
+                        settingsPanel.classList.remove('active');
+                    }
+                });
+            }
         });
     </script>
 </body>
