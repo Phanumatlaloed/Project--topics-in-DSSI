@@ -74,6 +74,7 @@
                         <tr>
                             <th>หมายเลขออเดอร์</th>
                             <th>ลูกค้า</th>
+                            <th>ที่อยู่</th>
                             <th>ยอดรวม</th>
                             <th>สถานะการชำระเงิน</th>
                             <th>สลิป</th>
@@ -86,6 +87,10 @@
                         <tr data-status="{{ order.status }}">
                             <td><span class="order-id">#{{ order.id }}</span></td>
                             <td>{{ order.user.username }}</td>
+                            <td>
+                                {{ order.shipping_address }}<br>
+                                {{ order.city }}, {{ order.postal_code }}
+                            </td>
                             <td>฿{{ order.total_price }}</td>
 
                             <td>

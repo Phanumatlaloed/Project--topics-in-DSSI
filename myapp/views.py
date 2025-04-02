@@ -2887,23 +2887,6 @@ def request_withdrawal(request):
     return redirect("seller_wallet")
 
 
-def update_order_status(request, order_id, new_status):
-    order = get_object_or_404(Order, id=order_id, seller=request.user.seller_profile)
-
-    if new_status == "delivered" and order.status != "delivered":
-        # ✅ เพิ่มยอดเข้า Wallet
-        wallet, _ = SellerWallet.objects.get_or_create(seller=order.seller)
-        for item in order.order_items.all():
-            wallet.balance += item.price_per_item * item.quantity
-        wallet.save()
-
-    order.status = new_status
-    order.save()
-    return redirect('seller_orders')
-
-
-
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
