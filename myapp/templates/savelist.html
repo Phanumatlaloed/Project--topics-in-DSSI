@@ -118,9 +118,16 @@
                         <div class="post-item">
                             <div class="post-header">
                                 <div class="user-info">
-                                    <div class="group-icon">
-                                        <i class="fas fa-users"></i>
+                                    {% if saved_post.post.group.image %}
+                                        <img src="{{ saved_post.post.group.image.url }}" class="profile-pic" alt="Group" />
+                                    {% else %}
+                                        <img src="{% static 'media/default-group.jpg' %}" class="profile-pic" alt="Group" />
+                                    {% endif %}
+                                    <div class="user-details">
+                                        <div class="username">{{ saved_post.post.group.name }}</div>
+                                        <div class="post-date">ชุมชน</div>
                                     </div>
+                                    
                                     <div class="user-details">
                                         <div class="username">{{ saved_post.post.group.name }}</div>
                                         <div class="post-date">ชุมชน</div>
@@ -132,7 +139,7 @@
                             </div>
 
                             <div class="post-content">
-                                <a href="{% url 'group_detail' saved_post.post.id %}">
+                                <a href="{% url 'post_group_detail' saved_post.post.group.id saved_post.post.id %}">
                                     {{ saved_post.post.content }}
                                 </a>
                             </div>

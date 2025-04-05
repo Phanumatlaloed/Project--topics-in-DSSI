@@ -29,14 +29,14 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.status === 'saved') {
+                if (data.success && data.saved === true) {
                     btn.innerHTML = '<i class="fas fa-bookmark"></i> ยกเลิกบันทึก';
-                } else if (data.status === 'unsaved') {
+                } else if (data.success && data.saved === false) {
                     btn.innerHTML = '<i class="far fa-bookmark"></i> บันทึก';
                 } else {
                     alert("❌ ไม่สามารถบันทึกโพสต์ได้");
                 }
-            })
+            })                
             .catch(error => {
                 console.error("❌ Error:", error);
                 alert("❌ เกิดข้อผิดพลาดในการบันทึกโพสต์");

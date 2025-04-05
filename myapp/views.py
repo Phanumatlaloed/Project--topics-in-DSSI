@@ -775,12 +775,21 @@ def group_detail(request, group_id):
                 })
 
             return redirect('group_detail', group_id=group.id)
+        
+    saved_post_ids = []
+    if request.user.is_authenticated and is_member and posts:
+        try:
+            member = Member.objects.get(user=request.user)
+            saved_post_ids = list(SavedGroupPost.objects.filter(user=member, post__in=posts).values_list('post_id', flat=True))
+        except Member.DoesNotExist:
+            pass
 
     return render(request, 'group_detail.html', {
         'group': group,
         'posts': posts,
         'is_member': is_member,
         'products': products,  # ✅ ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
+        'saved_post_ids': saved_post_ids,  # ✅ ส่งให้ template ใช้
     })
 
 #โพสต์ในกลุ่ม
@@ -960,6 +969,16 @@ def edit_group_comment(request, comment_id):
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
+# แสดงรายละเอียดโพสต์ในกลุ่ม
+@login_required
+def post_group_detail(request, post_id, group_id):
+    """ แสดงรายละเอียดโพสต์ในกลุ่ม """ 
+    post = get_object_or_404(GroupPost, id=post_id, group__id=group_id)  # ✅ ใช้ group__id
+    group = post.group  # ✅ ดึงกลุ่มจากโพสต์โดยตรง
+    return render(request, 'post_group_detail.html', {
+        'post': post,
+        'group': group  # ✅ ส่ง group ไป template
+    })
 
 
 #อัพเดทโปรไฟล์
@@ -2590,6 +2609,26 @@ def delete_reported_post(request, post_id):
     if post:
         post.delete()
         messages.success(request, "Post has been deleted.")
+    return redirect("admin_dashboard")
+
+# from django.views.decorators.http import require_POST
+# @require_POST
+# @user_passes_test(is_admin)
+# @login_required(login_url='admin_login') 
+def cancel_reported_post(request, post_id):
+    if not request.user.is_staff:
+        messages.error(request, "คุณไม่มีสิทธิ์ในการเข้าถึง")
+        return redirect("home")  # หรือหน้าที่คุณอยากส่งกลับเมื่อไม่ใช่แอดมิน
+
+    post = Post.objects.filter(id=post_id).first()
+    reports = Report.objects.filter(post=post)
+    
+    if post:
+        post.is_reported = False
+        post.save()
+        reports.delete()
+        messages.success(request, "คำร้องรายงานโพสต์ถูกยกเลิกแล้ว")
+    
     return redirect("admin_dashboard")
 
 from django.contrib.auth.views import PasswordResetView
