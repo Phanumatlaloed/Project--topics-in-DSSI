@@ -45,7 +45,6 @@
             <div class="card">
                 <h2 class="text-pink">💳 กระเป๋าเงินร้านค้า</h2>
                 <p class="balance">ยอดเงินคงเหลือ: <span class="money">฿{{ wallet.balance }}</span></p>
-                <p>✅ รายได้ที่สามารถถอนเงินได้: <span class="money">฿{{ withdrawable_income }}</span></p>
     
                 <!-- 🔥 ปุ่มกดขอถอนเงิน -->
                 {% if wallet.balance > 0 %}
@@ -109,40 +108,87 @@
                     </tbody>
                 </table>
     
-                <h3>📦 รายการออเดอร์ที่ใช้ในการถอน</h3>
+                <h3>🧾 รายการออเดอร์ทั้งหมด (พร้อมสินค้าและการชำระเงิน)</h3>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>คำสั่งซื้อ</th>
+                            <th>รหัสคำสั่งซื้อ</th>
+                            <th>ลูกค้า</th>
                             <th>สถานะ</th>
-                            <th>ยอดขาย</th>
-                            <th>วันที่</th>
+                            <th>ยอดขายรวม</th>
+                            <th>วันที่สั่งซื้อ</th>
+                            <th>สินค้า</th>
+                            <th>สถานะชำระเงิน</th>
+                            <th>วันที่ชำระ</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in withdrawable_orders %}
+                        {% for order in all_orders %}
                         <tr>
                             <td>#{{ order.id }}</td>
+                            <td>{{ order.user.username }}</td>
                             <td>
                                 {% if order.status == "delivered" %}
-                                    ✅ จัดส่งแล้ว
+                                     จัดส่งแล้ว
                                 {% elif order.status == "cancelled" %}
-                                    🚫 ยกเลิกแล้ว
+                                     ยกเลิกแล้ว
                                 {% elif order.status == "refunded" %}
-                                    🔁 คืนเงินแล้ว
+                                     คืนเงินแล้ว
+                                {% elif order.status == "packing" %}
+                                     แพ็คของ
                                 {% else %}
-                                    🔄 {{ order.status }}
+                                     {{ order.status }}
                                 {% endif %}
                             </td>
                             <td class="money">฿{{ order.total_price }}</td>
                             <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <ul>
+                                    {% for item in order.order_items.all %}
+                                        <li>{{ item.product.name }} ({{ item.quantity }} ชิ้น)</li>
+                                    {% empty %}
+                                        <li>-</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>
+                                {% if order.payment_status == 'paid' %}
+                                     ชำระแล้ว
+                                {% else %}
+                                     รอชำระ
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if order.payment %}
+                                    {{ order.payment.created_at|date:"d/m/Y H:i" }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="4">❌ ไม่มีออเดอร์ที่ถอนออกได้ในตอนนี้</td></tr>
+                        <tr>
+                            <td colspan="8">❌ ยังไม่มีออเดอร์</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
+            <section class="contact-admin-card">
+                <h3><i class="fas fa-headset"></i> ต้องการความช่วยเหลือ?</h3>
+                <p>หากคุณมีปัญหาในการชำระเงิน หรือคำถามอื่น ๆ สามารถติดต่อทีมงานแอดมินได้เลย</p>
+            
+                <ul class="contact-list">
+                    <li><i class="fas fa-envelope"></i> อีเมล: <a href="mailto:support@myshop.com">support@myshop.com</a></li>
+                    <li><i class="fab fa-line"></i> LINE ID: <strong>@myshopadmin</strong></li>
+                    <li><i class="fas fa-phone-alt"></i> โทร: <a href="tel:0991234567">099-123-4567</a></li>
+                </ul>
+            
+                <a href="mailto:support@myshop.com" class="btn-contact-admin">
+                    <i class="fas fa-paper-plane"></i> ติดต่อแอดมิน
+                </a>
+            </section>
+        </main>
+    </div>
         </main>
     </div>
     </body>

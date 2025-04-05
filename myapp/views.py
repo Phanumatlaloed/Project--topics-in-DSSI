@@ -2724,6 +2724,9 @@ def seller_wallet(request):
     wallet, created = SellerWallet.objects.get_or_create(seller=seller)
     withdrawals = WithdrawalRequest.objects.filter(seller=seller).order_by('-created_at')
 
+    # ✅ ออเดอร์ทั้งหมดของผู้ขายนี้ (ไม่กรองสถานะ)
+    all_orders = Order.objects.filter(seller=seller).prefetch_related('order_items__product', 'user', 'payment').order_by('-created_at')
+
     # ✅ คำนวณรายได้ที่ถอนได้:
     withdrawable_orders = Order.objects.filter(
         seller=seller,
@@ -2740,6 +2743,7 @@ def seller_wallet(request):
         'wallet': wallet,
         'withdrawals': withdrawals,
         'withdrawable_income': withdrawable_income,
+        'all_orders': all_orders,
     })
 
 from django.db.models.signals import post_save
