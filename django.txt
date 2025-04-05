@@ -8,3 +8,4 @@ Pillow
 django-crispy-forms
 python-dotenv
 django-cors-headers
+bootstrap

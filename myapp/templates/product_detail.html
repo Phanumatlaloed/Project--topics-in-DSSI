@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -8,6 +9,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'styles/product_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sriracha&display=swap" rel="stylesheet">
@@ -123,25 +125,30 @@
     <!-- Reviews Section -->
     <div class="reviews-section">
         <h3>🌟 รีวิวจากลูกค้า</h3>
-
         {% for review in product.reviews.all %}
             <div class="review-box">
                 <div class="review-header">
                     <p class="review-username"><strong>{{ review.user.username }}</strong></p>
                     <p class="rating rating-{% if review.rating >= 4 %}high{% elif review.rating >= 3 %}medium{% else %}low{% endif %}">
                         {% for i in "12345" %}
-                            {% if forloop.counter <= review.rating %}
-                                ⭐
-                            {% else %}
-                                ☆
-                            {% endif %}
+                            {% if forloop.counter <= review.rating %}⭐{% else %}☆{% endif %}
                         {% endfor %}
                         {{ review.rating }}/5
                     </p>
                 </div>
                 <p class="review-meta">🛒 รีวิวจากร้าน <strong>{{ review.order.seller.store_name }}</strong> • {{ review.created_at|date:"d M Y" }}</p>
                 <p class="review-comment">{{ review.comment }}</p>
-
+    
+                <!-- ✅ Show seller response if available -->
+                {% get_review_response review.id as review_response %}
+                {% if review_response %}
+                    <div class="seller-response">
+                        <p><strong>✍️ คำตอบจากร้าน {{ review_response.seller.store_name }}:</strong></p>
+                        <p>{{ review_response.response_text }}</p>
+                        <p class="response-date">🗓️ {{ review_response.created_at|date:"d M Y H:i" }}</p>
+                    </div>
+                {% endif %}
+    
                 <!-- Review Media -->
                 <div class="review-media">
                     {% for media in review.media.all %}
@@ -157,11 +164,6 @@
             </div>
         {% empty %}
             <div class="empty-reviews">
-                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="#9e9e9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
                 <p class="empty-title">ยังไม่มีรีวิวสำหรับสินค้านี้</p>
                 <p class="empty-subtitle">เป็นคนแรกที่รีวิวสินค้านี้หลังจากสั่งซื้อ</p>
             </div>
@@ -249,33 +251,11 @@
         </div>
     {% endif %}
 
-    <!-- Review Summary Button -->
-    <form method="POST" class="center-form">
-        {% csrf_token %}
-        <button type="submit" name="summarize_reviews" class="btn summarize">
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-            สรุปรีวิวทั้งหมด
-        </button>
-    </form>
 
-    <!-- Summary Results -->
-    {% if summary and not reviews %}
-        <div class="review-summary">
-            <h2>📌 สรุปรีวิวสินค้า</h2>
-            <p class="summary-text">{{ summary }}</p>
-        </div>
-    {% endif %}
     
     <!-- JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-    <script src="{% static 'scripts/product_detail.js' %}"></script>
     <script>
         $(document).ready(function(){
             $('.product-slider').slick({

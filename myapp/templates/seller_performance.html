@@ -8,9 +8,12 @@
 
     <!-- ✅ CSS -->
     <link rel="stylesheet" href="{% static 'styles/seller_performance.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- เพิ่ม Font Awesome สำหรับ Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- เพิ่ม Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
     <!-- Mobile Hamburger Menu -->
@@ -54,64 +57,164 @@
         <!-- 🌟 Main Content -->
         <div class="container">
             <h2>📊 รายงานประสิทธิภาพร้านค้า</h2>
-
-            <!-- ✅ รายได้รวม -->
+          
             <div class="report-card">
-                <h3>💰 รายได้รวม</h3>
-                <p class="money">฿{{ total_sales }}</p>
+              <h3>💰 รายได้รวม</h3>
+              <p class="money">฿{{ total_sales }}</p>
             </div>
-
-            <!-- ✅ สินค้าขายดี -->
+          
             <h3>🔥 สินค้าขายดี (5 อันดับแรก)</h3>
             <table class="table">
-                <thead>
-                    <tr>
-                        <th>สินค้า</th>
-                        <th>จำนวนที่ขาย</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for product in top_products %}
-                    <tr>
-                        <td>{{ product.name }}</td>
-                        <td>{{ product.total_sold_count }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="2">❌ ยังไม่มีสินค้าขาย</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+              <thead>
+                <tr><th>สินค้า</th><th>จำนวนที่ขาย</th></tr>
+              </thead>
+              <tbody>
+                {% for product in top_products %}
+                <tr><td>{{ product.name }}</td><td>{{ product.total_sold_count }}</td></tr>
+                {% empty %}
+                <tr><td colspan="2">❌ ยังไม่มีสินค้าขาย</td></tr>
+                {% endfor %}
+              </tbody>
             </table>
-
-            <!-- ✅ จำนวนการคืนสินค้า -->
+          
             <div class="report-card">
-                <h3>🔄 การคืนสินค้า</h3>
-                <p>{{ refunds }} ครั้ง</p>
+              <h3>🔄 การคืนสินค้า</h3>
+              <p>{{ refunds }} ครั้ง</p>
             </div>
-
-            <!-- ✅ คะแนนรีวิวเฉลี่ย -->
+          
             <div class="report-card">
-                <h3>⭐ คะแนนรีวิวเฉลี่ย</h3>
-                <p>{{ avg_rating|floatformat:1 }}/5.0</p>
+              <h3>⭐ คะแนนรีวิวเฉลี่ย</h3>
+              <p>{{ avg_rating|floatformat:1 }}/5.0</p>
             </div>
-
-            <!-- ✅ รีวิวล่าสุด -->
+          
             <h3>📝 รีวิวล่าสุด</h3>
             <ul class="review-list">
-                {% for review in recent_reviews %}
-                <li>
-                    <strong>{{ review.product.name }}</strong> - ⭐ {{ review.rating }}/5
-                    <p>"{{ review.comment }}"</p>
-                    <small>โดย {{ review.user.username }} เมื่อ {{ review.created_at|date:"d/m/Y" }}</small>
-                </li>
-                {% empty %}
-                <li>❌ ยังไม่มีรีวิว</li>
-                {% endfor %}
+              {% for review in recent_reviews %}
+              <li>
+                <strong>{{ review.product.name }}</strong> - ⭐ {{ review.rating }}/5
+                <p>"{{ review.comment }}"</p>
+                <small>โดย {{ review.user.username }} เมื่อ {{ review.created_at|date:'d/m/Y' }}</small>
+              </li>
+              {% empty %}
+              <li>❌ ยังไม่มีรีวิว</li>
+              {% endfor %}
             </ul>
-
-        </div>
-    </div>
-
-</body>
-</html>
+          
+            <!-- 📊 กราฟ -->
+            <div class="charts-section">
+              <div class="chart-card">
+                <h3>🏆 ยอดขายสินค้า Top 10</h3>
+                <div class="chart-container">
+                  <canvas id="top10SalesChart"></canvas>
+                </div>
+              </div>
+              <div class="chart-card">
+                <h3>📅 ยอดขายรายเดือน</h3>
+                <div class="chart-container">
+                  <canvas id="monthlySalesChart"></canvas>
+                </div>
+              </div>
+              <div class="chart-card">
+                <h3>⭐ คะแนนรีวิว (รวม)</h3>
+                <div class="chart-container">
+                  <canvas id="reviewDonutChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Chart.js -->
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          
+          <script>
+            const top10Names = JSON.parse('{{ top10_names|safe }}');
+            const top10Counts = JSON.parse('{{ top10_counts|safe }}');
+            const monthlyLabels = JSON.parse('{{ monthly_labels|safe }}');
+            const monthlySales = JSON.parse('{{ monthly_sales|safe }}');
+            const reviewData = JSON.parse('{{ review_distribution|safe }}');
+          
+            const top10Chart = new Chart(document.getElementById("top10SalesChart"), {
+              type: 'bar',
+              data: {
+                labels: top10Names,
+                datasets: [{
+                  label: 'จำนวนที่ขาย (ชิ้น)',
+                  data: top10Counts,
+                  backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  y: {
+                    ticks: {
+                      callback: function(value) {
+                        const label = this.getLabelForValue(value);
+                        return label.length > 30 ? label.substring(0, 30) + '...' : label;
+                      },
+                      font: { size: 12 }
+                    }
+                  },
+                  x: { beginAtZero: true }
+                },
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    callbacks: {
+                      title: function(tooltipItems) {
+                        const label = tooltipItems[0].label;
+                        return label.length > 60 ? label.substring(0, 60) + '...' : label;
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          
+            const monthlyChart = new Chart(document.getElementById("monthlySalesChart"), {
+              type: 'line',
+              data: {
+                labels: monthlyLabels,
+                datasets: [{
+                  label: 'ยอดขาย (บาท)',
+                  data: monthlySales,
+                  fill: true,
+                  borderColor: '#f97316',
+                  backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                  tension: 0.3
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  y: { beginAtZero: true }
+                }
+              }
+            });
+          
+            const reviewDonut = new Chart(document.getElementById("reviewDonutChart"), {
+              type: 'doughnut',
+              data: {
+                labels: ['⭐ 5', '⭐ 4', '⭐ 3', '⭐ 2', '⭐ 1'],
+                datasets: [{
+                  data: reviewData,
+                  backgroundColor: ['#4caf50','#8bc34a','#ffeb3b','#ffc107','#f44336']
+                }]
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: { position: 'bottom' }
+                }
+              }
+            });
+            
+          </script>
+          
+          </body>
+          </html>
