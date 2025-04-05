@@ -36,8 +36,6 @@
             console.log("🔍 DEBUG: Reviewed Products JSON after parsing ->", reviewedProducts);
         });
     </script>
-    <input type="hidden" id="reviewed-products-data" value="{{ reviewed_products|safe }}">
-
     <!-- แนะนำให้ใส่ก่อนส่วน tab content -->
     <script>
       // Debug ข้อมูล reviewed_products
@@ -52,6 +50,8 @@
     <script src="{% static 'js/orders_can.js' %}" defer></script>
 </head>
 <body>
+    <input type="hidden" id="reviewed-products-data" value='{{ reviewed_products|safe }}'>
+
     <!-- ✅ Navbar -->
     <header>
         <nav class="navbar">
@@ -236,10 +236,6 @@
                 </div>
             </div>
             
-            
-            
-            <!-- ✅ ออเดอร์ที่จัดส่งสำเร็จ -->
-            <!-- ✅ ออเดอร์ที่จัดส่งสำเร็จ -->
 <!-- ✅ ออเดอร์ที่จัดส่งสำเร็จ -->
 <div class="tab-pane fade" id="completedOrders">
     {% if completed_orders %}
@@ -278,13 +274,15 @@
                 <td>
                     {% for item in order.order_items.all %}
                         {% with key=item.product.id|stringformat:"s"|add:"_"|add:order.id|stringformat:"s" %}
-                            <a href="{% url 'add_review' order.id item.product.id %}" 
-                               class="btn btn-primary btn-sm review-btn"
-                               data-order-id="{{ order.id }}"
-                               data-product-id="{{ item.product.id }}"
-                               id="review-btn-{{ order.id }}-{{ item.product.id }}">
-                               📝 รีวิว
-                            </a>
+                            <div class="d-inline-block mb-1">
+                                <a href="{% url 'add_review' order.id item.product.id %}" 
+                                    class="btn btn-primary btn-sm review-btn"
+                                    data-order-id="{{ order.id }}"
+                                    data-product-id="{{ item.product.id }}"
+                                    id="review-btn-{{ order.id }}-{{ item.product.id }}">
+                                    📝 รีวิว
+                                </a>
+                            </div>
                         {% endwith %}
                     {% endfor %}
                 </td>                                                                              
@@ -462,6 +460,35 @@
         <p class="text-center text-muted">😢 ไม่มีคำสั่งซื้อ</p>
     {% endif %}
 </div>
+<script>
+    // ใส่โค้ดนี้ในหน้า add_review.html
+document.addEventListener("DOMContentLoaded", function() {
+    const reviewForm = document.getElementById("review-form");
+    
+    if (reviewForm) {
+        reviewForm.addEventListener("submit", function() {
+            // บันทึกว่าได้รีวิวแล้วเมื่อกดส่งฟอร์ม
+            const productId = "{{ product.id }}";
+            const orderId = "{{ order.id }}";
+            const key = `${productId}_${orderId}`;
+            
+            let reviewedProducts = {};
+            try {
+                let storedReviews = localStorage.getItem("reviewedProducts");
+                if (storedReviews) {
+                    reviewedProducts = JSON.parse(storedReviews);
+                }
+            } catch (error) {
+                console.error("❌ JSON Parsing Error:", error);
+                reviewedProducts = {};
+            }
+            
+            reviewedProducts[key] = true;
+            localStorage.setItem("reviewedProducts", JSON.stringify(reviewedProducts));
+        });
+    }
+});
+</script>
 
 </body>
 </html>

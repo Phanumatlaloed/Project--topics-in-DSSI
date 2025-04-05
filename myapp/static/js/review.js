@@ -1,63 +1,50 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ JavaScript Loaded: review.js");
 
-    // ✅ โหลดข้อมูลสินค้ารีวิวจาก LocalStorage (ถ้ามี)
+    // ✅ โหลดข้อมูลรีวิวจาก Django ที่ฝังไว้ใน HTML
+    let reviewedProductsRaw = document.getElementById("reviewed-products-data")?.value || "{}";
     let reviewedProducts = {};
+
     try {
-        let storedReviews = localStorage.getItem("reviewedProducts");
-        if (storedReviews) {
-            reviewedProducts = JSON.parse(storedReviews);
-        } else {
-            localStorage.setItem("reviewedProducts", JSON.stringify({}));
-        }
+        reviewedProducts = JSON.parse(reviewedProductsRaw);
     } catch (error) {
         console.error("❌ JSON Parsing Error:", error);
-        localStorage.setItem("reviewedProducts", JSON.stringify({}));
+        reviewedProducts = {};
     }
 
-    console.log("🔍 DEBUG: Loaded Reviewed Products ->", reviewedProducts);
+    console.log("🔍 Reviewed Products from Django ->", reviewedProducts);
 
-    // ✅ ตรวจสอบปุ่มรีวิวทุกปุ่ม และกำหนดสถานะ
+    // ✅ ตรวจสอบปุ่มรีวิวและอัปเดตสถานะ
     document.querySelectorAll(".review-btn").forEach(button => {
-        let orderId = button.dataset.orderId;
-        let productId = button.dataset.productId;
-        let key = `${productId}_${orderId}`;
+        const orderId = button.dataset.orderId;
+        const productId = button.dataset.productId;
+        const key = `${productId}_${orderId}`;
 
-        // ✅ ถ้าถูกรีวิวแล้ว ให้ปิดการใช้งานปุ่มรีวิว
+        console.log(`🔍 Checking review-btn key: ${key}, reviewed: ${reviewedProducts[key]}`);
+
         if (reviewedProducts[key]) {
             button.textContent = "✅ รีวิวแล้ว";
             button.classList.remove("btn-primary");
             button.classList.add("btn-secondary");
             button.disabled = true;
         }
-
-        // ✅ เมื่อคลิกปุ่ม ให้บันทึกสถานะรีวิวลง LocalStorage และเปลี่ยน UI ทันที
-        button.addEventListener("click", function () {
-            reviewedProducts[key] = true;
-            localStorage.setItem("reviewedProducts", JSON.stringify(reviewedProducts));
-
-            button.textContent = "✅ รีวิวแล้ว";
-            button.classList.remove("btn-primary");
-            button.classList.add("btn-secondary");
-            button.disabled = true;
-
-            updateRefundButtons();
-        });
     });
 
-    // ✅ ฟังก์ชันอัปเดตปุ่มขอคืนเงินให้ปิดการใช้งานหากมีสินค้าถูกรีวิวแล้ว
-    function updateRefundButtons() {
+    // ✅ อัปเดตปุ่มขอคืนเงิน
+    updateRefundButtons(reviewedProducts);
+
+    function updateRefundButtons(reviewedProducts) {
         document.querySelectorAll(".refund-btn").forEach(button => {
-            let orderId = button.dataset.orderId;
+            const orderId = button.dataset.orderId;
             let reviewed = false;
 
-            // ✅ เช็คทุกสินค้าภายในออเดอร์ ถ้ามีสินค้าถูกรีวิวแล้ว ให้ปิดปุ่ม
             document.querySelectorAll(`.review-btn[data-order-id="${orderId}"]`).forEach(reviewBtn => {
-                let productId = reviewBtn.dataset.productId;
-                let key = `${productId}_${orderId}`;
+                const productId = reviewBtn.dataset.productId;
+                const key = `${productId}_${orderId}`;
 
                 if (reviewedProducts[key]) {
                     reviewed = true;
+                    console.log(`🛑 Found reviewed item for refund block: ${key}`);
                 }
             });
 
@@ -71,7 +58,4 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
-    // ✅ เรียกใช้งานตอนโหลดหน้าเว็บ
-    updateRefundButtons();
 });

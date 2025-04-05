@@ -24,6 +24,7 @@
                     <th>ร้านค้า</th>
                     <th>ชื่อบัญชีธนาคาร</th>
                     <th>เลขบัญชีธนาคาร</th>
+                    <th>ชื่อธนาคาร</th>
                     <th>จำนวนเงิน</th>
                     <th>สถานะ</th>
                     <th>สลิปการโอน</th>
@@ -34,8 +35,10 @@
                 {% for withdrawal in withdrawals %}
                 <tr>
                     <td>{{ withdrawal.seller.store_name }}</td>
-                    <td>{{ withdrawal.seller.bank_account_name|default:"-" }}</td>
-                    <td>{{ withdrawal.seller.bank_account_number|default:"-" }}</td>
+                    <td>{{ withdrawal.account_name|default:"-" }}</td>
+                    <td>{{ withdrawal.account_number|default:"-" }}</td>
+                    <td>{{ withdrawal.bank_name|default:"-" }}</td>
+
                     <td>฿{{ withdrawal.amount }}</td>
                     <td>
                         {% if withdrawal.status == "pending" %}

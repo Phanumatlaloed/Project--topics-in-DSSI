@@ -1,79 +1,160 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account</title>
+    <title>สร้างบัญชีใหม่</title>
     <link rel="stylesheet" href="{% static 'styles/register.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="register-container">
-        <!-- โลโก้ -->
-        <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="logo">
-
-        <h1>สร้างบัญชีใหม่</h1>
-
-        <!-- แสดงข้อความแจ้งเตือน -->
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="message {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
+    <div class="page-container">
+        <div class="decoration-left">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
         </div>
-        {% endif %}
-
-        <!-- ฟอร์มการสมัคร -->
-        <form action="{% url 'register' %}" method="post">
-            {% csrf_token %}
-
-            <div class="input-group">
-                <input type="text" name="first_name" placeholder="ชื่อ" required>
-                <input type="text" name="last_name" placeholder="นามสกุล" required>
+        
+        <div class="register-container">
+            <!-- โลโก้ -->
+            <div class="logo-container">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="logo">
             </div>
-
-            <div class="input-group">
-                <input type="email" name="email" placeholder="อีเมล" required>  <!-- ✅ เพิ่มช่องอีเมล -->
+            
+            <h1>✨ สร้างบัญชีใหม่ ✨</h1>
+            <p class="subtitle">ยินดีต้อนรับ! กรุณากรอกข้อมูลเพื่อสร้างบัญชีของคุณ</p>
+            
+            <!-- แสดงข้อความแจ้งเตือน -->
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
             </div>
-
-            <label for="birthday">วันเกิด</label>
-            <div class="input-group">
-                <input type="date" name="date_of_birth" required>
-            </div>
-
-            <label>เพศ</label>
-            <div class="input-group gender">
-                <label><input type="radio" name="gender" value="male" required> ชาย</label>
-                <label><input type="radio" name="gender" value="female" required> หญิง</label>
-                <label><input type="radio" name="gender" value="other" required> อื่น ๆ</label>
-            </div>
-
-            <div class="input-group">
-                <input type="text" name="username" placeholder="ชื่อผู้ใช้" required>
-            </div>
-
-            <div class="input-group">
-                <input type="password" name="password" placeholder="รหัสผ่านใหม่" required>
-            </div>
-
-            <p class="info-text">
-                เมื่อคลิกสมัคร แสดงว่าคุณยินยอมตาม <a href="#">ข้อกำหนด</a>, <a href="#">นโยบายความเป็นส่วนตัว</a> และ <a href="#">นโยบายคุกกี้</a> ของเรา
-            </p>
-
-            <button type="submit" class="register-button">สมัคร</button>
-
-            <a href="{% url 'login' %}" class="existing-account">มีบัญชีแล้ว? ใช่ไหม</a>
-        </form>
+            {% endif %}
+            
+            <!-- ฟอร์มการสมัคร -->
+            <form action="{% url 'register' %}" method="post" class="register-form">
+                {% csrf_token %}
+                
+                <div class="form-section">
+                    <h3>ข้อมูลส่วนตัว</h3>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="first_name">ชื่อ</label>
+                            <input type="text" id="first_name" name="first_name" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="last_name">นามสกุล</label>
+                            <input type="text" id="last_name" name="last_name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="email">อีเมล</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="birthday">วันเกิด</label>
+                        <input type="date" id="birthday" name="date_of_birth" required>
+                    </div>
+                    
+                    <div class="input-field gender-field">
+                        <label>เพศ</label>
+                        <div class="gender-options">
+                            <label class="radio-container">
+                                <input type="radio" name="gender" value="male" required>
+                                <span class="radio-label">ชาย</span>
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="gender" value="female" required>
+                                <span class="radio-label">หญิง</span>
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="gender" value="other" required>
+                                <span class="radio-label">อื่น ๆ</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>ข้อมูลบัญชี</h3>
+                    
+                    <div class="input-field">
+                        <label for="username">ชื่อผู้ใช้</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="input-field password-field">
+                        <label for="password">รหัสผ่าน</label>
+                        <div class="password-input-container">
+                            <input type="password" id="password" name="password" required>
+                            <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon eye-open" viewBox="0 0 24 24" width="24" height="24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon eye-closed hidden" viewBox="0 0 24 24" width="24" height="24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="terms-container">
+                    <p class="info-text">
+                        เมื่อคลิกสมัคร แสดงว่าคุณยินยอมตาม <a href="#">ข้อกำหนด</a>, <a href="#">นโยบายความเป็นส่วนตัว</a> และ <a href="#">นโยบายคุกกี้</a> ของเรา
+                    </p>
+                </div>
+                
+                <button type="submit" class="register-button">สมัครสมาชิก</button>
+                
+                <div class="login-link">
+                    <p>มีบัญชีแล้วหรือไม่? <a href="{% url 'login' %}" class="existing-account">เข้าสู่ระบบเลย</a></p>
+                </div>
+            </form>
+        </div>
+        
+        <div class="decoration-right">
+            <div class="circle circle-4"></div>
+            <div class="circle circle-5"></div>
+            <div class="circle circle-6"></div>
+        </div>
     </div>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Redirect after successful registration
             const successMessage = document.querySelector('.message.success');
             if (successMessage) {
                 setTimeout(function () {
                     window.location.href = "{% url 'login' %}";
                 }, 5000); // Redirect after 5 seconds
             }
+            
+            // Toggle password visibility
+            const togglePassword = document.querySelector('.toggle-password');
+            const passwordField = document.querySelector('#password');
+            const eyeOpenIcon = document.querySelector('.eye-open');
+            const eyeClosedIcon = document.querySelector('.eye-closed');
+            
+            togglePassword.addEventListener('click', function() {
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    eyeOpenIcon.classList.add('hidden');
+                    eyeClosedIcon.classList.remove('hidden');
+                } else {
+                    passwordField.type = 'password';
+                    eyeOpenIcon.classList.remove('hidden');
+                    eyeClosedIcon.classList.add('hidden');
+                }
+            });
         });
     </script>
 </body>

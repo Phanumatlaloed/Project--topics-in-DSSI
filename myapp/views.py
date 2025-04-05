@@ -536,9 +536,22 @@ def toggle_like(request, post_id):
 
 @login_required
 def post_detail(request, post_id):
-    """ แสดงรายละเอียดโพสต์ """
+    """ แสดงรายละเอียดโพสต์ พร้อมสินค้าแนะนำ """
     post = get_object_or_404(Post, id=post_id)
-    return render(request, 'post_detail.html', {'post': post})
+    products = Product.objects.all()[:6]  # ✅ ดึงสินค้า 6 รายการแรกมาแสดง
+
+    following_users = list(Follow.objects.filter(follower=request.user).values_list('following_id', flat=True))
+
+    # ✅ เก็บ `followed_users` เป็นเซ็ตเพื่อใช้ใน template
+    followed_users = set(following_users)
+
+    return render(request, 'post_detail.html', {
+        'post': post,
+        'products': products,  # ✅ ส่ง products ไปที่ template
+        'following_users': list(following_users),  # ✅ ส่งค่าผู้ใช้ที่ติดตามไปยังเทมเพลต
+        'following_users': following_users,
+        'followed_users': followed_users,
+    })
 
 @login_required
 def post_like_detail(request, post_id):
@@ -1450,7 +1463,9 @@ from .services import analyze_text
 # ✅ แสดงรายละเอียดสินค้า
 @login_required
 def product_detail(request, product_id):
-    """แสดงรายละเอียดสินค้า พร้อมการวิเคราะห์รีวิวโดย AI"""
+    if not request.user.is_authenticated or request.user.role != 'member':
+        messages.error(request, "❌ เฉพาะสมาชิก (Member) เท่านั้นที่สามารถเข้าถึงหน้านี้ได้")
+        return redirect('login')  # หรือเปลี่ยนเส้นทางไปหน้าที่เหมาะสม เช่น 'home'
     product = get_object_or_404(Product, id=product_id)
     reviews = Review.objects.filter(product=product)
     review_responses = {r.review_id: r for r in ReviewResponse.objects.filter(review__product=product)}

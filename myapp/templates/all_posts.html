@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -7,87 +6,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📝 โพสต์ทั้งหมด</title>
     <link rel="stylesheet" href="{% static 'styles/all_posts.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-
-    <!-- 🌸 Sidebar -->
-    <aside class="sidebar">
-        <h2>📌 เมนู</h2>
-        <ul class="sidebar-menu">
-            <li><a href="{% url 'all_posts' %}" class="active">🏠 หน้าแรก</a></li>
-            <li><a href="{% url 'register' %}">📝 สมัครสมาชิก</a></li>
-            <li><a href="{% url 'login' %}">🔑 เข้าสู่ระบบ</a></li>
-        </ul>
-    </aside>
-
-    <div class="container">
-        <!-- 🌸 เนื้อหาโพสต์ -->
-        <main class="content-container">
-            <h1>📝 โพสต์ทั้งหมด</h1>
-            <form method="GET" action="{% url 'all_posts' %}" class="search-form">
-                <input type="text" name="query" placeholder=" ค้นหาโพสต์..." value="{{ query }}">
-
-                <button type="submit">ค้นหา</button>
-            </form>
-
-            <div class="posts">
-                {% for post in posts %}
-                <div class="post card">
-                    <div class="user-info">
-                        {% if post.user.member_profile.profile_picture %}
-                            <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img">
-                        {% else %}
-                            <img src="{% static 'images/default-profile.png' %}" class="profile-img">
-                        {% endif %}
-                        <b>{{ post.user.username }}</b>
-                    </div>
-    
-                    <p>{{ post.content }}</p>
-    
-                    {% if post.media.all %}
-                    <div class="post-media">
-                        {% for media in post.media.all|slice:":4" %}
-                            <div class="media-item">
-                                {% if media.media_type == "image" %}
-                                    <img src="{{ media.file.url }}" class="img-fluid">
-                                {% elif media.media_type == "video" %}
-                                    <video src="{{ media.file.url }}" controls class="img-fluid"></video>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-                {% empty %}
-                    <p class="no-results">❌ ไม่พบโพสต์</p>
-                {% endfor %}
+    <div class="wrapper">
+        <!-- 🌸 Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'media/logo.jpg' %}" alt="Logo" class="logo-img">
+                <h2 class="site-name">✨ Genniguru ✨</h2>
             </div>
-        </main>
-    
-        <!-- 🌟 Grid สินค้า -->
-        <aside class="recommendations">
-            <h5>แนะนำสินค้า</h5>
-            <div class="product-grid">
-                {% if products %}
-                    {% for product in products %}
-                        <div class="product-card">
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
-                            <p>{{ product.name }}</p>
-                            <p class="text-primary">💰 ฿{{ product.price }}</p>
-                            <a href="{% url 'product_detail_user' product.id %}" class="btn btn-sm btn-outline-primary">ดูรายละเอียด</a>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-muted">ไม่มีสินค้าแนะนำในขณะนี้</p>
-                {% endif %}
+            
+            <h3>📌 เมนู</h3>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'all_posts' %}" class="active">🏠 หน้าแรก</a></li>
+                <li><a href="{% url 'register' %}">📝 สมัครสมาชิก</a></li>
+                <li><a href="{% url 'login' %}">🔑 เข้าสู่ระบบ</a></li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <p>✨ ยินดีต้อนรับ ✨</p>
             </div>
         </aside>
+
+        <div class="main-content">
+            <!-- 🌸 เนื้อหาโพสต์ -->
+            <main class="content-container">
+                <div class="header-section">
+                    <h1>📝 โพสต์ทั้งหมด</h1>
+                    <form method="GET" action="{% url 'all_posts' %}" class="search-form">
+                        <input type="text" name="query" placeholder="ค้นหาโพสต์..." value="{{ query }}">
+                        <button type="submit">ค้นหา</button>
+                        <button type="button" onclick="clearSearch()" class="clear-btn">ล้าง</button>
+                    </form>
+                </div>
+
+                <div class="posts">
+                    {% for post in posts %}
+                    <div class="post card">
+                        <div class="user-info">
+                            {% if post.user.member_profile.profile_picture %}
+                                <img src="{{ post.user.member_profile.profile_picture.url }}" class="profile-img">
+                            {% else %}
+                                <img src="{% static 'images/default-profile.png' %}" class="profile-img">
+                            {% endif %}
+                            <div class="user-details">
+                                <b>{{ post.user.username }}</b>
+                                <span class="post-time">เมื่อ {{ post.created_at|timesince }} ที่ผ่านมา</span>
+                            </div>
+                        </div>
+                        
+                        <p class="post-content">{{ post.content }}</p>
+                        
+                        {% if post.media.all %}
+                        <div class="post-media {% if post.media.all|length == 1 %}single-media{% elif post.media.all|length == 2 %}dual-media{% elif post.media.all|length >= 3 %}multi-media{% endif %}">
+                            {% for media in post.media.all|slice:":4" %}
+                                <div class="media-item">
+                                    {% if media.media_type == "image" %}
+                                        <img src="{{ media.file.url }}" class="img-fluid">
+                                    {% elif media.media_type == "video" %}
+                                        <video src="{{ media.file.url }}" controls class="img-fluid"></video>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                        <div class="no-results">
+                            <span class="no-results-icon">❌</span>
+                            <p>ไม่พบโพสต์</p>
+                            <p class="sub-text">ลองค้นหาด้วยคำอื่น หรือกลับมาเช็คอีกครั้งในภายหลัง</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </main>
+            
+            <!-- 🌟 Grid สินค้า -->
+            <aside class="recommendations">
+                <h3>✨ แนะนำสินค้า</h3>
+                <div class="product-grid">
+                    {% if products %}
+                        {% for product in products %}
+                            <div class="product-card">
+                                <div class="product-img-container">
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                                </div>
+                                <div class="product-info">
+                                    <p class="product-name">{{ product.name }}</p>
+                                    <p class="product-price">฿{{ product.price }}</p>
+                                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-primary">ดูรายละเอียด</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-products">ไม่มีสินค้าแนะนำในขณะนี้</p>
+                    {% endif %}
+                </div>
+            </aside>
+        </div>
     </div>
-    
+
+    <script>
+        function clearSearch() {
+            document.querySelector('input[name="query"]').value = "";
+            document.querySelector('.search-form').submit();
+        }
+    </script>
 </body>
 </html>
-<script>
-    function clearSearch() {
-        document.querySelector('input[name="query"]').value = "";
-    }
-</script>

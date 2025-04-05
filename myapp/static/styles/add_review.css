@@ -87,7 +87,37 @@ textarea {
     min-height: 80px;
 }
 
-/* 🌸 ปุ่มส่ง */
+/* 🌸 กลุ่มปุ่ม */
+.form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+/* 🌸 ปุ่มยกเลิก */
+.btn-cancel {
+    background: #f2f2f2;
+    color: #ff6b81;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ff6b81;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+    min-width: 120px;
+}
+
+.btn-cancel:hover {
+    background: #ffe6eb;
+    color: #d6405f;
+    border-color: #d6405f;
+}
+
+/* ปรับปุ่มส่งให้เข้าชุด */
 .btn-submit {
     background: #ff6b81;
     color: white;
@@ -95,9 +125,9 @@ textarea {
     font-size: 16px;
     border: none;
     border-radius: 8px;
-    margin-top: 20px;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s ease;
+    min-width: 120px;
 }
 
 .btn-submit:hover {
