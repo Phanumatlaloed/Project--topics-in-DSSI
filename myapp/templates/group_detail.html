@@ -302,12 +302,12 @@
                             </button>
                             
                             <button class="btn save-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
-                                {% if post in request.user.saved_posts.all %}
+                                {% if post.id in saved_post_ids %}
                                     <i class="fas fa-bookmark"></i> ยกเลิกบันทึก
                                 {% else %}
                                     <i class="far fa-bookmark"></i> บันทึก
                                 {% endif %}
-                            </button>
+                            </button>                            
 
                             {% if request.user == post.user %}
 

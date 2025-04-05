@@ -64,6 +64,7 @@ urlpatterns = [
     #path('delete_media/<int:media_id>/', views.delete_media, name='delete_media'),
     path('community/<int:group_id>/group_comment/<int:comment_id>/delete/', views.delete_group_comment, name='delete_group_comment'),
     path('group_comment/<int:comment_id>/edit/', views.edit_group_comment, name='edit_group_comment'),
+    path('post_group_detail/<int:group_id>/<int:post_id>/', post_group_detail, name='post_group_detail'),
 
     # ✅ เส้นทางสำหรับผู้ขาย
     path("seller/login/", seller_login, name="seller_login"),
@@ -143,6 +144,7 @@ urlpatterns = [
     path('admin_dashboard/', admin_dashboard, name='admin_dashboard'),
     path('delete_post/<int:post_id>/', delete_reported_post, name='delete_reported_post'),
     path('admin_logout/', logout_view, name='admin_logout'),  # ✅ เพิ่มเส้นทางออกจากระบบของแอดมิน
+    path('cancel_reported_post/<int:post_id>/', views.cancel_reported_post, name='cancel_reported_post'),
 
     path('addresses/', views.manage_addresses, name='manage_addresses'),
     path('addresses/add/', views.add_address, name='add_address'),

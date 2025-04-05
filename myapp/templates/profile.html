@@ -432,6 +432,221 @@
     
 
     <script>
+        // เมื่อเอกสารโหลดเสร็จ
+        document.addEventListener('DOMContentLoaded', function() {
+            // ปิดการใช้งาน bootstrap modal ทั้งหมด
+            var bsModalElements = document.querySelectorAll('.modal');
+            bsModalElements.forEach(function(modal) {
+                // ลบ class ที่เกี่ยวข้องกับ animation
+                modal.classList.remove('fade');
+                // ซ่อน modal ให้มั่นใจว่าไม่มี modal ที่แสดงผล
+                modal.style.display = 'none';
+            });
+
+            // สร้างฟังก์ชันเปิด modal เอง
+            window.openModalManually = function(modalId) {
+                // ปิด modal ทั้งหมดก่อน
+                document.querySelectorAll('.modal.show').forEach(function(openModal) {
+                    openModal.style.display = 'none';
+                    openModal.classList.remove('show');
+                });
+                
+                // เปิด modal ที่ต้องการ
+                var modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'block';
+                    modal.classList.add('show');
+                }
+            };
+            
+            // แทนที่ onclick ของ media-item
+            document.querySelectorAll('.media-item').forEach(function(item) {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var targetId = this.getAttribute('data-bs-target').substring(1);
+                    openModalManually(targetId);
+                });
+            });
+            
+            // แทนที่ onclick ของ gallery-item
+            document.querySelectorAll('.gallery-item').forEach(function(item) {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var mediaId = this.getAttribute('data-media-id');
+                    openModalManually(mediaId);
+                });
+            });
+            
+            // แก้ไขฟังก์ชัน navigateMedia
+            window.navigateMedia = function(postId, currentIdx, direction, total) {
+                // ปิด modal ปัจจุบันก่อน
+                document.querySelectorAll('.modal.show').forEach(function(openModal) {
+                    openModal.style.display = 'none';
+                    openModal.classList.remove('show');
+                });
+                
+                // คำนวณ index ใหม่
+                var newIndex = currentIdx + direction;
+                if (newIndex < 0) newIndex = total - 1;
+                if (newIndex >= total) newIndex = 0;
+                
+                // เปิด modal ใหม่
+                var newModalId = 'mediaModal-' + postId + '-' + (newIndex + 1);
+                openModalManually(newModalId);
+            };
+            
+            // เพิ่ม event listener สำหรับปุ่มปิด
+            document.querySelectorAll('.close-button, .btn-close').forEach(function(closeButton) {
+                closeButton.addEventListener('click', function() {
+                    var modal = this.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                        modal.classList.remove('show');
+                    }
+                });
+            });
+            
+            // เพิ่ม event listener สำหรับการคลิกพื้นหลัง modal
+            document.querySelectorAll('.modal').forEach(function(modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                        this.classList.remove('show');
+                    }
+                });
+            });
+            
+            // เพิ่ม event listener สำหรับการกด ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal.show').forEach(function(modal) {
+                        modal.style.display = 'none';
+                        modal.classList.remove('show');
+                    });
+                }
+            });
+            
+            // โอเวอร์ไรด์ฟังก์ชันเดิม
+            window.openMediaModal = function(modalId) {
+                openModalManually(modalId);
+            };
+        });
+              // Modal handling and navigation
+              document.addEventListener('DOMContentLoaded', function() {
+            // Create a single modal instance for navigation
+            let activeModal = null;
+            let currentPostId = null;
+            let currentIndex = 0;
+            let totalItems = 0;
+            
+            // Setup event listeners for media items
+            document.querySelectorAll('.media-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const postId = this.getAttribute('data-post-id');
+                    const mediaIndex = parseInt(this.getAttribute('data-media-index'));
+                    currentPostId = postId;
+                    currentIndex = mediaIndex;
+                    
+                    // Count total items for this post
+                    const mediaItems = document.querySelectorAll(`[data-post-id="${postId}"]`);
+                    totalItems = mediaItems.length;
+                });
+            });
+            
+            // Navigation buttons event listeners
+            document.querySelectorAll('.prev-btn, .next-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    
+                    const postId = this.getAttribute('data-post-id');
+                    const direction = this.classList.contains('prev-btn') ? -1 : 1;
+                    const currentIdx = parseInt(this.getAttribute('data-current-index'));
+                    const total = parseInt(this.getAttribute('data-total'));
+                    
+                    navigateMedia(postId, currentIdx, direction, total);
+                });
+            });
+            
+            // Function to navigate between media items
+            window.navigateMedia = function(postId, currentIdx, direction, total) {
+                // Calculate new index with wrap-around
+                let newIndex = currentIdx + direction;
+                if (newIndex < 0) newIndex = total - 1;
+                if (newIndex >= total) newIndex = 0;
+                
+                // Hide current modal
+                const currentModal = document.getElementById(`mediaModal-${postId}-${currentIdx + 1}`);
+                const bsCurrentModal = bootstrap.Modal.getInstance(currentModal);
+                if (bsCurrentModal) {
+                    bsCurrentModal.hide();
+                }
+                
+                // Show new modal with short delay to avoid flickering
+                setTimeout(() => {
+                    const newModal = document.getElementById(`mediaModal-${postId}-${newIndex + 1}`);
+                    const bsNewModal = new bootstrap.Modal(newModal);
+                    bsNewModal.show();
+                }, 400);
+            };
+            
+            // Handle keyboard navigation for modals
+            document.addEventListener('keydown', function(e) {
+                const modal = document.querySelector('.modal.show');
+                if (!modal) return;
+                
+                const modalId = modal.id;
+                if (!modalId.startsWith('mediaModal-')) return;
+                
+                const parts = modalId.split('-');
+                if (parts.length < 3) return;
+                
+                const postId = parts[1];
+                const index = parseInt(parts[2]) - 1;
+                const total = parseInt(modal.querySelector('.media-nav .media-counter').textContent.split(' / ')[1]);
+                
+                switch (e.key) {
+                    case 'ArrowLeft':
+                        navigateMedia(postId, index, -1, total);
+                        e.preventDefault();
+                        break;
+                    case 'ArrowRight':
+                        navigateMedia(postId, index, 1, total);
+                        e.preventDefault();
+                        break;
+                }
+            });
+            
+            // Opening modals from gallery
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const modalId = this.getAttribute('data-media-id');
+                    openMediaModal(modalId);
+                });
+            });
+            
+            // Function to open media modals from gallery
+            window.openMediaModal = function(modalId) {
+                // Hide gallery modal if open
+                const openModals = document.querySelectorAll('.modal.show');
+                openModals.forEach(openModal => {
+                    const bsOpenModal = bootstrap.Modal.getInstance(openModal);
+                    if (bsOpenModal) {
+                        bsOpenModal.hide();
+                    }
+                });
+                
+                // Show target modal with short delay
+                setTimeout(() => {
+                    const modal = document.getElementById(modalId);
+                    if (modal) {
+                        const bsModal = new bootstrap.Modal(modal);
+                        bsModal.show();
+                    }
+                }, 400);
+            };
+        });
         // JavaScript สำหรับการอัปโหลดรูปภาพและวิดีโอ
         document.addEventListener('DOMContentLoaded', function() {
             const imageInput = document.getElementById('postImages');
