@@ -27,44 +27,6 @@ body {
     line-height: 1.6;
 }
 
-/* Navbar Styling */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: white;
-    padding: 0.8rem 2rem;
-    box-shadow: var(--shadow);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.logo img {
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.nav-links {
-    display: flex;
-    list-style: none;
-    gap: 1.5rem;
-}
-
-.nav-link {
-    text-decoration: none;
-    color: var(--dark-color);
-    font-weight: 500;
-    padding: 0.5rem 0.8rem;
-    border-radius: 5px;
-    transition: var(--transition);
-}
-
-.nav-link:hover, .nav-link.active {
-    background-color: var(--primary-color);
-    color: white;
-}
 
 /* Product Container */
 .product-container {
@@ -553,3 +515,4 @@ body {
 @media (max-width: 768px) {
     .navbar {
         flex-direction
+    }

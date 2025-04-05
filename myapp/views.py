@@ -1453,8 +1453,8 @@ def product_detail(request, product_id):
     """แสดงรายละเอียดสินค้า พร้อมการวิเคราะห์รีวิวโดย AI"""
     product = get_object_or_404(Product, id=product_id)
     reviews = Review.objects.filter(product=product)
-    summary = None
-    translated_summary = None
+    review_responses = {r.review_id: r for r in ReviewResponse.objects.filter(review__product=product)}
+
 
     # ✅ แปลงคะแนนรีวิวเป็นดาว ⭐⭐⭐⭐⭐
     for review in reviews:
@@ -1502,8 +1502,7 @@ def product_detail(request, product_id):
         'positive_ratio': positive_ratio,
         'neutral_ratio': neutral_ratio,
         'negative_ratio': negative_ratio,
-        'summary': summary,
-        'translated_summary': translated_summary
+        "review_responses": review_responses,
     })
 
 @login_required
@@ -2663,15 +2662,31 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F
 from .models import SellerWallet, WithdrawalRequest, RefundRequest, OrderItem, Order
 
-from django.utils import timezone
-from datetime import datetime
+from decimal import Decimal
+from django.db.models import Sum, Q
+@login_required
 def seller_wallet(request):
-    """ แสดงข้อมูลกระเป๋าเงินของผู้ขาย """
     seller = request.user.seller_profile
     wallet, created = SellerWallet.objects.get_or_create(seller=seller)
     withdrawals = WithdrawalRequest.objects.filter(seller=seller).order_by('-created_at')
 
-    return render(request, 'seller_wallet.html', {'wallet': wallet, 'withdrawals': withdrawals})
+    # ✅ คำนวณรายได้ที่ถอนได้:
+    withdrawable_orders = Order.objects.filter(
+        seller=seller,
+        payment_status="paid"
+    ).exclude(
+        status="packing"  # ❌ ไม่รวมออเดอร์ที่ยังอยู่ระหว่างแพ็ค
+    )
+
+    withdrawable_income = withdrawable_orders.aggregate(
+        total=Sum("total_price")
+    )["total"] or Decimal("0.00")
+
+    return render(request, 'seller_wallet.html', {
+        'wallet': wallet,
+        'withdrawals': withdrawals,
+        'withdrawable_income': withdrawable_income,
+    })
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -2955,14 +2970,13 @@ from .models import Order, Product, Review, RefundRequest
 
 @login_required
 def seller_performance(request):
-    """ แสดงรายงานประสิทธิภาพของร้านค้า """
     seller = request.user.seller_profile
 
-    # ✅ คำนวณยอดขายทั้งหมด โดยไม่รวมคำสั่งซื้อที่มีการคืนสินค้า
+    # ✅ ยอดขายรวม
     completed_orders = Order.objects.filter(seller=seller, status="delivered").exclude(refund_requests__status="approved")
     total_sales = completed_orders.aggregate(Sum("total_price"))["total_price__sum"] or 0
 
-    # ✅ คำนวณยอดขายของแต่ละสินค้า (ไม่นับสินค้าถูกคืน)
+    # ✅ สินค้าขายดี (5 อันดับแรกสำหรับตาราง)
     sold_products = (
         OrderItem.objects.filter(order__seller=seller)
         .exclude(refund_requests__status="approved")
@@ -2970,31 +2984,61 @@ def seller_performance(request):
         .annotate(total_sold_count=Sum("quantity"))
         .order_by("-total_sold_count")[:5]
     )
-
-    # ✅ ดึงสินค้าตาม `product_id` และเพิ่ม `total_sold_count` เข้าไป
     top_products = []
-    for sold_product in sold_products:
-        product = Product.objects.get(id=sold_product["product__id"])
-        product.total_sold_count = sold_product["total_sold_count"]  # ✅ เพิ่มจำนวนที่ขายเข้าไป
+    for item in sold_products:
+        product = Product.objects.get(id=item["product__id"])
+        product.total_sold_count = item["total_sold_count"]
         top_products.append(product)
 
-    # ✅ จำนวนการคืนสินค้า
+    # ✅ Top 10 สำหรับกราฟ
+    top10_data = (
+        OrderItem.objects.filter(order__seller=seller)
+        .exclude(refund_requests__status="approved")
+        .values("product__name")
+        .annotate(total_sold=Sum("quantity"))
+        .order_by("-total_sold")[:10]
+    )
+    top10_names = [item["product__name"] for item in top10_data]
+    top10_counts = [int(item["total_sold"]) for item in top10_data]
+
+    # ✅ ยอดขายรายเดือน
+    monthly_sales_data = (
+        Order.objects.filter(seller=seller, payment_status='paid')
+        .annotate(month=TruncMonth("created_at"))
+        .values("month")
+        .annotate(total=Sum("total_price"))
+        .order_by("month")
+    )
+    monthly_labels = [entry["month"].strftime("%b %Y") for entry in monthly_sales_data]
+    monthly_sales = [float(entry["total"]) for entry in monthly_sales_data]
+
+    # ✅ คะแนนรีวิว
+    reviews = Review.objects.filter(product__seller=seller)
+    avg_rating = reviews.aggregate(Avg("rating"))["rating__avg"] or 0
+    review_distribution = [
+        reviews.filter(rating=5).count(),
+        reviews.filter(rating=4).count(),
+        reviews.filter(rating=3).count(),
+        reviews.filter(rating=2).count(),
+        reviews.filter(rating=1).count(),
+    ]
+    recent_reviews = reviews.order_by("-created_at")[:5]
+
+    # ✅ การคืนสินค้า
     refunds = RefundRequest.objects.filter(order__seller=seller, status="approved").count()
 
-    # ✅ คะแนนรีวิวเฉลี่ย
-    avg_rating = Review.objects.filter(product__seller=seller).aggregate(Avg("rating"))["rating__avg"] or 0
-
-    # ✅ รีวิวล่าสุด 5 รายการ
-    recent_reviews = Review.objects.filter(product__seller=seller).order_by("-created_at")[:5]
-
-    return render(request, 'seller_performance.html', {
+    return render(request, "seller_performance.html", {
         "total_sales": total_sales,
-        "top_products": top_products,  # ✅ ตรวจสอบให้แน่ใจว่ามี `total_sold_count`
+        "top_products": top_products,
         "refunds": refunds,
         "avg_rating": avg_rating,
-        "recent_reviews": recent_reviews
+        "recent_reviews": recent_reviews,
+        "top10_names": json.dumps(top10_names),
+        "top10_counts": json.dumps(top10_counts),
+        "monthly_labels": json.dumps(monthly_labels),
+        "monthly_sales": json.dumps(monthly_sales),
+        "review_distribution": json.dumps(review_distribution),
     })
-
 
 def is_admin(user):
     return user.is_staff  # ✅ อนุญาตเฉพาะแอดมิน
