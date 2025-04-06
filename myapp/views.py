@@ -388,6 +388,12 @@ def delete_post(request, post_id):
                     os.remove(file_path)
             media.delete()
 
+        # ลบ comment ที่เกี่ยวข้อง
+        post.comments.all().delete()
+
+        # ลบ media ที่แนบ
+        post.media.all().delete()
+
         post.delete()  # ✅ ลบโพสต์ต้นฉบับ
         return JsonResponse({"success": True, "message": "โพสต์ต้นฉบับถูกลบเรียบร้อยแล้ว!"}, status=200)
     
@@ -3521,3 +3527,4 @@ def create_notification(user, notification_type, sender=None, post=None, order=N
 
     print(f"DEBUG: สร้างการแจ้งเตือน -> {message}")
     return message
+

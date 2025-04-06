@@ -28,6 +28,7 @@
     <script src="{% static 'js/comment.js' %}" defer></script>
     <script src="{% static 'js/savelist.js' %}" defer></script>
     <script src="{% static 'js/follow.js' %}" defer></script>
+    
 </head>
 
 <body>
@@ -474,15 +475,15 @@
             modalBody.appendChild(navContainer);
             
             // Add close button if not present
-            if (!modal.querySelector('.close-button')) {
-                const closeButton = document.createElement('button');
-                closeButton.className = 'close-button';
-                closeButton.innerHTML = '<i class="fas fa-times"></i>';
-                closeButton.addEventListener('click', function() {
-                    closeModal(modal);
-                });
-                modalBody.appendChild(closeButton);
-            }
+            // if (!modal.querySelector('.close-button')) {
+            //     const closeButton = document.createElement('button');
+            //     closeButton.className = 'close-button';
+            //     closeButton.innerHTML = '<i class="fas fa-times"></i>';
+            //     closeButton.addEventListener('click', function() {
+            //         closeModal(modal);
+            //     });
+            //     modalBody.appendChild(closeButton);
+            // }
         }
         
         // Update counter
@@ -597,9 +598,8 @@
                             const imgPreview = document.createElement('div');
                             imgPreview.className = 'preview-item position-relative';
                             imgPreview.innerHTML = `
-                                <img src="${e.target.result}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
-                                <button type="button" class="btn-close position-absolute top-0 end-0 bg-danger text-white" style="padding: 2px;"></button>
-                            `;
+                                <img src="${e.target.result}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">`
+                            ;
                             imagePreview.appendChild(imgPreview);
                             
                             // Remove image on close button click
@@ -693,51 +693,7 @@
                 }, 400);
             };
         });
-        // Media preview functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Preview images before upload
-            const postImages = document.getElementById('postImages');
-            const imagePreview = document.getElementById('imagePreview');
-            
-            if (postImages && imagePreview) {
-                postImages.addEventListener('change', function() {
-                    imagePreview.innerHTML = '';
-                    
-                    if (this.files) {
-                        const fileCount = Math.min(this.files.length, 4);
-                        imagePreview.classList.add('d-flex', 'flex-wrap', 'gap-2');
-                        
-                        for (let i = 0; i < fileCount; i++) {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                const imgPreview = document.createElement('div');
-                                imgPreview.className = 'preview-item position-relative';
-                                imgPreview.innerHTML = `
-                                    <img src="${e.target.result}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
-                                    <button type="button" class="btn-close position-absolute top-0 end-0 bg-danger text-white" style="padding: 2px;"></button>
-                                `;
-                                imagePreview.appendChild(imgPreview);
-                                
-                                // Remove image on close button click
-                                imgPreview.querySelector('.btn-close').addEventListener('click', function() {
-                                    imgPreview.remove();
-                                });
-                            }
-                            reader.readAsDataURL(this.files[i]);
-                        }
-                        
-                        if (this.files.length > 4) {
-                            const moreIndicator = document.createElement('div');
-                            moreIndicator.className = 'more-indicator bg-light rounded p-2 d-flex align-items-center justify-content-center';
-                            moreIndicator.style.width = '100px';
-                            moreIndicator.style.height = '100px';
-                            moreIndicator.innerHTML = `<span>+${this.files.length - 4} เพิ่มเติม</span>`;
-                            imagePreview.appendChild(moreIndicator);
-                        }
-                    }
-                });
-            }
-        });
+        
         // Function to open individual media modals from the gallery
         function openMediaModal(modalId) {
             // Hide the gallery modal

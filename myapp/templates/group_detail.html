@@ -25,7 +25,7 @@
     <script src="{% static 'js/group_edit.js' %}" defer></script>
     <script src="{% static 'js/commentcommu.js' %}" defer></script>
     <script src="{% static 'js/group_save.js' %}" defer></script>
-    <script src="{% static 'js/follow.js' %}" defer></script>
+    <script src="{% static 'js/group_follow.js' %}" defer></script>
 </head>
 <body>
     <div class="wrapper">
@@ -545,6 +545,86 @@
                 const bsModal = new bootstrap.Modal(modal);
                 bsModal.show();
             };
+        });
+
+        // Add navigation between media items
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup media navigation for each post
+            const posts = document.querySelectorAll('.post');
+            
+            posts.forEach(post => {
+                const postId = post.id.replace('post-', '');
+                const mediaModals = document.querySelectorAll(`[id^="mediaModal-${postId}-"]`);
+                
+                if (mediaModals.length <= 1) return; // No need for navigation if there's only one media item
+                
+                mediaModals.forEach((modal, index) => {
+                    // Add navigation buttons if not already present
+                    if (!modal.querySelector('.media-nav')) {
+                        const modalBody = modal.querySelector('.modal-body');
+                        
+                        // Create navigation container
+                        const navContainer = document.createElement('div');
+                        navContainer.className = 'media-nav';
+                        
+                        // Previous button
+                        const prevBtn = document.createElement('button');
+                        prevBtn.className = 'nav-btn prev-btn';
+                        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                        prevBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            navigateMedia(postId, index, -1, mediaModals.length);
+                        });
+                        
+                        // Next button
+                        const nextBtn = document.createElement('button');
+                        nextBtn.className = 'nav-btn next-btn';
+                        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                        nextBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            navigateMedia(postId, index, 1, mediaModals.length);
+                        });
+                        
+                        // Counter
+                        const counter = document.createElement('div');
+                        counter.className = 'media-counter';
+                        counter.textContent = `${index + 1} / ${mediaModals.length}`;
+                        
+                        // Append elements
+                        navContainer.appendChild(prevBtn);
+                        navContainer.appendChild(counter);
+                        navContainer.appendChild(nextBtn);
+                        modalBody.appendChild(navContainer);
+                    }
+                });
+            });
+
+            function navigateMedia(postId, currentIndex, direction, totalItems) {
+                // คำนวณ index ใหม่
+                let newIndex = currentIndex + direction;
+
+                // วนกลับถ้าเกินขอบเขต
+                if (newIndex < 0) newIndex = totalItems - 1;
+                if (newIndex >= totalItems) newIndex = 0;
+
+                // ปิด modal ปัจจุบัน
+                const currentModalId = `mediaModal-${postId}-${currentIndex + 1}`;
+                const currentModalEl = document.getElementById(currentModalId);
+                if (currentModalEl) {
+                    const modalInstance = bootstrap.Modal.getInstance(currentModalEl);
+                    if (modalInstance) modalInstance.hide();
+                }
+
+                // เปิด modal ใหม่
+                setTimeout(() => {
+                    const newModalId = `mediaModal-${postId}-${newIndex + 1}`;
+                    const newModalEl = document.getElementById(newModalId);
+                    if (newModalEl) {
+                        const newModalInstance = new bootstrap.Modal(newModalEl);
+                        newModalInstance.show();
+                    }
+                }, 300); // รอให้ modal ปิดก่อนค่อยเปิดใหม่
+            }
         });
     </script>
 </body>

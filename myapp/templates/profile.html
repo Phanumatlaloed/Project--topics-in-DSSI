@@ -767,6 +767,59 @@
                 });
             }
         });
+
+        // Add navigation between media items
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup media navigation for each post
+            const posts = document.querySelectorAll('.post');
+            
+            posts.forEach(post => {
+                const postId = post.id.replace('post-', '');
+                const mediaModals = document.querySelectorAll(`[id^="mediaModal-${postId}-"]`);
+                
+                if (mediaModals.length <= 1) return; // No need for navigation if there's only one media item
+                
+                mediaModals.forEach((modal, index) => {
+                    // Add navigation buttons if not already present
+                    if (!modal.querySelector('.media-nav')) {
+                        const modalBody = modal.querySelector('.modal-body');
+                        
+                        // Create navigation container
+                        const navContainer = document.createElement('div');
+                        navContainer.className = 'media-nav';
+                        
+                        // Previous button
+                        const prevBtn = document.createElement('button');
+                        prevBtn.className = 'nav-btn prev-btn';
+                        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                        prevBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            navigateMedia(postId, index, -1, mediaModals.length);
+                        });
+                        
+                        // Next button
+                        const nextBtn = document.createElement('button');
+                        nextBtn.className = 'nav-btn next-btn';
+                        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                        nextBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            navigateMedia(postId, index, 1, mediaModals.length);
+                        });
+                        
+                        // Counter
+                        const counter = document.createElement('div');
+                        counter.className = 'media-counter';
+                        counter.textContent = `${index + 1} / ${mediaModals.length}`;
+                        
+                        // Append elements
+                        navContainer.appendChild(prevBtn);
+                        navContainer.appendChild(counter);
+                        navContainer.appendChild(nextBtn);
+                        modalBody.appendChild(navContainer);
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

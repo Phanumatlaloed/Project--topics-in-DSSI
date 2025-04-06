@@ -256,6 +256,7 @@ urlpatterns = [
     path("api/notifications/", views.api_member_notifications, name="api_member_notifications"),
     path("notifications/mark-as-read/", views.mark_notification_as_read, name="mark_notification_as_read"),
     # path('notifications/mark-all-read/', views.mark_all_notifications_as_read, name='mark_all_notifications_as_read'),
+    
 
     path('admins/performance/', views.admin_performance, name='admin_performance'),
     path('admins/performance-data/', views.admin_performance_chart_data, name='admin_performance_chart_data'),
