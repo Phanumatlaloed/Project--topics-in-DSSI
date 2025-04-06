@@ -27,12 +27,21 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.success) {
                     // อัพเดทปุ่มตามสถานะการถูกใจ
+                    const icon = document.createElement('i');
+                    
+                    // ล้างเนื้อหาปุ่มเดิม
+                    button.innerHTML = '';
+                    
                     if (data.liked) {
-                        this.innerHTML = '<i class="fas fa-heart"></i> ถูกใจแล้ว';
-                        this.classList.add('liked');
+                        icon.className = 'fas fa-heart';
+                        button.appendChild(icon);
+                        button.appendChild(document.createTextNode(' ถูกใจแล้ว'));
+                        button.classList.add('liked');
                     } else {
-                        this.innerHTML = '<i class="far fa-heart"></i> ถูกใจ';
-                        this.classList.remove('liked');
+                        icon.className = 'far fa-heart';
+                        button.appendChild(icon);
+                        button.appendChild(document.createTextNode(' ถูกใจ'));
+                        button.classList.remove('liked');
                     }
                     
                     // อัพเดทจำนวนคนถูกใจ

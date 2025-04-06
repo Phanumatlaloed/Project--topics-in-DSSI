@@ -276,39 +276,39 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Post, PostMedia
 
-def profile(request):
+# def profile(request):
 
-    products = Product.objects.all()[:6]  
+#     products = Product.objects.all()[:6]  
 
-    user = request.user  # ดึงข้อมูลของผู้ใช้ที่ล็อกอินอยู่
-    profile = get_object_or_404(Member, user=user)  # ดึงโปรไฟล์ของผู้ใช้
-    posts = Post.objects.filter(user=user, is_reported=False).order_by('-created_at')  # กรองโพสต์ที่ไม่ถูกรีพอร์ต
+#     user = request.user  # ดึงข้อมูลของผู้ใช้ที่ล็อกอินอยู่
+#     profile = get_object_or_404(Member, user=user)  # ดึงโปรไฟล์ของผู้ใช้
+#     posts = Post.objects.filter(user=user, is_reported=False).order_by('-created_at')  # กรองโพสต์ที่ไม่ถูกรีพอร์ต
 
 
-    if request.method == 'POST':
-        profile = user.profile
+#     if request.method == 'POST':
+#         profile = user.profile
 
-        # Update user information
-        user.first_name = request.POST.get('first_name', user.first_name)
-        user.last_name = request.POST.get('last_name', user.last_name)
-        user.email = request.POST.get('email', user.email)
+#         # Update user information
+#         user.first_name = request.POST.get('first_name', user.first_name)
+#         user.last_name = request.POST.get('last_name', user.last_name)
+#         user.email = request.POST.get('email', user.email)
 
-        # Update profile information
-        profile.title = request.POST.get('title', profile.title)
-        profile.about = request.POST.get('about', profile.about)
+#         # Update profile information
+#         profile.title = request.POST.get('title', profile.title)
+#         profile.about = request.POST.get('about', profile.about)
 
-        # Save changes
-        user.save()
-        profile.save()
+#         # Save changes
+#         user.save()
+#         profile.save()
 
-        messages.success(request, 'Profile updated successfully!')
-        return redirect('profile')
+#         messages.success(request, 'Profile updated successfully!')
+#         return redirect('profile')
 
-    return render(request, 'profile.html', {
-        'user': user,
-        'posts': posts,
-        'products': products,  # ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
-        })
+#     return render(request, 'profile.html', {
+#         'user': user,
+#         'posts': posts,
+#         'products': products,  # ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
+#         })
 
 
 def profile_edit(request):
@@ -788,7 +788,12 @@ def group_detail(request, group_id):
                 })
 
             return redirect('group_detail', group_id=group.id)
-        
+    liked_post_ids = []
+    if request.user.is_authenticated and is_member and posts:
+        liked_post_ids = list(
+            posts.filter(likes=request.user).values_list('id', flat=True)
+        )
+    
     saved_post_ids = []
     if request.user.is_authenticated and is_member and posts:
         try:
@@ -803,6 +808,8 @@ def group_detail(request, group_id):
         'is_member': is_member,
         'products': products,  # ✅ ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
         'saved_post_ids': saved_post_ids,  # ✅ ส่งให้ template ใช้
+        'liked_post_ids': liked_post_ids,
+
     })
 
 #โพสต์ในกลุ่ม
@@ -1038,6 +1045,12 @@ def profile_view(request, user_id):
     # ตรวจสอบว่าเป็นโปรไฟล์ของผู้ที่ล็อกอินหรือไม่
     is_own_profile = request.user == user
     is_following = user.followers.filter(id=request.user.id).exists()
+
+    # ✅ ดึง post IDs ที่ผู้ใช้คนนี้เคยกดถูกใจไว้
+    liked_post_ids = set(request.user.liked_posts.values_list('id', flat=True))  # ✅ ดึงโพสต์ที่ไลค์ไว้
+
+    saved_post_ids = list(SavedPost.objects.filter(user=request.user).values_list('post_id', flat=True))
+
     
     context = {
         'user': user,
@@ -1045,6 +1058,8 @@ def profile_view(request, user_id):
         'is_own_profile': is_own_profile,
         'is_following': is_following,
         'products': products,  # ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
+        'liked_post_ids': liked_post_ids,  # ✅ ส่ง post IDs ที่ไลค์ไว้
+        'saved_post_ids': saved_post_ids,  # ✅ ส่ง post IDs ที่บันทึกไว้
     }
     return render(request, 'profile.html', context)
 

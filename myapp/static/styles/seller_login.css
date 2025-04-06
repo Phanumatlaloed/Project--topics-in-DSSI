@@ -1,151 +1,306 @@
-/* 🌸 ตั้งค่าพื้นฐาน */
+/* Seller Login Page CSS */
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+  /* สีหลักตามที่กำหนด - โทนชมพู-ม่วง */
+  --primary: #FF6B8B;
+  --primary-light: #FFC0CB;
+  --primary-dark: #E5446D;
+  --secondary: #6C63FF;
+  --white: #FFFFFF;
+  --light-gray: #F8F9FA;
+  --gray: #E9ECEF;
+  --dark-gray: #6C757D;
+  --black: #343A40;
+  --text: #212529;
+  --error: #DC3545;
+  --success: #28A745;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: all 0.25s ease;
+  --focus-ring: 0 0 0 3px rgba(255, 107, 139, 0.25);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Prompt', 'Poppins', sans-serif;
+}
+
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #fff5f8;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+  color: var(--text);
+  line-height: 1.5;
+  padding: 20px;
 }
 
-/* 🌸 คอนเทนเนอร์หลัก */
 .login-container {
-    background: white;
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
-/* 🌸 โลโก้ */
-.logo img {
-    width: 100px;
-    height: auto;
-    margin-bottom: 15px;
-    border-radius: 50%;
-    border: 3px solid #ff6b81;
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
 }
 
-/* 🌸 หัวข้อ */
+.logo-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* แทนที่รูปภาพด้วยไอคอน Font Awesome */
+.logo-container i {
+  font-size: 48px;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: var(--light-gray);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+  border: 3px solid var(--primary-light);
+}
+
+/* ซ่อนรูปภาพเดิม */
+.logo-container img {
+  display: none;
+}
+
 h2 {
-    color: #ff4081;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 10px;
 }
 
-/* 🌸 ข้อความแนะนำ */
-p {
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 20px;
+.subtitle {
+  font-size: 15px;
+  color: var(--dark-gray);
+  margin-bottom: 20px;
 }
 
-/* 🌸 กล่องใส่ข้อมูล */
+.messages {
+  list-style-type: none;
+  background-color: rgba(220, 53, 69, 0.1);
+  border-left: 3px solid var(--error);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  color: var(--error);
+  font-size: 14px;
+  text-align: left;
+}
+
+.messages .success {
+  background-color: rgba(40, 167, 69, 0.1);
+  border-left: 3px solid var(--success);
+  color: var(--success);
+}
+
 .input-group {
-    position: relative;
-    margin-bottom: 20px;
+  margin-bottom: 20px;
+  text-align: left;
 }
 
-.input-group input {
-    width: 100%;
-    padding: 12px 14px; /* ✅ padding ซ้ายขวา */
-    border: 2px solid #ffccd5;
-    border-radius: 8px;
-    font-size: 16px;
-    text-align: left;
-    background: #fffafc;
-    transition: all 0.3s ease-in-out;
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--black);
 }
 
-/* ✅ ปรับตำแหน่งไอคอนตา */
+label i {
+  color: var(--primary);
+  margin-right: 6px;
+}
+
+input[type="text"],
+input[type="password"] {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  border: 1.5px solid var(--gray);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+  color: var(--text);
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--focus-ring);
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+  color: #ADB5BD;
+}
+
 .password-group {
-    position: relative;
+  position: relative;
 }
 
 .toggle-password {
-    position: absolute;
-    top: 50%;
-    right: 14px;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #ff6b81;
-    font-size: 18px;
-    transition: color 0.3s ease-in-out;
+  position: absolute;
+  right: 12px;
+  top: 42px;
+  color: var(--dark-gray);
+  cursor: pointer;
+  padding: 4px;
+  z-index: 1;
+  font-size: 15px;
 }
 
 .toggle-password:hover {
-    color: #e05570;
+  color: var(--primary);
 }
 
-/* 🌸 ปุ่มเข้าสู่ระบบ */
 .btn-login {
-    width: 100%;
-    padding: 12px;
-    background-color: #ff6b81;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-    box-shadow: 0px 4px 8px rgba(255, 99, 132, 0.3);
+  display: flex;
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(to right, var(--primary), var(--primary-light));
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 24px;
+  justify-content: center;
+  align-items: center;
 }
 
-.btn-login:hover {
-    background-color: #e05570;
-    transform: translateY(-2px);
+.btn-login i {
+  margin-right: 8px;
 }
 
-/* 🌸 ลิงก์สมัครสมาชิก */
+.btn-login:hover, .btn-login:focus {
+  background: linear-gradient(to right, var(--primary-dark), var(--primary));
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-login:active {
+  transform: translateY(1px);
+}
+
 .register-link {
-    font-size: 14px;
-    margin-top: 15px;
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--dark-gray);
 }
 
 .register-link a {
-    color: #ff6b81;
-    font-weight: bold;
-    text-decoration: none;
-    transition: color 0.3s;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
 }
 
 .register-link a:hover {
-    color: #e05570;
+  color: var(--primary-dark);
+  text-decoration: underline;
 }
 
-/* 🌸 ลิงก์ผู้ขายและผู้ดูแลระบบ */
 .other-login {
-    margin-top: 15px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray);
+  display: flex;
+  justify-content: center;
+  gap: 15px;
 }
 
 .other-login a {
-    color: #ff6b81;
-    font-weight: bold;
-    text-decoration: none;
-    transition: color 0.3s;
+  display: inline-flex;
+  align-items: center;
+  color: var(--dark-gray);
+  text-decoration: none;
+  font-size: 14px;
+  transition: var(--transition);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background-color: var(--light-gray);
+}
+
+.other-login a i {
+  margin-right: 6px;
+  color: var(--primary);
 }
 
 .other-login a:hover {
-    color: #e05570;
+  background-color: var(--gray);
+  color: var(--primary);
 }
 
-/* 🌸 Responsive */
+.separator {
+  color: var(--dark-gray);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+/* เพิ่มแอนิเมชันเมื่อโหลดหน้า */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive Design */
 @media (max-width: 480px) {
-    .login-container {
-        padding: 30px;
-    }
-
-    h2 {
-        font-size: 22px;
-    }
-
-    .btn-login {
-        font-size: 14px;
-    }
+  .login-container {
+    padding: 24px 20px;
+  }
+  
+  .logo-container i {
+    width: 80px;
+    height: 80px;
+    font-size: 42px;
+  }
+  
+  h2 {
+    font-size: 22px;
+  }
+  
+  .other-login {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .separator {
+    display: none;
+  }
 }

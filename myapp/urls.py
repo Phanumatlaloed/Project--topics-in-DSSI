@@ -50,7 +50,6 @@ urlpatterns = [
     # Profile management and view
     path('profile/settings/', views.profile_management, name='profile_management'),  # เส้นทางตั้งค่าโปรไฟล์
     path('profile/<int:user_id>/', views.profile_view, name='profile'),  # เส้นทางแสดงโปรไฟล์
-    path('profile/', views.profile_view, name='profile'),  # เส้นทางแสดงโปรไฟล์
 
     #จัดการโพสต์ในกลุ่ม group_deta
     path('group_post/like/<int:post_id>/like', views.toggle_group_post_like, name='toggle_group_post_like'),

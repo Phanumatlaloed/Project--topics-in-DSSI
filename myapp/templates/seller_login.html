@@ -1,85 +1,89 @@
-{% load static %}
-
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เข้าสู่ระบบผู้ขาย | MyShop</title>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'styles/seller_login.css' %}">
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome (ใช้สำหรับไอคอนตา) -->
-    <!-- โหลด FontAwesome เวอร์ชัน 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-</head>
-<body>
-    <div class="login-container">
-        <!-- โลโก้ -->
-        <div class="logo">
-            <img src="{% static 'media/logo.jpg' %}" alt="MyShop Logo">
-        </div>
-
-        <!-- หัวข้อ -->
-        <h2>เข้าสู่ระบบผู้ขาย</h2>
-        <p>เข้าสู่ระบบเพื่อจัดการร้านค้าของคุณ</p>
-
-        <!-- แสดงข้อความแจ้งเตือน -->
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="{{ message.tags }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
-        <!-- ฟอร์มเข้าสู่ระบบ -->
-        <form method="post">
-            {% csrf_token %}
+{% load static %}  
+<!DOCTYPE html> 
+<html lang="th"> 
+<head>     
+    <meta charset="UTF-8">     
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">     
+    <title>เข้าสู่ระบบผู้ขาย | MyShop</title>      
+    <!-- CSS -->     
+    <link rel="stylesheet" href="{% static 'styles/seller_login.css' %}">      
+    <!-- Google Font -->     
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">      
+    <!-- Font Awesome -->     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"> 
+</head> 
+<body>     
+    <div class="login-container">         
+        <!-- โลโก้ -->         
+        <div class="logo-container">
+            <!-- ใช้ไอคอนแทนรูปภาพ -->
+            <i class="fas fa-store"></i>
+        </div>          
+        
+        <!-- หัวข้อ -->         
+        <h2>เข้าสู่ระบบผู้ขาย</h2>         
+        <p class="subtitle">เข้าสู่ระบบเพื่อจัดการร้านค้าของคุณ</p>
+        
+        <!-- แสดงข้อความแจ้งเตือน -->         
+        {% if messages %}             
+            <ul class="messages">                 
+                {% for message in messages %}                     
+                    <li class="{{ message.tags }}">{{ message }}</li>                 
+                {% endfor %}             
+            </ul>         
+        {% endif %}          
+        
+        <!-- ฟอร์มเข้าสู่ระบบ -->         
+        <form method="post">             
+            {% csrf_token %}             
             <div class="input-group">
-                <input type="text" name="username" placeholder="ชื่อผู้ใช้" required>
-            </div>
+                <label for="username"><i class="fas fa-user"></i> ชื่อผู้ใช้</label>                 
+                <input type="text" id="username" name="username" placeholder="กรอกชื่อผู้ใช้" required>             
+            </div>              
+            
             <div class="input-group password-group">
-                <input type="password" name="password" id="password" placeholder="รหัสผ่าน" required>
-                <span class="toggle-password" onclick="togglePassword()">
-                    <i class="fas fa-eye"></i>
-                </span>
-            </div>
-            <button type="submit" class="btn-login">เข้าสู่ระบบ</button>
-        </form>
-
-        <!-- ลิงก์สมัครสมาชิก -->
-        <p class="register-link">
-            ยังไม่มีบัญชีผู้ขาย? <a href="{% url 'register_seller' %}">ลงทะเบียนที่นี่</a>
-        </p>
-
-        <!-- ลิงก์ไปยัง Login ของลูกค้าและแอดมิน -->
-        <div class="other-login">
-            <a href="{% url 'login' %}">เข้าสู่ระบบลูกค้า</a> |
-            <a href="{% url 'admin_login' %}">เข้าสู่ระบบแอดมิน</a>
-        </div>
-    </div>
-
-    <!-- JavaScript เปิด/ปิดรหัสผ่าน -->
-    <script>
-        function togglePassword() {
-            let passwordField = document.getElementById("password");
-            let toggleIcon = document.querySelector(".toggle-password i");
+                <label for="password"><i class="fas fa-lock"></i> รหัสผ่าน</label>                 
+                <input type="password" name="password" id="password" placeholder="กรอกรหัสผ่าน" required>                 
+                <span class="toggle-password" onclick="togglePassword()">                     
+                    <i class="fas fa-eye"></i>                 
+                </span>             
+            </div>              
+            
+            <button type="submit" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+            </button>         
+        </form>          
+        
+        <!-- ลิงก์สมัครสมาชิก -->         
+        <p class="register-link">             
+            <i class="fas fa-user-plus"></i> ยังไม่มีบัญชีผู้ขาย? <a href="{% url 'register_seller' %}">ลงทะเบียนที่นี่</a>         
+        </p>          
+        
+        <!-- ลิงก์ไปยัง Login ของลูกค้าและแอดมิน -->         
+        <div class="other-login">             
+            <a href="{% url 'login' %}"><i class="fas fa-users"></i> เข้าสู่ระบบลูกค้า</a> 
+            <span class="separator">|</span>             
+            <a href="{% url 'admin_login' %}"><i class="fas fa-user-shield"></i> เข้าสู่ระบบแอดมิน</a>         
+        </div>     
+    </div>      
     
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                toggleIcon.classList.remove("fa-eye");
-                toggleIcon.classList.add("fa-eye-slash");
-            } else {
-                passwordField.type = "password";
-                toggleIcon.classList.remove("fa-eye-slash");
-                toggleIcon.classList.add("fa-eye");
-            }
-        }
-    </script>    
-</body>
+    <!-- JavaScript เปิด/ปิดรหัสผ่าน -->     
+    <script>         
+        function togglePassword() {             
+            let passwordField = document.getElementById("password");             
+            let toggleIcon = document.querySelector(".toggle-password i");              
+            
+            if (passwordField.type === "password") {                 
+                passwordField.type = "text";                 
+                toggleIcon.classList.remove("fa-eye");                 
+                toggleIcon.classList.add("fa-eye-slash");             
+            } else {                 
+                passwordField.type = "password";                 
+                toggleIcon.classList.remove("fa-eye-slash");                 
+                toggleIcon.classList.add("fa-eye");             
+            }         
+        }     
+    </script>     
+</body> 
 </html>

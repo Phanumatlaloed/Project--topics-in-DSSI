@@ -292,10 +292,13 @@
 
                         <!-- Actions -->
                         <div class="actions">
-                            <button class="btn like-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
-                                <i class="far fa-heart"></i> ถูกใจ
+                            <button class="btn like-btn {% if post.id in liked_post_ids %}liked{% endif %}" data-post-id="{{ post.id }}">
+                                {% if post.id in liked_post_ids %}
+                                    <i class="fas fa-heart"></i> ถูกใจแล้ว
+                                {% else %}
+                                    <i class="far fa-heart"></i> ถูกใจ
+                                {% endif %}
                             </button>
-                            <span id="like-count-{{ post.id }}">{{ post.likes.count }} ถูกใจ</span>
                             
                             <button class="btn share-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
                                 <i class="fas fa-share-alt"></i> แชร์
