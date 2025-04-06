@@ -75,6 +75,7 @@
                             <th>หมายเลขออเดอร์</th>
                             <th>ลูกค้า</th>
                             <th>ที่อยู่</th>
+                            <th>สินค้า</th>
                             <th>ยอดรวม</th>
                             <th>สถานะการชำระเงิน</th>
                             <th>สลิป</th>
@@ -91,6 +92,16 @@
                                 {{ order.shipping_address }}<br>
                                 {{ order.city }}, {{ order.postal_code }}
                             </td>
+                            <td>
+                                <ul>
+                                  {% for item in order.order_items.all %}
+                                    <li>{{ item.product.name }} ({{ item.quantity }} ชิ้น)</li>
+                                  {% empty %}
+                                    <li>-</li>
+                                  {% endfor %}
+                                </ul>
+                              </td>
+                              
                             <td>฿{{ order.total_price }}</td>
 
                             <td>

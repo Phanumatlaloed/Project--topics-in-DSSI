@@ -8,72 +8,126 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'styles/edit_product.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}">
     
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <!-- Navbar -->
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-                <a href="{% url 'home' %}"><img src="{% static 'media/logo.jpg' %}" alt="Shop Logo"></a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="{% url 'home' %}">🏠 Home</a></li>
-                <li><a href="{% url 'community_list' %}">👥 Community</a></li>
-                <li><a href="{% url 'savelist' %}">💾 Save</a></li>
-                <li><a href="{% url 'profile' request.user.id %}">📄 Profile</a></li>
-                <li><a href="{% url 'product_list' %}">🛍 Products</a></li>
-                <li><a href="{% url 'my_products' %}">📦 My Store</a></li>
-            </ul>
-        </nav>
-    </header>
+    <a href="{% url 'my_products' %}" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
 
-    <!-- Edit Product Container -->
-    <div class="edit-product-container">
-        <h2>✏️ Edit Product</h2>
-
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                {{ form.name.label_tag }}
-                {{ form.name }}
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1><i class="fas fa-edit"></i> แก้ไขสินค้า</h1>
+                <div class="breadcrumb">
+                    <a href="{% url 'seller_dashboard' %}">หน้าหลัก</a> / 
+                    <a href="{% url 'my_products' %}">สินค้าของฉัน</a> / 
+                    <span>แก้ไขสินค้า</span>
+                </div>
             </div>
 
-            <div class="form-group">
-                {{ form.description.label_tag }}
-                {{ form.description }}
-            </div>
+            <!-- Edit Product Form -->
+            <div class="edit-product-container">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data" class="edit-product-form">
+                            {% csrf_token %}
+                            
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="{{ form.name.id_for_label }}">
+                                        <i class="fas fa-tag"></i> ชื่อสินค้า
+                                    </label>
+                                    {{ form.name }}
+                                </div>
+                            </div>
 
-            <div class="form-group">
-                {{ form.price.label_tag }}
-                {{ form.price }}
-            </div>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="{{ form.description.id_for_label }}">
+                                        <i class="fas fa-align-left"></i> รายละเอียดสินค้า
+                                    </label>
+                                    {{ form.description }}
+                                </div>
+                            </div>
 
-            <div class="form-group">
-                {{ form.stock.label_tag }}
-                {{ form.stock }}
-            </div>
-            
-            <div class="form-group">
-                {{ form.category.label_tag }}
-                {{ form.category }}  <!-- ✅ Dropdown เลือกหมวดหมู่ -->
-            </div>
+                            <div class="form-row two-columns">
+                                <div class="form-group">
+                                    <label for="{{ form.price.id_for_label }}">
+                                        <i class="fas fa-money-bill"></i> ราคา
+                                    </label>
+                                    {{ form.price }}
+                                </div>
 
-            <div class="form-group">
-                {{ form.image.label_tag }}
-                {{ form.image }}
-                {% if form.instance.image %}
-                    <img src="{{ form.instance.image.url }}" class="preview-image" alt="Current Product Image">
-                {% endif %}
+                                <div class="form-group">
+                                    <label for="{{ form.stock.id_for_label }}">
+                                        <i class="fas fa-cubes"></i> จำนวนสินค้า
+                                    </label>
+                                    {{ form.stock }}
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="{{ form.category.id_for_label }}">
+                                        <i class="fas fa-folder"></i> หมวดหมู่
+                                    </label>
+                                    {{ form.category }}
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="{{ form.image.id_for_label }}">
+                                        <i class="fas fa-image"></i> รูปภาพสินค้า
+                                    </label>
+                                    <div class="image-upload-container">
+                                        <div class="upload-btn-wrapper">
+                                            <button class="btn-upload"><i class="fas fa-cloud-upload-alt"></i> อัพโหลดรูปภาพ</button>
+                                            {{ form.image }}
+                                        </div>
+                                        {% if form.instance.image %}
+                                        <div class="preview-container">
+                                            <img src="{{ form.instance.image.url }}" class="preview-image" alt="รูปภาพสินค้าปัจจุบัน">
+                                            <div class="image-overlay">รูปภาพปัจจุบัน</div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> บันทึกการเปลี่ยนแปลง
+                                </button>
+                                <a href="{% url 'my_products' %}" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> ยกเลิก
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-            <button type="submit" class="save-btn">💾 Save Changes</button>
-        </form>
-
-        <a href="{% url 'my_products' %}" class="cancel-btn">🔙 Cancel</a>
+        </div>
     </div>
+
+    <script>
+        // Show filename when file is selected
+        document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'No file selected';
+            const uploadBtn = document.querySelector('.btn-upload');
+            if (fileName !== 'No file selected') {
+                uploadBtn.innerHTML = `<i class="fas fa-check"></i> ${fileName}`;
+                uploadBtn.classList.add('file-selected');
+            }
+        });
+    </script>
 </body>
 </html>
