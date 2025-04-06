@@ -239,6 +239,10 @@ def home(request):
     # ✅ ดึงการแจ้งเตือนของผู้ใช้
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:10]
 
+    # ✅ ดึง post IDs ที่ผู้ใช้คนนี้เคยกดถูกใจไว้
+    liked_post_ids = set(request.user.liked_posts.values_list('id', flat=True))  # ✅ ดึงโพสต์ที่ไลค์ไว้
+
+    saved_post_ids = list(SavedPost.objects.filter(user=request.user).values_list('post_id', flat=True))
 
     return render(request, 'home.html', {
         'username': request.user.username,
@@ -248,6 +252,8 @@ def home(request):
         'followed_users': followed_users,
         'products': products,  # ✅ ส่งสินค้าพร้อมโพสต์ไปยังเทมเพลต
         'notifications': notifications,  # ✅ ส่งการแจ้งเตือนไปยังเทมเพลต
+        'liked_post_ids': liked_post_ids,  # ✅ สำคัญมาก!
+        'saved_post_ids': saved_post_ids,  # ✅ ส่งรายการ ID ของโพสต์ที่บันทึกไว้
     })
 
 #logout
@@ -505,6 +511,7 @@ from .models import Post  # ✅ ตรวจสอบว่า import ถูก�
 
 #     return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
 
+#ถูกใจโพสต์หน้าหลัก
 @login_required
 def toggle_like(request, post_id):
     if request.method == "POST":

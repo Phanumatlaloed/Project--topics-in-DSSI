@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener("click", function () {
             let postId = this.dataset.postId;
             let btn = this;
-
+            
             fetch(`/save/${postId}/`, {
                 method: "POST",
                 headers: {
@@ -17,15 +17,29 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // สร้างไอคอนใหม่
+                    let icon = document.createElement('i');
+                    
+                    // ล้างเนื้อหาปุ่มเดิม
+                    btn.innerHTML = '';
+                    
                     if (data.saved) {
-                        btn.innerHTML = `<i class="fas fa-bookmark"></i> ยกเลิกบันทึก`;
+                        // กรณีบันทึกแล้ว
+                        icon.className = 'fas fa-bookmark';
+                        btn.appendChild(icon);
+                        btn.appendChild(document.createTextNode(' ยกเลิกบันทึก'));
                         btn.classList.add("btn-success");
                         btn.classList.remove("btn-light");
+                        btn.dataset.saved = "true";
                     } else {
-                        btn.innerHTML = `<i class="far fa-bookmark"></i> บันทึก`; // ใช้ 'far' (outline) เมื่อยังไม่บันทึก
+                        // กรณียังไม่บันทึก
+                        icon.className = 'far fa-bookmark';
+                        btn.appendChild(icon);
+                        btn.appendChild(document.createTextNode(' บันทึก'));
                         btn.classList.add("btn-light");
                         btn.classList.remove("btn-success");
-                    }                    
+                        btn.dataset.saved = "false";
+                    }
                 } else {
                     alert("❌ ไม่สามารถบันทึกโพสต์ได้");
                 }
@@ -39,8 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener("click", function () {
             let postId = this.dataset.postId;
             let card = this.closest(".col-md-6, .col-lg-4");
-
-            fetch(`/remove_saved_post/${postId}/`, {  // ✅ ใช้ URL ที่ถูกต้อง
+            
+            fetch(`/remove_saved_post/${postId}/`, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCSRFToken(),
@@ -65,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function getCSRFToken() {
         let csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']");
         if (csrfToken) return csrfToken.value;
-
+        
         let cookieValue = null;
         if (document.cookie) {
             let cookies = document.cookie.split(';');

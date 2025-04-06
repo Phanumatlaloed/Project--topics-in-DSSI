@@ -227,20 +227,24 @@
 
                             <!-- Actions -->
                             <div class="actions">
-                                <button class="btn like-btn" data-post-id="{{ post.id }}">
-                                    <i class="far fa-heart"></i> ถูกใจ
+                                <button class="btn like-btn {% if post.id in liked_post_ids %}liked{% endif %}" data-post-id="{{ post.id }}">
+                                    {% if post.id in liked_post_ids %}
+                                        <i class="fas fa-heart"></i> ถูกใจแล้ว
+                                    {% else %}
+                                        <i class="far fa-heart"></i> ถูกใจ
+                                    {% endif %}
                                 </button>
-                                <span id="like-count-{{ post.id }}">{{ post.likes.count }} ถูกใจ</span>
+                                
                                 
                                 <button class="btn share-btn" data-post-id="{{ post.id }}">
                                     <i class="fas fa-share-alt"></i> แชร์
                                 </button>
                                 
                                 <button class="btn save-btn" data-post-id="{{ post.id }}">
-                                    {% if post in request.user.saved_posts.all %}
-                                        <i class="fas fa-bookmark"></i> ยกเลิกบันทึก
+                                    {% if post.id in saved_post_ids %}
+                                        <i class="fas fa-bookmark"></i> <span class="save-text">ยกเลิกบันทึก</span>
                                     {% else %}
-                                        <i class="far fa-bookmark"></i> บันทึก
+                                        <i class="far fa-bookmark"></i> <span class="save-text">บันทึก</span>
                                     {% endif %}
                                 </button>
 

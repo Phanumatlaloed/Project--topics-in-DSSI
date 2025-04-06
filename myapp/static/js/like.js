@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ โหลดไฟล์ Like.js เรียบร้อยแล้ว!");
-
+    
     // เลือกปุ่มถูกใจทั้งหมดในหน้าเว็บ
     document.querySelectorAll(".like-btn").forEach(button => {
         button.addEventListener("click", async (event) => {
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("ไม่พบ postId หรือ likeCountSpan");
                 return;
             }
-
+            
             try {
                 const response = await fetch(`/like/${postId}/`, {
                     method: "POST",
@@ -21,15 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         "X-Requested-With": "XMLHttpRequest"
                     }
                 });
-
+                
                 const result = await response.json();
                 if (result.success) {
+                    // สร้างไอคอนแยกจาก text เพื่อป้องกันปัญหา
+                    const icon = document.createElement('i');
+                    button.innerHTML = '';
+                    
                     // อัพเดทปุ่มตามสถานะการถูกใจ
                     if (result.liked) {
-                        button.innerHTML = '<i class="fas fa-heart"></i> ถูกใจแล้ว';
+                        icon.className = 'fas fa-heart';
+                        button.appendChild(icon);
+                        button.appendChild(document.createTextNode(' ถูกใจแล้ว'));
                         button.classList.add('liked');
                     } else {
-                        button.innerHTML = '<i class="far fa-heart"></i> ถูกใจ';
+                        icon.className = 'far fa-heart';
+                        button.appendChild(icon);
+                        button.appendChild(document.createTextNode(' ถูกใจ'));
                         button.classList.remove('liked');
                     }
                     
@@ -43,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-
+    
     function getCSRFToken() {
         const tokenInput = document.querySelector("[name=csrfmiddlewaretoken]");
         if (!tokenInput) {
