@@ -455,3 +455,79 @@ select:focus {
 .btn-contact-admin:hover {
   background-color: #e91e63;
 }
+
+/* ✅ ฟิลเตอร์ Select + Date */
+.filter {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--primary-light);
+  background-color: var(--white);
+  font-family: 'Prompt', sans-serif;
+  font-size: 14px;
+  color: var(--black);
+  transition: var(--transition);
+}
+
+.filter:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 5px rgba(255, 105, 180, 0.4);
+}
+
+/* ✅ ปุ่มค้นหา */
+.btn.btn-success {
+  background-color: var(--primary);
+  color: var(--white);
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: var(--transition);
+  border: none;
+  cursor: pointer;
+}
+
+.btn.btn-success:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(255, 105, 135, 0.3);
+}
+
+/* ✅ กล่องฟอร์มรวมฟิลเตอร์ */
+.filter-form {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.filter-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--black);
+}
+
+/* ✅ Responsive บนมือถือ */
+@media (max-width: 600px) {
+  .filter-form {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .btn.btn-success {
+    width: 100%;
+    text-align: center;
+  }
+
+  .filter-form label {
+    width: 100%;
+  }
+
+  .filter {
+    width: 100%;
+  }
+}

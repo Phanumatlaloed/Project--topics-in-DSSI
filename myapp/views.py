@@ -2755,6 +2755,27 @@ def seller_wallet(request):
     # ✅ ออเดอร์ทั้งหมดของผู้ขายนี้ (ไม่กรองสถานะ)
     all_orders = Order.objects.filter(seller=seller).prefetch_related('order_items__product', 'user', 'payment').order_by('-created_at')
 
+     # รับค่าฟิลเตอร์
+    status_filter = request.GET.get('status')
+    date_filter = request.GET.get('date')  # format: YYYY-MM-DD
+
+    order_query = Q(seller=seller)
+
+    if status_filter:
+        order_query &= Q(status=status_filter)
+
+    if date_filter:
+        try:
+            date_obj = datetime.strptime(date_filter, '%Y-%m-%d')
+            order_query &= Q(created_at__date=date_obj.date())
+        except:
+            pass
+
+    # จำกัดแค่ 15 รายการล่าสุด
+    all_orders = Order.objects.filter(order_query).prefetch_related(
+        'order_items__product', 'user', 'payment'
+    ).order_by('-created_at')[:15]
+
     # ✅ คำนวณรายได้ที่ถอนได้:
     withdrawable_orders = Order.objects.filter(
         seller=seller,
@@ -2772,6 +2793,8 @@ def seller_wallet(request):
         'withdrawals': withdrawals,
         'withdrawable_income': withdrawable_income,
         'all_orders': all_orders,
+        'status_filter': status_filter,
+        'date_filter': date_filter,
     })
 
 from django.db.models.signals import post_save

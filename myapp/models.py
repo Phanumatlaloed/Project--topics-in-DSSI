@@ -213,7 +213,6 @@ BANK_CHOICES = [
     ('ttb', 'ธนาคารทหารไทยธนชาต'),
     ('gsb', 'ธนาคารออมสิน'),
     ('baac', 'ธ.ก.ส.'),
-    ('other', 'ธนาคารอื่นๆ'),
 ]
 class Seller(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='seller_profile')
