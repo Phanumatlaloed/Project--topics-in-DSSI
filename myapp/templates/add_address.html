@@ -4,12 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>➕ เพิ่มที่อยู่ใหม่</title>
+    <title> เพิ่มที่อยู่ใหม่</title>
     <link rel="stylesheet" href="{% static 'styles/add_address.css' %}">
     <link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
 </head>
 <body>
-
     <!-- 🌸 Navbar -->
     <header class="navbar">
         <div class="logo">
@@ -28,6 +27,11 @@
 
     <div class="address-container">
         <h2>เพิ่มที่อยู่ใหม่</h2>
+        
+        <div class="instruction-box">
+            <p class="instruction-text">⚠️ โปรดกรอกชื่อและนามสกุลของผู้รับในที่อยู่ให้ครบถ้วน เพื่อความสะดวกในการจัดส่งสินค้า</p>
+        </div>
+        
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
