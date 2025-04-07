@@ -1101,7 +1101,7 @@ def save_group_post(request, group_id, post_id):
     post = get_object_or_404(GroupPost, id=post_id)  # ดึงโพสต์
 
     try:
-        member = Member.objects.get(user=request.user)  # ✅ ดึง `Member` instance
+        member = Member.objects.get(user=request.user)
     except Member.DoesNotExist:
         return JsonResponse({"success": False, "message": "Member profile not found"}, status=400)
 
@@ -2543,6 +2543,14 @@ def unblock_user(request, user_id):
     if request.method == 'POST':
         # ลบข้อมูลการบล็อคจากตาราง
         blocked.delete()
+
+        # กู้คืนโพสต์ที่เคยถูกซ่อนจากรายงานให้กลับมาแสดง
+        posts = Post.objects.filter(user=blocked_user, is_reported=True)
+
+        for post in posts:
+            post.is_reported = False
+            post.save()
+
         
         messages.success(request, f'คุณได้เลิกบล็อค {blocked_user.username} เรียบร้อยแล้ว')
         return redirect('blocked_users_list')

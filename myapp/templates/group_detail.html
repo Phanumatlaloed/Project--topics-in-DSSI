@@ -299,6 +299,7 @@
                                     <i class="far fa-heart"></i> ถูกใจ
                                 {% endif %}
                             </button>
+                            <span id="like-count-{{ post.id }}" class="like-count-text">{{ post.likes.count }} ถูกใจ</span>
                             
                             <button class="btn share-btn" data-post-id="{{ post.id }}" data-group-id="{{ group.id }}">
                                 <i class="fas fa-share-alt"></i> แชร์
