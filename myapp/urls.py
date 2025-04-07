@@ -28,7 +28,7 @@ urlpatterns = [
     path('community/<int:group_id>/', views.group_detail, name='group_detail'),
     path('community/<int:group_id>/join/', views.join_group, name='join_group'),
     path('community/<int:group_id>/edit/', views.edit_group, name='edit_group'),
-    path('community/<int:group_id>/delete/', views.delete_group, name='delete_group'),
+    path('community/group/<int:group_id>/delete/', views.delete_group, name='delete_group'),
     path('community/<int:group_id>/leave/', views.leave_group, name='leave_group'),
 
 

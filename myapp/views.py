@@ -218,9 +218,7 @@ def home(request):
     blocked_users = list(BlockedUser.objects.filter(blocked_by=request.user).values_list('blocked_user', flat=True))
 
     # ✅ ดึงโพสต์ให้แสดงเฉพาะ:
-    # - โพสต์ที่ **ไม่ถูกรีพอร์ต**
-    # - โพสต์ของตัวเองต้องแสดงเสมอ
-    # - โพสต์ของผู้ใช้ที่ถูกบล็อกต้องถูกซ่อน
+
     posts = Post.objects.filter(
         Q(is_reported=False) | Q(user=request.user)  # ✅ โพสต์ของตัวเองต้องแสดง
     ).exclude(
@@ -738,16 +736,47 @@ def edit_group(request, group_id):
 
 #ลบกลุ่มที่สร้างในหน้าชุมชน
 @login_required
-def delete_group(request, group_id, post_id):
-    """ ให้เจ้าของกลุ่มสามารถลบกลุ่ม """
-    post = get_object_or_404(GroupPost, id=post_id, group=group, user=request.user)
-
-    group = get_object_or_404(CommunityGroup, id=group_id, created_by=request.user)
-    if request.method == "POST":
-        post.delete()
-        return JsonResponse({"success": True, "message": "โพสต์ถูกลบแล้ว!"})
-
-    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+def delete_group(request, group_id):
+    """Allow the group owner to delete their group"""
+    try:
+        # Get the group - using the correct model name from your application
+        group = get_object_or_404(CommunityGroup, id=group_id)
+        
+        # Check if user has permission to delete
+        if request.user != group.created_by and request.user not in group.admins.all():
+            return JsonResponse({
+                "success": False, 
+                "message": "คุณไม่มีสิทธิ์ลบกลุ่มนี้"
+            }, status=403)
+        
+        # Process deletion request
+        if request.method == "POST":
+            # Store group name for confirmation message
+            group_name = group.name
+            
+            # Delete the group
+            group.delete()
+            
+            return JsonResponse({
+                "success": True, 
+                "message": f"กลุ่ม '{group_name}' ถูกลบเรียบร้อยแล้ว!"
+            })
+        
+        return JsonResponse({
+            "success": False, 
+            "message": "Invalid request method"
+        }, status=400)
+        
+    except Exception as e:
+        # Log the exception for debugging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error deleting group {group_id}: {str(e)}")
+        
+        return JsonResponse({
+            "success": False,
+            "message": f"เกิดข้อผิดพลาด: {str(e)}"
+        }, status=500)
 
 #รายละเอียดในกลุ่ม
 from django.http import JsonResponse

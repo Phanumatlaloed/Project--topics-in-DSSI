@@ -49,6 +49,7 @@ body {
   box-shadow: var(--shadow-md);
   padding: 32px;
   text-align: center;
+  position: relative; /* สำหรับการจัดตำแหน่งแบบ absolute ของปุ่มผู้ดูแลระบบ */
 }
 
 .logo-container {
@@ -174,9 +175,8 @@ input[type="text"]::placeholder {
 }
 
 .links {
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
+  text-align: right;
+  margin-bottom: 20px;
 }
 
 .links a {
@@ -197,11 +197,15 @@ input[type="text"]::placeholder {
   border-radius: 2px;
 }
 
-.admin-login, .seller {
-  margin-top: 8px;
+/* ส่วนใหม่สำหรับลิงก์ด้านล่าง */
+.bottom-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
 }
 
-.admin-login a, .seller a {
+.seller a {
   display: inline-flex;
   align-items: center;
   color: var(--dark-gray);
@@ -212,14 +216,6 @@ input[type="text"]::placeholder {
   border-radius: var(--radius-sm);
 }
 
-.admin-login a:before {
-  content: '\f007';
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 900;
-  margin-right: 8px;
-  color: var(--primary);
-}
-
 .seller a:before {
   content: '\f07a';
   font-family: 'Font Awesome 5 Free';
@@ -228,7 +224,33 @@ input[type="text"]::placeholder {
   color: var(--primary);
 }
 
-.admin-login a:hover, .seller a:hover {
+.seller a:hover {
+  background-color: var(--light-gray);
+}
+
+.admin-login a {
+  display: inline-flex;
+  align-items: center;
+  color: var(--light-gray); /* สีจางลง */
+  text-decoration: none;
+  font-size: 12px; /* ขนาดเล็กลง */
+  transition: var(--transition);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  opacity: 0.7; /* ความโปร่งใสเพิ่มขึ้น (จางลง) */
+}
+
+.admin-login a:before {
+  content: '\f007';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  margin-right: 8px;
+  color: var(--dark-gray);
+}
+
+.admin-login a:hover {
+  opacity: 1;
+  color: var(--dark-gray);
   background-color: var(--light-gray);
 }
 
@@ -252,9 +274,13 @@ input[type="text"]::placeholder {
     font-size: 22px;
   }
   
-  .links {
+  .bottom-links {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
+  }
+  
+  .admin-login {
+    align-self: flex-end;
   }
 }
