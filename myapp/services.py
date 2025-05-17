@@ -18,14 +18,14 @@ def analyze_text(text):
         if response.status_code == 200:
             try:
                 response_data = response.json()
-                print(f"🔍 API Response: {response_data}")  # ✅ Debug API response
+                print(f"🔍 API Response: {response_data}")  
 
-                # ✅ ตรวจสอบว่ามี key "sentiment" หรือไม่
+               
                 sentiment_data = response_data.get("sentiment", {})
 
-                # ✅ ใช้ค่า "polarity" เป็นตัวบอก sentiment
+                
                 if "polarity" in sentiment_data:
-                    return sentiment_data["polarity"]  # ✅ คืนค่า "positive", "negative", หรือ "neutral"
+                    return sentiment_data["polarity"]  
 
                 print("⚠️ API Response ไม่มีค่า polarity")
                 return None

@@ -1,8 +1,9 @@
-/* admin_withdrawals.css */
+/* admin_withdrawals.css - ปรับปรุงเพื่อความสม่ำเสมอและสวยงาม */
 
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
 
 :root {
+  /* สีหลัก */
   --primary-pink: #f8bbd0;
   --light-pink: #ffeeff;
   --dark-pink: #c48b9f;
@@ -11,10 +12,35 @@
   --medium-gray: #e0e0e0;
   --text-dark: #333333;
   --text-medium: #666666;
+  
+  /* สีสถานะ */
   --success: #4caf50;
   --warning: #ff9800;
   --danger: #f44336;
+  
+  /* เงา */
   --shadow: rgba(0, 0, 0, 0.08);
+  
+  /* ขนาดมาตรฐาน */
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 15px;
+  --border-radius-xl: 20px;
+  
+  /* ระยะห่าง */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 30px;
+  
+  /* ขนาดตัวอักษร */
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-md: 16px;
+  --font-lg: 18px;
+  --font-xl: 22px;
+  --font-xxl: 28px;
 }
 
 * {
@@ -28,33 +54,35 @@ body {
   background-color: var(--light-pink);
   color: var(--text-dark);
   line-height: 1.6;
-  padding: 20px;
+  padding: var(--spacing-lg);
+  font-size: var(--font-md);
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
   background-color: var(--white);
-  border-radius: 15px;
+  border-radius: var(--border-radius-lg);
   box-shadow: 0 5px 15px var(--shadow);
-  padding: 30px;
+  padding: var(--spacing-xl);
   position: relative;
 }
 
-/* Navigation back button */
+/* ปุ่มย้อนกลับ */
 .back-button {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: var(--spacing-lg);
+  left: var(--spacing-lg);
   background-color: var(--primary-pink);
   color: var(--text-dark);
   border: none;
-  padding: 8px 15px;
-  border-radius: 20px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius-xl);
   font-weight: 500;
+  font-size: var(--font-sm);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--spacing-xs);
   text-decoration: none;
   transition: all 0.3s ease;
 }
@@ -67,12 +95,12 @@ body {
 
 h2 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: var(--spacing-xl);
   color: var(--dark-pink);
-  font-size: 28px;
+  font-size: var(--font-xxl);
   font-weight: 600;
   position: relative;
-  padding-bottom: 10px;
+  padding-bottom: var(--spacing-sm);
 }
 
 h2::after {
@@ -87,14 +115,76 @@ h2::after {
   border-radius: 3px;
 }
 
+/* ส่วนตัวกรอง */
+.filters {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 200px;
+}
+
+.filter-group label {
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.filter-group input,
+.filter-group select {
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--medium-gray);
+  font-size: var(--font-sm);
+  color: var(--text-dark);
+  background-color: var(--white);
+  transition: border-color 0.3s ease;
+  height: 40px; /* ทำให้ input มีขนาดเท่ากันหมด */
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  border-color: var(--primary-pink);
+  outline: none;
+}
+
+/* ปุ่มตัวกรอง */
+.btn-apply-filter {
+  background-color: var(--primary-pink);
+  color: var(--text-dark);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  font-size: var(--font-sm);
+  transition: all 0.3s ease;
+  display: inline-block;
+  height: 40px; /* ทำให้ปุ่มมีความสูงเท่ากับ input */
+  align-self: flex-end; /* จัดให้อยู่ด้านล่างเมื่ออยู่ใน filter-group */
+}
+
+.btn-apply-filter:hover {
+  background-color: var(--dark-pink);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
+/* ตาราง */
 .table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  margin-top: 20px;
+  margin-top: var(--spacing-lg);
   box-shadow: 0 2px 5px var(--shadow);
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
 }
 
 .table thead {
@@ -102,10 +192,11 @@ h2::after {
 }
 
 .table th {
-  padding: 15px;
+  padding: var(--spacing-md);
   text-align: left;
   font-weight: 500;
   color: var(--text-dark);
+  font-size: var(--font-sm);
 }
 
 .table tbody tr {
@@ -122,17 +213,21 @@ h2::after {
 }
 
 .table td {
-  padding: 15px;
+  padding: var(--spacing-md);
   border-bottom: 1px solid var(--medium-gray);
+  font-size: var(--font-sm);
+  vertical-align: middle; /* จัดข้อความให้อยู่กลางแนวตั้ง */
 }
 
-/* Status styles */
+/* สถานะ */
 .status {
   display: inline-block;
   padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
+  border-radius: var(--border-radius-xl);
+  font-size: var(--font-xs);
   font-weight: 500;
+  min-width: 100px; /* กำหนดความกว้างขั้นต่ำเพื่อให้มีขนาดเท่ากัน */
+  text-align: center; /* จัดข้อความให้อยู่ตรงกลาง */
 }
 
 .status.pending {
@@ -150,21 +245,22 @@ h2::after {
   color: var(--white);
 }
 
-/* Button styles */
+/* ปุ่มต่างๆ */
 .btn-view, 
 .btn-approve, 
 .btn-reject, 
 .btn-confirm {
   display: inline-block;
   padding: 8px 12px;
-  border-radius: 20px;
-  font-size: 14px;
+  border-radius: var(--border-radius-xl);
+  font-size: var(--font-xs);
   font-weight: 500;
   text-align: center;
   cursor: pointer;
   border: none;
   margin: 2px;
   transition: all 0.3s ease;
+  min-width: 80px; /* กำหนดความกว้างขั้นต่ำเพื่อให้มีขนาดเท่ากัน */
 }
 
 .btn-view {
@@ -196,36 +292,45 @@ h2::after {
   cursor: not-allowed;
 }
 
-/* File input styling */
+/* การจัดรูปแบบ input ไฟล์ */
 input[type="file"] {
   display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-sm);
+  padding: var(--spacing-xs);
 }
 
-/* No requests message */
+/* ข้อความเมื่อไม่มีคำขอ */
 .no-requests {
   text-align: center;
   padding: 40px;
-  font-size: 18px;
+  font-size: var(--font-lg);
   color: var(--text-medium);
   background-color: var(--light-gray);
-  border-radius: 10px;
-  margin-top: 20px;
+  border-radius: var(--border-radius-md);
+  margin-top: var(--spacing-lg);
 }
 
-/* Responsive styles */
+/* รูปแบบสำหรับการแสดงผลบนอุปกรณ์ต่างๆ */
 @media (max-width: 1024px) {
   .container {
-    padding: 20px;
+    padding: var(--spacing-lg);
   }
   
-  .table {
-    font-size: 14px;
+  h2 {
+    font-size: var(--font-xl);
   }
 }
 
 @media (max-width: 768px) {
+  body {
+    padding: var(--spacing-sm);
+  }
+  
+  .container {
+    padding: var(--spacing-md);
+  }
+  
   .table {
     display: block;
     overflow-x: auto;
@@ -233,12 +338,30 @@ input[type="file"] {
   
   .back-button {
     position: static;
-    margin-bottom: 15px;
+    margin-bottom: var(--spacing-md);
     display: inline-block;
   }
   
   h2 {
-    font-size: 22px;
-    margin-top: 15px;
+    font-size: var(--font-lg);
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
   }
+  
+  .filter-group {
+    width: 100%;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .filters {
+    gap: var(--spacing-sm);
+  }
+}
+
+/* การจัดการปุ่มในแถวเดียวกัน */
+.actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  justify-content: flex-start;
+  flex-wrap: wrap;
 }

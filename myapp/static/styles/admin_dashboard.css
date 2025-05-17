@@ -243,55 +243,7 @@ body {
         padding: 10px;
     }
 }
-.cancel-btn {
-    background-color: #f0ad4e;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-}
 
-.cancel-btn:hover {
-    background-color: #ec971f;
-}
-/* เพิ่ม CSS ต่อไปนี้ในไฟล์ admin_dashboard.css */
-
-/* ปรับแต่งปุ่มการจัดการ */
-.delete-btn, .cancel-btn {
-    display: inline-block;
-    margin: 5px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    width: 100%;
-    text-align: center;
-    border: none;
-    cursor: pointer;
-}
-
-.delete-btn {
-    background-color: #e74c3c;
-    color: white;
-}
-
-.delete-btn:hover {
-    background-color: #c0392b;
-    transform: translateY(-2px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
-
-.cancel-btn {
-    background-color: #f39c12;
-    color: white;
-}
-
-.cancel-btn:hover {
-    background-color: #d35400;
-    transform: translateY(-2px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
 
 /* ปรับปรุงการจัดวางฟอร์ม */
 .mt-2 {
@@ -380,4 +332,76 @@ body {
 .no-report-text i {
     margin-right: 10px;
     font-size: 1.3rem;
+}
+
+/* ปรับปรุงสไตล์ปุ่มให้มีขนาดเท่ากัน */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+/* ปรับขนาดปุ่มให้เท่ากัน */
+.delete-btn, .cancel-btn, form[action*="cancel_reported_post"] button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* ทำให้ปุ่มมีความกว้างเท่ากัน */
+    padding: 10px 20px; /* เพิ่ม padding ให้ปุ่มใหญ่ขึ้น */
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem; /* ขนาดตัวอักษรให้เหมาะสม */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1; /* ให้ปุ่มขยายเต็มพื้นที่ที่มีให้ */
+}
+
+/* สไตล์ปุ่ม delete */
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* สไตล์ปุ่ม cancel */
+.cancel-btn {
+    background-color: #f39c12;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #e67e22;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ปรับปรุงการแสดงไอคอนในปุ่ม */
+.delete-btn i, .cancel-btn i {
+    margin-right: 8px;
+    font-size: 1rem;
+}
+
+/* ปรับปรุงการแสดงปุ่มในฟอร์ม */
+form[action*="cancel_reported_post"] button::before {
+    content: "\f057"; /* Font Awesome icon code for times-circle */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+/* ปรับขนาดปุ่มเมื่อหน้าจอเล็กลง */
+@media (max-width: 768px) {
+    .delete-btn, .cancel-btn, form[action*="cancel_reported_post"] button {
+        padding: 12px 20px;  /* ปรับ padding ใหญ่ขึ้น */
+        font-size: 1rem; /* ปรับขนาดตัวอักษร */
+        height: 45px; /* ปรับให้ปุ่มมีความสูงที่เท่ากัน */
+    }
 }

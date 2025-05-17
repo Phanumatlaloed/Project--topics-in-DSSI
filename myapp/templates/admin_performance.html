@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📊 รายงานประสิทธิภาพผู้ขาย</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
-
+    
     <!-- โหลด Chart.js จาก CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
@@ -88,13 +87,16 @@
             padding: 20px;
             margin-bottom: 30px;
             box-shadow: var(--card-shadow);
+            height: 400px;
+            width: 100%;
+            position: relative;
         }
         
         .chart-container1 {
             background-color: white;
             border-radius: 8px;
             padding: 20px;
-            padding-bottom: 40px; /* ✅ เพิ่มส่วนล่างให้มีพื้นที่แสดงแกน x */
+            padding-bottom: 40px; /* เพิ่มส่วนล่างให้มีพื้นที่แสดงแกน x */
             margin-bottom: 30px;
             box-shadow: var(--card-shadow);
             overflow: hidden;
@@ -153,6 +155,26 @@
             color: white;
         }
         
+        .back-button-container {
+            padding: 20px;
+            text-align: left;
+        }
+        
+        .back-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #395bbf;
+        }
+        
         @media (max-width: 768px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
@@ -207,11 +229,16 @@
         </div>
         
         <!-- กราฟยอดขายรายเดือน -->
-        <div class="chart-container1" style="height: 500px; width: 100%;">
+        <div class="chart-container" style="height: 500px;">
             <h3>📈 ยอดขายรายเดือน</h3>
-            <canvas id="salesChart" style="width: 100%; height: 100%;"></canvas>
+            <canvas id="salesChart"></canvas>
         </div>
         
+        <!-- กราฟจำนวนผู้ใช้งานรายวัน -->
+        <div class="chart-container">
+            <h3>👤 จำนวนผู้ใช้งานรายวัน</h3>
+            <canvas id="dailyUsersChart"></canvas>
+        </div>
         
         <!-- ผู้ขายที่มียอดขายสูงสุด -->
         <h3>🏆 ผู้ขายที่มียอดขายสูงสุด</h3>
@@ -275,7 +302,194 @@
         }
         const csrftoken = getCookie('csrftoken');
 
-        // ดึงข้อมูลกราฟจาก API endpoint
+        // เตรียมข้อมูลสำหรับกราฟการคืนสินค้า (จากข้อมูลที่ส่งมาจาก Django)
+        const refundData = {
+            labels: [
+                {% for refund in refunds_by_month %}
+                    "{{ refund.created_at__month }}/{{ refund.created_at__year }}",
+                {% endfor %}
+            ],
+            values: [
+                {% for refund in refunds_by_month %}
+                    {{ refund.total_refunds }},
+                {% endfor %}
+            ],
+            rates: [
+                {% for refund in refunds_by_month %}
+                    {{ refund.refund_rate }},
+                {% endfor %}
+            ]
+        };
+        
+        // เตรียมข้อมูลสำหรับกราฟผู้ใช้งานรายวัน
+        const dailyUsersData = {
+            labels: [
+                {% for day in daily_users %}
+                    "{{ day.date|date:'d/m/Y' }}",
+                {% endfor %}
+            ],
+            values: [
+                {% for day in daily_users %}
+                    {{ day.user_count }},
+                {% endfor %}
+            ]
+        };
+
+        // สร้างกราฟการคืนสินค้า
+        const refundCtx = document.getElementById('refundChart').getContext('2d');
+        const refundChart = new Chart(refundCtx, {
+            type: 'bar',
+            data: {
+                labels: refundData.labels,
+                datasets: [
+                    {
+                        label: 'จำนวนการคืนสินค้า',
+                        data: refundData.values,
+                        backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                        borderColor: 'rgba(220, 53, 69, 1)',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        yAxisID: 'y',
+                        order: 2
+                    },
+                    {
+                        label: 'อัตราการคืนสินค้า (%)',
+                        data: refundData.rates,
+                        borderColor: 'rgba(255, 193, 7, 1)',
+                        backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                        type: 'line',
+                        yAxisID: 'y1',
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'จำนวนการคืนสินค้า'
+                        },
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        type: 'linear',
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'อัตราการคืนสินค้า (%)'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // สร้างกราฟจำนวนผู้ใช้งานรายวัน
+        const dailyUsersCtx = document.getElementById('dailyUsersChart').getContext('2d');
+        const dailyUsersChart = new Chart(dailyUsersCtx, {
+            type: 'bar',
+            data: {
+                labels: dailyUsersData.labels,
+                datasets: [{
+                    label: 'จำนวนผู้ใช้งานระบบ',
+                    data: dailyUsersData.values,
+                    backgroundColor: 'rgba(40, 167, 69, 0.7)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    maxBarThickness: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'จำนวนผู้ใช้',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                            color: '#333',
+                            font: {
+                                size: 12
+                            },
+                            maxRotation: 45,
+                            minRotation: 45,
+                            autoSkip: false
+                        },
+                        border: {
+                            width: 2,
+                            color: '#333'
+                        },
+                        title: {
+                            display: true,
+                            text: 'วันที่',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        bottom: 20
+                    }
+                }
+            }
+        });
+        
+        // ดึงข้อมูลกราฟจาก API endpoint สำหรับกราฟยอดขาย
         fetch('/admins/performance-data/', {
             method: 'GET',
             headers: {
@@ -345,52 +559,11 @@
                     }
                 }
             });
-            
-            // // สร้างกราฟจำนวนผู้ใช้งานรายวัน
-            // var dailyUsersCtx = document.getElementById('dailyUsersChart').getContext('2d');
-            // var dailyUsersChart = new Chart(dailyUsersCtx, {
-            //     type: 'bar',
-            //     data: {
-            //         labels: data.users_data.labels,
-            //         datasets: [{
-            //             label: 'จำนวนผู้ใช้งานระบบ',
-            //             data: data.users_data.values,
-            //             backgroundColor: 'rgba(40, 167, 69, 0.7)',
-            //             borderColor: 'rgba(40, 167, 69, 1)',
-            //             borderWidth: 1,
-            //             borderRadius: 5,
-            //             maxBarThickness: 20
-            //         }]
-            //     },
-            //     options: {
-            //         responsive: true,
-            //         maintainAspectRatio: false,
-            //         plugins: {
-            //             legend: {
-            //                 position: 'top',
-            //             },
-            //             tooltip: {
-            //                 mode: 'index',
-            //                 intersect: false
-            //             }
-            //         },
-            //         scales: {
-            //             y: {
-            //                 beginAtZero: true,
-            //                 ticks: {
-            //                     precision: 0
-            //                 }
-            //             }
-            //         }
-            //     }
-            // });
         })
         .catch(error => {
             console.error('Error fetching chart data:', error);
             // แสดงข้อความแจ้งเตือนเมื่อโหลดข้อมูลไม่สำเร็จ
-            document.querySelectorAll('.chart-container').forEach(container => {
-                container.innerHTML = '<div class="alert alert-danger">ไม่สามารถโหลดข้อมูลกราฟได้ กรุณาลองใหม่อีกครั้ง</div>';
-            });
+            document.getElementById('salesChart').parentElement.innerHTML = '<div style="color: #dc3545; text-align: center; margin-top: 50px;">ไม่สามารถโหลดข้อมูลกราฟได้ กรุณาลองใหม่อีกครั้ง</div>';
         });
     });
     </script>
