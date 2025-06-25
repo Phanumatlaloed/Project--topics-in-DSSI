@@ -62,6 +62,9 @@ mysql -u root -p
 
 CREATE DATABASE mydata85 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+![image](https://github.com/user-attachments/assets/3800684e-f3e7-4e89-96c7-5065f7ac1180)
+
+
 6.รันคำสั่ง Migrations และ Start Server
 
 python manage.py makemigrations
