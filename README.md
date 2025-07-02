@@ -34,6 +34,8 @@ pip install -r django.txt
 python -m pip install Pillow,django,PyJWT,requests,mysqlclient,django-allauth,cryptography,Pillow,django-crispy-forms,python-dotenv
 django-cors-headers,bootstrap,allauth,requests,jwt
 
+บางทีมันโหลดไม่ติดเช็คดีๆนะ โหลดแบบ pip install เลยก็ได้
+
 4.ตั้งค่า Django ให้ใช้ PyMySQL แทน mysqlclient
 
  เปิดไฟล์: yourproject/__init__.py
@@ -51,7 +53,7 @@ pymysql.install_as_MySQLdb()
 5. สร้างฐานข้อมูลใน MySQL
 ชื่อ root 
 
-รหัส 12345
+รหัส 12345  ตรวจสอบดีๆแต่ละเครื่องรหัสไม่เหมือนกัน 
 
 พอต 3066
 
@@ -65,16 +67,26 @@ CREATE DATABASE mydata85 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ![image](https://github.com/user-attachments/assets/3800684e-f3e7-4e89-96c7-5065f7ac1180)
 
 
-6.รันคำสั่ง Migrations และ Start Server
+6.รันคำสั่ง Migrations และ Start Server\
 
+อย่าลืมลบ C:\Users\Apai\Desktop\projectgenni\Project--topics-in-DSSI\notifications\migrations 
+
+C:\Users\Apai\Desktop\projectgenni\Project--topics-in-DSSI\myapp\migrations
+![image](https://github.com/user-attachments/assets/807f2497-23bf-4412-ab8f-876009d7d1ee)
+![image](https://github.com/user-attachments/assets/f7a8fbe1-4c87-4a89-a42e-afe6be0a43cb)
+
+มีสองที่นะ โปรต้องทำ noticแยก   ลบพวก 0001 0002 ออก ค่อย make 
+
+C:\Users\Apai\Desktop\projectgenni\Project--topics-in-DSSI\myapp\migrations\0001_initial.py
 python manage.py makemigrations
 
 python manage.py migrate
 
-python manage.py createsuperuser  # สร้างแอดมินเข้าเว็บ
 
 python manage.py runserver
 
 จากนั้นเปิดเบราว์เซอร์แล้วเข้า:
 
 http://127.0.0.1:8000/
+
+ภาพและโลโก้ต่างๆไม่มีไม่เป็นไรเพราะ เจนเอาออกเนื่องจากไฟล์ใหญ่ ไม่สามารถอัพขึ้นกิตได้
