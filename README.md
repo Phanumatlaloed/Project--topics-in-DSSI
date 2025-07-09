@@ -3,6 +3,9 @@
 
 “รัน Docker container” ในโปรเจกต์ของคุณ (จากสถานะปัจจุบันของคุณเลย):
 
+## Logs การใช้งาน AI
+https://drive.google.com/file/d/1oXuoqqrawv8UNX7j-ApDGKnmwHh3HHgw/view?usp=sharing
+
 https://chatgpt.com/share/686e49c0-9bdc-800e-ab5e-f707ad1e0e18
 
  หยุด Container เดิม (ถ้ายังรันอยู่)
