@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8.0.34
+    restart: always
+    environment:
+      MYSQL_DATABASE: mydata85
+      MYSQL_ROOT_PASSWORD: 12345
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  web:
+    build: .
+    command: >
+      sh -c "./wait-for-it.sh db:3306 --timeout=60 --strict -- 
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8010:8000"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
