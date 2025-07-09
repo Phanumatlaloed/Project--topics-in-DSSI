@@ -1,6 +1,54 @@
 ﻿# projectend
 # webgenni
 
+“รัน Docker container” ในโปรเจกต์ของคุณ (จากสถานะปัจจุบันของคุณเลย):
+
+https://chatgpt.com/share/686e49c0-9bdc-800e-ab5e-f707ad1e0e18
+
+ หยุด Container เดิม (ถ้ายังรันอยู่)
+
+docker-compose down -v
+
+ สร้าง Container ใหม่ + Build ใหม่ (ชัวร์สุด)
+
+docker-compose up -d --build
+
+ ตรวจสอบว่า Container รันสำเร็จไหม:
+
+
+docker ps
+
+ถ้าเห็น container ชื่อ save-web-1 กับ save-db-1 ขึ้นว่า “Up” แสดงว่ารันสำเร็จ
+
+(Optional) ถ้าอยากดู log:
+
+docker-compose logs -f web
+
+เปิดเว็บได้เลยที่:
+
+http://localhost:8010/
+
+รันคำสั่ง Django เพิ่มเติมใน Container:
+
+migrate:
+
+docker-compose exec web python manage.py migrate
+
+createsuperuser:
+
+
+docker-compose exec web python manage.py createsuperuser
+
+สรุป คำสั่งสำคัญที่คุณใช้รัน Docker Container ได้:
+
+docker-compose down -v
+
+docker-compose up -d --build
+
+docker ps
+
+docker-compose exec web python manage.py migrate
+
 # วิธีการดาวโหลด
 1.เตรียม Python และ MySQL
 
