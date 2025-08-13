@@ -18,7 +18,6 @@ cryptography
 django-crispy-forms
 python-dotenv
 django-cors-headers
-allauth
 requests
 jwt
 pymysql
