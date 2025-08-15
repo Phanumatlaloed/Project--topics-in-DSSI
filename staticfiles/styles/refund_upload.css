@@ -1,0 +1,79 @@
+/* 🌸 Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffd1dc;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    height: 50px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #333;
+}
+
+.nav-links a.logout {
+    color: red;
+}
+
+/* 📤 Upload Card */
+.card {
+    background: #fff;
+    border-radius: 10px;
+    border: 2px solid #ffb6c1;
+}
+
+.card h4 {
+    color: #ff1493;
+}
+
+/* 📎 File Input */
+input[type="file"] {
+    border: 2px dashed #ff69b4;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+input[type="file"]:hover {
+    background: #ffe4e1;
+}
+
+/* ✅ Upload Button */
+.btn-success {
+    background: #ff1493;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.btn-success:hover {
+    background: #ff69b4;
+}
+
+/* 🔙 Back Button */
+.btn-secondary {
+    background: #ccc;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.btn-secondary:hover {
+    background: #999;
+}

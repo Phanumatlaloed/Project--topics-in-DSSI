@@ -1,0 +1,312 @@
+/* ===== BASE STYLES ===== */
+:root {
+  --primary: #FF6584;
+  --primary-light: #FFC0CB;
+  --primary-dark: #E5446D;
+  --white: #ffffff;
+  --light-gray: #f5f5f5;
+  --medium-gray: #e0e0e0;
+  --dark-gray: #333333;
+  --text-color: #2c3e50;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --info: #3498db;
+  --danger: #e74c3c;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background-color: #f8f9fa;
+  color: var(--text-color);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* ===== DASHBOARD LAYOUT ===== */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.container {
+  flex: 1;
+  padding: 25px;
+  margin-left: 260px;
+  transition: var(--transition);
+}
+
+/* ===== HAMBURGER MENU ===== */
+.hamburger-menu {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1001;
+  padding: 10px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  box-shadow: var(--shadow);
+}
+
+.bar {
+  width: 25px;
+  height: 3px;
+  background-color: var(--white);
+  margin: 5px 0;
+  transition: var(--transition);
+  display: block;
+}
+
+/* ===== HEADINGS ===== */
+h2 {
+  margin-bottom: 25px;
+  color: var(--primary-dark);
+  font-weight: 500;
+  font-size: 1.8rem;
+  border-left: 5px solid var(--primary);
+  padding-left: 15px;
+}
+
+h3 {
+  margin-bottom: 15px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+/* ===== SUMMARY CARDS ===== */
+.report-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow);
+  border-top: 4px solid var(--primary);
+  transition: var(--transition);
+}
+
+.report-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.report-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.report-card p {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--primary-dark);
+}
+
+.money {
+  position: relative;
+  color: var(--success) !important;
+}
+
+.money::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background-color: var(--success);
+  border-radius: 2px;
+}
+
+/* ===== CHART CARDS ===== */
+.charts-section {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+@media (min-width: 768px) {
+  .charts-section {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.chart-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+.chart-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--primary-dark);
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+canvas {
+  max-width: 100%;
+  height: 100% !important;
+}
+
+/* ===== TABLE ===== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+  background-color: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.table th, .table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--medium-gray);
+}
+
+.table thead th {
+  background-color: var(--primary-light);
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(255, 101, 132, 0.05);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== REVIEW LIST ===== */
+.review-list {
+  list-style: none;
+  margin-bottom: 25px;
+}
+
+.review-list li {
+  background-color: var(--white);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  border-left: 4px solid var(--primary-light);
+}
+
+.review-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.review-list strong {
+  color: var(--primary-dark);
+  font-weight: 500;
+}
+
+.review-list p {
+  margin: 10px 0;
+  font-style: italic;
+  color: var(--text-color);
+}
+
+.review-list small {
+  display: block;
+  color: #777;
+  font-size: 0.8rem;
+}
+
+/* ===== RESPONSIVENESS ===== */
+@media screen and (max-width: 992px) {
+  .container {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+
+  .hamburger-menu.active .bar:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+  }
+
+  .hamburger-menu.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger-menu.active .bar:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+  }
+
+  .chart-container {
+    height: 250px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .report-card, .chart-card {
+    padding: 15px;
+  }
+
+  .chart-container {
+    height: 200px;
+  }
+
+  .table th, .table td {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.report-card, .chart-card, .table, .review-list li {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* ===== STAGGERED ANIMATION ===== */
+.report-card:nth-child(2) { animation-delay: 0.1s; }
+.chart-card:nth-child(3) { animation-delay: 0.2s; }
+.chart-card:nth-child(5) { animation-delay: 0.3s; }
+.review-list li:nth-child(1) { animation-delay: 0.4s; }
+.review-list li:nth-child(2) { animation-delay: 0.5s; }
+.review-list li:nth-child(3) { animation-delay: 0.6s; }

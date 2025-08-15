@@ -1,0 +1,158 @@
+/* 🌸 ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🌸 Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    width: 80px;
+    height: auto;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #ff6b81;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    background: #ff6b81;
+    color: white;
+}
+
+/* 🌸 Payment Form Container */
+.payment-container {
+    width: 80%;
+    margin: 40px auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #ff6b81;
+    font-size: 26px;
+}
+
+h3 {
+    color: #ff6b81;
+    font-size: 22px;
+    margin-top: 20px;
+}
+
+/* 🌸 รายการคำสั่งซื้อ */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+/* 🌸 ฟอร์มอัปโหลด */
+label {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 2px solid #ff6b81;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+/* 🌸 ปุ่ม */
+button {
+    padding: 12px 20px;
+    background-color: #ff6b81;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #e05570;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-success {
+    background: #ff6b81;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #e05570;
+}
+
+/* 🌸 Responsive (มือถือ & แท็บเล็ต) */
+@media (max-width: 768px) {
+    .payment-container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    h3 {
+        font-size: 20px;
+    }
+
+    input[type="file"] {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}

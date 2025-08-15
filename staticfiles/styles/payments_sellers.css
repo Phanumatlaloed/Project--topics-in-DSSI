@@ -1,0 +1,304 @@
+/* ✅ ตั้งค่า Theme และ Typography */
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+
+:root {
+  --primary: #FF6B8B;
+  --primary-light: #FFC0CB;
+  --primary-dark: #E5446D;
+  --secondary: #6C63FF;
+  --white: #FFFFFF;
+  --light-gray: #F8F9FA;
+  --gray: #E9ECEF;
+  --dark-gray: #6C757D;
+  --black: #343A40;
+  --success: #20C997;
+  --warning: #FFC107;
+  --danger: #DC3545;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background-color: var(--light-gray);
+  color: var(--black);
+  line-height: 1.6;
+}
+
+/* ✅ Layout Dashboard */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+
+/* ✅ Main Content */
+.content {
+  flex-grow: 1;
+  margin-left: 280px;
+  padding: 40px;
+  transition: var(--transition);
+}
+
+/* ✅ Header */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--white);
+  padding: 25px 30px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.content-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+}
+
+  .content h2 {
+    color: var(--primary-dark);
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: 600;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--primary-light);
+    position: relative;
+  }
+  
+  .content h2::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 80px;
+    height: 2px;
+    background-color: var(--primary);
+  }
+  
+  /* ===== PAYMENT TABLE ===== */
+  .payment-table {
+    background-color: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 30px;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  thead {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+  }
+  
+  th {
+    padding: 16px 15px;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  
+  td {
+    padding: 16px 15px;
+    border-bottom: 1px solid var(--gray);
+    vertical-align: middle;
+  }
+  
+  tbody tr {
+    transition: var(--transition);
+  }
+  
+  tbody tr:hover {
+    background-color: rgba(255, 107, 139, 0.05);
+  }
+  
+  /* Order ID styling */
+  td:first-child {
+    font-weight: 600;
+    color: var(--primary-dark);
+  }
+  
+  /* Status styling */
+  .status {
+    font-weight: 500;
+  }
+  
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+    margin-right: 5px;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .approve {
+    background-color: var(--success);
+    color: var(--white);
+  }
+  
+  .approve:hover {
+    background-color: #1ba37e;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .reject {
+    background-color: var(--danger);
+    color: var(--white);
+  }
+  
+  .reject:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .slip-btn {
+    background-color: var(--secondary);
+    color: var(--white);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-block;
+    font-size: 14px;
+  }
+  
+  .slip-btn:hover {
+    background-color: #5a52d5;
+    transform: translateY(-2px);
+  }
+  
+  /* ===== NO ORDERS MESSAGE ===== */
+  .content p {
+    background-color: var(--white);
+    padding: 25px;
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-size: 16px;
+    color: var(--dark-gray);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  /* ===== RESPONSIVE DESIGN ===== */
+  @media (max-width: 1024px) {
+    .content {
+      margin-left: 0;
+      padding: 25px;
+    }
+  
+    .payment-table {
+      overflow-x: auto;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .content h2 {
+      font-size: 24px;
+    }
+  
+    th, td {
+      padding: 12px 10px;
+      font-size: 14px;
+    }
+  
+    .btn {
+      padding: 6px 10px;
+      font-size: 13px;
+      margin-bottom: 5px;
+      display: block;
+      width: 100%;
+    }
+  }
+
+  .contact-admin-card {
+    background: #fff0f5;
+    border: 1px solid #ffb6c1;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 40px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(255, 182, 193, 0.3);
+    font-family: 'Prompt', sans-serif;
+}
+
+.contact-admin-card h3 {
+    color: #e91e63;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.contact-admin-card p {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.contact-admin-card .contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.contact-admin-card .contact-list li {
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #444;
+}
+
+.contact-admin-card .contact-list i {
+    color: #e91e63;
+    margin-right: 8px;
+}
+
+.btn-contact-admin {
+    background-color: #ff69b4;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.btn-contact-admin:hover {
+    background-color: #e91e63;
+}
+

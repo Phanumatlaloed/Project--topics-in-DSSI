@@ -1,0 +1,224 @@
+/* 🌸 พื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-image: linear-gradient(135deg, rgba(255, 182, 193, 0.2) 25%, transparent 25%),
+                      linear-gradient(225deg, rgba(255, 182, 193, 0.2) 25%, transparent 25%),
+                      linear-gradient(45deg, rgba(255, 182, 193, 0.2) 25%, transparent 25%),
+                      linear-gradient(315deg, rgba(255, 182, 193, 0.2) 25%, transparent 25%);
+    background-position: 10px 0, 10px 0, 0 0, 0 0;
+    background-size: 20px 20px;
+    background-repeat: repeat;
+}
+
+/* 🌸 ส่วนของที่อยู่ */
+.address-container {
+    max-width: 800px;
+    width: 90%;
+    margin: 40px auto;
+    padding: 35px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(255, 105, 135, 0.3);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.address-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(to right, #ff758c, #ff7eb3);
+}
+
+h2 {
+    color: #ff6b81;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px dashed #ffb6c1;
+    display: inline-block;
+}
+
+/* 🌸 การ์ดที่อยู่ */
+.address-card {
+    padding: 20px;
+    margin-bottom: 25px;
+    background-color: #fffafc;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(255, 105, 135, 0.15);
+    text-align: left;
+    border-left: 5px solid #ff758c;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.address-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(255, 105, 135, 0.25);
+}
+
+.address-card p {
+    margin: 8px 0;
+    color: #555;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.address-card p strong {
+    color: #ff6b81;
+    margin-right: 5px;
+}
+
+/* 🌸 ปุ่มต่างๆ */
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    margin: 10px 8px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, #ff758c, #ff7eb3);
+    color: white;
+    box-shadow: 0px 5px 15px rgba(255, 117, 140, 0.4);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, #ff5e62, #ff99ac);
+    box-shadow: 0px 8px 20px rgba(255, 105, 135, 0.5);
+    transform: translateY(-3px);
+}
+
+.btn-secondary {
+    background: white;
+    color: #ff758c;
+    border: 2px solid #ff758c;
+    box-shadow: 0px 4px 10px rgba(255, 117, 140, 0.2);
+}
+
+.btn-secondary:hover {
+    background: #fff5f8;
+    color: #ff5e62;
+    border-color: #ff5e62;
+    box-shadow: 0px 6px 15px rgba(255, 105, 135, 0.3);
+    transform: translateY(-3px);
+}
+
+.btn-warning {
+    background: linear-gradient(to right, #ffb347, #ffcc33);
+    color: white;
+    box-shadow: 0px 4px 10px rgba(255, 179, 71, 0.3);
+}
+
+.btn-warning:hover {
+    background: linear-gradient(to right, #ff9a00, #ffb347);
+    box-shadow: 0px 6px 15px rgba(255, 179, 71, 0.4);
+    transform: translateY(-3px);
+}
+
+.btn-danger {
+    background: linear-gradient(to right, #ff6b6b, #ff8585);
+    color: white;
+    box-shadow: 0px 4px 10px rgba(255, 107, 107, 0.3);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(to right, #ff5252, #ff6b6b);
+    box-shadow: 0px 6px 15px rgba(255, 107, 107, 0.4);
+    transform: translateY(-3px);
+}
+
+/* 🌸 ข้อความเมื่อไม่มีที่อยู่ */
+.address-container > p {
+    font-size: 18px;
+    color: #ff6b81;
+    background-color: rgba(255, 107, 129, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+/* 🌸 ฟุตเตอร์ */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px -4px 12px rgba(255, 105, 135, 0.1);
+    border-top: 3px solid #ffb6c1;
+    margin-top: auto;
+}
+
+footer p {
+    color: #ff6b81;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* 🌸 เอฟเฟกต์สวยๆ */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 107, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 129, 0);
+    }
+}
+
+/* ปุ่มในการ์ด */
+.address-card .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    margin: 10px 5px 0 0;
+}
+
+/* 🌸 ปรับแต่งให้รองรับมือถือ */
+@media (max-width: 768px) {
+    .address-container {
+        width: 85%;
+        padding: 25px 15px;
+        margin: 20px auto;
+    }
+    
+    h2 {
+        font-size: 24px;
+    }
+    
+    .address-card {
+        padding: 15px;
+    }
+    
+    .btn {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .address-card .btn {
+        display: inline-block;
+        width: calc(50% - 10px);
+        margin: 10px 5px 0 0;
+    }
+}

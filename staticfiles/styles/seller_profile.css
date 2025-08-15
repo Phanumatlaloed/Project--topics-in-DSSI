@@ -1,0 +1,60 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fef3f7; /* สีชมพูอ่อน */
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #ff6384;
+}
+
+form {
+    text-align: left;
+}
+
+form .form-control {
+    border: 2px solid #ffb6c1;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+form .form-control:focus {
+    border-color: #ff85a2;
+    box-shadow: 0px 0px 5px #ff85a2;
+}
+
+.btn-save {
+    background: #ff85a2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-save:hover {
+    background: #ff6384;
+}
+
+.btn-back {
+    display: block;
+    margin-top: 20px;
+    color: #ff6384;
+    text-decoration: none;
+    font-weight: bold;
+}

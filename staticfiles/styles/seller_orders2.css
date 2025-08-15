@@ -1,0 +1,174 @@
+/* ✅ ตั้งค่าแบบอักษรและโครงสร้างพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff0f3; /* พื้นหลังชมพูอ่อน */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ✅ Navbar */
+.navbar {
+    background-color: #ffdde1; /* ชมพูอ่อน */
+    padding: 10px 20px; /* ลด padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ปรับขนาดโลโก้ */
+.navbar .logo img {
+    height: 50px; /* ✅ ลดขนาดโลโก้ */
+    width: auto;
+    border-radius: 8px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    padding: 0;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #e75480; /* ชมพูเข้ม */
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: #ffb6c1; /* ชมพูอ่อน */
+    color: white;
+}
+
+/* ✅ ปรับขนาดและจัดวางโลโก้ตรงกลาง */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.logo-container img {
+    max-width: 150px; /* ✅ ปรับขนาดโลโก้ให้อยู่ในกรอบ */
+    height: auto;
+    border-radius: 10px;
+}
+
+/* ✅ คอนเทนเนอร์ของคำสั่งซื้อ */
+.order-container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2 {
+    color: #e75480;
+    margin-bottom: 20px;
+}
+
+/* ✅ ตารางคำสั่งซื้อ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+    background-color: #ffdde1; /* ชมพูอ่อน */
+    color: #e75480;
+    font-weight: bold;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #f3c3d3;
+    text-align: center;
+}
+
+tr:hover {
+    background-color: #fff0f3;
+}
+
+/* ✅ ปุ่มอัปเดตสถานะ */
+.btn {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.processing {
+    background-color: #ffb6c1; /* ชมพูอ่อน */
+    color: white;
+}
+
+.shipped {
+    background-color: #ff69b4; /* ชมพูเข้ม */
+    color: white;
+}
+
+.delivered {
+    background-color: #e75480; /* แดงเข้ม */
+    color: white;
+}
+
+.cancel {
+    background-color: #ff6b6b;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* ✅ ปรับแต่งปุ่มดูสลิป */
+.slip-btn {
+    display: inline-block;
+    padding: 6px 10px;
+    background-color: #ff69b4;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.slip-btn:hover {
+    background-color: #e75480;
+}
+
+/* ✅ Footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #ffdde1;
+    color: #e75480;
+    margin-top: 20px;
+    font-weight: bold;
+}

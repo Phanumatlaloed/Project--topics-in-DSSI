@@ -1,0 +1,183 @@
+/* 🌸 ธีมหลัก */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8; /* ใช้สีพื้นหลังเหมือน order_his.css */
+    margin: 0;
+    padding: 0;
+}
+
+/* 🌸 ปรับ Container ให้ดูสมดุล */
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* 🌸 ปรับขนาดหัวข้อ */
+.title {
+    text-align: center;
+    color: #ff4081;
+    font-size: 28px; /* ขนาดตัวอักษรให้ตรงกัน */
+    font-weight: bold;
+}
+
+/* 🌸 ปรับตารางสินค้าให้เหมือนกัน */
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 🌸 หัวข้อของตาราง */
+.cart-table th, .cart-table td {
+    padding: 14px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+}
+
+/* 🌸 ปรับข้อมูลสินค้าให้ชิดซ้าย */
+.cart-table td.product-info {
+    text-align: left; /* ทำให้ข้อมูลชิดซ้าย */
+    display: flex;
+    align-items: center;
+}
+
+.cart-table td.product-info img {
+    margin-right: 15px; /* เพิ่มระยะห่างระหว่างรูปและข้อความ */
+}
+
+/* 🌸 ปรับขนาดรูปภาพสินค้า */
+.product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-right: 15px; /* ให้มีระยะห่างจากชื่อสินค้า */
+}
+
+/* 🌸 ปุ่มเพิ่ม-ลดสินค้า */
+.quantity-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.quantity-controls a {
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: #ff99b9;
+    color: white;
+    transition: 0.3s;
+}
+
+.quantity-controls a:hover {
+    background: #ff668a;
+}
+
+/* 🌸 ปุ่มลบสินค้า */
+.btn-remove {
+    text-decoration: none;
+    padding: 8px 14px;
+    background: #ff5f74;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.btn-remove:hover {
+    background: #ff3f5f;
+}
+
+/* 🌸 สรุปยอดเงิน */
+.cart-summary {
+    margin-top: 25px;
+    padding: 25px;
+    background: #ffe6eb;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.cart-summary h3 {
+    margin-bottom: 12px;
+    font-size: 22px;
+    color: #ff668a;
+}
+
+.total-price {
+    font-size: 26px;
+    font-weight: bold;
+    color: #ff3f5f;
+}
+
+/* 🌸 ปุ่ม Checkout */
+.btn-checkout {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #ff668a;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.3s;
+    margin-top: 18px;
+}
+
+.btn-checkout:hover {
+    background: #ff3f5f;
+}
+
+/* 🌸 Responsive Design */
+@media (max-width: 1024px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-table td {
+        font-size: 14px;
+    }
+
+    .quantity-controls {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .quantity-controls a {
+        font-size: 16px;
+        padding: 5px 12px;
+    }
+
+    .btn-checkout {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-image {
+        width: 60px;
+        height: 60px;
+    }
+
+    .btn-checkout {
+        font-size: 14px;
+        padding: 12px;
+    }
+}

@@ -259,7 +259,6 @@ urlpatterns = [
 
     path('admins/performance/', views.admin_performance, name='admin_performance'),
     path('admins/performance-data/', views.admin_performance_chart_data, name='admin_performance_chart_data'),
-    
 ]
 
     

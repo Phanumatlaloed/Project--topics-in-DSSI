@@ -1,0 +1,127 @@
+/* 🌸 ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🌸 Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    width: 80px;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #ff6b81;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    background: #ff6b81;
+    color: white;
+}
+
+/* 🌸 ฟอร์มรีวิว */
+.container {
+    max-width: 600px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2 {
+    color: #ff6b81;
+    font-size: 24px;
+}
+
+/* 🌸 ฟอร์ม */
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.review-form label {
+    font-weight: bold;
+    color: #ff6b81;
+}
+
+.rating-select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ff6b81;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ff6b81;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+input[type="file"] {
+    border: 2px solid #ff6b81;
+    padding: 8px;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.submit-btn {
+    background: #ff6b81;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background: #e05570;
+}
+
+/* 🌸 ปุ่มกลับ */
+.back-btn {
+    display: block;
+    margin-top: 15px;
+    color: #ff6b81;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    text-decoration: underline;
+}
+
+/* 🌸 Responsive */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+    }
+}

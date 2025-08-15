@@ -1,0 +1,168 @@
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #fff5f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🔹 เพิ่มขนาด container ให้ใหญ่ขึ้น */
+.container {
+    max-width: 800px; /* ✅ จาก 600px เป็น 800px */
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    text-align: center;
+    color: #ff6b9d;
+    font-size: 32px; /* ✅ เพิ่มขนาด font */
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* 🔹 ปรับขนาดการ์ดให้ดูใหญ่ขึ้น */
+.order-card {
+    background: #ffebf2;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.highlight {
+    color: #ff3385;
+}
+
+.card {
+    background: #fff;
+    border: 2px solid #ffbdd2; /* ✅ เพิ่มความหนาของขอบ */
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background: #ffbdd2;
+    color: white;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* 🔹 ปรับขนาดตัวอักษร & ช่องว่างในรายการสินค้า */
+.product-list {
+    list-style: none;
+    padding: 15px;
+}
+
+.product-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-size: 16px;
+    border-bottom: 1px solid #ffbdd2;
+}
+
+.product-item:last-child {
+    border-bottom: none;
+}
+
+.order-info {
+    list-style: none;
+    padding: 15px;
+    background: #ffe5ec;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+/* 🔹 ปรับขนาดฟอร์มขอคืนเงินให้กว้างขึ้น */
+.refund-form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+/* 🔹 ปรับขนาด input ใหญ่ขึ้น */
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ffbdd2;
+    border-radius: 8px;
+}
+
+textarea {
+    min-height: 100px; /* ✅ ปรับให้สูงขึ้น */
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #ff6b9d;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit-btn:hover {
+    background: #ff3385;
+}
+
+/* 🔹 ปรับปุ่มย้อนกลับให้ใหญ่ขึ้น */
+.back-btn {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.btn {
+    display: inline-block;
+    background: #999;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #666;
+}
+
+/* 🔹 ปรับขนาดตัวหนังสือของยอดรวมให้ใหญ่ & โดดเด่นขึ้น */
+.total-price {
+    font-size: 26px;  /* ✅ ขยายขนาดตัวอักษร */
+    font-weight: bold;
+    color: #ff3385;   /* ✅ ใช้สีชมพูเข้ม */
+    text-align: center;
+    background: #ffe5ec;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #ffbdd2;
+    box-shadow: 0px 3px 8px rgba(255, 51, 133, 0.3); /* ✅ เพิ่มเงาให้ดูมีมิติ */
+    margin-bottom: 20px;
+}
+

@@ -1,0 +1,522 @@
+/* ==================== COMMON VARIABLES ==================== */
+:root {
+    --pink-light: #FFD1DC;
+    --pink-light-transparent: rgba(255, 209, 220, 0.3);
+    --pink-medium: #FFC0CB;
+    --pink-dark: #FF9AA2;
+    --white: #FFFFFF;
+    --gray-light: #F8F9FA;
+    --gray-medium: #E9ECEF;
+    --text-dark: #343A40;
+    --text-light: #6C757D;
+    --accent-color: #FF6B81;
+    --success-color: #66CDAA;
+    --info-color: #87CEFA;
+    --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+  }
+  
+  /* ==================== GLOBAL STYLES ==================== */
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--gray-light);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  
+  a {
+    text-decoration: none;
+    color: var(--accent-color);
+    transition: var(--transition);
+  }
+  
+  a:hover {
+    color: var(--pink-dark);
+  }
+  
+
+  
+  /* ==================== MAIN CONTENT STYLES ==================== */
+  main {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+  
+  h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  h2:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background-color: var(--pink-medium);
+    border-radius: 10px;
+  }
+  
+  /* ==================== SEARCH & FILTER STYLES ==================== */
+  #searchBox {
+    width: 100%;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border: 2px solid var(--pink-light);
+    border-radius: var(--border-radius);
+    font-size: 16px;
+    background-color: var(--white);
+    transition: var(--transition);
+  }
+  
+  #searchBox:focus {
+    outline: none;
+    border-color: var(--pink-medium);
+    box-shadow: 0 0 8px rgba(255, 182, 193, 0.5);
+  }
+  
+  #searchBox::placeholder {
+    color: var(--text-light);
+  }
+  
+  .filter-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    background-color: var(--white);
+    padding: 15px 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+  
+  .filter-section label {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+    white-space: nowrap;
+  }
+  
+  #categoryFilter {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid var(--pink-light);
+    border-radius: var(--border-radius);
+    font-size: 16px;
+    color: var(--text-dark);
+    background-color: var(--white);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  #categoryFilter:focus {
+    outline: none;
+    border-color: var(--pink-medium);
+  }
+  
+  /* ==================== PRODUCT GRID STYLES ==================== */
+  .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+  }
+  
+  .product-item {
+    transition: var(--transition);
+  }
+  
+  .card {
+    height: 100%;
+    border: none;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* แก้ไขขนาดรูปภาพให้มีขนาดที่เหมาะสม */
+  .card-img-top {
+    height: 240px;
+    object-fit: contain; /* เปลี่ยนจาก cover เป็น contain เพื่อให้รูปภาพแสดงเต็มรูปแบบ */
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-bottom: 2px solid var(--pink-light);
+    max-width: 100%;
+  }
+  
+  .card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  /* ปรับปรุงการแสดงชื่อสินค้า */
+  .card-title {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--accent-color);
+    font-weight: 600;
+    min-height: 48px; /* กำหนดความสูงขั้นต่ำเพื่อให้มีพื้นที่สำหรับชื่อสินค้า */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    position: relative;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--pink-light);
+  }
+  
+  .card-text {
+    margin-bottom: 8px;
+    color: var(--text-light);
+    font-size: 0.95rem;
+  }
+  
+  .card-text a {
+    font-weight: 500;
+  }
+  
+  /* ปรับปรุงให้สวยงาม */
+  .card-text a:hover {
+    text-decoration: underline;
+  }
+  
+  /* สไตล์สำหรับร้านค้า */
+  .card-text a[href*='store_detail'] {
+    color: var(--accent-color);
+  }
+  
+  /* สไตล์สำหรับหมวดหมู่ */
+  .card-text:nth-of-type(2) {
+    background-color: var(--pink-light-transparent);
+    padding: 4px 10px;
+    border-radius: 15px;
+    display: inline-block;
+    font-size: 0.85rem;
+  }
+  
+  /* ข้อมูลสต็อกสินค้า */
+  .card-text:nth-of-type(3) {
+    margin-top: 5px;
+  }
+  
+  /* ข้อมูลยอดขาย */
+  .card-text:nth-of-type(4) {
+    font-weight: 500;
+  }
+  
+  .text-primary {
+    color: var(--accent-color) !important;
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-top: 15px;
+    text-align: right;
+  }
+  
+  .out-of-stock {
+    color: #DC3545;
+    font-weight: 500;
+  }
+  
+  /* ==================== BUTTON STYLES ==================== */
+  .btn-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto; /* ปุ่มอยู่ด้านล่างสุดของ card-body */
+    padding-top: 15px;
+  }
+  
+  .btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 25px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    flex: 1;
+    text-align: center;
+    display: inline-block;
+    font-size: 0.95rem;
+  }
+  
+  .btn-success {
+    background-color: var(--success-color);
+    color: var(--white);
+  }
+  
+  .btn-success:hover {
+    background-color: #5AB9A8;
+    transform: translateY(-2px);
+  }
+  
+  .btn-info {
+    background-color: var(--info-color);
+    color: var(--white);
+  }
+  
+  .btn-info:hover {
+    background-color: #6BAED6;
+    transform: translateY(-2px);
+  }
+  
+  .btn-secondary {
+    background-color: var(--gray-medium);
+    color: var(--text-dark);
+  }
+  
+  /* ==================== RESPONSIVENESS ==================== */
+  @media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      padding: 10px;
+    }
+    
+    .logo {
+      margin-bottom: 15px;
+    }
+    
+    .nav-links {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .filter-section {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    #categoryFilter {
+      width: 100%;
+    }
+    
+    .row {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .btn-container {
+      flex-direction: column;
+    }
+    
+    .card-img-top {
+      height: 200px; /* ลดความสูงของรูปภาพบนมือถือ */
+    }
+  }
+  
+  /* ปรับปรุงสำหรับหน้าจอขนาดกลาง */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .row {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+    
+    .card-img-top {
+      height: 180px;
+    }
+  }
+  
+  /* ==================== ANIMATIONS ==================== */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .product-item {
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  .product-item:nth-child(2n) {
+    animation-delay: 0.1s;
+  }
+  
+  .product-item:nth-child(3n) {
+    animation-delay: 0.2s;
+  }
+  
+  /* ==================== CUSTOM MESSAGE STYLES ==================== */
+  #noProducts {
+    text-align: center;
+    padding: 30px;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    color: var(--text-light);
+    font-size: 1.2rem;
+    margin: 30px auto;
+    max-width: 600px;
+    border: 2px dashed var(--pink-light);
+  }
+  
+  /* Alert styles for JavaScript messages */
+  .alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: var(--border-radius);
+    color: var(--white);
+    z-index: 2000;
+    box-shadow: var(--box-shadow);
+    animation: slideIn 0.5s ease forwards;
+  }
+  
+  .alert-success {
+    background-color: var(--success-color);
+  }
+  
+  .alert-danger {
+    background-color: #FF6B6B;
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  /* ==================== สำหรับหน้าสินค้าที่แสดงในภาพตัวอย่าง ==================== */
+  /* ตัวเลือกหมวดหมู่ */
+  .category-select {
+    padding: 10px 15px;
+    border: 1px solid var(--pink-light);
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    color: var(--text-dark);
+    width: 100%;
+    font-size: 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23FF6B81' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 15px) center;
+    padding-right: 30px;
+  }
+  
+  /* ช่องค้นหา */
+  .search-box {
+    padding: 10px 15px;
+    border: 1px solid var(--pink-light);
+    border-radius: var(--border-radius);
+    width: 100%;
+    font-size: 1rem;
+    background-color: var(--white);
+    transition: var(--transition);
+  }
+  
+  .search-box:focus {
+    outline: none;
+    border-color: var(--pink-medium);
+    box-shadow: 0 0 8px rgba(255, 182, 193, 0.5);
+  }
+  
+  /* ป้ายหมวดหมู่ */
+  .category-tag {
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    background-color: var(--pink-light-transparent);
+    padding: 3px 10px;
+    border-radius: 15px;
+    margin-right: 5px;
+    display: inline-block;
+  }
+  
+  /* สไตล์สำหรับร้านค้า */
+  .store-name {
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .store-name a {
+    color: var(--accent-color);
+    text-decoration: none;
+  }
+  
+  .store-name a:hover {
+    text-decoration: underline;
+  }
+  
+  /* จำนวนในสต็อก */
+  .stock-count {
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+  
+  /* ยอดขาย */
+  .sold-count {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    font-weight: 500;
+  }
+  
+  /* ราคา */
+  .price {
+    color: var(--accent-color);
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: right;
+    margin: 10px 0;
+  }
+  
+  /* ปุ่มเพิ่มในตะกร้า */
+  .add-to-cart-btn {
+    background-color: var(--success-color);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    padding: 8px 15px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .add-to-cart-btn:hover {
+    background-color: #5AB9A8;
+    transform: translateY(-2px);
+  }
+  
+  /* ปุ่มรายละเอียด */
+  .detail-btn {
+    background-color: var(--info-color);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    padding: 8px 15px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .detail-btn:hover {
+    background-color: #6BAED6;
+    transform: translateY(-2px);
+  }

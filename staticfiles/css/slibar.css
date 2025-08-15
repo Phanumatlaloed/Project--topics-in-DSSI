@@ -1,0 +1,152 @@
+/* ✅ ปรับ Sidebar ให้ดูเรียบหรู ทันสมัย */
+.sidebar {
+    width: 260px;
+    background: #fff;
+    color: #e75480;
+    padding: 20px;
+    min-height: 100vh;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    border-right: 3px solid #ffdde1;
+}
+
+/* ✅ ชื่อหัวข้อ Sidebar */
+.sidebar-title {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 12px;
+    color: #ff6b81;
+    background: linear-gradient(135deg, #ffe6eb, #ffd3d3);
+    border-radius: 10px;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ เมนูภายใน Sidebar */
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+/* ✅ หัวข้อหมวดหมู่ */
+.menu-header {
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 10px 14px;
+    color: #ff6b81;
+    text-transform: uppercase;
+    font-size: 14px;
+    background: rgba(255, 230, 235, 0.6);
+    border-radius: 8px;
+}
+
+/* ✅ รายการเมนู */
+.menu-item {
+    margin-top: 8px;
+}
+
+.menu-item a {
+    color: #ff6b81;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 18px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    font-size: 16px;
+    font-weight: 500;
+    background: rgba(255, 230, 235, 0.3);
+}
+
+/* ✅ ไอคอนเมนู */
+.menu-item a i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* ✅ เอฟเฟกต์ Hover & Active */
+.menu-item a:hover, .menu-item.active a {
+    background: linear-gradient(135deg, #ffb6c1, #ffdde1);
+    color: white;
+    font-weight: bold;
+    transform: translateX(6px);
+    box-shadow: 0px 4px 12px rgba(255, 99, 132, 0.3);
+}
+
+/* ✅ ปุ่ม Logout */
+.menu-item.logout a {
+    background: rgba(255, 200, 210, 0.5);
+    font-weight: bold;
+    color: #ff3f5f;
+    transition: all 0.3s;
+}
+
+.menu-item.logout a:hover {
+    background: #ff6b81;
+    color: white;
+    box-shadow: 0px 4px 10px rgba(255, 0, 0, 0.3);
+}
+
+/* 🌸 Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .menu-item a {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+        padding: 15px;
+    }
+
+    .menu-header {
+        font-size: 12px;
+    }
+
+    .menu-item a {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        position: fixed;
+        height: auto;
+        bottom: 0;
+        left: 0;
+        padding: 12px;
+        box-shadow: 0px -2px 12px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #ffdde1, #ffe6eb);
+    }
+
+    .menu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .menu-item {
+        flex: 1 1 45%;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .menu-item a {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .menu-item.logout a {
+        flex: 1 1 100%;
+    }
+}

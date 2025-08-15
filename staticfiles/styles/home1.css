@@ -1,0 +1,107 @@
+/* 🎨 Background */
+body {
+    background-color: #fff5f7; /* สีชมพูอ่อน */
+}
+
+/* 🎨 จัดโครงสร้าง Layout */
+.container-fluid {
+    display: grid;
+    grid-template-columns: 250px auto 300px;
+    gap: 20px;
+}
+
+/* 🎨 Sidebar */
+.sidebar {
+    background-color: #ffe3e6;
+    height: 100vh;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+}
+
+/* 🎨 เนื้อหาโพสต์ */
+.content {
+    margin-left: 270px;
+    padding: 20px;
+}
+
+/* 🎨 แนะนำสินค้า */
+.recommendations {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* 🎨 ปรับขนาดโพสต์ */
+.create-post, .post {
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+/* 📸 ปรับรูปภาพให้ขนาดเท่ากัน */
+.post-media {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.media-item img, .media-item video {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* 🎁 Grid แสดงสินค้า */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.product-card {
+    background: #f8f9fa;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+}
+
+
+/* 🎨 Sidebar */
+.bg-pink {
+    background-color: #ffe3e6 !important;
+}
+
+/* 🎨 ปรับขนาดโพสต์ */
+.create-post, .post {
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+/* 📸 ปรับรูปภาพให้ขนาดเหมาะสม */
+.post-media {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.media-item img, .media-item video {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* 🖼️ ถ้ามีเกิน 4 รูป ให้แสดง +จำนวนที่เหลือ */
+.extra-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px;
+}

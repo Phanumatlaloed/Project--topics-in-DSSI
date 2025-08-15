@@ -1,0 +1,405 @@
+/* ✅ ตั้งค่า Theme */
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+
+:root {
+  --primary: #FF6584;
+  --primary-light: #FFC0CB;
+  --primary-dark: #E5446D;
+  --secondary: #6C63FF;
+  --white: #FFFFFF;
+  --light-gray: #F8F9FA;
+  --gray: #E9ECEF;
+  --dark-gray: #6C757D;
+  --black: #343A40;
+  --success: #20C997;
+  --warning: #FFC107;
+  --danger: #DC3545;
+  --info: #17A2B8;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background-color: var(--light-gray);
+  color: var(--black);
+  line-height: 1.6;
+}
+
+/* ✅ Layout Dashboard */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ✅ Main Content */
+.content {
+  flex-grow: 1;
+  margin-left: 280px; /* This should match sidebar width */
+  padding: 40px;
+  transition: var(--transition);
+  width: calc(100% - 280px); /* Add this to ensure proper width */
+}
+
+/* เมื่อไม่มี sidebar ให้แสดงเต็มหน้าจอ */
+.content-full {
+  margin-left: 0;
+  width: 100%;
+}
+
+.content h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--dark-gray);
+  margin-bottom: 25px;
+  font-size: 16px;
+}
+
+/* ✅ Refund Table Styles */
+.refund-table {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 25px;
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead {
+  background: var(--gray);
+}
+
+th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--dark-gray);
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--primary-light);
+  white-space: nowrap;
+}
+
+td {
+  padding: 16px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray);
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+tbody tr {
+  transition: var(--transition);
+}
+
+tbody tr:hover {
+  background-color: var(--light-gray);
+}
+
+/* ✅ Button Styles */
+.btn {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition);
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-success, .btn-success:visited, .success {
+  background-color: var(--success);
+  color: var(--white);
+}
+
+.btn-danger, .btn-danger:visited {
+  background-color: var(--danger);
+  color: var(--white);
+}
+
+.upload {
+  background-color: var(--info);
+  color: var(--white);
+}
+
+.confirm {
+  background-color: var(--secondary);
+  color: var(--white);
+}
+
+.slip-btn {
+  background-color: var(--warning);
+  color: var(--black);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.btn:hover, .slip-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active, .slip-btn:active {
+  transform: translateY(0);
+}
+
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ✅ Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.status-pending {
+  background-color: rgba(255, 193, 7, 0.2);
+  color: #856404;
+  border: 1px solid rgba(255, 193, 7, 0.4);
+}
+
+.status-approved {
+  background-color: rgba(32, 201, 151, 0.2);
+  color: #155724;
+  border: 1px solid rgba(32, 201, 151, 0.4);
+}
+
+.status-rejected {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: #721c24;
+  border: 1px solid rgba(220, 53, 69, 0.4);
+}
+
+.status-confirmed {
+  background-color: rgba(108, 99, 255, 0.2);
+  color: #2e36a2;
+  border: 1px solid rgba(108, 99, 255, 0.4);
+}
+
+/* ✅ Page Header */
+.page-header {
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--primary-light);
+}
+
+.page-header h1 {
+  color: var(--primary-dark);
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.page-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.page-count {
+  font-size: 16px;
+  color: var(--dark-gray);
+}
+
+/* ✅ แก้ไขปัญหาตารางที่ล้นออกจากหน้าจอ */
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
+  margin-bottom: 30px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 5px;
+}
+
+/* ✅ กำหนดความกว้างคอลัมน์ */
+.col-num {
+  width: 5%;
+}
+.col-customer {
+  width: 10%;
+}
+.col-product {
+  width: 25%;
+}
+.col-reason {
+  width: 12%;
+}
+.col-amount {
+  width: 8%;
+}
+.col-status {
+  width: 10%;
+}
+.col-payment-proof {
+  width: 10%;
+}
+.col-product-proof {
+  width: 10%;
+}
+.col-action {
+  width: 10%;
+}
+
+/* ✅ Contact Admin Card */
+.contact-admin-card {
+  background: #fff0f5;
+  border: 1px solid #ffb6c1;
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 40px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(255, 182, 193, 0.3);
+}
+
+.contact-admin-card h3 {
+  color: #e91e63;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.contact-admin-card p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.contact-admin-card .contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-admin-card .contact-list li {
+  margin: 10px 0;
+  font-size: 1rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-admin-card .contact-list i {
+  color: #e91e63;
+}
+
+.btn-contact-admin {
+  background-color: #ff69b4;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s ease;
+  display: inline-block;
+}
+
+.btn-contact-admin:hover {
+  background-color: #e91e63;
+}
+
+/* ✅ Responsive Styles */
+@media (max-width: 1200px) {
+  table {
+    min-width: 1000px; /* ให้เลื่อนได้เมื่อหน้าจอเล็กลง */
+  }
+  
+  .content {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header h1 {
+    font-size: 26px;
+  }
+  
+  .page-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .contact-admin-card {
+    padding: 20px 15px;
+  }
+  
+  .contact-admin-card h3 {
+    font-size: 1.3rem;
+  }
+}
+
+/* ✅ ไอคอนในหน้าเว็บ */
+.icon {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+/* ✅ สีสถานะ */
+.text-pending {
+  color: var(--warning);
+}
+
+.text-approved {
+  color: var(--success);
+}
+
+.text-rejected {
+  color: var(--danger);
+}
+
+.text-confirmed {
+  color: var(--secondary);
+}

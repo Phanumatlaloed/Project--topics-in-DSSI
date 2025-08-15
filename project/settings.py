@@ -94,7 +94,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",  # ใช้ MySQL
         "NAME": "mydata85",                 # ชื่อฐานข้อมูลที่คุณสร้างไว้
         "USER": "root",                       # ชื่อผู้ใช้ MySQL
-        "PASSWORD": "12345",                   # รหัสผ่าน MySQL
+        "PASSWORD": "1234",                   # รหัสผ่าน MySQL
         "HOST": "db",                  # โฮสต์ MySQL
         "PORT": "3306",                       # พอร์ตของ MySQL (ปกติคือ 3306)
         "OPTIONS": {
@@ -198,3 +198,5 @@ EMAIL_SSL_CONTEXT = ssl._create_unverified_context()
 TIME_ZONE = 'Asia/Bangkok'
 # USE_TZ = True  # เปิดใช้งาน Time Zone
 USE_TZ = False
+# ✅ ไฟล์จะถูก collect มาไว้ที่นี่เมื่อรัน collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

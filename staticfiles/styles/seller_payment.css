@@ -1,0 +1,148 @@
+/* ✅ ตั้งค่าทั่วไป */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fff0f5; /* สีชมพูอ่อน */
+    margin: 0;
+    padding: 0;
+}
+
+/* ✅ กล่องเนื้อหา */
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 20px auto;
+    background: #ffffff;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(255, 105, 180, 0.3);
+    border-radius: 12px;
+    text-align: center;
+}
+
+/* ✅ หัวข้อ */
+h2 {
+    color: #d63384;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* ✅ เมนูผู้ขาย */
+.menu {
+    background: #ff69b4;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: inline-block;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.menu a:hover {
+    background: #ff1493;
+    border-radius: 6px;
+}
+
+.logout {
+    background: #d63384;
+    border-radius: 6px;
+    padding: 8px 15px;
+}
+
+.logout:hover {
+    background: #ff0000;
+}
+
+/* ✅ ตาราง */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin-top: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(255, 105, 180, 0.2);
+}
+
+/* ✅ หัวตาราง */
+th {
+    background: #ff69b4;
+    color: white;
+    padding: 14px;
+    font-size: 16px;
+}
+
+/* ✅ เนื้อหาตาราง */
+td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ffb6c1;
+    font-size: 14px;
+}
+
+/* ✅ สลับสีแถว */
+tr:nth-child(even) {
+    background: #fffaf0;
+}
+
+tr:hover {
+    background: #ffe4e1;
+    transition: all 0.3s ease-in-out;
+}
+
+/* ✅ ปุ่มอนุมัติ/ปฏิเสธ */
+.approve, .reject {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.approve {
+    color: white;
+    background: #28a745;
+}
+
+.approve:hover {
+    background: #218838;
+}
+
+.reject {
+    color: white;
+    background: #dc3545;
+}
+
+.reject:hover {
+    background: #c82333;
+}
+
+/* ✅ สลิป */
+.slip-link {
+    color: #ff1493;
+    font-weight: bold;
+    text-decoration: underline;
+    transition: all 0.3s ease-in-out;
+}
+
+.slip-link:hover {
+    color: #c71585;
+}
+
+.no-slip {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* ✅ แสดงยอดเงินสีสวย */
+.amount {
+    color: #28a745;
+    font-weight: bold;
+}

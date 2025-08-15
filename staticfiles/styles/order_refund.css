@@ -1,0 +1,134 @@
+/* 🎨 ตั้งค่าสีหลัก */
+:root {
+    --primary-color: #ff6b81;
+    --secondary-color: #ff9f43;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --light-bg: #fff5f8;
+}
+
+/* ✅ ปรับแต่งพื้นหลัง */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #ffe6e9;
+    margin: 0;
+    padding: 0;
+}
+
+/* 📜 สไตล์ตาราง */
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table th {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 14px;
+    padding: 12px;
+}
+
+/* 📌 ปรับแต่งแถวของคำขอคืนเงิน */
+.table-warning th {
+    background-color: var(--warning-color) !important;
+}
+
+.table-warning td {
+    background-color: var(--light-bg);
+}
+
+/* 🎨 ปรับแต่งปุ่ม */
+.btn {
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-warning {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+}
+
+.btn-warning:hover {
+    background-color: #e08e3d;
+}
+
+.btn-info {
+    background-color: var(--info-color);
+    color: white;
+    border: none;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #e05570;
+}
+
+/* 🏪 ปรับแต่งชื่อร้านค้า */
+td .store-name {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* 🔄 ปรับแต่งไอคอนสถานะ */
+td .status-icon {
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+/* 📤 อัปโหลดไฟล์ */
+input[type="file"] {
+    display: block;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+/* 📜 จัดข้อความในช่องหลักฐานคืนเงิน */
+td form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 🎨 Responsive */
+@media (max-width: 768px) {
+    .table {
+        font-size: 12px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}

@@ -1,0 +1,129 @@
+/* 🌸 พื้นหลังและฟอนต์ */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* 🌸 Navbar */
+.navbar {
+    background-color: #ffebf0;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    height: 45px; /* ปรับขนาดโลโก้ให้พอดี */
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ff5a8a;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #d14770;
+}
+
+/* 🌸 กล่อง Checkout */
+.checkout-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+/* 🌸 Section เลือกที่อยู่ */
+.address-selection {
+    background-color: #fff0f4;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 2px solid #ff5a8a;
+}
+
+legend {
+    font-weight: bold;
+    color: #ff5a8a;
+    font-size: 18px;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+/* 🌸 ปุ่มจัดการที่อยู่ */
+.address-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #ff5a8a;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #f4c2c2;
+    color: #333;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    opacity: 0.8;
+}
+
+/* 🌸 ปุ่มยืนยัน */
+.btn-success {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 20px;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+/* 🌸 Footer */
+footer {
+    margin-top: 30px;
+    font-size: 14px;
+    color: #666;
+}

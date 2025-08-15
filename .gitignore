@@ -10,8 +10,6 @@ __pycache__/
 *.bin
 *.exe
 
-# ข้ามไฟล์ Media หรือไฟล์ใหญ่
-media/
 
 # ข้ามไฟล์จาก Virtual Environment
 venv/

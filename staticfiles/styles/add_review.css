@@ -1,0 +1,135 @@
+/* 🌸 ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff5f8;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* 🌸 Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    width: 80px;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #ff6b81;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.nav-links a:hover {
+    background: #ff6b81;
+    color: white;
+}
+
+/* 🌸 Container */
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 🌸 Product Info */
+.product-info img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* 🌸 ฟอร์ม */
+form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 10px;
+    color: #ff6b81;
+}
+
+select, textarea, input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ff6b81;
+    border-radius: 8px;
+    margin-top: 5px;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* 🌸 กลุ่มปุ่ม */
+.form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+/* 🌸 ปุ่มยกเลิก */
+.btn-cancel {
+    background: #f2f2f2;
+    color: #ff6b81;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ff6b81;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+    min-width: 120px;
+}
+
+.btn-cancel:hover {
+    background: #ffe6eb;
+    color: #d6405f;
+    border-color: #d6405f;
+}
+
+/* ปรับปุ่มส่งให้เข้าชุด */
+.btn-submit {
+    background: #ff6b81;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    min-width: 120px;
+}
+
+.btn-submit:hover {
+    background: #e05570;
+}

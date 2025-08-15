@@ -1,20 +1,26 @@
-FROM python:3.10
+FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libmariadb-dev-compat \
+    libmariadb-dev \
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY requirements.txt ./
-RUN pip install --upgrade pip && pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY wait-for-it.sh ./
-RUN chmod +x wait-for-it.sh
+COPY . /app
 
-COPY . .
+ENV DJANGO_SETTINGS_MODULE=project.settings
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# ใช้ pymysql แทน mysqlclient
-RUN echo "import pymysql; pymysql.install_as_MySQLdb()" >> project/__init__.py
+EXPOSE 8080
 
-# ตั้งค่าคำสั่งที่ต้องการให้รันเมื่อคอนเทนเนอร์เริ่ม
-CMD ["sh", "-c", "./wait-for-it.sh db:3306 --timeout=60 --strict -- python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]
