@@ -12,8 +12,6 @@ __pycache__/
 
 
 # ข้ามไฟล์จาก Virtual Environment
-venv/
-env/
 *.log
 
 # ข้ามไฟล์ IDE
