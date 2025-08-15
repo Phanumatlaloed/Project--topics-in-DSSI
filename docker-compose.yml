@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: mysql:8.0
@@ -15,18 +17,19 @@ services:
     container_name: web
     depends_on:
       - db
-    env_file:                
+    env_file:
       - .env
-    environment:
-      MYSQL_HOST: db
-      MYSQL_PORT: 3306
     ports:
       - "8080:8080"
     volumes:
       - ./media:/app/media
       - ./staticfiles:/app/staticfiles
-    command: ["/entrypoint.sh"]
+    command: >
+      sh -c "sleep 10 &&
+         python manage.py migrate &&
+         python manage.py collectstatic --noinput &&
+         gunicorn project.wsgi:application --bind 0.0.0.0:8080 --workers 3"
+
 
 volumes:
   db_data:
-
