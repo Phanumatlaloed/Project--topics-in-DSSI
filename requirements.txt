@@ -1,11 +1,9 @@
-django
+Django>=5.1
 PyJWT
 requests
-django-allauth
 cryptography
 Pillow
 django-crispy-forms
-python-dotenv
 django-cors-headers
 Pillow
 django
@@ -20,3 +18,5 @@ requests
 jwt
 pymysql
 gunicorn
+mysqlclient
+python-decouple
