@@ -48,6 +48,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.middleware.security.SecurityMiddleware",
 ]
 
 ROOT_URLCONF = "project.urls"
@@ -117,10 +119,29 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "webmaster@localhost")
 SERVER_EMAIL = os.getenv("SERVER_EMAIL", DEFAULT_FROM_EMAIL)
 
-if not DEBUG:
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    X_FRAME_OPTIONS = "DENY"
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+from decouple import config
+
+ALLOWED_HOSTS = [
+    h.strip()
+    for h in config("ALLOWED_HOSTS", default="").split(",")
+    if h.strip()
+]
+
+# ใส่ทั้ง http และ https พร้อมพอร์ต (เช่น 8080)
+def _with_port(host, port="8080"):
+    return f"http://{host}:{port}", f"https://{host}:{port}"
+
+_csrf = []
+for h in ALLOWED_HOSTS:
+    if h in ("", "localhost", "127.0.0.1"):
+        # สำหรับ dev/localhost (ถ้าจะใช้) ไม่ใส่พอร์ตก็ได้ถ้าใช้ 80/443
+        _csrf.extend([f"http://{h}:8080", f"https://{h}:8080"])
+    else:
+        http, https = _with_port(h, "8080")
+        _csrf.extend([http, https])
+
+CSRF_TRUSTED_ORIGINS = _csrf
+
+DEBUG = False
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
